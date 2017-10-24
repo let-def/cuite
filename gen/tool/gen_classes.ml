@@ -187,7 +187,7 @@ let cfield ~h ~c ~ml cl = function
       (if args = [] then "unit" else String.concat " * " (List.map (qtype_ml_posname) args))
       (cl_c_name cl.cl) uname
 
-let gen ~mltype ~ml =
+let gen ?c ~mltype ~ml () =
   List.iter (fun cl ->
       match cl.cl.cl_extend with
       | None ->
@@ -196,11 +196,15 @@ let gen ~mltype ~ml =
         print mltype "type %s = [`%s | %s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl')
     ) (all_class ());
   List.iter (print ml "%s") (all_ml_decl ());
+  with_file "cuite_stubs.gen.h" @@ fun h ->
   List.iter (fun cl ->
       let name = c_mangle (cl_c_name cl.cl) in
-      with_file ("cuite_" ^ name ^ ".h") @@ fun h ->
-      print h "#include \"cuite.h\"";
-      with_file ("cuite_" ^ name ^ ".cpp") @@ fun c ->
+      begin match c with
+        | None ->
+          (fun f -> with_file ("cuite_" ^ name ^ ".gen.cpp")
+              (fun c -> print c "#include \"cuite_stubs.h\""; f c))
+        | Some c -> (fun f -> f c)
+      end @@ fun c ->
       let fields = List.rev cl.cl.cl_fields in
       List.iter (constructor ~h ~c ~ml cl) fields;
       print ml "module %s = struct" (ml_mangle (cl_c_name cl.cl));

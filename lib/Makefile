@@ -4,10 +4,14 @@ CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shel
 all: abook_addresswidget
 
 clean:
-	rm -f *.o *.cm*
+	rm -f *.o *.cm* *.gen.*
 
-CPP_SOURCES= mlqt_models.cpp cuite_stubs.cpp mlqt_support.cpp mlqt_lib.cpp mlqt_qvariant.cpp mlqt_csupport.c cuite_const.cpp 
-MLQT_OBJECTS= $(patsubst %.cpp,%.o,$(CPP_SOURCES)) qflags.mli qflags.ml qt_ref.mli qt_ref.ml qt.mli qt.ml cuite_types.ml qVariant.mli qVariant.ml qModels.ml cuite.ml
+CPP_SOURCES=$(wildcard *.gen.cpp) mlqt_models.cpp cuite_stubs.cpp mlqt_support.cpp mlqt_lib.cpp mlqt_qvariant.cpp mlqt_csupport.c cuite_const.cpp
+
+libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
+	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $^
+
+MLQT_OBJECTS= qflags.mli qflags.ml qt_ref.mli qt_ref.ml qt.mli qt.ml cuite_types.ml qVariant.mli qVariant.ml qModels.ml cuite.ml
 
 ## RULES
 
@@ -21,19 +25,20 @@ MLQT_OBJECTS= $(patsubst %.cpp,%.o,$(CPP_SOURCES)) qflags.mli qflags.ml qt_ref.m
 	$(CXX) -c $<
 
 %.o: %.c %.h
-	$(OCAMLC) -c $<
+	$(OCAMLC) -ccopt -fPIC -c $<
 
 %.o: %.c
-	$(OCAMLC) -c $<
+	$(OCAMLC) -ccopt -fPIC -c $<
 
 ## EXAMPLES
 
-example_1: $(MLQT_OBJECTS) example_1.ml
-	ocamlfind opt -g -o $@ -cclib '-lstdc++ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network' $^
+CUITEOPT=ocamlopt.opt -g -cclib '-Wl,-rpath,. -L. -lcuite'
+example_1: $(MLQT_OBJECTS) example_1.ml | libcuite.so 
+	$(CUITEOPT) -o $@ $^
 
-abook_addresswidget: $(MLQT_OBJECTS) abook_addresswidget.ml
-	ocamlfind opt -g -o $@ -cclib '-lstdc++ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network' $^
+abook_addresswidget: $(MLQT_OBJECTS) abook_addresswidget.ml | libcuite.so 
+	$(CUITEOPT) -o $@ $^
 
-test: $(MLQT_OBJECTS) test.ml
-	ocamlfind opt -g -o $@ -cclib '-lstdc++ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network' $^
+test: $(MLQT_OBJECTS) test.ml | libcuite.so 
+	$(CUITEOPT) -o $@ $^
 

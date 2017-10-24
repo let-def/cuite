@@ -1,7 +1,4 @@
 #include "cuite_stubs.h"
-#include <caml/memory.h>
-
-#include "cuite_stubs.gen.cpp"
 
 external value mlqt_QApplication_new_(value args)
 {

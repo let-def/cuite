@@ -13,5 +13,11 @@ let () =
     ml "open Qt";
     ml "open Cuite_types";
     ml "";
-    Gen_classes.gen ~mltype ~ml
+    match Sys.getenv "CUITE_UNIFIED" with
+    | exception Not_found -> Gen_classes.gen ~mltype ~ml ()
+    | "" -> Gen_classes.gen ~mltype ~ml ()
+    | _ ->
+      with_file "cuite_stubs.gen.cpp" @@ fun c ->
+      print c "#include \"cuite_stubs.h\"";
+      Gen_classes.gen ~mltype ~ml ~c ()
   end
