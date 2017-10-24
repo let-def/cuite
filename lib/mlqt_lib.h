@@ -1,0 +1,109 @@
+#ifndef __MLQT_LIB_H__
+#define __MLQT_LIB_H__
+
+#include <QtCore>
+#include <QtGui>
+#include <QtWidgets>
+#include <caml/mlvalues.h>
+#include "mlqt_support.h"
+
+#define MLQT_GENERIC_CONVERTER(T, RET, ARG)        \
+  static inline bool mlqt_##T##_check_use(value v) \
+  { return mlqt_qt_check_use(v); }                 \
+  RET mlqt_##T##_from_ocaml(const value& v);       \
+  value& mlqt_##T##_to_ocaml(const ARG v)
+
+#define MLQT_IMMEDIATE_CONVERTER(T) MLQT_GENERIC_CONVERTER(T, T, T)
+#define MLQT_CONVERTER(T) MLQT_GENERIC_CONVERTER(T, T, T&)
+#define MLQT_PTR_CONVERTER(T) MLQT_GENERIC_CONVERTER(T, T*, T*)
+
+/* Custom types */
+MLQT_IMMEDIATE_CONVERTER(int);
+MLQT_IMMEDIATE_CONVERTER(bool);
+MLQT_IMMEDIATE_CONVERTER(double);
+MLQT_IMMEDIATE_CONVERTER(intnat);
+typedef char *pchar;
+MLQT_CONVERTER(pchar);
+MLQT_CONVERTER(QString);
+MLQT_CONVERTER(QRect);
+MLQT_CONVERTER(QRectF);
+MLQT_CONVERTER(QPoint);
+MLQT_CONVERTER(QPointF);
+MLQT_CONVERTER(QSize);
+MLQT_CONVERTER(QSizeF);
+
+/* Relocatable */
+MLQT_PTR_CONVERTER(QByteArray);
+MLQT_PTR_CONVERTER(QBrush);
+MLQT_PTR_CONVERTER(QColor);
+MLQT_PTR_CONVERTER(QCursor);
+MLQT_PTR_CONVERTER(QDate);
+MLQT_PTR_CONVERTER(QDateTime);
+MLQT_PTR_CONVERTER(QDir);
+MLQT_PTR_CONVERTER(QFont);
+MLQT_PTR_CONVERTER(QFontMetrics);
+MLQT_PTR_CONVERTER(QIcon);
+MLQT_PTR_CONVERTER(QKeySequence);
+MLQT_PTR_CONVERTER(QLocale);
+MLQT_PTR_CONVERTER(QMargins);
+MLQT_PTR_CONVERTER(QMatrix4x4);
+MLQT_PTR_CONVERTER(QMatrix);
+MLQT_PTR_CONVERTER(QByteArrayList);
+MLQT_PTR_CONVERTER(QItemSelectionRange);
+MLQT_PTR_CONVERTER(QItemSelection);
+MLQT_PTR_CONVERTER(QModelIndexList);
+MLQT_PTR_CONVERTER(QModelIndex);
+MLQT_PTR_CONVERTER(QPainterPath);
+MLQT_PTR_CONVERTER(QPalette);
+MLQT_PTR_CONVERTER(QRegExp);
+MLQT_PTR_CONVERTER(QRegion);
+MLQT_PTR_CONVERTER(QStringList);
+MLQT_PTR_CONVERTER(QTextCursor);
+MLQT_PTR_CONVERTER(QTextFormat);
+MLQT_PTR_CONVERTER(QTextCharFormat);
+MLQT_PTR_CONVERTER(QTime);
+MLQT_PTR_CONVERTER(QTransform);
+MLQT_PTR_CONVERTER(QUrl);
+MLQT_PTR_CONVERTER(QVector3D);
+MLQT_PTR_CONVERTER(QPixmap);
+MLQT_PTR_CONVERTER(QFileInfo);
+
+typedef QVariant QVariantOther;
+MLQT_PTR_CONVERTER(QVariantOther);
+
+MLQT_PTR_CONVERTER(QBitArray);
+MLQT_PTR_CONVERTER(QChar);
+MLQT_PTR_CONVERTER(QEasingCurve);
+MLQT_PTR_CONVERTER(QUuid);
+MLQT_PTR_CONVERTER(QPersistentModelIndex);
+MLQT_PTR_CONVERTER(QImage);
+MLQT_PTR_CONVERTER(QLine);
+MLQT_PTR_CONVERTER(QLineF);
+MLQT_PTR_CONVERTER(QPen);
+MLQT_PTR_CONVERTER(QPolygon);
+MLQT_PTR_CONVERTER(QPolygonF);
+MLQT_PTR_CONVERTER(QQuaternion);
+MLQT_PTR_CONVERTER(QRegularExpression);
+MLQT_PTR_CONVERTER(QSizePolicy);
+MLQT_PTR_CONVERTER(QTextLength);
+MLQT_PTR_CONVERTER(QVector2D);
+MLQT_PTR_CONVERTER(QVector4D);
+MLQT_PTR_CONVERTER(QBitmap);
+
+/* Manual */
+
+MLQT_PTR_CONVERTER(QPainter);
+MLQT_PTR_CONVERTER(QStyleOption);
+MLQT_PTR_CONVERTER(QItemEditorFactory);
+MLQT_PTR_CONVERTER(QEvent);
+MLQT_PTR_CONVERTER(QDataStream);
+MLQT_PTR_CONVERTER(QListWidgetItem);
+MLQT_PTR_CONVERTER(QTreeWidgetItem);
+MLQT_PTR_CONVERTER(QTableWidgetItem);
+MLQT_PTR_CONVERTER(QTableWidgetSelectionRange);
+MLQT_PTR_CONVERTER(QFileIconProvider);
+MLQT_PTR_CONVERTER(QRegularExpressionMatch);
+MLQT_PTR_CONVERTER(QRegularExpressionMatchIterator);
+MLQT_PTR_CONVERTER(QStringRef);
+
+#endif

@@ -1,0 +1,3590 @@
+open Shared
+
+let qJsonParseError'ParseError = qenum "QJsonParseError" "ParseError" [
+  "NoError";
+  "UnterminatedObject";
+  "MissingNameSeparator";
+  "UnterminatedArray";
+  "MissingValueSeparator";
+  "IllegalValue";
+  "TerminationByNumber";
+  "IllegalNumber";
+  "IllegalEscapeSequence";
+  "IllegalUTF8String";
+  "UnterminatedString";
+  "MissingObject";
+  "DeepNesting";
+  "DocumentTooLarge";
+  "GarbageAtEnd";
+]
+let qEasingCurve'Type = qenum "QEasingCurve" "Type" [
+  "Linear";
+  "InQuad";
+  "OutQuad";
+  "InOutQuad";
+  "OutInQuad";
+  "InCubic";
+  "OutCubic";
+  "InOutCubic";
+  "OutInCubic";
+  "InQuart";
+  "OutQuart";
+  "InOutQuart";
+  "OutInQuart";
+  "InQuint";
+  "OutQuint";
+  "InOutQuint";
+  "OutInQuint";
+  "InSine";
+  "OutSine";
+  "InOutSine";
+  "OutInSine";
+  "InExpo";
+  "OutExpo";
+  "InOutExpo";
+  "OutInExpo";
+  "InCirc";
+  "OutCirc";
+  "InOutCirc";
+  "OutInCirc";
+  "InElastic";
+  "OutElastic";
+  "InOutElastic";
+  "OutInElastic";
+  "InBack";
+  "OutBack";
+  "InOutBack";
+  "OutInBack";
+  "InBounce";
+  "OutBounce";
+  "InOutBounce";
+  "OutInBounce";
+  "InCurve";
+  "OutCurve";
+  "SineCurve";
+  "CosineCurve";
+  "BezierSpline";
+  "TCBSpline";
+  "Custom";
+  "NCurveTypes";
+]
+let qTimeZone'TimeType = qenum "QTimeZone" "TimeType" [
+  "StandardTime";
+  "DaylightTime";
+  "GenericTime";
+]
+let qTimeZone'NameType = qenum "QTimeZone" "NameType" [
+  "DefaultName";
+  "LongName";
+  "ShortName";
+  "OffsetName";
+]
+let qLineF'IntersectType = qenum "QLineF" "IntersectType" [
+  "NoIntersection";
+  "BoundedIntersection";
+  "UnboundedIntersection";
+]
+let qEvent'Type = qenum "QEvent" "Type" [
+  "None";
+  "Timer";
+  "MouseButtonPress";
+  "MouseButtonRelease";
+  "MouseButtonDblClick";
+  "MouseMove";
+  "KeyPress";
+  "KeyRelease";
+  "FocusIn";
+  "FocusOut";
+  "FocusAboutToChange";
+  "Enter";
+  "Leave";
+  "Paint";
+  "Move";
+  "Resize";
+  "Create";
+  "Destroy";
+  "Show";
+  "Hide";
+  "Close";
+  "Quit";
+  "ParentChange";
+  "ParentAboutToChange";
+  "ThreadChange";
+  "WindowActivate";
+  "WindowDeactivate";
+  "ShowToParent";
+  "HideToParent";
+  "Wheel";
+  "WindowTitleChange";
+  "WindowIconChange";
+  "ApplicationWindowIconChange";
+  "ApplicationFontChange";
+  "ApplicationLayoutDirectionChange";
+  "ApplicationPaletteChange";
+  "PaletteChange";
+  "Clipboard";
+  "Speech";
+  "MetaCall";
+  "SockAct";
+  "WinEventAct";
+  "DeferredDelete";
+  "DragEnter";
+  "DragMove";
+  "DragLeave";
+  "Drop";
+  "DragResponse";
+  "ChildAdded";
+  "ChildPolished";
+  "ChildRemoved";
+  "ShowWindowRequest";
+  "PolishRequest";
+  "Polish";
+  "LayoutRequest";
+  "UpdateRequest";
+  "UpdateLater";
+  "EmbeddingControl";
+  "ActivateControl";
+  "DeactivateControl";
+  "ContextMenu";
+  "InputMethod";
+  "TabletMove";
+  "LocaleChange";
+  "LanguageChange";
+  "LayoutDirectionChange";
+  "Style";
+  "TabletPress";
+  "TabletRelease";
+  "OkRequest";
+  "HelpRequest";
+  "IconDrag";
+  "FontChange";
+  "EnabledChange";
+  "ActivationChange";
+  "StyleChange";
+  "IconTextChange";
+  "ModifiedChange";
+  "MouseTrackingChange";
+  "WindowBlocked";
+  "WindowUnblocked";
+  "WindowStateChange";
+  "ReadOnlyChange";
+  "ToolTip";
+  "WhatsThis";
+  "StatusTip";
+  "ActionChanged";
+  "ActionAdded";
+  "ActionRemoved";
+  "FileOpen";
+  "Shortcut";
+  "ShortcutOverride";
+  "WhatsThisClicked";
+  "ToolBarChange";
+  "ApplicationActivate";
+  (*"ApplicationActivated";*)
+  "ApplicationDeactivate";
+  (*"ApplicationDeactivated";*)
+  "QueryWhatsThis";
+  "EnterWhatsThisMode";
+  "LeaveWhatsThisMode";
+  "ZOrderChange";
+  "HoverEnter";
+  "HoverLeave";
+  "HoverMove";
+  (*"EnterEditFocus"; #ifdef QT_KEYPAD_NAVIGATION
+  "LeaveEditFocus";*)
+  "AcceptDropsChange";
+  "ZeroTimerEvent";
+  "GraphicsSceneMouseMove";
+  "GraphicsSceneMousePress";
+  "GraphicsSceneMouseRelease";
+  "GraphicsSceneMouseDoubleClick";
+  "GraphicsSceneContextMenu";
+  "GraphicsSceneHoverEnter";
+  "GraphicsSceneHoverMove";
+  "GraphicsSceneHoverLeave";
+  "GraphicsSceneHelp";
+  "GraphicsSceneDragEnter";
+  "GraphicsSceneDragMove";
+  "GraphicsSceneDragLeave";
+  "GraphicsSceneDrop";
+  "GraphicsSceneWheel";
+  "KeyboardLayoutChange";
+  "DynamicPropertyChange";
+  "TabletEnterProximity";
+  "TabletLeaveProximity";
+  "NonClientAreaMouseMove";
+  "NonClientAreaMouseButtonPress";
+  "NonClientAreaMouseButtonRelease";
+  "NonClientAreaMouseButtonDblClick";
+  "MacSizeChange";
+  "ContentsRectChange";
+  "MacGLWindowChange";
+  "FutureCallOut";
+  "GraphicsSceneResize";
+  "GraphicsSceneMove";
+  "CursorChange";
+  "ToolTipChange";
+  "NetworkReplyUpdated";
+  "GrabMouse";
+  "UngrabMouse";
+  "GrabKeyboard";
+  "UngrabKeyboard";
+  "MacGLClearDrawable";
+  "StateMachineSignal";
+  "StateMachineWrapped";
+  "TouchBegin";
+  "TouchUpdate";
+  "TouchEnd";
+  "NativeGesture";
+  "RequestSoftwareInputPanel";
+  "CloseSoftwareInputPanel";
+  "WinIdChange";
+  "Gesture";
+  "GestureOverride";
+  "ScrollPrepare";
+  "Scroll";
+  "Expose";
+  "InputMethodQuery";
+  "OrientationChange";
+  "TouchCancel";
+  "ThemeChange";
+  "SockClose";
+  "PlatformPanel";
+  "StyleAnimationUpdate";
+  "ApplicationStateChange";
+  "WindowChangeInternal";
+  "ScreenChangeInternal";
+  "PlatformSurface";
+  "Pointer";
+  "TabletTrackingChange";
+  "User";
+  "MaxUser";
+]
+let qMimeDatabase'MatchMode = qenum "QMimeDatabase" "MatchMode" [
+  "MatchDefault";
+  "MatchExtension";
+  "MatchContent";
+]
+let qJsonDocument'DataValidation = qenum "QJsonDocument" "DataValidation" [
+  "Validate";
+  "BypassValidation";
+]
+let qJsonDocument'JsonFormat = qenum "QJsonDocument" "JsonFormat" [
+  "Indented";
+  "Compact";
+]
+let qByteArray'Base64Option = qenum "QByteArray" "Base64Option" [
+  "Base64Encoding";
+  "Base64UrlEncoding";
+  (*"KeepTrailingEquals";*)
+  "OmitTrailingEquals";
+]
+let qLocale'Language = qenum "QLocale" "Language" [
+  "AnyLanguage";
+  "C";
+  "Abkhazian";
+  "Oromo";
+  "Afar";
+  "Afrikaans";
+  "Albanian";
+  "Amharic";
+  "Arabic";
+  "Armenian";
+  "Assamese";
+  "Aymara";
+  "Azerbaijani";
+  "Bashkir";
+  "Basque";
+  "Bengali";
+  "Dzongkha";
+  "Bihari";
+  "Bislama";
+  "Breton";
+  "Bulgarian";
+  "Burmese";
+  "Belarusian";
+  "Khmer";
+  "Catalan";
+  "Chinese";
+  "Corsican";
+  "Croatian";
+  "Czech";
+  "Danish";
+  "Dutch";
+  "English";
+  "Esperanto";
+  "Estonian";
+  "Faroese";
+  "Fijian";
+  "Finnish";
+  "French";
+  "WesternFrisian";
+  "Gaelic";
+  "Galician";
+  "Georgian";
+  "German";
+  "Greek";
+  "Greenlandic";
+  "Guarani";
+  "Gujarati";
+  "Hausa";
+  "Hebrew";
+  "Hindi";
+  "Hungarian";
+  "Icelandic";
+  "Indonesian";
+  "Interlingua";
+  "Interlingue";
+  "Inuktitut";
+  "Inupiak";
+  "Irish";
+  "Italian";
+  "Japanese";
+  "Javanese";
+  "Kannada";
+  "Kashmiri";
+  "Kazakh";
+  "Kinyarwanda";
+  "Kirghiz";
+  "Korean";
+  "Kurdish";
+  "Rundi";
+  "Lao";
+  "Latin";
+  "Latvian";
+  "Lingala";
+  "Lithuanian";
+  "Macedonian";
+  "Malagasy";
+  "Malay";
+  "Malayalam";
+  "Maltese";
+  "Maori";
+  "Marathi";
+  "Marshallese";
+  "Mongolian";
+  "NauruLanguage";
+  "Nepali";
+  "NorwegianBokmal";
+  "Occitan";
+  "Oriya";
+  "Pashto";
+  "Persian";
+  "Polish";
+  "Portuguese";
+  "Punjabi";
+  "Quechua";
+  "Romansh";
+  "Romanian";
+  "Russian";
+  "Samoan";
+  "Sango";
+  "Sanskrit";
+  "Serbian";
+  "Ossetic";
+  "SouthernSotho";
+  "Tswana";
+  "Shona";
+  "Sindhi";
+  "Sinhala";
+  "Swati";
+  "Slovak";
+  "Slovenian";
+  "Somali";
+  "Spanish";
+  "Sundanese";
+  "Swahili";
+  "Swedish";
+  "Sardinian";
+  "Tajik";
+  "Tamil";
+  "Tatar";
+  "Telugu";
+  "Thai";
+  "Tibetan";
+  "Tigrinya";
+  "Tongan";
+  "Tsonga";
+  "Turkish";
+  "Turkmen";
+  "Tahitian";
+  "Uighur";
+  "Ukrainian";
+  "Urdu";
+  "Uzbek";
+  "Vietnamese";
+  "Volapuk";
+  "Welsh";
+  "Wolof";
+  "Xhosa";
+  "Yiddish";
+  "Yoruba";
+  "Zhuang";
+  "Zulu";
+  "NorwegianNynorsk";
+  "Bosnian";
+  "Divehi";
+  "Manx";
+  "Cornish";
+  "Akan";
+  "Konkani";
+  "Ga";
+  "Igbo";
+  "Kamba";
+  "Syriac";
+  "Blin";
+  "Geez";
+  "Koro";
+  "Sidamo";
+  "Atsam";
+  "Tigre";
+  "Jju";
+  "Friulian";
+  "Venda";
+  "Ewe";
+  "Walamo";
+  "Hawaiian";
+  "Tyap";
+  "Nyanja";
+  "Filipino";
+  "SwissGerman";
+  "SichuanYi";
+  "Kpelle";
+  "LowGerman";
+  "SouthNdebele";
+  "NorthernSotho";
+  "NorthernSami";
+  "Taroko";
+  "Gusii";
+  "Taita";
+  "Fulah";
+  "Kikuyu";
+  "Samburu";
+  "Sena";
+  "NorthNdebele";
+  "Rombo";
+  "Tachelhit";
+  "Kabyle";
+  "Nyankole";
+  "Bena";
+  "Vunjo";
+  "Bambara";
+  "Embu";
+  "Cherokee";
+  "Morisyen";
+  "Makonde";
+  "Langi";
+  "Ganda";
+  "Bemba";
+  "Kabuverdianu";
+  "Meru";
+  "Kalenjin";
+  "Nama";
+  "Machame";
+  "Colognian";
+  "Masai";
+  "Soga";
+  "Luyia";
+  "Asu";
+  "Teso";
+  "Saho";
+  "KoyraChiini";
+  "Rwa";
+  "Luo";
+  "Chiga";
+  "CentralMoroccoTamazight";
+  "KoyraboroSenni";
+  "Shambala";
+  "Bodo";
+  "Avaric";
+  "Chamorro";
+  "Chechen";
+  "Church";
+  "Chuvash";
+  "Cree";
+  "Haitian";
+  "Herero";
+  "HiriMotu";
+  "Kanuri";
+  "Komi";
+  "Kongo";
+  "Kwanyama";
+  "Limburgish";
+  "LubaKatanga";
+  "Luxembourgish";
+  "Navaho";
+  "Ndonga";
+  "Ojibwa";
+  "Pali";
+  "Walloon";
+  "Aghem";
+  "Basaa";
+  "Zarma";
+  "Duala";
+  "JolaFonyi";
+  "Ewondo";
+  "Bafia";
+  "MakhuwaMeetto";
+  "Mundang";
+  "Kwasio";
+  "Nuer";
+  "Sakha";
+  "Sangu";
+  "CongoSwahili";
+  "Tasawaq";
+  "Vai";
+  "Walser";
+  "Yangben";
+  "Avestan";
+  "Asturian";
+  "Ngomba";
+  "Kako";
+  "Meta";
+  "Ngiemboon";
+  "Aragonese";
+  "Akkadian";
+  "AncientEgyptian";
+  "AncientGreek";
+  "Aramaic";
+  "Balinese";
+  "Bamun";
+  "BatakToba";
+  "Buginese";
+  "Buhid";
+  "Carian";
+  "Chakma";
+  "ClassicalMandaic";
+  "Coptic";
+  "Dogri";
+  "EasternCham";
+  "EasternKayah";
+  "Etruscan";
+  "Gothic";
+  "Hanunoo";
+  "Ingush";
+  "LargeFloweryMiao";
+  "Lepcha";
+  "Limbu";
+  "Lisu";
+  "Lu";
+  "Lycian";
+  "Lydian";
+  "Mandingo";
+  "Manipuri";
+  "Meroitic";
+  "NorthernThai";
+  "OldIrish";
+  "OldNorse";
+  "OldPersian";
+  "OldTurkish";
+  "Pahlavi";
+  "Parthian";
+  "Phoenician";
+  "PrakritLanguage";
+  "Rejang";
+  "Sabaean";
+  "Samaritan";
+  "Santali";
+  "Saurashtra";
+  "Sora";
+  "Sylheti";
+  "Tagbanwa";
+  "TaiDam";
+  "TaiNua";
+  "Ugaritic";
+  "Akoose";
+  "Lakota";
+  "StandardMoroccanTamazight";
+  "Mapuche";
+  "CentralKurdish";
+  "LowerSorbian";
+  "UpperSorbian";
+  "Kenyang";
+  "Mohawk";
+  "Nko";
+  "Prussian";
+  "Kiche";
+  "SouthernSami";
+  "LuleSami";
+  "InariSami";
+  "SkoltSami";
+  "Warlpiri";
+  "ManichaeanMiddlePersian";
+  "Mende";
+  "AncientNorthArabian";
+  "LinearA";
+  "HmongNjua";
+  "Ho";
+  "Lezghian";
+  "Bassa";
+  "Mono";
+  "TedimChin";
+  "Maithili";
+  "Ahom";
+  "AmericanSignLanguage";
+  "ArdhamagadhiPrakrit";
+  "Bhojpuri";
+  "HieroglyphicLuwian";
+  "LiteraryChinese";
+  "Mazanderani";
+  "Mru";
+  "Newari";
+  "NorthernLuri";
+  "Palauan";
+  "Papiamento";
+  "Saraiki";
+  "TokelauLanguage";
+  "TokPisin";
+  "TuvaluLanguage";
+  "UncodedLanguages";
+  "Cantonese";
+  "Osage";
+  "Tangut";
+  (*"Norwegian";
+  "Moldavian";
+  "SerboCroatian";
+  "Tagalog";
+  "Twi";
+  "Afan";
+  "Byelorussian";
+  "Bhutani";
+  "Cambodian";
+  "Kurundi";
+  "RhaetoRomance";
+  "Chewa";
+  "Frisian";
+  "Uigur";
+  "LastLanguage";*)
+]
+let qLocale'Script = qenum "QLocale" "Script" [
+  "AnyScript";
+  "ArabicScript";
+  "CyrillicScript";
+  "DeseretScript";
+  "GurmukhiScript";
+  "SimplifiedHanScript";
+  "TraditionalHanScript";
+  "LatinScript";
+  "MongolianScript";
+  "TifinaghScript";
+  "ArmenianScript";
+  "BengaliScript";
+  "CherokeeScript";
+  "DevanagariScript";
+  "EthiopicScript";
+  "GeorgianScript";
+  "GreekScript";
+  "GujaratiScript";
+  "HebrewScript";
+  "JapaneseScript";
+  "KhmerScript";
+  "KannadaScript";
+  "KoreanScript";
+  "LaoScript";
+  "MalayalamScript";
+  "MyanmarScript";
+  "OriyaScript";
+  "TamilScript";
+  "TeluguScript";
+  "ThaanaScript";
+  "ThaiScript";
+  "TibetanScript";
+  "SinhalaScript";
+  "SyriacScript";
+  "YiScript";
+  "VaiScript";
+  "AvestanScript";
+  "BalineseScript";
+  "BamumScript";
+  "BatakScript";
+  "BopomofoScript";
+  "BrahmiScript";
+  "BugineseScript";
+  "BuhidScript";
+  "CanadianAboriginalScript";
+  "CarianScript";
+  "ChakmaScript";
+  "ChamScript";
+  "CopticScript";
+  "CypriotScript";
+  "EgyptianHieroglyphsScript";
+  "FraserScript";
+  "GlagoliticScript";
+  "GothicScript";
+  "HanScript";
+  "HangulScript";
+  "HanunooScript";
+  "ImperialAramaicScript";
+  "InscriptionalPahlaviScript";
+  "InscriptionalParthianScript";
+  "JavaneseScript";
+  "KaithiScript";
+  "KatakanaScript";
+  "KayahLiScript";
+  "KharoshthiScript";
+  "LannaScript";
+  "LepchaScript";
+  "LimbuScript";
+  "LinearBScript";
+  "LycianScript";
+  "LydianScript";
+  "MandaeanScript";
+  "MeiteiMayekScript";
+  "MeroiticScript";
+  "MeroiticCursiveScript";
+  "NkoScript";
+  "NewTaiLueScript";
+  "OghamScript";
+  "OlChikiScript";
+  "OldItalicScript";
+  "OldPersianScript";
+  "OldSouthArabianScript";
+  "OrkhonScript";
+  "OsmanyaScript";
+  "PhagsPaScript";
+  "PhoenicianScript";
+  "PollardPhoneticScript";
+  "RejangScript";
+  "RunicScript";
+  "SamaritanScript";
+  "SaurashtraScript";
+  "SharadaScript";
+  "ShavianScript";
+  "SoraSompengScript";
+  "CuneiformScript";
+  "SundaneseScript";
+  "SylotiNagriScript";
+  "TagalogScript";
+  "TagbanwaScript";
+  "TaiLeScript";
+  "TaiVietScript";
+  "TakriScript";
+  "UgariticScript";
+  "BrailleScript";
+  "HiraganaScript";
+  "CaucasianAlbanianScript";
+  "BassaVahScript";
+  "DuployanScript";
+  "ElbasanScript";
+  "GranthaScript";
+  "PahawhHmongScript";
+  "KhojkiScript";
+  "LinearAScript";
+  "MahajaniScript";
+  "ManichaeanScript";
+  "MendeKikakuiScript";
+  "ModiScript";
+  "MroScript";
+  "OldNorthArabianScript";
+  "NabataeanScript";
+  "PalmyreneScript";
+  "PauCinHauScript";
+  "OldPermicScript";
+  "PsalterPahlaviScript";
+  "SiddhamScript";
+  "KhudawadiScript";
+  "TirhutaScript";
+  "VarangKshitiScript";
+  "AhomScript";
+  "AnatolianHieroglyphsScript";
+  "HatranScript";
+  "MultaniScript";
+  "OldHungarianScript";
+  "SignWritingScript";
+  "AdlamScript";
+  "BhaiksukiScript";
+  "MarchenScript";
+  "NewaScript";
+  "OsageScript";
+  "TangutScript";
+  "HanWithBopomofoScript";
+  "JamoScript";
+  (*"SimplifiedChineseScript";
+  "TraditionalChineseScript";
+  "LastScript";*)
+]
+let qLocale'Country = qenum "QLocale" "Country" [
+  "AnyCountry";
+  "Afghanistan";
+  "Albania";
+  "Algeria";
+  "AmericanSamoa";
+  "Andorra";
+  "Angola";
+  "Anguilla";
+  "Antarctica";
+  "AntiguaAndBarbuda";
+  "Argentina";
+  "Armenia";
+  "Aruba";
+  "Australia";
+  "Austria";
+  "Azerbaijan";
+  "Bahamas";
+  "Bahrain";
+  "Bangladesh";
+  "Barbados";
+  "Belarus";
+  "Belgium";
+  "Belize";
+  "Benin";
+  "Bermuda";
+  "Bhutan";
+  "Bolivia";
+  "BosniaAndHerzegowina";
+  "Botswana";
+  "BouvetIsland";
+  "Brazil";
+  "BritishIndianOceanTerritory";
+  "Brunei";
+  "Bulgaria";
+  "BurkinaFaso";
+  "Burundi";
+  "Cambodia";
+  "Cameroon";
+  "Canada";
+  "CapeVerde";
+  "CaymanIslands";
+  "CentralAfricanRepublic";
+  "Chad";
+  "Chile";
+  "China";
+  "ChristmasIsland";
+  "CocosIslands";
+  "Colombia";
+  "Comoros";
+  "CongoKinshasa";
+  "CongoBrazzaville";
+  "CookIslands";
+  "CostaRica";
+  "IvoryCoast";
+  "Croatia";
+  "Cuba";
+  "Cyprus";
+  "CzechRepublic";
+  "Denmark";
+  "Djibouti";
+  "Dominica";
+  "DominicanRepublic";
+  "EastTimor";
+  "Ecuador";
+  "Egypt";
+  "ElSalvador";
+  "EquatorialGuinea";
+  "Eritrea";
+  "Estonia";
+  "Ethiopia";
+  "FalklandIslands";
+  "FaroeIslands";
+  "Fiji";
+  "Finland";
+  "France";
+  "Guernsey";
+  "FrenchGuiana";
+  "FrenchPolynesia";
+  "FrenchSouthernTerritories";
+  "Gabon";
+  "Gambia";
+  "Georgia";
+  "Germany";
+  "Ghana";
+  "Gibraltar";
+  "Greece";
+  "Greenland";
+  "Grenada";
+  "Guadeloupe";
+  "Guam";
+  "Guatemala";
+  "Guinea";
+  "GuineaBissau";
+  "Guyana";
+  "Haiti";
+  "HeardAndMcDonaldIslands";
+  "Honduras";
+  "HongKong";
+  "Hungary";
+  "Iceland";
+  "India";
+  "Indonesia";
+  "Iran";
+  "Iraq";
+  "Ireland";
+  "Israel";
+  "Italy";
+  "Jamaica";
+  "Japan";
+  "Jordan";
+  "Kazakhstan";
+  "Kenya";
+  "Kiribati";
+  "NorthKorea";
+  "SouthKorea";
+  "Kuwait";
+  "Kyrgyzstan";
+  "Laos";
+  "Latvia";
+  "Lebanon";
+  "Lesotho";
+  "Liberia";
+  "Libya";
+  "Liechtenstein";
+  "Lithuania";
+  "Luxembourg";
+  "Macau";
+  "Macedonia";
+  "Madagascar";
+  "Malawi";
+  "Malaysia";
+  "Maldives";
+  "Mali";
+  "Malta";
+  "MarshallIslands";
+  "Martinique";
+  "Mauritania";
+  "Mauritius";
+  "Mayotte";
+  "Mexico";
+  "Micronesia";
+  "Moldova";
+  "Monaco";
+  "Mongolia";
+  "Montserrat";
+  "Morocco";
+  "Mozambique";
+  "Myanmar";
+  "Namibia";
+  "NauruCountry";
+  "Nepal";
+  "Netherlands";
+  "CuraSao";
+  "NewCaledonia";
+  "NewZealand";
+  "Nicaragua";
+  "Niger";
+  "Nigeria";
+  "Niue";
+  "NorfolkIsland";
+  "NorthernMarianaIslands";
+  "Norway";
+  "Oman";
+  "Pakistan";
+  "Palau";
+  "PalestinianTerritories";
+  "Panama";
+  "PapuaNewGuinea";
+  "Paraguay";
+  "Peru";
+  "Philippines";
+  "Pitcairn";
+  "Poland";
+  "Portugal";
+  "PuertoRico";
+  "Qatar";
+  "Reunion";
+  "Romania";
+  "Russia";
+  "Rwanda";
+  "SaintKittsAndNevis";
+  "SaintLucia";
+  "SaintVincentAndTheGrenadines";
+  "Samoa";
+  "SanMarino";
+  "SaoTomeAndPrincipe";
+  "SaudiArabia";
+  "Senegal";
+  "Seychelles";
+  "SierraLeone";
+  "Singapore";
+  "Slovakia";
+  "Slovenia";
+  "SolomonIslands";
+  "Somalia";
+  "SouthAfrica";
+  "SouthGeorgiaAndTheSouthSandwichIslands";
+  "Spain";
+  "SriLanka";
+  "SaintHelena";
+  "SaintPierreAndMiquelon";
+  "Sudan";
+  "Suriname";
+  "SvalbardAndJanMayenIslands";
+  "Swaziland";
+  "Sweden";
+  "Switzerland";
+  "Syria";
+  "Taiwan";
+  "Tajikistan";
+  "Tanzania";
+  "Thailand";
+  "Togo";
+  "TokelauCountry";
+  "Tonga";
+  "TrinidadAndTobago";
+  "Tunisia";
+  "Turkey";
+  "Turkmenistan";
+  "TurksAndCaicosIslands";
+  "TuvaluCountry";
+  "Uganda";
+  "Ukraine";
+  "UnitedArabEmirates";
+  "UnitedKingdom";
+  "UnitedStates";
+  "UnitedStatesMinorOutlyingIslands";
+  "Uruguay";
+  "Uzbekistan";
+  "Vanuatu";
+  "VaticanCityState";
+  "Venezuela";
+  "Vietnam";
+  "BritishVirginIslands";
+  "UnitedStatesVirginIslands";
+  "WallisAndFutunaIslands";
+  "WesternSahara";
+  "Yemen";
+  "CanaryIslands";
+  "Zambia";
+  "Zimbabwe";
+  "ClippertonIsland";
+  "Montenegro";
+  "Serbia";
+  "SaintBarthelemy";
+  "SaintMartin";
+  "LatinAmericaAndTheCaribbean";
+  "AscensionIsland";
+  "AlandIslands";
+  "DiegoGarcia";
+  "CeutaAndMelilla";
+  "IsleOfMan";
+  "Jersey";
+  "TristanDaCunha";
+  "SouthSudan";
+  "Bonaire";
+  "SintMaarten";
+  "Kosovo";
+  "EuropeanUnion";
+  "OutlyingOceania";
+  (*"Tokelau";
+  "Tuvalu";
+  "DemocraticRepublicOfCongo";
+  "PeoplesRepublicOfCongo";
+  "DemocraticRepublicOfKorea";
+  "RepublicOfKorea";
+  "RussianFederation";
+  "SyrianArabRepublic";
+  "LastCountry";*)
+]
+let qLocale'MeasurementSystem = qenum "QLocale" "MeasurementSystem" [
+  "MetricSystem";
+  "ImperialUSSystem";
+  "ImperialUKSystem";
+  (*"ImperialSystem";*)
+]
+let qLocale'FormatType = qenum "QLocale" "FormatType" [
+  "LongFormat";
+  "ShortFormat";
+  "NarrowFormat";
+]
+let qLocale'NumberOption = qenum "QLocale" "NumberOption" [
+  "DefaultNumberOptions";
+  "OmitGroupSeparator";
+  "RejectGroupSeparator";
+  "OmitLeadingZeroInExponent";
+  "RejectLeadingZeroInExponent";
+  "IncludeTrailingZeroesAfterDot";
+  "RejectTrailingZeroesAfterDot";
+]
+let qLocale'FloatingPointPrecisionOption = qenum "QLocale" "FloatingPointPrecisionOption" [
+  "FloatingPointShortest";
+]
+let qLocale'CurrencySymbolFormat = qenum "QLocale" "CurrencySymbolFormat" [
+  "CurrencyIsoCode";
+  "CurrencySymbol";
+  "CurrencyDisplayName";
+]
+let qLocale'QuotationStyle = qenum "QLocale" "QuotationStyle" [
+  "StandardQuotation";
+  "AlternateQuotation";
+]
+let qReadWriteLock'RecursionMode = qenum "QReadWriteLock" "RecursionMode" [
+  "NonRecursive";
+  "Recursive";
+]
+let qXmlStreamReader'TokenType = qenum "QXmlStreamReader" "TokenType" [
+  "NoToken";
+  "Invalid";
+  "StartDocument";
+  "EndDocument";
+  "StartElement";
+  "EndElement";
+  "Characters";
+  "Comment";
+  "DTD";
+  "EntityReference";
+  "ProcessingInstruction";
+]
+let qXmlStreamReader'ReadElementTextBehaviour = qenum "QXmlStreamReader" "ReadElementTextBehaviour" [
+  "ErrorOnUnexpectedElement";
+  "IncludeChildElements";
+  "SkipChildElements";
+]
+let qXmlStreamReader'Error = qenum "QXmlStreamReader" "Error" [
+  "NoError";
+  "UnexpectedElementError";
+  "CustomError";
+  "NotWellFormedError";
+  "PrematureEndOfDocumentError";
+]
+let qMetaMethod'Access = qenum "QMetaMethod" "Access" [
+  "Private";
+  "Protected";
+  "Public";
+]
+let qMetaMethod'MethodType = qenum "QMetaMethod" "MethodType" [
+  "Method";
+  "Signal";
+  "Slot";
+  "Constructor";
+]
+let qOperatingSystemVersion'OSType = qenum "QOperatingSystemVersion" "OSType" [
+  "Unknown";
+  "Windows";
+  "MacOS";
+  "IOS";
+  "TvOS";
+  "WatchOS";
+  "Android";
+]
+let qMetaType'Type = qenum "QMetaType" "Type" [
+  "UnknownType";
+  "Bool";
+  "Int";
+  "UInt";
+  "LongLong";
+  "ULongLong";
+  "Double";
+  "Long";
+  "Short";
+  "Char";
+  "ULong";
+  "UShort";
+  "UChar";
+  "Float";
+  "VoidStar";
+  "QChar";
+  "QString";
+  "QStringList";
+  "QByteArray";
+  "QBitArray";
+  "QDate";
+  "QTime";
+  "QDateTime";
+  "QUrl";
+  "QLocale";
+  "QRect";
+  "QRectF";
+  "QSize";
+  "QSizeF";
+  "QLine";
+  "QLineF";
+  "QPoint";
+  "QPointF";
+  "QRegExp";
+  "QEasingCurve";
+  "QUuid";
+  "QVariant";
+  "QModelIndex";
+  "QPersistentModelIndex";
+  "QRegularExpression";
+  "QJsonValue";
+  "QJsonObject";
+  "QJsonArray";
+  "QJsonDocument";
+  "QByteArrayList";
+  "QObjectStar";
+  "SChar";
+  "Void";
+  "QVariantMap";
+  "QVariantList";
+  "QVariantHash";
+  "QFont";
+  "QPixmap";
+  "QBrush";
+  "QColor";
+  "QPalette";
+  "QIcon";
+  "QImage";
+  "QPolygon";
+  "QRegion";
+  "QBitmap";
+  "QCursor";
+  "QKeySequence";
+  "QPen";
+  "QTextLength";
+  "QTextFormat";
+  "QMatrix";
+  "QTransform";
+  "QMatrix4x4";
+  "QVector2D";
+  "QVector3D";
+  "QVector4D";
+  "QQuaternion";
+  "QPolygonF";
+  "QSizePolicy";
+  "User";
+]
+let qMetaType'TypeFlag = qenum "QMetaType" "TypeFlag" [
+  "NeedsConstruction";
+  "NeedsDestruction";
+  "MovableType";
+  "PointerToQObject";
+  "IsEnumeration";
+  "SharedPointerToQObject";
+  "WeakPointerToQObject";
+  "TrackingPointerToQObject";
+  "WasDeclaredAsMetaType";
+  "IsGadget";
+]
+let qMetaType'TypeFlags = qflags "QMetaType" "TypeFlags" qMetaType'TypeFlag
+let qChar'SpecialCharacter = qenum "QChar" "SpecialCharacter" [
+  "Null";
+  "Tabulation";
+  "LineFeed";
+  "CarriageReturn";
+  "Space";
+  "Nbsp";
+  "SoftHyphen";
+  "ReplacementCharacter";
+  "ObjectReplacementCharacter";
+  "ByteOrderMark";
+  "ByteOrderSwapped";
+  "ParagraphSeparator";
+  "LineSeparator";
+  "LastValidCodePoint";
+]
+let qChar'Category = qenum "QChar" "Category" [
+  "Mark_NonSpacing";
+  "Mark_SpacingCombining";
+  "Mark_Enclosing";
+  "Number_DecimalDigit";
+  "Number_Letter";
+  "Number_Other";
+  "Separator_Space";
+  "Separator_Line";
+  "Separator_Paragraph";
+  "Other_Control";
+  "Other_Format";
+  "Other_Surrogate";
+  "Other_PrivateUse";
+  "Other_NotAssigned";
+  "Letter_Uppercase";
+  "Letter_Lowercase";
+  "Letter_Titlecase";
+  "Letter_Modifier";
+  "Letter_Other";
+  "Punctuation_Connector";
+  "Punctuation_Dash";
+  "Punctuation_Open";
+  "Punctuation_Close";
+  "Punctuation_InitialQuote";
+  "Punctuation_FinalQuote";
+  "Punctuation_Other";
+  "Symbol_Math";
+  "Symbol_Currency";
+  "Symbol_Modifier";
+  "Symbol_Other";
+]
+let qChar'Script = qenum "QChar" "Script" [
+  "Script_Unknown";
+  "Script_Inherited";
+  "Script_Common";
+  "Script_Latin";
+  "Script_Greek";
+  "Script_Cyrillic";
+  "Script_Armenian";
+  "Script_Hebrew";
+  "Script_Arabic";
+  "Script_Syriac";
+  "Script_Thaana";
+  "Script_Devanagari";
+  "Script_Bengali";
+  "Script_Gurmukhi";
+  "Script_Gujarati";
+  "Script_Oriya";
+  "Script_Tamil";
+  "Script_Telugu";
+  "Script_Kannada";
+  "Script_Malayalam";
+  "Script_Sinhala";
+  "Script_Thai";
+  "Script_Lao";
+  "Script_Tibetan";
+  "Script_Myanmar";
+  "Script_Georgian";
+  "Script_Hangul";
+  "Script_Ethiopic";
+  "Script_Cherokee";
+  "Script_CanadianAboriginal";
+  "Script_Ogham";
+  "Script_Runic";
+  "Script_Khmer";
+  "Script_Mongolian";
+  "Script_Hiragana";
+  "Script_Katakana";
+  "Script_Bopomofo";
+  "Script_Han";
+  "Script_Yi";
+  "Script_OldItalic";
+  "Script_Gothic";
+  "Script_Deseret";
+  "Script_Tagalog";
+  "Script_Hanunoo";
+  "Script_Buhid";
+  "Script_Tagbanwa";
+  "Script_Coptic";
+  "Script_Limbu";
+  "Script_TaiLe";
+  "Script_LinearB";
+  "Script_Ugaritic";
+  "Script_Shavian";
+  "Script_Osmanya";
+  "Script_Cypriot";
+  "Script_Braille";
+  "Script_Buginese";
+  "Script_NewTaiLue";
+  "Script_Glagolitic";
+  "Script_Tifinagh";
+  "Script_SylotiNagri";
+  "Script_OldPersian";
+  "Script_Kharoshthi";
+  "Script_Balinese";
+  "Script_Cuneiform";
+  "Script_Phoenician";
+  "Script_PhagsPa";
+  "Script_Nko";
+  "Script_Sundanese";
+  "Script_Lepcha";
+  "Script_OlChiki";
+  "Script_Vai";
+  "Script_Saurashtra";
+  "Script_KayahLi";
+  "Script_Rejang";
+  "Script_Lycian";
+  "Script_Carian";
+  "Script_Lydian";
+  "Script_Cham";
+  "Script_TaiTham";
+  "Script_TaiViet";
+  "Script_Avestan";
+  "Script_EgyptianHieroglyphs";
+  "Script_Samaritan";
+  "Script_Lisu";
+  "Script_Bamum";
+  "Script_Javanese";
+  "Script_MeeteiMayek";
+  "Script_ImperialAramaic";
+  "Script_OldSouthArabian";
+  "Script_InscriptionalParthian";
+  "Script_InscriptionalPahlavi";
+  "Script_OldTurkic";
+  "Script_Kaithi";
+  "Script_Batak";
+  "Script_Brahmi";
+  "Script_Mandaic";
+  "Script_Chakma";
+  "Script_MeroiticCursive";
+  "Script_MeroiticHieroglyphs";
+  "Script_Miao";
+  "Script_Sharada";
+  "Script_SoraSompeng";
+  "Script_Takri";
+  "Script_CaucasianAlbanian";
+  "Script_BassaVah";
+  "Script_Duployan";
+  "Script_Elbasan";
+  "Script_Grantha";
+  "Script_PahawhHmong";
+  "Script_Khojki";
+  "Script_LinearA";
+  "Script_Mahajani";
+  "Script_Manichaean";
+  "Script_MendeKikakui";
+  "Script_Modi";
+  "Script_Mro";
+  "Script_OldNorthArabian";
+  "Script_Nabataean";
+  "Script_Palmyrene";
+  "Script_PauCinHau";
+  "Script_OldPermic";
+  "Script_PsalterPahlavi";
+  "Script_Siddham";
+  "Script_Khudawadi";
+  "Script_Tirhuta";
+  "Script_WarangCiti";
+  "Script_Ahom";
+  "Script_AnatolianHieroglyphs";
+  "Script_Hatran";
+  "Script_Multani";
+  "Script_OldHungarian";
+  "Script_SignWriting";
+  "ScriptCount";
+]
+let qChar'Direction = qenum "QChar" "Direction" [
+  "DirL";
+  "DirR";
+  "DirEN";
+  "DirES";
+  "DirET";
+  "DirAN";
+  "DirCS";
+  "DirB";
+  "DirS";
+  "DirWS";
+  "DirON";
+  "DirLRE";
+  "DirLRO";
+  "DirAL";
+  "DirRLE";
+  "DirRLO";
+  "DirPDF";
+  "DirNSM";
+  "DirBN";
+  "DirLRI";
+  "DirRLI";
+  "DirFSI";
+  "DirPDI";
+]
+let qChar'Decomposition = qenum "QChar" "Decomposition" [
+  "NoDecomposition";
+  "Canonical";
+  "Font";
+  "NoBreak";
+  "Initial";
+  "Medial";
+  "Final";
+  "Isolated";
+  "Circle";
+  "Super";
+  "Sub";
+  "Vertical";
+  "Wide";
+  "Narrow";
+  "Small";
+  "Square";
+  "Compat";
+  "Fraction";
+]
+let qChar'JoiningType = qenum "QChar" "JoiningType" [
+  "Joining_None";
+  "Joining_Causing";
+  "Joining_Dual";
+  "Joining_Right";
+  "Joining_Left";
+  "Joining_Transparent";
+]
+let qChar'Joining = qenum "QChar" "Joining" [
+  "OtherJoining";
+  "Dual";
+  "Right";
+  "Center";
+]
+let qChar'UnicodeVersion = qenum "QChar" "UnicodeVersion" [
+  "Unicode_Unassigned";
+  "Unicode_1_1";
+  "Unicode_2_0";
+  "Unicode_2_1_2";
+  "Unicode_3_0";
+  "Unicode_3_1";
+  "Unicode_3_2";
+  "Unicode_4_0";
+  "Unicode_4_1";
+  "Unicode_5_0";
+  "Unicode_5_1";
+  "Unicode_5_2";
+  "Unicode_6_0";
+  "Unicode_6_1";
+  "Unicode_6_2";
+  "Unicode_6_3";
+  "Unicode_7_0";
+  "Unicode_8_0";
+]
+let qElapsedTimer'ClockType = qenum "QElapsedTimer" "ClockType" [
+  "SystemTime";
+  "MonotonicClock";
+  "TickCounter";
+  "MachAbsoluteTime";
+  "PerformanceCounter";
+]
+let qStandardPaths'StandardLocation = qenum "QStandardPaths" "StandardLocation" [
+  "DesktopLocation";
+  "DocumentsLocation";
+  "FontsLocation";
+  "ApplicationsLocation";
+  "MusicLocation";
+  "MoviesLocation";
+  "PicturesLocation";
+  "TempLocation";
+  "HomeLocation";
+  "DataLocation";
+  "CacheLocation";
+  "GenericDataLocation";
+  "RuntimeLocation";
+  "ConfigLocation";
+  "DownloadLocation";
+  "GenericCacheLocation";
+  "GenericConfigLocation";
+  "AppDataLocation";
+  "AppConfigLocation";
+  (*"AppLocalDataLocation";*)
+]
+let qStandardPaths'LocateOption = qenum "QStandardPaths" "LocateOption" [
+  "LocateFile";
+  "LocateDirectory";
+]
+let qDirIterator'IteratorFlag = qenum "QDirIterator" "IteratorFlag" [
+  "NoIteratorFlags";
+  "FollowSymlinks";
+  "Subdirectories";
+]
+let qRegExp'PatternSyntax = qenum "QRegExp" "PatternSyntax" [
+  "RegExp";
+  "Wildcard";
+  "FixedString";
+  "RegExp2";
+  "WildcardUnix";
+  "W3CXmlSchema11";
+]
+let qRegExp'CaretMode = qenum "QRegExp" "CaretMode" [
+  "CaretAtZero";
+  "CaretAtOffset";
+  "CaretWontMatch";
+]
+let qTextCodec'ConversionFlag = qenum "QTextCodec" "ConversionFlag" [
+  "DefaultConversion";
+  "ConvertInvalidToNull";
+  "IgnoreHeader";
+  "FreeFunction";
+]
+let qSystemSemaphore'AccessMode = qenum "QSystemSemaphore" "AccessMode" [
+  "Open";
+  "Create";
+]
+let qSystemSemaphore'SystemSemaphoreError = qenum "QSystemSemaphore" "SystemSemaphoreError" [
+  "NoError";
+  "PermissionDenied";
+  "KeyError";
+  "AlreadyExists";
+  "NotFound";
+  "OutOfResources";
+  "UnknownError";
+]
+let qUrl'ParsingMode = qenum "QUrl" "ParsingMode" [
+  "TolerantMode";
+  "StrictMode";
+  "DecodedMode";
+]
+let qUrl'UrlFormattingOption = qenum "QUrl" "UrlFormattingOption" [
+  "None";
+  "RemoveScheme";
+  "RemovePassword";
+  "RemoveUserInfo";
+  "RemovePort";
+  "RemoveAuthority";
+  "RemovePath";
+  "RemoveQuery";
+  "RemoveFragment";
+  "PreferLocalFile";
+  "StripTrailingSlash";
+  "RemoveFilename";
+  "NormalizePathSegments";
+]
+let qUrl'ComponentFormattingOption = qenum "QUrl" "ComponentFormattingOption" [
+  "PrettyDecoded";
+  "EncodeSpaces";
+  "EncodeUnicode";
+  "EncodeDelimiters";
+  "EncodeReserved";
+  "DecodeReserved";
+  "FullyEncoded";
+  "FullyDecoded";
+]
+let qUrl'UserInputResolutionOption = qenum "QUrl" "UserInputResolutionOption" [
+  "DefaultResolution";
+  "AssumeLocalFile";
+]
+let qUuid'Variant = qenum "QUuid" "Variant" [
+  "VarUnknown";
+  "NCS";
+  "DCE";
+  "Microsoft";
+  "Reserved";
+]
+let qUuid'Version = qenum "QUuid" "Version" [
+  "VerUnknown";
+  "Time";
+  "EmbeddedPOSIX";
+  "Md5";
+  (*"Name";*)
+  "Random";
+  "Sha1";
+]
+let qCryptographicHash'Algorithm = qenum "QCryptographicHash" "Algorithm" [
+  "Md4";
+  "Md5";
+  "Sha1";
+  "Sha224";
+  "Sha256";
+  "Sha384";
+  "Sha512";
+  "Sha3_224";
+  "Sha3_256";
+  "Sha3_384";
+  "Sha3_512";
+]
+let qLibraryInfo'LibraryLocation = qenum "QLibraryInfo" "LibraryLocation" [
+  "PrefixPath";
+  "DocumentationPath";
+  "HeadersPath";
+  "LibrariesPath";
+  "LibraryExecutablesPath";
+  "BinariesPath";
+  "PluginsPath";
+  "ImportsPath";
+  "Qml2ImportsPath";
+  "ArchDataPath";
+  "DataPath";
+  "TranslationsPath";
+  "ExamplesPath";
+  "TestsPath";
+  "SettingsPath";
+]
+let qCommandLineOption'Flag = qenum "QCommandLineOption" "Flag" [
+  "HiddenFromHelp";
+  "ShortOptionStyle";
+]
+let qRegularExpression'PatternOption = qenum "QRegularExpression" "PatternOption" [
+  "NoPatternOption";
+  "CaseInsensitiveOption";
+  "DotMatchesEverythingOption";
+  "MultilineOption";
+  "ExtendedPatternSyntaxOption";
+  "InvertedGreedinessOption";
+  "DontCaptureOption";
+  "UseUnicodePropertiesOption";
+  "OptimizeOnFirstUsageOption";
+  "DontAutomaticallyOptimizeOption";
+]
+let qRegularExpression'PatternOptions = qflags "QRegularExpression" "PatternOptions" qRegularExpression'PatternOption
+let qRegularExpression'MatchType = qenum "QRegularExpression" "MatchType" [
+  "NormalMatch";
+  "PartialPreferCompleteMatch";
+  "PartialPreferFirstMatch";
+  "NoMatch";
+]
+let qRegularExpression'MatchOption = qenum "QRegularExpression" "MatchOption" [
+  "NoMatchOption";
+  "AnchoredMatchOption";
+  "DontCheckSubjectStringMatchOption";
+]
+let qRegularExpression'MatchOptions = qflags "QRegularExpression" "MatchOptions" qRegularExpression'MatchOption
+let qString'SectionFlag = qenum "QString" "SectionFlag" [
+  "SectionDefault";
+  "SectionSkipEmpty";
+  "SectionIncludeLeadingSep";
+  "SectionIncludeTrailingSep";
+  "SectionCaseInsensitiveSeps";
+]
+let qString'SplitBehavior = qenum "QString" "SplitBehavior" [
+  "KeepEmptyParts";
+  "SkipEmptyParts";
+]
+let qString'NormalizationForm = qenum "QString" "NormalizationForm" [
+  "NormalizationForm_D";
+  "NormalizationForm_C";
+  "NormalizationForm_KD";
+  "NormalizationForm_KC";
+]
+(*let qDataStream'Version = qenum "QDataStream" "Version" [
+  "Qt_1_0";
+  "Qt_2_0";
+  "Qt_2_1";
+  "Qt_3_0";
+  "Qt_3_1";
+  "Qt_3_3";
+  "Qt_4_0";
+  "Qt_4_1";
+  "Qt_4_2";
+  "Qt_4_3";
+  "Qt_4_4";
+  "Qt_4_5";
+  "Qt_4_6";
+  "Qt_4_7";
+  "Qt_4_8";
+  "Qt_4_9";
+  "Qt_5_0";
+  "Qt_5_1";
+  "Qt_5_2";
+  "Qt_5_3";
+  "Qt_5_4";
+  "Qt_5_5";
+  "Qt_5_6";
+  "Qt_5_7";
+  "Qt_5_8";
+  "Qt_5_9";
+  "Qt_DefaultCompiledVersion";
+]*)
+let qDataStream'ByteOrder = qenum "QDataStream" "ByteOrder" [
+  "BigEndian";
+  "LittleEndian";
+]
+let qDataStream'Status = qenum "QDataStream" "Status" [
+  "Ok";
+  "ReadPastEnd";
+  "ReadCorruptData";
+  "WriteFailed";
+]
+let qDataStream'FloatingPointPrecision = qenum "QDataStream" "FloatingPointPrecision" [
+  "SinglePrecision";
+  "DoublePrecision";
+]
+let qJsonValue'Type = qenum "QJsonValue" "Type" [
+  "Null";
+  "Bool";
+  "Double";
+  "String";
+  "Array";
+  "Object";
+  "Undefined";
+]
+let qCommandLineParser'SingleDashWordOptionMode = qenum "QCommandLineParser" "SingleDashWordOptionMode" [
+  "ParseAsCompactedShortOptions";
+  "ParseAsLongOptions";
+]
+let qCommandLineParser'OptionsAfterPositionalArgumentsMode = qenum "QCommandLineParser" "OptionsAfterPositionalArgumentsMode" [
+  "ParseAsOptions";
+  "ParseAsPositionalArguments";
+]
+let qTextStream'RealNumberNotation = qenum "QTextStream" "RealNumberNotation" [
+  "SmartNotation";
+  "FixedNotation";
+  "ScientificNotation";
+]
+let qTextStream'FieldAlignment = qenum "QTextStream" "FieldAlignment" [
+  "AlignLeft";
+  "AlignRight";
+  "AlignCenter";
+  "AlignAccountingStyle";
+]
+let qTextStream'Status = qenum "QTextStream" "Status" [
+  "Ok";
+  "ReadPastEnd";
+  "ReadCorruptData";
+  "WriteFailed";
+]
+let qTextStream'NumberFlag = qenum "QTextStream" "NumberFlag" [
+  "ShowBase";
+  "ForcePoint";
+  "ForceSign";
+  "UppercaseBase";
+  "UppercaseDigits";
+]
+let qDeadlineTimer'ForeverConstant = qenum "QDeadlineTimer" "ForeverConstant" [
+  "Forever";
+]
+let qDate'MonthNameType = qenum "QDate" "MonthNameType" [
+  "DateFormat";
+  "StandaloneFormat";
+]
+let qLockFile'LockError = qenum "QLockFile" "LockError" [
+  "NoError";
+  "LockFailedError";
+  "PermissionError";
+  "UnknownError";
+]
+let qSysInfo'Sizes = qenum "QSysInfo" "Sizes" [
+  "WordSize";
+]
+let qSysInfo'Endian = qenum "QSysInfo" "Endian" [
+  "BigEndian";
+  "LittleEndian";
+]
+(*let qSysInfo'WinVersion = qenum "QSysInfo" "WinVersion" [
+  "WV_None";
+  "WV_32s";
+  "WV_95";
+  "WV_98";
+  "WV_Me";
+  "WV_DOS_based";
+  "WV_NT";
+  "WV_2000";
+  "WV_XP";
+  "WV_2003";
+  "WV_VISTA";
+  "WV_WINDOWS7";
+  "WV_WINDOWS8";
+  "WV_WINDOWS8_1";
+  "WV_WINDOWS10";
+  "WV_NT_based";
+  "WV_4_0";
+  "WV_5_0";
+  "WV_5_1";
+  "WV_5_2";
+  "WV_6_0";
+  "WV_6_1";
+  "WV_6_2";
+  "WV_6_3";
+  "WV_10_0";
+  "WV_CE";
+  "WV_CENET";
+  "WV_CE_5";
+  "WV_CE_6";
+  "WV_CE_based";
+]
+let qSysInfo'MacVersion = qenum "QSysInfo" "MacVersion" [
+  "MV_None";
+  "MV_Unknown";
+  "MV_9";
+  "MV_10_0";
+  "MV_10_1";
+  "MV_10_2";
+  "MV_10_3";
+  "MV_10_4";
+  "MV_10_5";
+  "MV_10_6";
+  "MV_10_7";
+  "MV_10_8";
+  "MV_10_9";
+  "MV_10_10";
+  "MV_10_11";
+  "MV_10_12";
+  "MV_CHEETAH";
+  "MV_PUMA";
+  "MV_JAGUAR";
+  "MV_PANTHER";
+  "MV_TIGER";
+  "MV_LEOPARD";
+  "MV_SNOWLEOPARD";
+  "MV_LION";
+  "MV_MOUNTAINLION";
+  "MV_MAVERICKS";
+  "MV_YOSEMITE";
+  "MV_ELCAPITAN";
+  "MV_SIERRA";
+  "MV_IOS";
+  "MV_IOS_4_3";
+  "MV_IOS_5_0";
+  "MV_IOS_5_1";
+  "MV_IOS_6_0";
+  "MV_IOS_6_1";
+  "MV_IOS_7_0";
+  "MV_IOS_7_1";
+  "MV_IOS_8_0";
+  "MV_IOS_8_1";
+  "MV_IOS_8_2";
+  "MV_IOS_8_3";
+  "MV_IOS_8_4";
+  "MV_IOS_9_0";
+  "MV_IOS_9_1";
+  "MV_IOS_9_2";
+  "MV_IOS_9_3";
+  "MV_IOS_10_0";
+  "MV_TVOS";
+  "MV_TVOS_9_0";
+  "MV_TVOS_9_1";
+  "MV_TVOS_9_2";
+  "MV_TVOS_10_0";
+  "MV_WATCHOS";
+  "MV_WATCHOS_2_0";
+  "MV_WATCHOS_2_1";
+  "MV_WATCHOS_2_2";
+  "MV_WATCHOS_3_0";
+]*)
+let qVariant'Type = qenum "QVariant" "Type" [
+  "Invalid";
+  "Bool";
+  "Int";
+  "UInt";
+  "LongLong";
+  "ULongLong";
+  "Double";
+  "Char";
+  "Map";
+  "List";
+  "String";
+  "StringList";
+  "ByteArray";
+  "BitArray";
+  "Date";
+  "Time";
+  "DateTime";
+  "Url";
+  "Locale";
+  "Rect";
+  "RectF";
+  "Size";
+  "SizeF";
+  "Line";
+  "LineF";
+  "Point";
+  "PointF";
+  "RegExp";
+  "RegularExpression";
+  "Hash";
+  "EasingCurve";
+  "Uuid";
+  "ModelIndex";
+  "PersistentModelIndex";
+  "LastCoreType";
+  "Font";
+  "Pixmap";
+  "Brush";
+  "Color";
+  "Palette";
+  "Image";
+  "Polygon";
+  "Region";
+  "Bitmap";
+  "Cursor";
+  "KeySequence";
+  "Pen";
+  "TextLength";
+  "TextFormat";
+  "Matrix";
+  "Transform";
+  "Matrix4x4";
+  "Vector2D";
+  "Vector3D";
+  "Vector4D";
+  "Quaternion";
+  "PolygonF";
+  "Icon";
+  (*"LastGuiType";*)
+  "SizePolicy";
+  "UserType";
+  "LastType";
+]
+let qTextBoundaryFinder'BoundaryType = qenum "QTextBoundaryFinder" "BoundaryType" [
+  "Grapheme";
+  "Word";
+  "Sentence";
+  "Line";
+]
+let qTextBoundaryFinder'BoundaryReason = qenum "QTextBoundaryFinder" "BoundaryReason" [
+  "NotAtBoundary";
+  "BreakOpportunity";
+  "StartOfItem";
+  "EndOfItem";
+  "MandatoryBreak";
+  "SoftHyphen";
+]
+let qDir'Filter = qenum "QDir" "Filter" [
+  "Dirs";
+  "Files";
+  "Drives";
+  "NoSymLinks";
+  "AllEntries";
+  "TypeMask";
+  "Readable";
+  "Writable";
+  "Executable";
+  "PermissionMask";
+  "Modified";
+  "Hidden";
+  "System";
+  "AccessMask";
+  "AllDirs";
+  "CaseSensitive";
+  "NoDot";
+  "NoDotDot";
+  "NoDotAndDotDot";
+  "NoFilter";
+]
+let qDir'Filters = qflags "QDir" "Filters" qDir'Filter
+let qDir'SortFlag = qenum "QDir" "SortFlag" [
+  "Name";
+  "Time";
+  "Size";
+  "Unsorted";
+  (*"SortByMask";*)
+  "DirsFirst";
+  "Reversed";
+  "IgnoreCase";
+  "DirsLast";
+  "LocaleAware";
+  "Type";
+  "NoSort";
+]
+let qDir'SortFlags = qflags "QDir" "SortFlags" qDir'SortFlag
+let qMutex'RecursionMode = qenum "QMutex" "RecursionMode" [
+  "NonRecursive";
+  "Recursive";
+]
+let qAbstractAnimation'Direction = qenum "QAbstractAnimation" "Direction" [
+  "Forward";
+  "Backward";
+]
+let qAbstractAnimation'State = qenum "QAbstractAnimation" "State" [
+  "Stopped";
+  "Paused";
+  "Running";
+]
+let qAbstractAnimation'DeletionPolicy = qenum "QAbstractAnimation" "DeletionPolicy" [
+  "KeepWhenStopped";
+  "DeleteWhenStopped";
+]
+let qIODevice'OpenModeFlag = qenum "QIODevice" "OpenModeFlag" [
+  "NotOpen";
+  "ReadOnly";
+  "WriteOnly";
+  "ReadWrite";
+  "Append";
+  "Truncate";
+  "Text";
+  "Unbuffered";
+]
+let qSettings'Status = qenum "QSettings" "Status" [
+  "NoError";
+  "AccessError";
+  "FormatError";
+]
+(*let qSettings'Format = qenum "QSettings" "Format" [
+  "NativeFormat";
+  "IniFormat";
+  "Registry32Format";
+  "Registry64Format";
+  "InvalidFormat";
+  "CustomFormat1";
+  "CustomFormat2";
+  "CustomFormat3";
+  "CustomFormat4";
+  "CustomFormat5";
+  "CustomFormat6";
+  "CustomFormat7";
+  "CustomFormat8";
+  "CustomFormat9";
+  "CustomFormat10";
+  "CustomFormat11";
+  "CustomFormat12";
+  "CustomFormat13";
+  "CustomFormat14";
+  "CustomFormat15";
+  "CustomFormat16";
+]*)
+let qSettings'Scope = qenum "QSettings" "Scope" [
+  "UserScope";
+  "SystemScope";
+]
+let qAbstractItemModel'LayoutChangeHint = qenum "QAbstractItemModel" "LayoutChangeHint" [
+  "NoLayoutChangeHint";
+  "VerticalSortHint";
+  "HorizontalSortHint";
+]
+let qItemSelectionModel'SelectionFlag = qenum "QItemSelectionModel" "SelectionFlag" [
+  "NoUpdate";
+  "Clear";
+  "Select";
+  "Deselect";
+  "Toggle";
+  "Current";
+  "Rows";
+  "Columns";
+  "SelectCurrent";
+  "ToggleCurrent";
+  "ClearAndSelect";
+]
+let qItemSelectionModel'SelectionFlags = qflags "QItemSelectionModel" "SelectionFlags" qItemSelectionModel'SelectionFlag
+(*let qCoreApplication'Encoding = qenum "QCoreApplication" "Encoding" [
+  "UnicodeUTF8";
+  "Latin1";
+  "DefaultCodec";
+  "CodecForTr";
+]*)
+let qEventLoop'ProcessEventsFlag = qenum "QEventLoop" "ProcessEventsFlag" [
+  "AllEvents";
+  "ExcludeUserInputEvents";
+  "ExcludeSocketNotifiers";
+  "WaitForMoreEvents";
+  "X11ExcludeTimers";
+  "EventLoopExec";
+  "DialogExec";
+]
+let qSharedMemory'AccessMode = qenum "QSharedMemory" "AccessMode" [
+  "ReadOnly";
+  "ReadWrite";
+]
+let qSharedMemory'SharedMemoryError = qenum "QSharedMemory" "SharedMemoryError" [
+  "NoError";
+  "PermissionDenied";
+  "InvalidSize";
+  "KeyError";
+  "AlreadyExists";
+  "NotFound";
+  "LockError";
+  "OutOfResources";
+  "UnknownError";
+]
+let qSocketNotifier'Type = qenum "QSocketNotifier" "Type" [
+  "Read";
+  "Write";
+  "Exception";
+]
+let qLibrary'LoadHint = qenum "QLibrary" "LoadHint" [
+  "ResolveAllSymbolsHint";
+  "ExportExternalSymbolsHint";
+  "LoadArchiveMemberHint";
+  "PreventUnloadHint";
+  "DeepBindHint";
+]
+let qLibrary'LoadHints = qflags "QLibrary" "LoadHints" qLibrary'LoadHint
+let qAbstractTransition'TransitionType = qenum "QAbstractTransition" "TransitionType" [
+  "ExternalTransition";
+  "InternalTransition";
+]
+let qThread'Priority = qenum "QThread" "Priority" [
+  "IdlePriority";
+  "LowestPriority";
+  "LowPriority";
+  "NormalPriority";
+  "HighPriority";
+  "HighestPriority";
+  "TimeCriticalPriority";
+  "InheritPriority";
+]
+let qTimeLine'State = qenum "QTimeLine" "State" [
+  "NotRunning";
+  "Paused";
+  "Running";
+]
+let qTimeLine'Direction = qenum "QTimeLine" "Direction" [
+  "Forward";
+  "Backward";
+]
+let qTimeLine'CurveShape = qenum "QTimeLine" "CurveShape" [
+  "EaseInCurve";
+  "EaseOutCurve";
+  "EaseInOutCurve";
+  "LinearCurve";
+  "SineCurve";
+  "CosineCurve";
+]
+let qHistoryState'HistoryType = qenum "QHistoryState" "HistoryType" [
+  "ShallowHistory";
+  "DeepHistory";
+]
+let qState'ChildMode = qenum "QState" "ChildMode" [
+  "ExclusiveStates";
+  "ParallelStates";
+]
+let qState'RestorePolicy = qenum "QState" "RestorePolicy" [
+  "DontRestoreProperties";
+  "RestoreProperties";
+]
+let qFileDevice'FileError = qenum "QFileDevice" "FileError" [
+  "NoError";
+  "ReadError";
+  "WriteError";
+  "FatalError";
+  "ResourceError";
+  "OpenError";
+  "AbortError";
+  "TimeOutError";
+  "UnspecifiedError";
+  "RemoveError";
+  "RenameError";
+  "PositionError";
+  "ResizeError";
+  "PermissionsError";
+  "CopyError";
+]
+let qFileDevice'Permission = qenum "QFileDevice" "Permission" [
+  "ReadOwner";
+  "WriteOwner";
+  "ExeOwner";
+  "ReadUser";
+  "WriteUser";
+  "ExeUser";
+  "ReadGroup";
+  "WriteGroup";
+  "ExeGroup";
+  "ReadOther";
+  "WriteOther";
+  "ExeOther";
+]
+let qFileDevice'FileHandleFlag = qenum "QFileDevice" "FileHandleFlag" [
+  "AutoCloseHandle";
+  "DontCloseHandle";
+]
+let qFileDevice'MemoryMapFlags = qenum "QFileDevice" "MemoryMapFlags" [
+  "NoOptions";
+  "MapPrivateOption";
+]
+let qProcess'ProcessError = qenum "QProcess" "ProcessError" [
+  "FailedToStart";
+  "Crashed";
+  "Timedout";
+  "ReadError";
+  "WriteError";
+  "UnknownError";
+]
+let qProcess'ProcessState = qenum "QProcess" "ProcessState" [
+  "NotRunning";
+  "Starting";
+  "Running";
+]
+let qProcess'ProcessChannel = qenum "QProcess" "ProcessChannel" [
+  "StandardOutput";
+  "StandardError";
+]
+let qProcess'ProcessChannelMode = qenum "QProcess" "ProcessChannelMode" [
+  "SeparateChannels";
+  "MergedChannels";
+  "ForwardedChannels";
+  "ForwardedOutputChannel";
+  "ForwardedErrorChannel";
+]
+let qProcess'InputChannelMode = qenum "QProcess" "InputChannelMode" [
+  "ManagedInputChannel";
+  "ForwardedInputChannel";
+]
+let qProcess'ExitStatus = qenum "QProcess" "ExitStatus" [
+  "NormalExit";
+  "CrashExit";
+]
+let qStateMachine'EventPriority = qenum "QStateMachine" "EventPriority" [
+  "NormalPriority";
+  "HighPriority";
+]
+let qStateMachine'Error = qenum "QStateMachine" "Error" [
+  "NoError";
+  "NoInitialStateError";
+  "NoDefaultStateInHistoryStateError";
+  "NoCommonAncestorForTransitionError";
+]
+let qt'GlobalColor = qenum "Qt" "GlobalColor" [
+  "color0";
+  "color1";
+  "black";
+  "white";
+  "darkGray";
+  "gray";
+  "lightGray";
+  "red";
+  "green";
+  "blue";
+  "cyan";
+  "magenta";
+  "yellow";
+  "darkRed";
+  "darkGreen";
+  "darkBlue";
+  "darkCyan";
+  "darkMagenta";
+  "darkYellow";
+  "transparent";
+]
+let qt'KeyboardModifier = qenum "Qt" "KeyboardModifier" [
+  "NoModifier";
+  "ShiftModifier";
+  "ControlModifier";
+  "AltModifier";
+  "MetaModifier";
+  "KeypadModifier";
+  "GroupSwitchModifier";
+  "KeyboardModifierMask";
+]
+let qt'Modifier = qenum "Qt" "Modifier" [
+  "META";
+  "SHIFT";
+  "CTRL";
+  "ALT";
+  "MODIFIER_MASK";
+  "UNICODE_ACCEL";
+]
+let qt'MouseButton = qenum "Qt" "MouseButton" [
+  "NoButton";
+  "LeftButton";
+  "RightButton";
+  (*"MidButton";*)
+  "MiddleButton";
+  "BackButton";
+  (*"XButton1";*)
+  (*"ExtraButton1";*)
+  "ForwardButton";
+  (*"XButton2";*)
+  (*"ExtraButton2";*)
+  "TaskButton";
+  (*"ExtraButton3";*)
+  "ExtraButton4";
+  "ExtraButton5";
+  "ExtraButton6";
+  "ExtraButton7";
+  "ExtraButton8";
+  "ExtraButton9";
+  "ExtraButton10";
+  "ExtraButton11";
+  "ExtraButton12";
+  "ExtraButton13";
+  "ExtraButton14";
+  "ExtraButton15";
+  "ExtraButton16";
+  "ExtraButton17";
+  "ExtraButton18";
+  "ExtraButton19";
+  "ExtraButton20";
+  "ExtraButton21";
+  "ExtraButton22";
+  "ExtraButton23";
+  "ExtraButton24";
+  "AllButtons";
+  (*"MaxMouseButton";*)
+  "MouseButtonMask";
+]
+let qt'MouseButtons = qflags "Qt" "MouseButtons" qt'MouseButton
+let qt'Orientation = qenum "Qt" "Orientation" [
+  "Horizontal";
+  "Vertical";
+]
+let qt'Orientations = qflags "Qt" "Orientations" qt'Orientation
+let qt'FocusPolicy = qenum "Qt" "FocusPolicy" [
+  "NoFocus";
+  "TabFocus";
+  "ClickFocus";
+  "StrongFocus";
+  "WheelFocus";
+]
+let qt'TabFocusBehavior = qenum "Qt" "TabFocusBehavior" [
+  "NoTabFocus";
+  "TabFocusTextControls";
+  "TabFocusListControls";
+  "TabFocusAllControls";
+]
+let qt'SortOrder = qenum "Qt" "SortOrder" [
+  "AscendingOrder";
+  "DescendingOrder";
+]
+let qt'TileRule = qenum "Qt" "TileRule" [
+  "StretchTile";
+  "RepeatTile";
+  "RoundTile";
+]
+let qt'AlignmentFlag = qenum "Qt" "AlignmentFlag" [
+  "AlignLeft";
+  (*"AlignLeading";*)
+  "AlignRight";
+  (*"AlignTrailing";*)
+  "AlignHCenter";
+  "AlignJustify";
+  "AlignAbsolute";
+  "AlignHorizontal_Mask";
+  "AlignTop";
+  "AlignBottom";
+  "AlignVCenter";
+  "AlignBaseline";
+  "AlignVertical_Mask";
+  "AlignCenter";
+]
+let qt'Alignment = qflags "Qt" "Alignment" qt'AlignmentFlag
+let qt'TextFlag = qenum "Qt" "TextFlag" [
+  "TextSingleLine";
+  "TextDontClip";
+  "TextExpandTabs";
+  "TextShowMnemonic";
+  "TextWordWrap";
+  "TextWrapAnywhere";
+  "TextDontPrint";
+  "TextIncludeTrailingSpaces";
+  "TextHideMnemonic";
+  "TextJustificationForced";
+  "TextForceLeftToRight";
+  "TextForceRightToLeft";
+  "TextLongestVariant";
+  "TextBypassShaping";
+]
+let qt'TextElideMode = qenum "Qt" "TextElideMode" [
+  "ElideLeft";
+  "ElideRight";
+  "ElideMiddle";
+  "ElideNone";
+]
+let qt'WhiteSpaceMode = qenum "Qt" "WhiteSpaceMode" [
+  "WhiteSpaceNormal";
+  "WhiteSpacePre";
+  "WhiteSpaceNoWrap";
+  "WhiteSpaceModeUndefined";
+]
+let qt'HitTestAccuracy = qenum "Qt" "HitTestAccuracy" [
+  "ExactHit";
+  "FuzzyHit";
+]
+let qt'WindowType = qenum "Qt" "WindowType" [
+  "Widget";
+  "Window";
+  "Dialog";
+  "Sheet";
+  "Drawer";
+  "Popup";
+  "Tool";
+  "ToolTip";
+  "SplashScreen";
+  "Desktop";
+  "SubWindow";
+  "ForeignWindow";
+  "CoverWindow";
+  "WindowType_Mask";
+  "MSWindowsFixedSizeDialogHint";
+  "MSWindowsOwnDC";
+  "BypassWindowManagerHint";
+  (*"X11BypassWindowManagerHint";*)
+  "FramelessWindowHint";
+  "WindowTitleHint";
+  "WindowSystemMenuHint";
+  "WindowMinimizeButtonHint";
+  "WindowMaximizeButtonHint";
+  "WindowMinMaxButtonsHint";
+  "WindowContextHelpButtonHint";
+  "WindowShadeButtonHint";
+  "WindowStaysOnTopHint";
+  "WindowTransparentForInput";
+  "WindowOverridesSystemGestures";
+  "WindowDoesNotAcceptFocus";
+  "MaximizeUsingFullscreenGeometryHint";
+  "CustomizeWindowHint";
+  "WindowStaysOnBottomHint";
+  "WindowCloseButtonHint";
+  "MacWindowToolBarButtonHint";
+  "BypassGraphicsProxyWidget";
+  "NoDropShadowWindowHint";
+  "WindowFullscreenButtonHint";
+]
+let qt'WindowFlags = qflags "Qt" "WindowFlags" qt'WindowType
+let qt'WindowState = qenum "Qt" "WindowState" [
+  "WindowNoState";
+  "WindowMinimized";
+  "WindowMaximized";
+  "WindowFullScreen";
+  "WindowActive";
+]
+let qt'WindowStates = qflags "Qt" "WindowStates" qt'WindowState
+let qt'ApplicationState = qenum "Qt" "ApplicationState" [
+  "ApplicationSuspended";
+  "ApplicationHidden";
+  "ApplicationInactive";
+  "ApplicationActive";
+]
+let qt'ScreenOrientation = qenum "Qt" "ScreenOrientation" [
+  "PrimaryOrientation";
+  "PortraitOrientation";
+  "LandscapeOrientation";
+  "InvertedPortraitOrientation";
+  "InvertedLandscapeOrientation";
+]
+let qt'WidgetAttribute = qenum "Qt" "WidgetAttribute" [
+  "WA_Disabled";
+  "WA_UnderMouse";
+  "WA_MouseTracking";
+  "WA_ContentsPropagated";
+  "WA_OpaquePaintEvent";
+  (*"WA_NoBackground";*)
+  "WA_StaticContents";
+  "WA_LaidOut";
+  "WA_PaintOnScreen";
+  "WA_NoSystemBackground";
+  "WA_UpdatesDisabled";
+  "WA_Mapped";
+  "WA_MacNoClickThrough";
+  "WA_InputMethodEnabled";
+  "WA_WState_Visible";
+  "WA_WState_Hidden";
+  "WA_ForceDisabled";
+  "WA_KeyCompression";
+  "WA_PendingMoveEvent";
+  "WA_PendingResizeEvent";
+  "WA_SetPalette";
+  "WA_SetFont";
+  "WA_SetCursor";
+  "WA_NoChildEventsFromChildren";
+  "WA_WindowModified";
+  "WA_Resized";
+  "WA_Moved";
+  "WA_PendingUpdate";
+  "WA_InvalidSize";
+  "WA_MacBrushedMetal";
+  (*"WA_MacMetalStyle";*)
+  "WA_CustomWhatsThis";
+  "WA_LayoutOnEntireRect";
+  "WA_OutsideWSRange";
+  "WA_GrabbedShortcut";
+  "WA_TransparentForMouseEvents";
+  "WA_PaintUnclipped";
+  "WA_SetWindowIcon";
+  "WA_NoMouseReplay";
+  "WA_DeleteOnClose";
+  "WA_RightToLeft";
+  "WA_SetLayoutDirection";
+  "WA_NoChildEventsForParent";
+  "WA_ForceUpdatesDisabled";
+  "WA_WState_Created";
+  "WA_WState_CompressKeys";
+  "WA_WState_InPaintEvent";
+  "WA_WState_Reparented";
+  "WA_WState_ConfigPending";
+  "WA_WState_Polished";
+  "WA_WState_DND";
+  "WA_WState_OwnSizePolicy";
+  "WA_WState_ExplicitShowHide";
+  "WA_ShowModal";
+  "WA_MouseNoMask";
+  "WA_GroupLeader";
+  "WA_NoMousePropagation";
+  "WA_Hover";
+  "WA_InputMethodTransparent";
+  "WA_QuitOnClose";
+  "WA_KeyboardFocusChange";
+  "WA_AcceptDrops";
+  "WA_DropSiteRegistered";
+  (*"WA_ForceAcceptDrops";*)
+  "WA_WindowPropagation";
+  "WA_NoX11EventCompression";
+  "WA_TintedBackground";
+  "WA_X11OpenGLOverlay";
+  "WA_AlwaysShowToolTips";
+  "WA_MacOpaqueSizeGrip";
+  "WA_SetStyle";
+  "WA_SetLocale";
+  "WA_MacShowFocusRect";
+  "WA_MacNormalSize";
+  "WA_MacSmallSize";
+  "WA_MacMiniSize";
+  "WA_LayoutUsesWidgetRect";
+  "WA_StyledBackground";
+  "WA_MSWindowsUseDirect3D";
+  "WA_CanHostQMdiSubWindowTitleBar";
+  "WA_MacAlwaysShowToolWindow";
+  "WA_StyleSheet";
+  "WA_ShowWithoutActivating";
+  "WA_X11BypassTransientForHint";
+  "WA_NativeWindow";
+  "WA_DontCreateNativeAncestors";
+  "WA_MacVariableSize";
+  "WA_DontShowOnScreen";
+  "WA_X11NetWmWindowTypeDesktop";
+  "WA_X11NetWmWindowTypeDock";
+  "WA_X11NetWmWindowTypeToolBar";
+  "WA_X11NetWmWindowTypeMenu";
+  "WA_X11NetWmWindowTypeUtility";
+  "WA_X11NetWmWindowTypeSplash";
+  "WA_X11NetWmWindowTypeDialog";
+  "WA_X11NetWmWindowTypeDropDownMenu";
+  "WA_X11NetWmWindowTypePopupMenu";
+  "WA_X11NetWmWindowTypeToolTip";
+  "WA_X11NetWmWindowTypeNotification";
+  "WA_X11NetWmWindowTypeCombo";
+  "WA_X11NetWmWindowTypeDND";
+  "WA_MacFrameworkScaled";
+  "WA_SetWindowModality";
+  "WA_WState_WindowOpacitySet";
+  "WA_TranslucentBackground";
+  "WA_AcceptTouchEvents";
+  "WA_WState_AcceptedTouchBeginEvent";
+  "WA_TouchPadAcceptSingleTouchEvents";
+  "WA_X11DoNotAcceptFocus";
+  "WA_MacNoShadow";
+  "WA_AlwaysStackOnTop";
+  "WA_TabletTracking";
+  "WA_AttributeCount";
+]
+let qt'ApplicationAttribute = qenum "Qt" "ApplicationAttribute" [
+  "AA_ImmediateWidgetCreation";
+  "AA_MSWindowsUseDirect3DByDefault";
+  "AA_DontShowIconsInMenus";
+  "AA_NativeWindows";
+  "AA_DontCreateNativeWidgetSiblings";
+  "AA_PluginApplication";
+  (*"AA_MacPluginApplication";*)
+  "AA_DontUseNativeMenuBar";
+  "AA_MacDontSwapCtrlAndMeta";
+  "AA_Use96Dpi";
+  "AA_X11InitThreads";
+  "AA_SynthesizeTouchForUnhandledMouseEvents";
+  "AA_SynthesizeMouseForUnhandledTouchEvents";
+  "AA_UseHighDpiPixmaps";
+  "AA_ForceRasterWidgets";
+  "AA_UseDesktopOpenGL";
+  "AA_UseOpenGLES";
+  "AA_UseSoftwareOpenGL";
+  "AA_ShareOpenGLContexts";
+  "AA_SetPalette";
+  "AA_EnableHighDpiScaling";
+  "AA_DisableHighDpiScaling";
+  "AA_UseStyleSheetPropagationInWidgetStyles";
+  "AA_DontUseNativeDialogs";
+  "AA_SynthesizeMouseForUnhandledTabletEvents";
+  "AA_CompressHighFrequencyEvents";
+  "AA_DontCheckOpenGLContextThreadAffinity";
+  "AA_DisableShaderDiskCache";
+  "AA_AttributeCount";
+]
+let qt'ImageConversionFlag = qenum "Qt" "ImageConversionFlag" [
+  "ColorMode_Mask";
+  (*"AutoColor";*)
+  (*"ColorOnly";*)
+  "MonoOnly";
+  "AlphaDither_Mask";
+  "ThresholdAlphaDither";
+  "OrderedAlphaDither";
+  "DiffuseAlphaDither";
+  (*"NoAlpha";*)
+  "Dither_Mask";
+  (*"DiffuseDither";*)
+  "OrderedDither";
+  "ThresholdDither";
+  "DitherMode_Mask";
+  (*"AutoDither";*)
+  "PreferDither";
+  "AvoidDither";
+  "NoOpaqueDetection";
+  "NoFormatConversion";
+]
+let qt'BGMode = qenum "Qt" "BGMode" [
+  "TransparentMode";
+  "OpaqueMode";
+]
+let qt'Key = qenum "Qt" "Key" [
+  "Key_Escape";
+  "Key_Tab";
+  "Key_Backtab";
+  "Key_Backspace";
+  "Key_Return";
+  "Key_Enter";
+  "Key_Insert";
+  "Key_Delete";
+  "Key_Pause";
+  "Key_Print";
+  "Key_SysReq";
+  "Key_Clear";
+  "Key_Home";
+  "Key_End";
+  "Key_Left";
+  "Key_Up";
+  "Key_Right";
+  "Key_Down";
+  "Key_PageUp";
+  "Key_PageDown";
+  "Key_Shift";
+  "Key_Control";
+  "Key_Meta";
+  "Key_Alt";
+  "Key_CapsLock";
+  "Key_NumLock";
+  "Key_ScrollLock";
+  "Key_F1";
+  "Key_F2";
+  "Key_F3";
+  "Key_F4";
+  "Key_F5";
+  "Key_F6";
+  "Key_F7";
+  "Key_F8";
+  "Key_F9";
+  "Key_F10";
+  "Key_F11";
+  "Key_F12";
+  "Key_F13";
+  "Key_F14";
+  "Key_F15";
+  "Key_F16";
+  "Key_F17";
+  "Key_F18";
+  "Key_F19";
+  "Key_F20";
+  "Key_F21";
+  "Key_F22";
+  "Key_F23";
+  "Key_F24";
+  "Key_F25";
+  "Key_F26";
+  "Key_F27";
+  "Key_F28";
+  "Key_F29";
+  "Key_F30";
+  "Key_F31";
+  "Key_F32";
+  "Key_F33";
+  "Key_F34";
+  "Key_F35";
+  "Key_Super_L";
+  "Key_Super_R";
+  "Key_Menu";
+  "Key_Hyper_L";
+  "Key_Hyper_R";
+  "Key_Help";
+  "Key_Direction_L";
+  "Key_Direction_R";
+  "Key_Space";
+  (*"Key_Any";*)
+  "Key_Exclam";
+  "Key_QuoteDbl";
+  "Key_NumberSign";
+  "Key_Dollar";
+  "Key_Percent";
+  "Key_Ampersand";
+  "Key_Apostrophe";
+  "Key_ParenLeft";
+  "Key_ParenRight";
+  "Key_Asterisk";
+  "Key_Plus";
+  "Key_Comma";
+  "Key_Minus";
+  "Key_Period";
+  "Key_Slash";
+  "Key_0";
+  "Key_1";
+  "Key_2";
+  "Key_3";
+  "Key_4";
+  "Key_5";
+  "Key_6";
+  "Key_7";
+  "Key_8";
+  "Key_9";
+  "Key_Colon";
+  "Key_Semicolon";
+  "Key_Less";
+  "Key_Equal";
+  "Key_Greater";
+  "Key_Question";
+  "Key_At";
+  "Key_A";
+  "Key_B";
+  "Key_C";
+  "Key_D";
+  "Key_E";
+  "Key_F";
+  "Key_G";
+  "Key_H";
+  "Key_I";
+  "Key_J";
+  "Key_K";
+  "Key_L";
+  "Key_M";
+  "Key_N";
+  "Key_O";
+  "Key_P";
+  "Key_Q";
+  "Key_R";
+  "Key_S";
+  "Key_T";
+  "Key_U";
+  "Key_V";
+  "Key_W";
+  "Key_X";
+  "Key_Y";
+  "Key_Z";
+  "Key_BracketLeft";
+  "Key_Backslash";
+  "Key_BracketRight";
+  "Key_AsciiCircum";
+  "Key_Underscore";
+  "Key_QuoteLeft";
+  "Key_BraceLeft";
+  "Key_Bar";
+  "Key_BraceRight";
+  "Key_AsciiTilde";
+  "Key_nobreakspace";
+  "Key_exclamdown";
+  "Key_cent";
+  "Key_sterling";
+  "Key_currency";
+  "Key_yen";
+  "Key_brokenbar";
+  "Key_section";
+  "Key_diaeresis";
+  "Key_copyright";
+  "Key_ordfeminine";
+  "Key_guillemotleft";
+  "Key_notsign";
+  "Key_hyphen";
+  "Key_registered";
+  "Key_macron";
+  "Key_degree";
+  "Key_plusminus";
+  "Key_twosuperior";
+  "Key_threesuperior";
+  "Key_acute";
+  "Key_mu";
+  "Key_paragraph";
+  "Key_periodcentered";
+  "Key_cedilla";
+  "Key_onesuperior";
+  "Key_masculine";
+  "Key_guillemotright";
+  "Key_onequarter";
+  "Key_onehalf";
+  "Key_threequarters";
+  "Key_questiondown";
+  "Key_Agrave";
+  "Key_Aacute";
+  "Key_Acircumflex";
+  "Key_Atilde";
+  "Key_Adiaeresis";
+  "Key_Aring";
+  "Key_AE";
+  "Key_Ccedilla";
+  "Key_Egrave";
+  "Key_Eacute";
+  "Key_Ecircumflex";
+  "Key_Ediaeresis";
+  "Key_Igrave";
+  "Key_Iacute";
+  "Key_Icircumflex";
+  "Key_Idiaeresis";
+  "Key_ETH";
+  "Key_Ntilde";
+  "Key_Ograve";
+  "Key_Oacute";
+  "Key_Ocircumflex";
+  "Key_Otilde";
+  "Key_Odiaeresis";
+  "Key_multiply";
+  "Key_Ooblique";
+  "Key_Ugrave";
+  "Key_Uacute";
+  "Key_Ucircumflex";
+  "Key_Udiaeresis";
+  "Key_Yacute";
+  "Key_THORN";
+  "Key_ssharp";
+  "Key_division";
+  "Key_ydiaeresis";
+  "Key_AltGr";
+  "Key_Multi_key";
+  "Key_Codeinput";
+  "Key_SingleCandidate";
+  "Key_MultipleCandidate";
+  "Key_PreviousCandidate";
+  "Key_Mode_switch";
+  "Key_Kanji";
+  "Key_Muhenkan";
+  "Key_Henkan";
+  "Key_Romaji";
+  "Key_Hiragana";
+  "Key_Katakana";
+  "Key_Hiragana_Katakana";
+  "Key_Zenkaku";
+  "Key_Hankaku";
+  "Key_Zenkaku_Hankaku";
+  "Key_Touroku";
+  "Key_Massyo";
+  "Key_Kana_Lock";
+  "Key_Kana_Shift";
+  "Key_Eisu_Shift";
+  "Key_Eisu_toggle";
+  "Key_Hangul";
+  "Key_Hangul_Start";
+  "Key_Hangul_End";
+  "Key_Hangul_Hanja";
+  "Key_Hangul_Jamo";
+  "Key_Hangul_Romaja";
+  "Key_Hangul_Jeonja";
+  "Key_Hangul_Banja";
+  "Key_Hangul_PreHanja";
+  "Key_Hangul_PostHanja";
+  "Key_Hangul_Special";
+  "Key_Dead_Grave";
+  "Key_Dead_Acute";
+  "Key_Dead_Circumflex";
+  "Key_Dead_Tilde";
+  "Key_Dead_Macron";
+  "Key_Dead_Breve";
+  "Key_Dead_Abovedot";
+  "Key_Dead_Diaeresis";
+  "Key_Dead_Abovering";
+  "Key_Dead_Doubleacute";
+  "Key_Dead_Caron";
+  "Key_Dead_Cedilla";
+  "Key_Dead_Ogonek";
+  "Key_Dead_Iota";
+  "Key_Dead_Voiced_Sound";
+  "Key_Dead_Semivoiced_Sound";
+  "Key_Dead_Belowdot";
+  "Key_Dead_Hook";
+  "Key_Dead_Horn";
+  "Key_Back";
+  "Key_Forward";
+  "Key_Stop";
+  "Key_Refresh";
+  "Key_VolumeDown";
+  "Key_VolumeMute";
+  "Key_VolumeUp";
+  "Key_BassBoost";
+  "Key_BassUp";
+  "Key_BassDown";
+  "Key_TrebleUp";
+  "Key_TrebleDown";
+  "Key_MediaPlay";
+  "Key_MediaStop";
+  "Key_MediaPrevious";
+  "Key_MediaNext";
+  "Key_MediaRecord";
+  "Key_MediaPause";
+  "Key_MediaTogglePlayPause";
+  "Key_HomePage";
+  "Key_Favorites";
+  "Key_Search";
+  "Key_Standby";
+  "Key_OpenUrl";
+  "Key_LaunchMail";
+  "Key_LaunchMedia";
+  "Key_Launch0";
+  "Key_Launch1";
+  "Key_Launch2";
+  "Key_Launch3";
+  "Key_Launch4";
+  "Key_Launch5";
+  "Key_Launch6";
+  "Key_Launch7";
+  "Key_Launch8";
+  "Key_Launch9";
+  "Key_LaunchA";
+  "Key_LaunchB";
+  "Key_LaunchC";
+  "Key_LaunchD";
+  "Key_LaunchE";
+  "Key_LaunchF";
+  "Key_MonBrightnessUp";
+  "Key_MonBrightnessDown";
+  "Key_KeyboardLightOnOff";
+  "Key_KeyboardBrightnessUp";
+  "Key_KeyboardBrightnessDown";
+  "Key_PowerOff";
+  "Key_WakeUp";
+  "Key_Eject";
+  "Key_ScreenSaver";
+  "Key_WWW";
+  "Key_Memo";
+  "Key_LightBulb";
+  "Key_Shop";
+  "Key_History";
+  "Key_AddFavorite";
+  "Key_HotLinks";
+  "Key_BrightnessAdjust";
+  "Key_Finance";
+  "Key_Community";
+  "Key_AudioRewind";
+  "Key_BackForward";
+  "Key_ApplicationLeft";
+  "Key_ApplicationRight";
+  "Key_Book";
+  "Key_CD";
+  "Key_Calculator";
+  "Key_ToDoList";
+  "Key_ClearGrab";
+  "Key_Close";
+  "Key_Copy";
+  "Key_Cut";
+  "Key_Display";
+  "Key_DOS";
+  "Key_Documents";
+  "Key_Excel";
+  "Key_Explorer";
+  "Key_Game";
+  "Key_Go";
+  "Key_iTouch";
+  "Key_LogOff";
+  "Key_Market";
+  "Key_Meeting";
+  "Key_MenuKB";
+  "Key_MenuPB";
+  "Key_MySites";
+  "Key_News";
+  "Key_OfficeHome";
+  "Key_Option";
+  "Key_Paste";
+  "Key_Phone";
+  "Key_Calendar";
+  "Key_Reply";
+  "Key_Reload";
+  "Key_RotateWindows";
+  "Key_RotationPB";
+  "Key_RotationKB";
+  "Key_Save";
+  "Key_Send";
+  "Key_Spell";
+  "Key_SplitScreen";
+  "Key_Support";
+  "Key_TaskPane";
+  "Key_Terminal";
+  "Key_Tools";
+  "Key_Travel";
+  "Key_Video";
+  "Key_Word";
+  "Key_Xfer";
+  "Key_ZoomIn";
+  "Key_ZoomOut";
+  "Key_Away";
+  "Key_Messenger";
+  "Key_WebCam";
+  "Key_MailForward";
+  "Key_Pictures";
+  "Key_Music";
+  "Key_Battery";
+  "Key_Bluetooth";
+  "Key_WLAN";
+  "Key_UWB";
+  "Key_AudioForward";
+  "Key_AudioRepeat";
+  "Key_AudioRandomPlay";
+  "Key_Subtitle";
+  "Key_AudioCycleTrack";
+  "Key_Time";
+  "Key_Hibernate";
+  "Key_View";
+  "Key_TopMenu";
+  "Key_PowerDown";
+  "Key_Suspend";
+  "Key_ContrastAdjust";
+  "Key_LaunchG";
+  "Key_LaunchH";
+  "Key_TouchpadToggle";
+  "Key_TouchpadOn";
+  "Key_TouchpadOff";
+  "Key_MicMute";
+  "Key_Red";
+  "Key_Green";
+  "Key_Yellow";
+  "Key_Blue";
+  "Key_ChannelUp";
+  "Key_ChannelDown";
+  "Key_Guide";
+  "Key_Info";
+  "Key_Settings";
+  "Key_MicVolumeUp";
+  "Key_MicVolumeDown";
+  "Key_New";
+  "Key_Open";
+  "Key_Find";
+  "Key_Undo";
+  "Key_Redo";
+  "Key_MediaLast";
+  "Key_Select";
+  "Key_Yes";
+  "Key_No";
+  "Key_Cancel";
+  "Key_Printer";
+  "Key_Execute";
+  "Key_Sleep";
+  "Key_Play";
+  "Key_Zoom";
+  "Key_Exit";
+  "Key_Context1";
+  "Key_Context2";
+  "Key_Context3";
+  "Key_Context4";
+  "Key_Call";
+  "Key_Hangup";
+  "Key_Flip";
+  "Key_ToggleCallHangup";
+  "Key_VoiceDial";
+  "Key_LastNumberRedial";
+  "Key_Camera";
+  "Key_CameraFocus";
+  "Key_unknown";
+]
+let qt'ArrowType = qenum "Qt" "ArrowType" [
+  "NoArrow";
+  "UpArrow";
+  "DownArrow";
+  "LeftArrow";
+  "RightArrow";
+]
+let qt'PenStyle = qenum "Qt" "PenStyle" [
+  "NoPen";
+  "SolidLine";
+  "DashLine";
+  "DotLine";
+  "DashDotLine";
+  "DashDotDotLine";
+  "CustomDashLine";
+  "MPenStyle";
+]
+let qt'PenCapStyle = qenum "Qt" "PenCapStyle" [
+  "FlatCap";
+  "SquareCap";
+  "RoundCap";
+  "MPenCapStyle";
+]
+let qt'PenJoinStyle = qenum "Qt" "PenJoinStyle" [
+  "MiterJoin";
+  "BevelJoin";
+  "RoundJoin";
+  "SvgMiterJoin";
+  "MPenJoinStyle";
+]
+let qt'BrushStyle = qenum "Qt" "BrushStyle" [
+  "NoBrush";
+  "SolidPattern";
+  "Dense1Pattern";
+  "Dense2Pattern";
+  "Dense3Pattern";
+  "Dense4Pattern";
+  "Dense5Pattern";
+  "Dense6Pattern";
+  "Dense7Pattern";
+  "HorPattern";
+  "VerPattern";
+  "CrossPattern";
+  "BDiagPattern";
+  "FDiagPattern";
+  "DiagCrossPattern";
+  "LinearGradientPattern";
+  "RadialGradientPattern";
+  "ConicalGradientPattern";
+  "TexturePattern";
+]
+let qt'SizeMode = qenum "Qt" "SizeMode" [
+  "AbsoluteSize";
+  "RelativeSize";
+]
+let qt'UIEffect = qenum "Qt" "UIEffect" [
+  "UI_General";
+  "UI_AnimateMenu";
+  "UI_FadeMenu";
+  "UI_AnimateCombo";
+  "UI_AnimateTooltip";
+  "UI_FadeTooltip";
+  "UI_AnimateToolBox";
+]
+let qt'CursorShape = qenum "Qt" "CursorShape" [
+  "ArrowCursor";
+  "UpArrowCursor";
+  "CrossCursor";
+  "WaitCursor";
+  "IBeamCursor";
+  "SizeVerCursor";
+  "SizeHorCursor";
+  "SizeBDiagCursor";
+  "SizeFDiagCursor";
+  "SizeAllCursor";
+  "BlankCursor";
+  "SplitVCursor";
+  "SplitHCursor";
+  "PointingHandCursor";
+  "ForbiddenCursor";
+  "WhatsThisCursor";
+  "BusyCursor";
+  "OpenHandCursor";
+  "ClosedHandCursor";
+  "DragCopyCursor";
+  "DragMoveCursor";
+  "DragLinkCursor";
+  (*"LastCursor";*)
+  "BitmapCursor";
+  "CustomCursor";
+]
+let qt'TextFormat = qenum "Qt" "TextFormat" [
+  "PlainText";
+  "RichText";
+  "AutoText";
+]
+let qt'AspectRatioMode = qenum "Qt" "AspectRatioMode" [
+  "IgnoreAspectRatio";
+  "KeepAspectRatio";
+  "KeepAspectRatioByExpanding";
+]
+let qt'DockWidgetArea = qenum "Qt" "DockWidgetArea" [
+  "LeftDockWidgetArea";
+  "RightDockWidgetArea";
+  "TopDockWidgetArea";
+  "BottomDockWidgetArea";
+  "DockWidgetArea_Mask";
+  (*"AllDockWidgetAreas";*)
+  "NoDockWidgetArea";
+]
+let qt'DockWidgetAreas = qflags "Qt" "DockWidgetAreas" qt'DockWidgetArea
+let qt'ToolBarArea = qenum "Qt" "ToolBarArea" [
+  "LeftToolBarArea";
+  "RightToolBarArea";
+  "TopToolBarArea";
+  "BottomToolBarArea";
+  "ToolBarArea_Mask";
+  (*"AllToolBarAreas";*)
+  "NoToolBarArea";
+]
+let qt'ToolBarAreas = qflags "Qt" "ToolBarAreas" qt'ToolBarArea
+let qt'DateFormat = qenum "Qt" "DateFormat" [
+  "TextDate";
+  "ISODate";
+  "SystemLocaleDate";
+  (*"LocalDate";*)
+  "LocaleDate";
+  "SystemLocaleShortDate";
+  "SystemLocaleLongDate";
+  "DefaultLocaleShortDate";
+  "DefaultLocaleLongDate";
+  "RFC2822Date";
+  "ISODateWithMs";
+]
+let qt'TimeSpec = qenum "Qt" "TimeSpec" [
+  "LocalTime";
+  "UTC";
+  "OffsetFromUTC";
+  "TimeZone";
+]
+let qt'DayOfWeek = qenum "Qt" "DayOfWeek" [
+  "Monday";
+  "Tuesday";
+  "Wednesday";
+  "Thursday";
+  "Friday";
+  "Saturday";
+  "Sunday";
+]
+let qt'ScrollBarPolicy = qenum "Qt" "ScrollBarPolicy" [
+  "ScrollBarAsNeeded";
+  "ScrollBarAlwaysOff";
+  "ScrollBarAlwaysOn";
+]
+let qt'CaseSensitivity = qenum "Qt" "CaseSensitivity" [
+  "CaseInsensitive";
+  "CaseSensitive";
+]
+let qt'Corner = qenum "Qt" "Corner" [
+  "TopLeftCorner";
+  "TopRightCorner";
+  "BottomLeftCorner";
+  "BottomRightCorner";
+]
+let qt'Edge = qenum "Qt" "Edge" [
+  "TopEdge";
+  "LeftEdge";
+  "RightEdge";
+  "BottomEdge";
+]
+let qt'Edges = qflags "Qt" "Edges" qt'Edge
+let qt'ConnectionType = qenum "Qt" "ConnectionType" [
+  "AutoConnection";
+  "DirectConnection";
+  "QueuedConnection";
+  "BlockingQueuedConnection";
+  "UniqueConnection";
+]
+let qt'ShortcutContext = qenum "Qt" "ShortcutContext" [
+  "WidgetShortcut";
+  "WindowShortcut";
+  "ApplicationShortcut";
+  "WidgetWithChildrenShortcut";
+]
+let qt'FillRule = qenum "Qt" "FillRule" [
+  "OddEvenFill";
+  "WindingFill";
+]
+let qt'MaskMode = qenum "Qt" "MaskMode" [
+  "MaskInColor";
+  "MaskOutColor";
+]
+let qt'ClipOperation = qenum "Qt" "ClipOperation" [
+  "NoClip";
+  "ReplaceClip";
+  "IntersectClip";
+]
+let qt'ItemSelectionMode = qenum "Qt" "ItemSelectionMode" [
+  "ContainsItemShape";
+  "IntersectsItemShape";
+  "ContainsItemBoundingRect";
+  "IntersectsItemBoundingRect";
+]
+let qt'ItemSelectionOperation = qenum "Qt" "ItemSelectionOperation" [
+  "ReplaceSelection";
+  "AddToSelection";
+]
+let qt'TransformationMode = qenum "Qt" "TransformationMode" [
+  "FastTransformation";
+  "SmoothTransformation";
+]
+let qt'Axis = qenum "Qt" "Axis" [
+  "XAxis";
+  "YAxis";
+  "ZAxis";
+]
+let qt'FocusReason = qenum "Qt" "FocusReason" [
+  "MouseFocusReason";
+  "TabFocusReason";
+  "BacktabFocusReason";
+  "ActiveWindowFocusReason";
+  "PopupFocusReason";
+  "ShortcutFocusReason";
+  "MenuBarFocusReason";
+  "OtherFocusReason";
+  "NoFocusReason";
+]
+let qt'ContextMenuPolicy = qenum "Qt" "ContextMenuPolicy" [
+  "NoContextMenu";
+  "DefaultContextMenu";
+  "ActionsContextMenu";
+  "CustomContextMenu";
+  "PreventContextMenu";
+]
+let qt'InputMethodQuery = qenum "Qt" "InputMethodQuery" [
+  "ImEnabled";
+  "ImCursorRectangle";
+  (*"ImMicroFocus";*)
+  "ImFont";
+  "ImCursorPosition";
+  "ImSurroundingText";
+  "ImCurrentSelection";
+  "ImMaximumTextLength";
+  "ImAnchorPosition";
+  "ImHints";
+  "ImPreferredLanguage";
+  "ImAbsolutePosition";
+  "ImTextBeforeCursor";
+  "ImTextAfterCursor";
+  "ImEnterKeyType";
+  "ImAnchorRectangle";
+  "ImInputItemClipRectangle";
+  "ImPlatformData";
+  "ImQueryInput";
+  "ImQueryAll";
+]
+let qt'InputMethodHint = qenum "Qt" "InputMethodHint" [
+  "ImhNone";
+  "ImhHiddenText";
+  "ImhSensitiveData";
+  "ImhNoAutoUppercase";
+  "ImhPreferNumbers";
+  "ImhPreferUppercase";
+  "ImhPreferLowercase";
+  "ImhNoPredictiveText";
+  "ImhDate";
+  "ImhTime";
+  "ImhPreferLatin";
+  "ImhMultiLine";
+  "ImhDigitsOnly";
+  "ImhFormattedNumbersOnly";
+  "ImhUppercaseOnly";
+  "ImhLowercaseOnly";
+  "ImhDialableCharactersOnly";
+  "ImhEmailCharactersOnly";
+  "ImhUrlCharactersOnly";
+  "ImhLatinOnly";
+  "ImhExclusiveInputMask";
+]
+let qt'InputMethodHints = qflags "Qt" "InputMethodHints" qt'InputMethodHint
+let qt'EnterKeyType = qenum "Qt" "EnterKeyType" [
+  "EnterKeyDefault";
+  "EnterKeyReturn";
+  "EnterKeyDone";
+  "EnterKeyGo";
+  "EnterKeySend";
+  "EnterKeySearch";
+  "EnterKeyNext";
+  "EnterKeyPrevious";
+]
+let qt'ToolButtonStyle = qenum "Qt" "ToolButtonStyle" [
+  "ToolButtonIconOnly";
+  "ToolButtonTextOnly";
+  "ToolButtonTextBesideIcon";
+  "ToolButtonTextUnderIcon";
+  "ToolButtonFollowStyle";
+]
+let qt'LayoutDirection = qenum "Qt" "LayoutDirection" [
+  "LeftToRight";
+  "RightToLeft";
+  "LayoutDirectionAuto";
+]
+let qt'AnchorPoint = qenum "Qt" "AnchorPoint" [
+  "AnchorLeft";
+  "AnchorHorizontalCenter";
+  "AnchorRight";
+  "AnchorTop";
+  "AnchorVerticalCenter";
+  "AnchorBottom";
+]
+let qt'FindChildOption = qenum "Qt" "FindChildOption" [
+  "FindDirectChildrenOnly";
+  "FindChildrenRecursively";
+]
+let qt'FindChildOptions = qflags "Qt" "FindChildOptions" qt'FindChildOption
+let qt'DropAction = qenum "Qt" "DropAction" [
+  "CopyAction";
+  "MoveAction";
+  "LinkAction";
+  "ActionMask";
+  "TargetMoveAction";
+  "IgnoreAction";
+]
+let qt'DropActions = qflags "Qt" "DropActions" qt'DropAction
+let qt'CheckState = qenum "Qt" "CheckState" [
+  "Unchecked";
+  "PartiallyChecked";
+  "Checked";
+]
+let qt'ItemDataRole = qenum "Qt" "ItemDataRole" [
+  "DisplayRole";
+  "DecorationRole";
+  "EditRole";
+  "ToolTipRole";
+  "StatusTipRole";
+  "WhatsThisRole";
+  "FontRole";
+  "TextAlignmentRole";
+  "BackgroundColorRole";
+  (*"BackgroundRole";*)
+  "TextColorRole";
+  (*"ForegroundRole";*)
+  "CheckStateRole";
+  "AccessibleTextRole";
+  "AccessibleDescriptionRole";
+  "SizeHintRole";
+  "InitialSortOrderRole";
+  "DisplayPropertyRole";
+  "DecorationPropertyRole";
+  "ToolTipPropertyRole";
+  "StatusTipPropertyRole";
+  "WhatsThisPropertyRole";
+  "UserRole";
+]
+let qt'ItemFlag = qenum "Qt" "ItemFlag" [
+  "NoItemFlags";
+  "ItemIsSelectable";
+  "ItemIsEditable";
+  "ItemIsDragEnabled";
+  "ItemIsDropEnabled";
+  "ItemIsUserCheckable";
+  "ItemIsEnabled";
+  "ItemIsAutoTristate";
+  (*"ItemIsTristate";*)
+  "ItemNeverHasChildren";
+  "ItemIsUserTristate";
+]
+let qt'ItemFlags = qflags "Qt" "ItemFlags" qt'ItemFlag
+let qt'MatchFlag = qenum "Qt" "MatchFlag" [
+  "MatchExactly";
+  "MatchContains";
+  "MatchStartsWith";
+  "MatchEndsWith";
+  "MatchRegExp";
+  "MatchWildcard";
+  "MatchFixedString";
+  "MatchCaseSensitive";
+  "MatchWrap";
+  "MatchRecursive";
+]
+let qt'MatchFlags = qflags "Qt" "MatchFlags" qt'MatchFlag
+let qt'WindowModality = qenum "Qt" "WindowModality" [
+  "NonModal";
+  "WindowModal";
+  "ApplicationModal";
+]
+let qt'TextInteractionFlag = qenum "Qt" "TextInteractionFlag" [
+  "NoTextInteraction";
+  "TextSelectableByMouse";
+  "TextSelectableByKeyboard";
+  "LinksAccessibleByMouse";
+  "LinksAccessibleByKeyboard";
+  "TextEditable";
+  "TextEditorInteraction";
+  "TextBrowserInteraction";
+]
+let qt'TextInteractionFlags = qflags "Qt" "TextInteractionFlags" qt'TextInteractionFlag
+let qt'EventPriority = qenum "Qt" "EventPriority" [
+  "HighEventPriority";
+  "NormalEventPriority";
+  "LowEventPriority";
+]
+let qt'SizeHint = qenum "Qt" "SizeHint" [
+  "MinimumSize";
+  "PreferredSize";
+  "MaximumSize";
+  "MinimumDescent";
+  "NSizeHints";
+]
+let qt'WindowFrameSection = qenum "Qt" "WindowFrameSection" [
+  "NoSection";
+  "LeftSection";
+  "TopLeftSection";
+  "TopSection";
+  "TopRightSection";
+  "RightSection";
+  "BottomRightSection";
+  "BottomSection";
+  "BottomLeftSection";
+  "TitleBarArea";
+]
+let qt'CoordinateSystem = qenum "Qt" "CoordinateSystem" [
+  "DeviceCoordinates";
+  "LogicalCoordinates";
+]
+let qt'TouchPointState = qenum "Qt" "TouchPointState" [
+  "TouchPointPressed";
+  "TouchPointMoved";
+  "TouchPointStationary";
+  "TouchPointReleased";
+]
+let qt'GestureState = qenum "Qt" "GestureState" [
+  "NoGesture";
+  "GestureStarted";
+  "GestureUpdated";
+  "GestureFinished";
+  "GestureCanceled";
+]
+let qt'GestureType = qenum "Qt" "GestureType" [
+  "TapGesture";
+  "TapAndHoldGesture";
+  "PanGesture";
+  "PinchGesture";
+  "SwipeGesture";
+  "CustomGesture";
+  "LastGestureType";
+]
+let qt'GestureFlag = qenum "Qt" "GestureFlag" [
+  "DontStartGestureOnChildren";
+  "ReceivePartialGestures";
+  "IgnoredGesturesPropagateToParent";
+]
+let qt'GestureFlags = qflags "Qt" "GestureFlags" qt'GestureFlag
+let qt'NativeGestureType = qenum "Qt" "NativeGestureType" [
+  "BeginNativeGesture";
+  "EndNativeGesture";
+  "PanNativeGesture";
+  "ZoomNativeGesture";
+  "SmartZoomNativeGesture";
+  "RotateNativeGesture";
+  "SwipeNativeGesture";
+]
+let qt'NavigationMode = qenum "Qt" "NavigationMode" [
+  "NavigationModeNone";
+  "NavigationModeKeypadTabOrder";
+  "NavigationModeKeypadDirectional";
+  "NavigationModeCursorAuto";
+  "NavigationModeCursorForceVisible";
+]
+let qt'CursorMoveStyle = qenum "Qt" "CursorMoveStyle" [
+  "LogicalMoveStyle";
+  "VisualMoveStyle";
+]
+let qt'TimerType = qenum "Qt" "TimerType" [
+  "PreciseTimer";
+  "CoarseTimer";
+  "VeryCoarseTimer";
+]
+let qt'ScrollPhase = qenum "Qt" "ScrollPhase" [
+  "NoScrollPhase";
+  "ScrollBegin";
+  "ScrollUpdate";
+  "ScrollEnd";
+]
+let qt'MouseEventSource = qenum "Qt" "MouseEventSource" [
+  "MouseEventNotSynthesized";
+  "MouseEventSynthesizedBySystem";
+  "MouseEventSynthesizedByQt";
+  "MouseEventSynthesizedByApplication";
+]
+let qt'MouseEventFlag = qenum "Qt" "MouseEventFlag" [
+  "MouseEventCreatedDoubleClick";
+  "MouseEventFlagMask";
+]
+let qt'ChecksumType = qenum "Qt" "ChecksumType" [
+  "ChecksumIso3309";
+  "ChecksumItuV41";
+]
