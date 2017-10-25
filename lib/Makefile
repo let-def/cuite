@@ -1,7 +1,8 @@
-OCAMLC=ocamlc -g
+OCAMLC=ocamlc.opt -g
+OCAMLOPT=ocamlopt.opt -g
 CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib)
 
-all: abook_addresswidget
+all: libcuite.so cuite.cma cuite.cmxa
 
 clean:
 	rm -f *.o *.cm* *.gen.*
@@ -11,7 +12,7 @@ CPP_SOURCES=$(wildcard *.gen.cpp) mlqt_models.cpp cuite_stubs.cpp mlqt_support.c
 libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $^
 
-MLQT_OBJECTS= qflags.mli qflags.ml qt_ref.mli qt_ref.ml qt.mli qt.ml cuite_types.ml qVariant.mli qVariant.ml qModels.ml cuite.ml
+ML_SOURCES= qflags.mli qflags.ml qt_ref.mli qt_ref.ml qt.mli qt.ml cuite_types.ml qVariant.mli qVariant.ml qModels.ml cuite.ml
 
 ## RULES
 
@@ -30,15 +31,10 @@ MLQT_OBJECTS= qflags.mli qflags.ml qt_ref.mli qt_ref.ml qt.mli qt.ml cuite_types
 %.o: %.c
 	$(OCAMLC) -ccopt -fPIC -c $<
 
-## EXAMPLES
+PWD=$(shell pwd)
 
-CUITEOPT=ocamlopt.opt -g -cclib '-Wl,-rpath,. -L. -lcuite'
-example_1: $(MLQT_OBJECTS) example_1.ml | libcuite.so 
-	$(CUITEOPT) -o $@ $^
+cuite.cma: $(ML_SOURCES) | libcuite.so
+	$(OCAMLC) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(PWD) $^
 
-abook_addresswidget: $(MLQT_OBJECTS) abook_addresswidget.ml | libcuite.so 
-	$(CUITEOPT) -o $@ $^
-
-test: $(MLQT_OBJECTS) test.ml | libcuite.so 
-	$(CUITEOPT) -o $@ $^
-
+cuite.cmxa: $(ML_SOURCES) | libcuite.so
+	$(OCAMLOPT) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(PWD) $^
