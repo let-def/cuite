@@ -7,6 +7,9 @@ all: libcuite.so cuite.cma cuite.cmxa
 clean:
 	rm -f *.o *.cm* *.gen.*
 
+distclean: clean
+	rm -f *.a *.so
+
 CPP_SOURCES=$(wildcard *.gen.cpp) mlqt_models.cpp cuite_stubs.cpp mlqt_support.cpp mlqt_lib.cpp mlqt_qvariant.cpp mlqt_csupport.c cuite_const.cpp
 
 libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))

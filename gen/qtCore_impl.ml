@@ -127,10 +127,10 @@ let () = with_class qAbstractItemModel [
     dynamic "rowCount" [arg "parent" qModelIndex] ~ret:int;
     dynamic "columnCount" [arg "parent" qModelIndex] ~ret:int;
     dynamic "hasChildren" [arg "parent" qModelIndex] ~ret:bool;
-    dynamic "data" [arg "index" qModelIndex;arg "role" int] ~ret:qVariant;
-    dynamic "setData" [arg "index" qModelIndex;arg "value" qVariant;arg "role" int] ~ret:bool;
-    dynamic "headerData" [arg "section" int;arg "orientation" qt'Orientation;arg "role" int] ~ret:qVariant;
-    dynamic "setHeaderData" [arg "section" int;arg "orientation" qt'Orientation;arg "value" qVariant;arg "role" int] ~ret:bool;
+    dynamic "data" [arg "index" qModelIndex;arg "role" qt'ItemDataRole] ~ret:qVariant;
+    dynamic "setData" [arg "index" qModelIndex;arg "value" qVariant;arg "role" qt'ItemDataRole] ~ret:bool;
+    dynamic "headerData" [arg "section" int;arg "orientation" qt'Orientation;arg "role" qt'ItemDataRole] ~ret:qVariant;
+    dynamic "setHeaderData" [arg "section" int;arg "orientation" qt'Orientation;arg "value" qVariant;arg "role" qt'ItemDataRole] ~ret:bool;
     (*dynamic "itemData" [arg "index" qModelIndex] ~ret:qMap<int, QVariant>;*)
     (*dynamic "setItemData" [arg "index" qModelIndex;arg "roles" qMap<int,QVariant>] ~ret:bool;*)
     dynamic "mimeTypes" [] ~ret:qStringList;

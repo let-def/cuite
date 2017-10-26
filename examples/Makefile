@@ -1,7 +1,7 @@
 OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
 
-all: abook_addresswidget
+all: abook_addresswidget test example_1
 
 clean:
 	rm -f *.o *.cm* *.gen.*

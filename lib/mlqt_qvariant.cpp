@@ -1,5 +1,7 @@
 #include "mlqt_qvariant.h"
 #include "mlqt_lib.h"
+#include <caml/alloc.h>
+#include <QDebug>
 
 #define TAG_UnknownType           0
 #define TAG_QBitArray             1
@@ -162,7 +164,12 @@ QVariant mlqt_QVariant_from_ocaml(const value& v)
     case TAG_QSizePolicy:
       return QVariant(*mlqt_QSizePolicy_from_ocaml(x));
     case TAG_QString:
-      return QVariant(mlqt_QString_from_ocaml(x));
+      {
+        printf("converting %s to QVariant\n", String_val(x));
+        QVariant v(mlqt_QString_from_ocaml(x));
+        qDebug() << "mlqt_QVariant_from_ocaml(" << v << ")";
+        return v;
+      }
     case TAG_QStringList:
       return QVariant(*mlqt_QStringList_from_ocaml(x));
     case TAG_QTextFormat:
@@ -188,249 +195,264 @@ QVariant mlqt_QVariant_from_ocaml(const value& v)
   }
 }
 
+static value& mlqt_QVariant_wrap(int tag, const value& v)
+{
+  value& result = *mlqt_region_alloc();
+  result = caml_alloc_small(1, tag);
+  Field(result, 0) = v;
+  return result;
+}
+
+value& mlqt_QVariant_to_ocaml(const QVariant *x)
+{
+  return mlqt_QVariant_to_ocaml(*x);
+}
+
 value& mlqt_QVariant_to_ocaml(const QVariant& x)
 {
+  qDebug() << "mlqt_QVariant_to_ocaml(" << x << ")";
   switch (x.type())
   {
     case QMetaType::UnknownType:
+      return mlqt_QVariant_wrap(TAG_UnknownType, mlqt_QVariantOther_to_ocaml(&x));
     case QMetaType::User:
-      return mlqt_QVariantOther_to_ocaml(&x);
+      return mlqt_QVariant_wrap(TAG_User, mlqt_QVariantOther_to_ocaml(&x));
     case QMetaType::QBitArray:
       {
         auto y = x.toBitArray();
-        return mlqt_QBitArray_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QBitArray, mlqt_QBitArray_to_ocaml(&y));
       }
     case QMetaType::QBitmap:
       {
         auto y = x.value<QBitmap>();
-        return mlqt_QBitmap_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QBitmap, mlqt_QBitmap_to_ocaml(&y));
       }
     case QMetaType::Bool:
-      return mlqt_bool_to_ocaml(x.toBool());
+      return mlqt_QVariant_wrap(TAG_Bool, mlqt_bool_to_ocaml(x.toBool()));
     case QMetaType::QBrush:
       {
         auto y = x.value<QBrush>();
-        return mlqt_QBrush_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QBrush, mlqt_QBrush_to_ocaml(&y));
       }
     case QMetaType::QByteArray:
       {
         auto y = x.toByteArray();
-        return mlqt_QByteArray_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QByteArray, mlqt_QByteArray_to_ocaml(&y));
       }
     case QMetaType::QChar:
       {
         auto y = x.toChar();
-        return mlqt_QChar_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QChar, mlqt_QChar_to_ocaml(&y));
       }
     case QMetaType::QColor:
       {
         auto y = x.value<QColor>();
-        return mlqt_QColor_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QColor, mlqt_QColor_to_ocaml(&y));
       }
     case QMetaType::QCursor:
       {
         auto y = x.value<QCursor>();
-        return mlqt_QCursor_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QCursor, mlqt_QCursor_to_ocaml(&y));
       }
     case QMetaType::QDate:
       {
         auto y = x.toDate();
-        return mlqt_QDate_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QDate, mlqt_QDate_to_ocaml(&y));
       }
     case QMetaType::QDateTime:
       {
         auto y = x.toDateTime();
-        return mlqt_QDateTime_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QDateTime, mlqt_QDateTime_to_ocaml(&y));
       }
     case QMetaType::Double:
-      return mlqt_double_to_ocaml(x.toDouble());
+      return mlqt_QVariant_wrap(TAG_Double, mlqt_double_to_ocaml(x.toDouble()));
     case QMetaType::QEasingCurve:
       {
         auto y = x.toEasingCurve();
-        return mlqt_QEasingCurve_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QEasingCurve, mlqt_QEasingCurve_to_ocaml(&y));
       }
     case QMetaType::QUuid:
       {
         auto y = x.toUuid();
-        return mlqt_QUuid_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QUuid, mlqt_QUuid_to_ocaml(&y));
       }
     case QMetaType::QModelIndex:
       {
         auto y = x.toModelIndex();
-        return mlqt_QModelIndex_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QModelIndex, mlqt_QModelIndex_to_ocaml(&y));
       }
     case QMetaType::QPersistentModelIndex:
       {
         auto y = x.toPersistentModelIndex();
-        return mlqt_QPersistentModelIndex_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QPersistentModelIndex, mlqt_QPersistentModelIndex_to_ocaml(&y));
       }
     case QMetaType::QFont:
       {
         auto y = x.value<QFont>();
-        return mlqt_QFont_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QFont, mlqt_QFont_to_ocaml(&y));
       }
     //case QMetaType::QVariantHash:
-    //  return mlqt_QVariantHash_to_ocaml(x.toVariantHash());
+    //  return mlqt_QVariant_wrap(TAG_QVariantHash, mlqt_QVariantHash_to_ocaml(x.toVariantHash()));
     case QMetaType::QIcon:
       {
         auto y = x.value<QIcon>();
-        return mlqt_QIcon_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QIcon, mlqt_QIcon_to_ocaml(&y));
       }
     case QMetaType::QImage:
       {
         auto y = x.value<QImage>();
-        return mlqt_QImage_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QImage, mlqt_QImage_to_ocaml(&y));
       }
     case QMetaType::Int:
-      return mlqt_int_to_ocaml(x.toInt());
+      return mlqt_QVariant_wrap(TAG_Int, mlqt_int_to_ocaml(x.toInt()));
     case QMetaType::QKeySequence:
       {
         auto y = x.value<QKeySequence>();
-        return mlqt_QKeySequence_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QKeySequence, mlqt_QKeySequence_to_ocaml(&y));
       }
     case QMetaType::QLine:
       {
         auto y = x.toLine();
-        return mlqt_QLine_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QLine, mlqt_QLine_to_ocaml(&y));
       }
     case QMetaType::QLineF:
       {
         auto y = x.toLineF();
-        return mlqt_QLineF_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QLineF, mlqt_QLineF_to_ocaml(&y));
       }
     //case QMetaType::QVariantList:
-    //  return mlqt_QVariantList_to_ocaml(x.toVariantList());
+    //  return mlqt_QVariant_wrap(TAG_QVariantList, mlqt_QVariantList_to_ocaml(x.toVariantList()));
     case QMetaType::QLocale:
       {
         auto y = x.toLocale();
-        return mlqt_QLocale_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QLocale, mlqt_QLocale_to_ocaml(&y));
       }
     case QMetaType::LongLong:
-      return mlqt_intnat_to_ocaml(x.toLongLong());
+      return mlqt_QVariant_wrap(TAG_LongLong, mlqt_intnat_to_ocaml(x.toLongLong()));
     //case QMetaType::QVariantMap:
-    //  return mlqt_QVariantMap_to_ocaml(x.toVariantMap());
+    //  return mlqt_QVariant_wrap(TAG_QVariantMap, mlqt_QVariantMap_to_ocaml(x.toVariantMap()));
     case QMetaType::QMatrix:
       {
         auto y = x.value<QMatrix>();
-        return mlqt_QMatrix_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QMatrix, mlqt_QMatrix_to_ocaml(&y));
       }
     case QMetaType::QTransform:
       {
         auto y = x.value<QTransform>();
-        return mlqt_QTransform_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QTransform, mlqt_QTransform_to_ocaml(&y));
       }
     case QMetaType::QMatrix4x4:
       {
         auto y = x.value<QMatrix4x4>();
-        return mlqt_QMatrix4x4_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QMatrix4x4, mlqt_QMatrix4x4_to_ocaml(&y));
       }
     case QMetaType::QPalette:
       {
         auto y = x.value<QPalette>();
-        return mlqt_QPalette_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QPalette, mlqt_QPalette_to_ocaml(&y));
       }
     case QMetaType::QPen:
       {
         auto y = x.value<QPen>();
-        return mlqt_QPen_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QPen, mlqt_QPen_to_ocaml(&y));
       }
     case QMetaType::QPixmap:
       {
         auto y = x.value<QPixmap>();
-        return mlqt_QPixmap_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QPixmap, mlqt_QPixmap_to_ocaml(&y));
       }
     case QMetaType::QPoint:
-      return mlqt_QPoint_to_ocaml(x.toPoint());
+      return mlqt_QVariant_wrap(TAG_QPoint, mlqt_QPoint_to_ocaml(x.toPoint()));
     case QMetaType::QPointF:
-      return mlqt_QPointF_to_ocaml(x.toPointF());
+      return mlqt_QVariant_wrap(TAG_QPointF, mlqt_QPointF_to_ocaml(x.toPointF()));
     case QMetaType::QPolygon:
       {
         auto y = x.value<QPolygon>();
-        return mlqt_QPolygon_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QPolygon, mlqt_QPolygon_to_ocaml(&y));
       }
     case QMetaType::QPolygonF:
       {
         auto y = x.value<QPolygonF>();
-        return mlqt_QPolygonF_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QPolygonF, mlqt_QPolygonF_to_ocaml(&y));
       }
     case QMetaType::QQuaternion:
       {
         auto y = x.value<QQuaternion>();
-        return mlqt_QQuaternion_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QQuaternion, mlqt_QQuaternion_to_ocaml(&y));
       }
     case QMetaType::QRect:
-      return mlqt_QRect_to_ocaml(x.toRect());
+      return mlqt_QVariant_wrap(TAG_QRect, mlqt_QRect_to_ocaml(x.toRect()));
     case QMetaType::QRectF:
-      return mlqt_QRectF_to_ocaml(x.toRectF());
+      return mlqt_QVariant_wrap(TAG_QRectF, mlqt_QRectF_to_ocaml(x.toRectF()));
     case QMetaType::QRegExp:
       {
         auto y = x.toRegExp();
-        return mlqt_QRegExp_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QRegExp, mlqt_QRegExp_to_ocaml(&y));
       }
     case QMetaType::QRegularExpression:
       {
         auto y = x.toRegularExpression();
-        return mlqt_QRegularExpression_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QRegularExpression, mlqt_QRegularExpression_to_ocaml(&y));
       }
     case TAG_QRegion:
       {
         auto y = x.value<QRegion>();
-        return mlqt_QRegion_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QRegion, mlqt_QRegion_to_ocaml(&y));
       }
     case QMetaType::QSize:
-      return mlqt_QSize_to_ocaml(x.toSize());
+      return mlqt_QVariant_wrap(TAG_QSize, mlqt_QSize_to_ocaml(x.toSize()));
     case QMetaType::QSizeF:
-      return mlqt_QSizeF_to_ocaml(x.toSizeF());
+      return mlqt_QVariant_wrap(TAG_QSizeF, mlqt_QSizeF_to_ocaml(x.toSizeF()));
     case QMetaType::QSizePolicy:
       {
         auto y = x.value<QSizePolicy>();
-        return mlqt_QSizePolicy_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QSizePolicy, mlqt_QSizePolicy_to_ocaml(&y));
       }
     case QMetaType::QString:
-      return mlqt_QString_to_ocaml(x.toString());
+      return mlqt_QVariant_wrap(TAG_QString, mlqt_QString_to_ocaml(x.toString()));
     case QMetaType::QStringList:
       {
         auto y = x.toStringList();
-        return mlqt_QStringList_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QStringList, mlqt_QStringList_to_ocaml(&y));
       }
     case QMetaType::QTextFormat:
       {
         auto y = x.value<QTextFormat>();
-        return mlqt_QTextFormat_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QTextFormat, mlqt_QTextFormat_to_ocaml(&y));
       }
     case QMetaType::QTextLength:
       {
         auto y = x.value<QTextLength>();
-        return mlqt_QTextLength_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QTextLength, mlqt_QTextLength_to_ocaml(&y));
       }
     case QMetaType::QTime:
       {
         auto y = x.toTime();
-        return mlqt_QTime_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QTime, mlqt_QTime_to_ocaml(&y));
       }
     case QMetaType::UInt:
-      return mlqt_int_to_ocaml(x.toUInt());
+      return mlqt_QVariant_wrap(TAG_UInt, mlqt_int_to_ocaml(x.toUInt()));
     case QMetaType::ULongLong:
-      return mlqt_intnat_to_ocaml(x.toULongLong());
+      return mlqt_QVariant_wrap(TAG_ULongLong, mlqt_intnat_to_ocaml(x.toULongLong()));
     case QMetaType::QUrl:
       {
         auto y = x.toUrl();
-        return mlqt_QUrl_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QUrl, mlqt_QUrl_to_ocaml(&y));
       }
     case QMetaType::QVector2D:
       {
         auto y = x.value<QVector2D>();
-        return mlqt_QVector2D_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QVector2D, mlqt_QVector2D_to_ocaml(&y));
       }
     case QMetaType::QVector3D:
       {
         auto y = x.value<QVector3D>();
-        return mlqt_QVector3D_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QVector3D, mlqt_QVector3D_to_ocaml(&y));
       }
     case QMetaType::QVector4D:
       {
         auto y = x.value<QVector4D>();
-        return mlqt_QVector4D_to_ocaml(&y);
+        return mlqt_QVariant_wrap(TAG_QVector4D, mlqt_QVector4D_to_ocaml(&y));
       }
     default:
       abort();
@@ -442,4 +464,11 @@ external value mlqt_QVariant_null(value vunit)
   MLQT_Region region;
   QVariant x;
   return mlqt_QVariantOther_to_ocaml(&x);
+}
+
+external value mlqt_QVariant_to_string(value variant)
+{
+  QVariant v(mlqt_QVariant_from_ocaml(variant));
+  QString s = v.toString();
+  return mlqt_QString_to_ocaml(s);
 }

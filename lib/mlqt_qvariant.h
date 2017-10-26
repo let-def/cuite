@@ -8,6 +8,7 @@
 #include "mlqt_support.h"
 
 QVariant mlqt_QVariant_from_ocaml(const value& v);
+value& mlqt_QVariant_to_ocaml(const QVariant *x);
 value& mlqt_QVariant_to_ocaml(const QVariant& v);
 
 external value mlqt_QVariant_null(value);

@@ -1,7 +1,7 @@
 open Cuite
 open Cuite_types
 
-let add_dialog parent =
+let add_dialog ?edit parent =
   let dialog = new'QDialog parent Qflags.empty in
   let name_label = new'QLabel'1 "Name" None Qflags.empty in
   let address_label = new'QLabel'1 "Address" None Qflags.empty in
@@ -31,14 +31,17 @@ let add_dialog parent =
   Qt.connect_slot' cancel_button
     (QPushButton.signal'clicked1()) dialog
     (Qt.slot_ignore (QDialog.slot'reject1()));
-  QWidget.setWindowTitle dialog "Add a Contact";
-  (dialog, name_text, address_text)
-
-let maybe_add_entry () =
-  let dialog, name, address = add_dialog None in
+  begin match edit with
+    | None -> QWidget.setWindowTitle dialog "Add a Contact"
+    | Some (name, address) ->
+      QWidget.setWindowTitle dialog "Edit a Contact";
+      QLineEdit.setReadOnly name_text true;
+      QLineEdit.setText name_text name;
+      QTextEdit.setText address_text address;
+  end;
   let result =
     if QDialog.exec dialog <> 0 then
-      Some (QLineEdit.text name, QTextEdit.toPlainText address)
+      Some (QLineEdit.text name_text, QTextEdit.toPlainText address_text)
     else
       None
   in
@@ -52,19 +55,18 @@ let new_address_tab ~send_details parent =
        Click Add to add new contacts." None Qflags.empty
   in
   let add_button = new'QPushButton'1 "Add" None in
-  let add_entry _ =
-    match maybe_add_entry () with
-    | Some (name, address) -> send_details name address
-    | None -> ()
-  in
-  Qt.connect' add_button (QPushButton.signal'clicked1 ()) add_entry;
+  Qt.connect' add_button (QPushButton.signal'clicked1 ()) (fun _ ->
+      match add_dialog None with
+      | Some (name, address) -> send_details name address
+      | None -> ()
+    );
   let main_layout = new'QVBoxLayout () in
   QVBoxLayout.addWidget main_layout description_label 0 Qflags.empty;
   QVBoxLayout.addWidget main_layout add_button 0 (Qflags.singleton qt'Alignment `AlignCenter);
   QWidget.setLayout tab (Some main_layout);
   tab
 
-let setup_tab self table group =
+let setup_tab self table group ~selection_changed =
   let proxy = new'QSortFilterProxyModel (Some self) in
   QSortFilterProxyModel.(
     setSourceModel proxy table;
@@ -81,13 +83,19 @@ let setup_tab self table group =
     setSelectionMode tableview `SingleSelection;
     setSortingEnabled tableview true;
   );
-  ignore (QTabWidget.addTab self tableview group : int)
-  (*Qt.connect_slot' (QTableView.selectionModel tableview)
-    (QItemSelectionModel.signal'selectionChanged())*)
+  ignore (QTabWidget.addTab self tableview group : int);
+  Qt.connect' (QTableView.selectionModel tableview)
+    (QItemSelectionModel.signal'selectionChanged1())
+    selection_changed
 
-let setup_tabs self table =
-  List.iter (setup_tab self table)
+let setup_tabs self table ~selection_changed =
+  List.iter (setup_tab self table ~selection_changed)
     ["ABC"; "DEF"; "GHI"; "JKL"; "MNO"; "PQR"; "STU"; "VW"; "XYZ"]
+
+let cast widget clss =
+  match Qt.cast widget clss with
+  | None -> assert false
+  | Some x -> x
 
 let address_widget_read_from_file addr_widget filename =
   ()
@@ -95,14 +103,57 @@ let address_widget_read_from_file addr_widget filename =
 let address_widget_write_to_file addr_widget filename =
   ()
 
-let address_widget_edit_entry _ _ =
-  ()
+let address_widget_edit_entry table addr_widget _ =
+  prerr_endline "editing entry";
+  let tableview = cast (QTabWidget.currentWidget addr_widget) (QTableView.class'()) in
+  let proxy = cast (QTableView.model tableview) (QSortFilterProxyModel.class'()) in
+  let selection = QTableView.selectionModel tableview in
+  let indexes = QItemSelectionModel.selectedRows selection 0 in
+  if QModelIndexList.count1 indexes > 0 then (
+    let index = QModelIndexList.at indexes 0 in
+    let row = QModelIndex.row (QSortFilterProxyModel.mapToSource proxy index) in
+    let index col =
+      QAbstractTableModel.index table row col (new'QModelIndex ())
+    in
+    match QAbstractTableModel.data table (index 0) `DisplayRole,
+          QAbstractTableModel.data table (index 1) `DisplayRole
+    with
+    | QVariant.QString name, QVariant.QString address ->
+      begin match add_dialog ~edit:(name, address) (Some addr_widget) with
+        | Some (_name, address) ->
+          ignore (
+            Printf.eprintf "setData(%d,1,%S)\n%!" row address;
+            QAbstractTableModel.setData table (index 1)
+              (QVariant.QString address) `DisplayRole
+            : bool
+          )
+        | None -> ()
+      end
+    | v1, v2 ->
+      prerr_endline ("unknown values: " ^ QVariant.to_string v1 ^ ", " ^ QVariant.to_string v2)
+  ) else
+    prerr_endline "nothing to edit"
 
-let address_widget_remove_entry _ _ =
-  ()
+
+
+let address_widget_remove_entry new_addr_tab table addr_widget _ =
+  let tableview = cast (QTabWidget.currentWidget addr_widget) (QTableView.class'()) in
+  let proxy = cast (QTableView.model tableview) (QSortFilterProxyModel.class'()) in
+  let selection = QTableView.selectionModel tableview in
+  let indexes = QItemSelectionModel.selectedRows selection 0 in
+  let dummy = new'QModelIndex() in
+  for i = 0 to QModelIndexList.count1 indexes - 1 do
+    let index = QModelIndexList.at indexes i in
+    let row = QModelIndex.row (QSortFilterProxyModel.mapToSource proxy index) in
+    ignore (QAbstractTableModel.removeRow table row dummy : bool);
+  done;
+  if QAbstractTableModel.rowCount table dummy = 0 then
+    ignore (QTabWidget.insertTab addr_widget 0 new_addr_tab "Address Book" : int)
 
 let address_widget_show_add_entry_dialog addr_widget _ =
-  ()
+  match add_dialog (Some addr_widget) with
+  | None -> ()
+  | Some (name, address) -> ()
 
 let list_model =
   QModels.qOCamlTableModel'callback
@@ -124,6 +175,24 @@ let list_model =
         | `DisplayRole, `Horizontal, 1 -> QVariant.QString "Address"
         | _ -> QVariant.null
       )
+    ~set_data:(fun list self position value role ->
+        match QModelIndex.row position, QModelIndex.column position,
+              role, value
+        with
+        | row, 1, `DisplayRole, QVariant.QString address ->
+          let rec seek n = function
+            | (name, _) :: xs when n = 0 -> (name, address) :: xs
+            | x :: xs -> x :: seek (n - 1) xs
+            | [] -> []
+          in
+          list := seek row !list;
+          true
+        | row, col, _, QVariant.Bool true -> assert false
+        | row, col, _, value ->
+          Printf.eprintf
+            "set_data(%d,%d,%S): invalid arguments\n%!" row col (QVariant.to_string value);
+          false
+      )
     ~insert_rows:(fun list self position rows index ->
         Some (fun () ->
             let rec insert n tail =
@@ -136,9 +205,25 @@ let list_model =
             list := seek position !list
           )
       )
+    ~remove_rows:(fun list self position rows index ->
+        Some (fun () ->
+            let rec remove n tail = match n, tail with
+              | n, _ :: xs when n > 0 -> remove (n - 1) xs
+              | _, xs -> xs
+            in
+            let rec seek n = function
+              | x :: xs when n > 0 -> x :: seek (n - 1) xs
+              | xs -> remove rows xs
+            in
+            list := seek position !list
+          )
+      )
+    ~flags:(fun _ self index ->
+        Qflags.of_list qt'ItemFlags [`ItemIsEnabled; `ItemIsSelectable]
+      )
     ()
 
-let address_widget parent =
+let address_widget parent ~send_details ~selection_changed =
   let default_content = [
     "A" , "T";
     "B" , "O";
@@ -148,16 +233,20 @@ let address_widget parent =
   ] in
   let table = QModels.new'QOCamlTableModel list_model (ref default_content) in
   let self = new'QTabWidget parent in
-  let new_address_tab = new_address_tab
-      ~send_details:(Printf.printf "name:%S address:%S\n%!") (Some self)
-  in
+  let new_address_tab = new_address_tab ~send_details (Some self) in
   ignore (QTabWidget.addTab self new_address_tab "Address Book" : int);
-  setup_tabs self table;
-  self
+  setup_tabs self table ~selection_changed;
+  (new_address_tab, table, self)
 
 let main_window () =
   let self = new'QMainWindow None Qflags.empty in
-  let address_widget = address_widget None in
+  let update_actions = ref ignore in
+  let selection_changed x = !update_actions x in
+  let new_address_tab, table, address_widget =
+    address_widget None
+      ~send_details:(fun name address -> ())
+      ~selection_changed
+  in
   let open_file _ =
     let filename = QFileDialog.getOpenFileName self "" "" "" in
     if filename <> "" then
@@ -191,24 +280,19 @@ let main_window () =
     let edit_act = QMenu.addAction tool_menu "&Edit Entry..." in
     QAction.setEnabled edit_act false;
     Qt.connect' edit_act (QAction.signal'triggered1())
-      (address_widget_edit_entry address_widget);
+      (address_widget_edit_entry table address_widget);
     let _ = QMenu.addSeparator tool_menu in
     let remove_act = QMenu.addAction tool_menu "&Remove Entry..." in
     QAction.setEnabled remove_act false;
     Qt.connect' remove_act (QAction.signal'triggered1())
-      (address_widget_remove_entry address_widget)
-    (*Qt.connect' address_widget (QAction.signal'triggered1())  updateActions*)
-    (*
-          QModelIndexList indexes = selection.indexes();
-
-          if (!indexes.isEmpty()) {
-              removeAct->setEnabled(true);
-              editAct->setEnabled(true);
-          } else {
-              removeAct->setEnabled(false);
-              editAct->setEnabled(false);
-          }
-    *)
+      (address_widget_remove_entry new_address_tab table address_widget);
+    update_actions := (fun (selected,_) ->
+        prerr_endline "selection changed";
+        let indexes = QItemSelection.indexes selected in
+        let enabled = not (QModelIndexList.isEmpty indexes) in
+        QAction.setEnabled remove_act enabled;
+        QAction.setEnabled edit_act enabled
+      );
   end;
   QMainWindow.setWindowTitle self "Address Book";
   self

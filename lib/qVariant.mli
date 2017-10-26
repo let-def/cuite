@@ -65,3 +65,4 @@ type t =
  | User                  of qVariantOther
 
 val null : t
+external to_string : t -> string = "mlqt_QVariant_to_string"

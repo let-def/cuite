@@ -66,3 +66,5 @@ type t =
 
 external null : unit -> qVariantOther = "mlqt_QVariant_null"
 let null = UnknownType (null ())
+
+external to_string : t -> string = "mlqt_QVariant_to_string"

@@ -849,7 +849,7 @@ external value mlqt_metaobject_cast(value vobj, value vmeta)
 {
   CAMLparam1(vobj);
   value result = Val_unit;
-  QObject *obj = mlqt_QObject_from_ocaml(Field(vobj,0));
+  QObject *obj = mlqt_QObject_from_ocaml(vobj);
   const QMetaObject *meta = obj->metaObject();
   const QMetaObject *target_meta = mlqt_QMetaObject_from_ocaml(vmeta);
   if (meta->inherits(target_meta))

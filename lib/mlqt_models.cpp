@@ -133,7 +133,7 @@ bool QOCamlTableModel::setData(const QModelIndex &index, const QVariant &v, int 
     PUSH_ARG(mlqt_QModelIndex_to_ocaml(&index));
     PUSH_ARG(mlqt_QVariant_to_ocaml(&v));
     PUSH_ARG(mlqt_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
-  CALL_METHOD(result, mlqt_Qt_ItemFlags_from_ocaml, meth_set_data);
+  CALL_METHOD(result, Val_bool, meth_set_data);
   return result;
 }
 
