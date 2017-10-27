@@ -14,8 +14,8 @@ let hash_variant s =
   if !accu > 0x3FFFFFFF then !accu - (1 lsl 31) else !accu
 
 let gen ~h ~c ~ml =
-  print h "#ifndef __QT5_CONSTANTS_H__\n\
-             #define __QT5_CONSTANTS_H__\n\
+  print h "#ifndef __CUITE_CONSTANTS_H__\n\
+             #define __CUITE_CONSTANTS_H__\n\
              #include <QtWidgets>\n\
              #include <caml/mlvalues.h>\n\
              #include <caml/alloc.h>\n\
