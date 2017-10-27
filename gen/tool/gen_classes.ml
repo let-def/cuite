@@ -195,11 +195,11 @@ let gen ?c ~ml () =
       | Some cl' ->
         print ml "type %s = [`%s | %s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl')
       end;
-      print ml "module %s = Cuite__%s" (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl.cl)
+      print ml "module %s = Cuite___%s" (cl_Ml_name cl.cl) (cl_c_name cl.cl)
     ) (all_class ());
   with_file "cuite_stubs.gen.h" @@ fun h ->
   List.iter (fun cl ->
-      with_file (sprint "cuite__%s.mli" (cl_ml_name cl.cl)) @@ fun ml ->
+      with_file (sprint "cuite__%s.mli" (cl_c_name cl.cl)) @@ fun ml ->
       let name = c_mangle (cl_c_name cl.cl) in
       begin match c with
         | None ->
@@ -211,7 +211,7 @@ let gen ?c ~ml () =
       List.iter (constructor ~h ~c ~ml cl) fields;
       begin match cl.cl.cl_extend with
         | None -> ()
-        | Some cl' -> print ml "  include %s" (cl_c_name cl')
+        | Some cl' -> print ml "  include Cuite___%s" (cl_c_name cl')
       end;
       let rec qmetaobject cl' =
         if cl_c_name cl' = "QObject" then (

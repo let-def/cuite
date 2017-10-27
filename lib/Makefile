@@ -5,7 +5,7 @@ CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shel
 all: libcuite.so cuite.cma cuite.cmxa
 
 clean:
-	rm -f *.o *.cm* *.gen.* cuite.ml
+	rm -f *.o *.cm* *.gen.* cuite.ml *___*.mli
 
 distclean: clean
 	rm -f *.a *.so
