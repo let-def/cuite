@@ -1,4 +1,3 @@
-open Qt
 open Cuite
 
 (*let root = ref []*)

@@ -1,0 +1,17 @@
+opam-version: "1.2"
+name: "cuite"
+version: "~unknown"
+maintainer: "Frederic Bour <frederic.bour@lakaban.net>"
+authors: "Frederic Bour <frederic.bour@lakaban.net>"
+homepage: "https://github.com/let-def/cuite"
+bug-reports: "https://github.com/let-def/cuite/issues"
+license: "MIT"
+dev-repo: "git@github.com:let-def/cuite.git"
+build: [
+  [make "default" "-j" jobs "LIB_PREFIX=%{lib}%"]
+]
+install: [make "install" "LIB_PREFIX=%{lib}%"]
+remove: ["ocamlfind" "remove" "cuite"]
+depends: [
+  "ocamlfind" {build}
+]

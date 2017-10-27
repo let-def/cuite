@@ -227,3 +227,21 @@ let gen ?c ~ml () =
       qmetaobject cl.cl;
       List.iter (cfield ~h ~c ~ml cl) fields;
     ) (all_class ())
+
+let gen_dep ~makefile () =
+  let cmo cl = sprint "cuite___%s.cmo" (cl_fs_name cl) in
+  let cmx cl = sprint "cuite___%s.cmx" (cl_fs_name cl) in
+  List.iter (fun cl ->
+      match cl.cl.cl_extend with
+      | None -> ()
+      | Some cl' ->
+        print makefile "%s: %s" (cmo cl.cl) (cmo cl');
+        makefile "";
+        print makefile "%s: %s" (cmx cl.cl) (cmx cl');
+        makefile ""
+    ) (all_class ());
+  let all_modules = List.map (fun cl -> cl.cl) (all_class ()) in
+  print makefile "GEN_BYTECODE = %s"
+    (String.concat " " (List.map cmo all_modules));
+  print makefile "GEN_NATIVE = %s"
+    (String.concat " " (List.map cmx all_modules));

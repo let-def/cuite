@@ -32,5 +32,7 @@ let () =
     else
       with_file "cuite_stubs.gen.cpp" @@ fun c ->
       print c "#include \"cuite_stubs.h\"";
-      Gen_classes.gen ~ml ~c ()
-  end
+      Gen_classes.gen ~ml ~c ();
+  end;
+  with_file "Makefile.gen"
+    (fun makefile -> Gen_classes.gen_dep ~makefile ())

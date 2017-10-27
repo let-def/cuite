@@ -1,0 +1,4 @@
+description = "Bindings to Qt 5"
+version = "0.1"
+archive(byte) = "cuite.cma"
+archive(native) = "cuite.cmxa"
