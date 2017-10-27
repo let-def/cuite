@@ -208,11 +208,11 @@ let gen ?c ~ml () =
       end @@ fun c ->
       let fields = List.rev cl.cl.cl_fields in
       List.iter (constructor ~h ~c ~ml cl) fields;
-      with_file (sprint "cuite___%s.mli" fs_name) @@ fun ml ->
+      with_file (sprint "cuite___%s.ml" fs_name) @@ fun ml ->
       ml "open Cuite";
       begin match cl.cl.cl_extend with
         | None -> ()
-        | Some cl' -> print ml "include (module type of Cuite___%s)" (cl_fs_name cl')
+        | Some cl' -> print ml "include Cuite___%s" (cl_fs_name cl')
       end;
       let rec qmetaobject cl' =
         if cl_c_name cl' = "QObject" then (

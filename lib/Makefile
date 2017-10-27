@@ -5,7 +5,7 @@ CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shel
 all: libcuite.so cuite.cma cuite.cmxa
 
 clean:
-	rm -f *.o *.cm* *.gen.* cuite.ml *___*.mli
+	rm -f *.o *.cm* *.gen.* cuite.ml
 
 distclean: clean
 	rm -f *.a *.so
@@ -27,7 +27,9 @@ BOOT_CMX = $(patsubst %.ml,%.cmx, $(patsubst %.mli,, $(BOOT_SOURCES)))
 
 OTHER_SOURCES = 											 \
 	cuite__variant.mli cuite__variant.ml \
-	cuite__models.ml 									
+	cuite__models.ml
+
+GEN_SOURCES = $(shell ocamldep.opt -sort cuite___*.ml)
 
 ## RULES
 
@@ -73,8 +75,8 @@ cuite.cmo: cuite.ml | pre.cmo
 cuite.cmx: cuite.ml | pre.cmx
 	$(OCAMLOPT) -c -no-alias-deps $^
 
-cuite.cma: $(BOOT_CMO) cuite.cmo $(OTHER_SOURCES) | libcuite.so
+cuite.cma: $(BOOT_CMO) cuite.cmo $(OTHER_SOURCES) $(GEN_SOURCES) | libcuite.so
 	$(OCAMLC) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(PWD) $^
 
-cuite.cmxa: $(BOOT_CMX) cuite.cmx $(OTHER_SOURCES) | libcuite.so
+cuite.cmxa: $(BOOT_CMX) cuite.cmx $(OTHER_SOURCES) $(GEN_SOURCES) | libcuite.so
 	$(OCAMLOPT) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(PWD) $^

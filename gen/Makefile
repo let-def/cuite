@@ -13,4 +13,4 @@ flag_values.ml: tool/shared.ml $(foreach LIB,$(LIBS),$(LIB)_enum.ml) tool/gen_va
 	/tmp/gen_value > flag_values.ml
 
 clean:
-	rm -f *.cm? flag_values.ml
+	rm -f *.cm? tool/*.cm? flag_values.ml

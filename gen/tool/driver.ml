@@ -5,7 +5,7 @@ let () =
   ml "module Qt = Cuite__qt";
   ml "module QVariant = Cuite__variant";
   ml "module QFlags = Cuite__flags";
-  ml "module QModels = Cuite__flags";
+  ml "module QModels = Cuite__models";
   ml "";
   ml "type 'a qt = 'a Qt.t";
   ml "";
