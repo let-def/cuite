@@ -5,7 +5,7 @@ let c_external h c ~impl {cl} uname ?(self=false) args =
   let args = List.mapi (fun i _ -> "value arg" ^ string_of_int i) args in
   let args = if self then "value argself" :: args else args in
   let cargs = if args = [] then "value unit" else String.concat "," args in
-  let name = sprint "mlqt_%s_%s" (cl_c_name cl) uname in
+  let name = sprint "cuite_%s_%s" (cl_c_name cl) uname in
   if need_bc_proxy then (
     print h "external value %s_bc(value *argv, int argvn);" name;
     print c "external value %s_bc(value *argv, int argvn)" name;
@@ -60,9 +60,9 @@ let constructor ~h ~c ~ml cl = function
       List.iteri (fun i (_, typ) ->
           qtype_c_check_use_after_free c typ (sprint "arg%d" i)
         ) args;
-      print c "  MLQT_Region region;";
+      print c "  CUITE_Region region;";
       List.iteri (fun i (_,_) ->
-          print c "  value& ml%d = mlqt_region_register(arg%d);" i i
+          print c "  value& ml%d = cuite_region_register(arg%d);" i i
         ) args;
       List.iteri (fun i (_,typ) ->
           print c "  %s c%d = %s;" (qtype_c_negname typ) i (qtype_c_from_ocaml typ ("ml" ^string_of_int i))
@@ -91,10 +91,10 @@ let cfield ~h ~c ~ml cl = function
       List.iteri (fun i (_, typ) ->
           qtype_c_check_use_after_free c typ (sprint "arg%d" i)
         ) args;
-      print c "  MLQT_Region region;";
-      print c "  value& mlself = mlqt_region_register(argself);";
+      print c "  CUITE_Region region;";
+      print c "  value& mlself = cuite_region_register(argself);";
       List.iteri (fun i (_,_) ->
-          print c "  value& ml%d = mlqt_region_register(arg%d);" i i
+          print c "  value& ml%d = cuite_region_register(arg%d);" i i
         ) args;
       print c "  auto self = %s;" (qtype_c_from_ocaml (QClass cl) "mlself");
       List.iteri (fun i (_,typ) ->
@@ -128,9 +128,9 @@ let cfield ~h ~c ~ml cl = function
       List.iteri (fun i (_, typ) ->
           qtype_c_check_use_after_free c typ (sprint "arg%d" i)
         ) args;
-      print c "  MLQT_Region region;";
+      print c "  CUITE_Region region;";
       List.iteri (fun i (_,_) ->
-          print c "  value& ml%d = mlqt_region_register(arg%d);" i i
+          print c "  value& ml%d = cuite_region_register(arg%d);" i i
         ) args;
       List.iteri (fun i (_,typ) ->
           print c "  %s c%d = %s;" (qtype_c_negname typ) i (qtype_c_from_ocaml typ ("ml" ^string_of_int i))
@@ -149,10 +149,10 @@ let cfield ~h ~c ~ml cl = function
 
   | Slot (name, args) ->
     let uname = unique_name cl name in
-    print c "MLQT_SLOT(%s, %s, %s(%s))"
+    print c "CUITE_SLOT(%s, %s, %s(%s))"
       (cl_c_name cl.cl) uname
       name (String.concat "," (List.map qtype_c_negname args));
-    print ml "  external slot'%s : unit -> ([> %s], %s) Qt.slot = \"mlqt_slot_%s_%s\" [@@noalloc]"
+    print ml "  external slot'%s : unit -> ([> %s], %s) Qt.slot = \"cuite_slot_%s_%s\" [@@noalloc]"
       uname (cl_ml_name cl.cl)
       (if args = [] then "unit" else String.concat " * " (List.map (qtype_ml_negname) args))
       (cl_c_name cl.cl) uname
@@ -163,8 +163,8 @@ let cfield ~h ~c ~ml cl = function
     print c "static void invoke_signal_%s_%s(%s)"
       (cl_c_name cl.cl) uname (String.concat "," ("intnat *cbid" :: List.map (fun (k,v) -> k^" "^ v) cparams));
     print c "{";
-    print c "  MLQT_Region region;";
-    print c "  value& arg = *mlqt_region_alloc();";
+    print c "  CUITE_Region region;";
+    print c "  value& arg = *cuite_region_alloc();";
     begin match args with
       | [] -> print c "  arg = Val_unit;";
       | [x] -> print c "  arg = %s;" (qtype_c_to_ocaml x "arg0");
@@ -174,15 +174,15 @@ let cfield ~h ~c ~ml cl = function
             print c "Store_field(arg, %d, %s);" i (qtype_c_to_ocaml typ ("arg"^string_of_int i)))
           xs;
     end;
-    print c "  mlqtcb_call(cbid, arg);";
+    print c "  cuitecb_call(cbid, arg);";
     print c "}";
-    print c "MLQT_SIGNAL(%s, %s, (qOverload<%s>(&%s::%s)), %s(%s), std::bind(&invoke_signal_%s_%s, %s))"
+    print c "CUITE_SIGNAL(%s, %s, (qOverload<%s>(&%s::%s)), %s(%s), std::bind(&invoke_signal_%s_%s, %s))"
       (cl_c_name cl.cl) uname
       (String.concat "," (List.map fst cparams)) (cl_c_name cl.cl) name
       name (String.concat "," (List.map fst cparams))
       (cl_c_name cl.cl) uname (String.concat "," ("cbid" :: List.mapi (fun i _ -> "std::placeholders::_"^string_of_int (i+1)) cparams))
     ;
-    print ml "  external signal'%s : unit -> ([> %s], %s) Qt.signal = \"mlqt_signal_%s_%s\" [@@noalloc]"
+    print ml "  external signal'%s : unit -> ([> %s], %s) Qt.signal = \"cuite_signal_%s_%s\" [@@noalloc]"
       uname (cl_ml_name cl.cl)
       (if args = [] then "unit" else String.concat " * " (List.map (qtype_ml_posname) args))
       (cl_c_name cl.cl) uname
@@ -214,8 +214,8 @@ let gen ?c ~mltype ~ml () =
       end;
       let rec qmetaobject cl' =
         if cl_c_name cl' = "QObject" then (
-          print c "MLQT_CLASS(%s)" (cl_c_name cl.cl);
-          print ml "  external class' : unit -> %s Qt.qt_class = \"mlqt_class_%s\" [@@noalloc]"
+          print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
+          print ml "  external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
             (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
         )
         else match cl'.cl_extend with

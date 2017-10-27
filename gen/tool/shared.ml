@@ -117,13 +117,13 @@ let custom_type ?(deletable=false) ?converter ?ml_pos ?ml_neg ?c_neg c_name =
   in
   Custom {
     ml_posname; ml_negname; c_name; c_negname;
-    c_from_ocaml = sprint "mlqt_%s_from_ocaml(%s)" c_ident;
-    c_to_ocaml = sprint "mlqt_%s_to_ocaml(%s)" c_ident;
+    c_from_ocaml = sprint "cuite_%s_from_ocaml(%s)" c_ident;
+    c_to_ocaml = sprint "cuite_%s_to_ocaml(%s)" c_ident;
     c_check_use_after_free =
       if deletable then
         match converter with
-        | None -> Some (sprint "mlqt_qt_check_use(%s)")
-        | Some c -> Some (sprint "mlqt_%s_check_use(%s)" c_ident)
+        | None -> Some (sprint "cuite_qt_check_use(%s)")
+        | Some c -> Some (sprint "cuite_%s_check_use(%s)" c_ident)
       else
         None
   }
@@ -278,7 +278,7 @@ let cl_converter cl =
 
 let qtype_c_from_ocaml qtype arg = match qtype with
   | QClass { cl_const; cl_qual; cl } ->
-    sprint "(%s%s%smlqt_%s_%sfrom_ocaml(%s)"
+    sprint "(%s%s%scuite_%s_%sfrom_ocaml(%s)"
       cl.cl_name
       (if cl_const then " const " else "")
       (match cl_qual with
@@ -288,25 +288,25 @@ let qtype_c_from_ocaml qtype arg = match qtype with
       (match cl_qual with `optional -> "option_" | _ -> "")
       arg
   | QEnum en ->
-    sprint "mlqt_%s_from_ocaml(%s)" (c_mangle (en.ens ^ "::" ^ en.ename)) arg
+    sprint "cuite_%s_from_ocaml(%s)" (c_mangle (en.ens ^ "::" ^ en.ename)) arg
   | QFlags fl ->
-    sprint "mlqt_%s_from_ocaml(%s)" (c_mangle (fl.fns ^ "::" ^ fl.fname)) arg
+    sprint "cuite_%s_from_ocaml(%s)" (c_mangle (fl.fns ^ "::" ^ fl.fname)) arg
   | Custom t -> t.c_from_ocaml arg
 
 let qtype_c_to_ocaml qtype arg = match qtype with
   | QClass { cl_const; cl_qual = `ref; cl } ->
-    sprint "mlqt_lift_ref(&mlqt_%s_to_ocaml, %s)"
+    sprint "cuite_lift_ref(&cuite_%s_to_ocaml, %s)"
       (cl_converter cl)
       arg
   | QClass { cl_const; cl_qual; cl } ->
-    sprint "mlqt_%s_%sto_ocaml(%s)"
+    sprint "cuite_%s_%sto_ocaml(%s)"
       (cl_converter cl)
       (match cl_qual with `optional -> "option_" | _ -> "")
       arg
   | QEnum en ->
-    sprint "mlqt_%s_to_ocaml(%s)" (c_mangle (en.ens ^ "::" ^ en.ename)) arg
+    sprint "cuite_%s_to_ocaml(%s)" (c_mangle (en.ens ^ "::" ^ en.ename)) arg
   | QFlags fl ->
-    sprint "mlqt_%s_to_ocaml(%s)" (c_mangle (fl.fns ^ "::" ^ fl.fname)) arg
+    sprint "cuite_%s_to_ocaml(%s)" (c_mangle (fl.fns ^ "::" ^ fl.fname)) arg
   | Custom t -> t.c_to_ocaml arg
 
 let qtype_c_negname qtype = match qtype with
@@ -340,9 +340,9 @@ let qtype_ml_negname qtype = match qtype with
 let qtype_c_check_use_after_free o qtype var =
   match qtype with
   | QClass { cl_qual = (`pointer | `ref); cl; _ } ->
-    print o "  CHECK_USE_AFTER_FREE(mlqt_%s_check_use(%s));" (cl_converter cl) var
+    print o "  CHECK_USE_AFTER_FREE(cuite_%s_check_use(%s));" (cl_converter cl) var
   | QClass { cl_qual = `optional; cl; _ } ->
-    print o "  CHECK_USE_AFTER_FREE(mlqt_%s_option_check_use(%s));" (cl_converter cl) var
+    print o "  CHECK_USE_AFTER_FREE(cuite_%s_option_check_use(%s));" (cl_converter cl) var
   | QEnum _ -> ()
   | QFlags _ -> ()
   | Custom t -> (

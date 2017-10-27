@@ -19,29 +19,29 @@ let gen ~h ~c ~ml =
              #include <QtWidgets>\n\
              #include <caml/mlvalues.h>\n\
              #include <caml/alloc.h>\n\
-             #include \"mlqt_support.h\"";
+             #include \"cuite_support.h\"";
   print c "#include \"cuite_const.h\"";
   let enum {ens; ename; emembers; econverter} =
     print ml "type %s = [%s\n  ]"
       (ml_val_mangle (ens ^"::"^ ename))
       (String.concat "\n  | " (List.map ((^) "`") emembers @ ["`"^fallback^" of int"]));
-    print h "%s::%s mlqt_%s_from_ocaml(const value& v);" ens ename econverter;
-    print c "%s::%s mlqt_%s_from_ocaml(const value& v)" ens ename econverter;
+    print h "%s::%s cuite_%s_from_ocaml(const value& v);" ens ename econverter;
+    print c "%s::%s cuite_%s_from_ocaml(const value& v)" ens ename econverter;
     print c "{";
     print c "  switch(Long_val(v)) {";
     List.iter (fun member ->
         print c "  case %d: return %s::%s;" (hash_variant member) ens member
       ) emembers;
     print c "  default:";
-    print c "    mlqt_assert(Is_block(v) && Field(v, 0) == %d);" (hash_variant fallback);
+    print c "    cuite_assert(Is_block(v) && Field(v, 0) == %d);" (hash_variant fallback);
     print c "    return (%s::%s)Long_val(Field(v, 1));" ens ename;
     print c "  }";
     print c "}";
     print c "";
-    print h "value& mlqt_%s_to_ocaml(const %s::%s& v);" econverter ens ename;
-    print c "value& mlqt_%s_to_ocaml(const %s::%s& v)" econverter ens ename;
+    print h "value& cuite_%s_to_ocaml(const %s::%s& v);" econverter ens ename;
+    print c "value& cuite_%s_to_ocaml(const %s::%s& v)" econverter ens ename;
     print c "{";
-    print c "  value& result = *mlqt_region_alloc();";
+    print c "  value& result = *cuite_region_alloc();";
     print c "  switch(v) {";
     List.iter (fun member ->
         print c "  case %s::%s: result = Val_long(%d); break;"
@@ -68,8 +68,8 @@ let gen ~h ~c ~ml =
           (ml_mangle member) (Flag_values.value_of (fenum.ens ^"::"^ member))
       ) fenum.emembers;
     print ml "  | `%s x -> Int64.of_int x)" fallback;
-    print h "#define mlqt_%s_to_ocaml(v) mlqt_flag_to_ocaml((uint)v)" fconverter;
-    print h "#define mlqt_%s_from_ocaml(v) ((%s)mlqt_flag_from_ocaml(v))" fconverter fident
+    print h "#define cuite_%s_to_ocaml(v) cuite_flag_to_ocaml((uint)v)" fconverter;
+    print h "#define cuite_%s_from_ocaml(v) ((%s)cuite_flag_from_ocaml(v))" fconverter fident
   in
   List.iter enum (all_enum ());
   List.iter flags (all_flags ());
