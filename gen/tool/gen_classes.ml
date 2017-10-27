@@ -187,17 +187,19 @@ let cfield ~h ~c ~ml cl = function
       (if args = [] then "unit" else String.concat " * " (List.map (qtype_ml_posname) args))
       (cl_c_name cl.cl) uname
 
-let gen ?c ~mltype ~ml () =
+let gen ?c ~ml () =
   List.iter (fun cl ->
-      match cl.cl.cl_extend with
+      begin match cl.cl.cl_extend with
       | None ->
-        print mltype "type %s = [`%s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl))
+        print ml "type %s = [`%s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl))
       | Some cl' ->
-        print mltype "type %s = [`%s | %s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl')
+        print ml "type %s = [`%s | %s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl')
+      end;
+      print ml "module %s = Cuite__%s" (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl.cl)
     ) (all_class ());
-  List.iter (print ml "%s") (all_ml_decl ());
   with_file "cuite_stubs.gen.h" @@ fun h ->
   List.iter (fun cl ->
+      with_file (sprint "cuite__%s.mli" (cl_ml_name cl.cl)) @@ fun ml ->
       let name = c_mangle (cl_c_name cl.cl) in
       begin match c with
         | None ->
@@ -207,7 +209,6 @@ let gen ?c ~mltype ~ml () =
       end @@ fun c ->
       let fields = List.rev cl.cl.cl_fields in
       List.iter (constructor ~h ~c ~ml cl) fields;
-      print ml "module %s = struct" (ml_mangle (cl_c_name cl.cl));
       begin match cl.cl.cl_extend with
         | None -> ()
         | Some cl' -> print ml "  include %s" (cl_c_name cl')
@@ -224,5 +225,4 @@ let gen ?c ~mltype ~ml () =
       in
       qmetaobject cl.cl;
       List.iter (cfield ~h ~c ~ml cl) fields;
-      print ml "end"
     ) (all_class ())

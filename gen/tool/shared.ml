@@ -95,7 +95,6 @@ and qenum = { ens : string; ename : string; emembers: string list; econverter: s
 and qflags = { fns : string; fname : string; fenum: qenum; fconverter: string }
 
 let all_class = ref []
-let all_ml_decl : string list ref = ref []
 
 let custom_type ?(deletable=false) ?converter ?ml_pos ?ml_neg ?c_neg c_name =
   let ml_posname = match ml_pos with
@@ -239,13 +238,9 @@ let qflags fns fname qenum =
   all_flags := t :: !all_flags;
   QFlags t
 
-let ml_declaration decls =
-  all_ml_decl := List.rev_append decls !all_ml_decl
-
 let all_class () = List.rev !all_class
 let all_enum () = List.rev !all_enum
 let all_flags () = List.rev !all_flags
-let all_ml_decl () = List.rev !all_ml_decl
 
 let const = function
   | Custom custom ->
