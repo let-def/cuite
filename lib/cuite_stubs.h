@@ -5,7 +5,7 @@
 
 #include "cuite_support.h"
 #include "cuite_wrappers.h"
-#include "cuite_qvariant.h"
+#include "cuite_variant.h"
 
 #include <QtWidgets>
 #include "cuite_const.h"

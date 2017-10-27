@@ -1,5 +1,5 @@
-#include "cuite_qvariant.h"
-#include "cuite_lib.h"
+#include "cuite_variant.h"
+#include "cuite_wrappers.h"
 #include <caml/alloc.h>
 #include <QDebug>
 
