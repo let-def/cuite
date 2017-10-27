@@ -29,11 +29,3 @@ val prev_sibling : [> `QObject] t -> [`QObject] t option
 val next_sibling : [> `QObject] t -> [`QObject] t option
 val parent : [> `QObject] t -> [`QObject] t option
 val children : [> `QObject] t -> [`QObject] t option
-
-(* Common types *)
-type qRect   = { rx: int; ry: int; rw: int; rh: int }
-type qRectF  = { rxf: float; ryf: float; rwf: float; rhf: float }
-type qPoint  = { px: int; py: int }
-type qPointF = { pxf: float; pyf: float }
-type qSize   = { sx: int ; sy: int }
-type qSizeF  = { sxf: float ; syf: float }

@@ -17,13 +17,17 @@ CPP_SOURCES=$(wildcard *.gen.cpp) \
 libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $^
 
-ML_SOURCES = 													 \
+BOOT_SOURCES =												 \
 	cuite__flags.mli   cuite__flags.ml 	 \
 	cuite__alloc.mli   cuite__alloc.ml 	 \
-	cuite__qt.mli		   cuite__qt.ml      \
+	cuite__qt.mli		   cuite__qt.ml
+
+BOOT_CMO = $(patsubst %.ml,%.cmo, $(patsubst %.mli,, $(BOOT_SOURCES)))
+BOOT_CMX = $(patsubst %.ml,%.cmx, $(patsubst %.mli,, $(BOOT_SOURCES)))
+
+OTHER_SOURCES = 											 \
 	cuite__variant.mli cuite__variant.ml \
-	cuite__models.ml 										 \
-	cuite.ml
+	cuite__models.ml 									
 
 ## RULES
 
@@ -44,8 +48,33 @@ ML_SOURCES = 													 \
 
 PWD=$(shell pwd)
 
-cuite.cma: $(ML_SOURCES) | libcuite.so
+pre.cmo: $(BOOT_SOURCES)
+	$(OCAMLC) -c $^
+
+pre.cmx: $(BOOT_SOURCES)
+	$(OCAMLOPT) -c $^
+
+$(BOOT_CMO): pre.cmo
+
+$(BOOT_CMX): pre.cmx
+
+%.cmi: %.mli
+	$(OCAMLC) -c $<
+
+%.cmo: %.ml
+	$(OCAMLC) -c $<
+
+%.cmx: %.ml
+	$(OCAMLOPT) -c $<
+
+cuite.cmo: cuite.ml | pre.cmo
+	$(OCAMLC) -c -no-alias-deps $^
+
+cuite.cmx: cuite.ml | pre.cmx
+	$(OCAMLOPT) -c -no-alias-deps $^
+
+cuite.cma: $(BOOT_CMO) cuite.cmo $(OTHER_SOURCES) | libcuite.so
 	$(OCAMLC) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(PWD) $^
 
-cuite.cmxa: $(ML_SOURCES) | libcuite.so
+cuite.cmxa: $(BOOT_CMX) cuite.cmx $(OTHER_SOURCES) | libcuite.so
 	$(OCAMLOPT) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(PWD) $^

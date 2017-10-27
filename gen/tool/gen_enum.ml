@@ -61,8 +61,8 @@ let gen ~h ~c ~ml =
     let eident = fenum.ens ^ "::" ^ fenum.ename in
     let fmangled = ml_val_mangle fident in
     let emangled = ml_val_mangle eident in
-    print ml "type %s = %s Qflags.t" fmangled emangled;
-    print ml "let %s : %s Qflags.set = Qflags.define (function" fmangled emangled;
+    print ml "type %s = %s QFlags.t" fmangled emangled;
+    print ml "let %s : %s QFlags.set = QFlags.define (function" fmangled emangled;
     List.iter (fun member ->
         print ml "  | `%s -> 0x%04LxL"
           (ml_mangle member) (Flag_values.value_of (fenum.ens ^"::"^ member))

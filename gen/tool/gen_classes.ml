@@ -195,28 +195,29 @@ let gen ?c ~ml () =
       | Some cl' ->
         print ml "type %s = [`%s | %s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl')
       end;
-      print ml "module %s = Cuite___%s" (cl_Ml_name cl.cl) (cl_c_name cl.cl)
+      print ml "module %s = Cuite___%s" (cl_Ml_name cl.cl) (cl_fs_name cl.cl)
     ) (all_class ());
   with_file "cuite_stubs.gen.h" @@ fun h ->
   List.iter (fun cl ->
-      with_file (sprint "cuite__%s.mli" (cl_c_name cl.cl)) @@ fun ml ->
-      let name = c_mangle (cl_c_name cl.cl) in
+      let fs_name = cl_fs_name cl.cl in
       begin match c with
         | None ->
-          (fun f -> with_file ("cuite_" ^ name ^ ".gen.cpp")
+          (fun f -> with_file (sprint "cuite_%s.gen.cpp" fs_name)
               (fun c -> print c "#include \"cuite_stubs.h\""; f c))
         | Some c -> (fun f -> f c)
       end @@ fun c ->
       let fields = List.rev cl.cl.cl_fields in
       List.iter (constructor ~h ~c ~ml cl) fields;
+      with_file (sprint "cuite___%s.mli" fs_name) @@ fun ml ->
+      ml "open Cuite";
       begin match cl.cl.cl_extend with
         | None -> ()
-        | Some cl' -> print ml "  include Cuite___%s" (cl_c_name cl')
+        | Some cl' -> print ml "include (module type of Cuite___%s)" (cl_fs_name cl')
       end;
       let rec qmetaobject cl' =
         if cl_c_name cl' = "QObject" then (
           print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
-          print ml "  external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
+          print ml "external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
             (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
         )
         else match cl'.cl_extend with

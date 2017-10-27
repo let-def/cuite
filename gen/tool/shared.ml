@@ -347,5 +347,6 @@ let qtype_c_check_use_after_free o qtype var =
     )
 
 let cl_c_name cl = cl.cl_name
+let cl_fs_name cl = c_mangle cl.cl_name
 let cl_ml_name cl = ml_val_mangle cl.cl_name
 let cl_Ml_name cl = String.capitalize_ascii (ml_val_mangle cl.cl_name)

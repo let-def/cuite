@@ -1,6 +1,5 @@
-open Cuite_types
+open Cuite
 
-type 'a qt = 'a Qt.t
 type 'a qOCamlTableModel = [ `QOCamlTableModel of 'a | qAbstractTableModel ]
 
 type 'a qOCamlTableModel'callback = {
@@ -17,7 +16,7 @@ type 'a qOCamlTableModel'callback = {
 let qOCamlTableModel'callback
     ~row_count ~column_count ~data
     ?(header_data = fun _ _ _ _ _ -> QVariant.null)
-    ?(flags = fun _ _ _ -> Qflags.empty)
+    ?(flags = fun _ _ _ -> QFlags.empty)
     ?(set_data = fun _ _ _ _ _ -> false)
     ?(insert_rows = fun _ _ _ _ _ -> None)
     ?(remove_rows  = fun _ _ _ _ _ -> None)

@@ -1,27 +1,26 @@
 open Cuite
-open Cuite_types
 
 let add_dialog ?edit parent =
-  let dialog = new'QDialog parent Qflags.empty in
-  let name_label = new'QLabel'1 "Name" None Qflags.empty in
-  let address_label = new'QLabel'1 "Address" None Qflags.empty in
+  let dialog = new'QDialog parent QFlags.empty in
+  let name_label = new'QLabel'1 "Name" None QFlags.empty in
+  let address_label = new'QLabel'1 "Address" None QFlags.empty in
   let ok_button = new'QPushButton'1 "OK" None in
   let cancel_button = new'QPushButton'1 "Cancel" None in
   let name_text = new'QLineEdit None in
   let address_text = new'QTextEdit None in
   let grid_layout = new'QGridLayout None in
   QGridLayout.setColumnStretch grid_layout 1 2;
-  QGridLayout.addWidget grid_layout name_label 0 0 Qflags.empty;
-  QGridLayout.addWidget grid_layout name_text 0 1 Qflags.empty;
+  QGridLayout.addWidget grid_layout name_label 0 0 QFlags.empty;
+  QGridLayout.addWidget grid_layout name_text 0 1 QFlags.empty;
   QGridLayout.addWidget grid_layout address_label 1 0
-    (Qflags.of_list qt'Alignment [`AlignLeft; `AlignTop]);
+    (QFlags.of_list qt'Alignment [`AlignLeft; `AlignTop]);
   QGridLayout.addWidget grid_layout address_text 1 1
-    (Qflags.singleton qt'Alignment `AlignLeft);
+    (QFlags.singleton qt'Alignment `AlignLeft);
   let button_layout = new'QHBoxLayout () in
-  QHBoxLayout.addWidget button_layout ok_button 0 Qflags.empty;
-  QHBoxLayout.addWidget button_layout cancel_button 0 Qflags.empty;
+  QHBoxLayout.addWidget button_layout ok_button 0 QFlags.empty;
+  QHBoxLayout.addWidget button_layout cancel_button 0 QFlags.empty;
   QGridLayout.addLayout grid_layout button_layout 2 1
-    (Qflags.singleton qt'Alignment `AlignRight);
+    (QFlags.singleton qt'Alignment `AlignRight);
   let main_layout = new'QVBoxLayout () in
   QVBoxLayout.addLayout main_layout grid_layout 0;
   QDialog.setLayout dialog (Some main_layout);
@@ -52,7 +51,7 @@ let new_address_tab ~send_details parent =
   let tab = new'QWidget parent in
   let description_label = new'QLabel'1
       "There are currently no contacts in your address book.\n\
-       Click Add to add new contacts." None Qflags.empty
+       Click Add to add new contacts." None QFlags.empty
   in
   let add_button = new'QPushButton'1 "Add" None in
   Qt.connect' add_button (QPushButton.signal'clicked1 ()) (fun _ ->
@@ -61,8 +60,8 @@ let new_address_tab ~send_details parent =
       | None -> ()
     );
   let main_layout = new'QVBoxLayout () in
-  QVBoxLayout.addWidget main_layout description_label 0 Qflags.empty;
-  QVBoxLayout.addWidget main_layout add_button 0 (Qflags.singleton qt'Alignment `AlignCenter);
+  QVBoxLayout.addWidget main_layout description_label 0 QFlags.empty;
+  QVBoxLayout.addWidget main_layout add_button 0 (QFlags.singleton qt'Alignment `AlignCenter);
   QWidget.setLayout tab (Some main_layout);
   tab
 
@@ -79,7 +78,7 @@ let setup_tab self table group ~selection_changed =
     setSelectionBehavior tableview `SelectRows;
     QHeaderView.setStretchLastSection (horizontalHeader tableview) true;
     QHeaderView.hide (verticalHeader tableview);
-    setEditTriggers tableview (Qflags.singleton qAbstractItemView'EditTriggers `NoEditTriggers);
+    setEditTriggers tableview (QFlags.singleton qAbstractItemView'EditTriggers `NoEditTriggers);
     setSelectionMode tableview `SingleSelection;
     setSortingEnabled tableview true;
   );
@@ -219,7 +218,7 @@ let list_model =
           )
       )
     ~flags:(fun _ self index ->
-        Qflags.of_list qt'ItemFlags [`ItemIsEnabled; `ItemIsSelectable]
+        QFlags.of_list qt'ItemFlags [`ItemIsEnabled; `ItemIsSelectable]
       )
     ()
 
@@ -239,7 +238,7 @@ let address_widget parent ~send_details ~selection_changed =
   (new_address_tab, table, self)
 
 let main_window () =
-  let self = new'QMainWindow None Qflags.empty in
+  let self = new'QMainWindow None QFlags.empty in
   let update_actions = ref ignore in
   let selection_changed x = !update_actions x in
   let new_address_tab, table, address_widget =

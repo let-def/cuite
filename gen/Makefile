@@ -6,11 +6,11 @@ all: ../lib/cuite.ml ../lib/cuite_stubs.gen.cpp ../lib/cuite_stubs.gen.h ../lib/
 	ocamlc -g -o /tmp/driver -I tool $^
 	cd ../lib && /tmp/driver
 
-../lib/cuite.ml ../lib/cuite_stubs.gen.h ../lib/cuite_const.cpp ../lib/cuite_const.h: ../lib/cuite.ml
+../lib/cuite.ml ../lib/cuite_stubs.gen.h ../lib/cuite_const.cpp ../lib/cuite_const.h: ../lib/cuite_stubs.gen.cpp
 
 flag_values.ml: tool/shared.ml $(foreach LIB,$(LIBS),$(LIB)_enum.ml) tool/gen_value.ml
 	ocamlc -g -o /tmp/gen_value -I tool $^
 	/tmp/gen_value > flag_values.ml
 
 clean:
-	rm -f *.cm?
+	rm -f *.cm? flag_values.ml

@@ -9,6 +9,13 @@ let () =
   ml "";
   ml "type 'a qt = 'a Qt.t";
   ml "";
+  ml "type qRect   = { rx: int; ry: int; rw: int; rh: int }";
+  ml "type qRectF  = { rxf: float; ryf: float; rwf: float; rhf: float }";
+  ml "type qPoint  = { px: int; py: int }";
+  ml "type qPointF = { pxf: float; pyf: float }";
+  ml "type qSize   = { sx: int ; sy: int }";
+  ml "type qSizeF  = { sxf: float ; syf: float }";
+  ml "";
   begin
     with_file "cuite_const.gen.h" @@ fun h ->
     with_file "cuite_const.gen.cpp" @@ fun c ->

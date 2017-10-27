@@ -848,14 +848,14 @@ let () = with_class qSignalBlocker [
     dynamic "reblock" [];
     dynamic "unblock" [];
   ]
-let () = with_class qFlag [
+(*let () = with_class qFlag [
     constructor "" [arg "value" int];
     constructor "" [];
     constructor "" [arg "value" uint];
     constructor "" [arg "value" short];
     constructor "" [arg "value" ushort];
     constructor "" [];
-  ]
+  ]*)
 let () = with_class qMutexLocker [
     constructor "" [arg "mutex" qMutex];
     dynamic "unlock" [];
@@ -4112,7 +4112,7 @@ let () = with_class qHash'const_iterator [
     (*dynamic "operator+=" [arg "j" int] ~ret:const_iterator;*)
     (*dynamic "operator-=" [arg "j" int] ~ret:const_iterator;*)
   ]
-let () = with_class qFlags [
+(*let () = with_class qFlags [
     constructor "" [arg "other" qFlags];
     (*dynamic "operator=" [arg "other" qFlags] ~ret:qFlags;*)
     constructor "" [arg "flag" enum];
@@ -4138,7 +4138,7 @@ let () = with_class qFlags [
     (*dynamic "operator!" [] ~ret:bool;*)
     dynamic "testFlag" [arg "flag" enum] ~ret:bool;
     dynamic "setFlag" [arg "flag" enum;arg "on" bool] ~ret:qFlags;
-  ]
+  ]*)
 let () = with_class qLockFile [
     constructor "" [arg "fileName" qString];
     dynamic "lock" [] ~ret:bool;

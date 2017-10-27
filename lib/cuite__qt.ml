@@ -48,13 +48,6 @@ external connect : 'a t -> ('a, 't) signal -> (connection -> 't -> unit) -> conn
 external connect' : 'a t -> ('a, 't) signal -> ('t -> unit) -> unit = "cuite_connect0"
 external connect_by_name : 'a t -> string -> 'b t -> string -> unit = "cuite_connect_by_name0"
 
-type qRect   = { rx: int; ry: int; rw: int; rh: int }
-type qRectF  = { rxf: float; ryf: float; rwf: float; rhf: float }
-type qPoint  = { px: int; py: int }
-type qPointF = { pxf: float; pyf: float }
-type qSize   = { sx: int ; sy: int }
-type qSizeF  = { sxf: float ; syf: float }
-
 (* Object hierarchy *)
 let object_option (o : Obj.t) : [`QObject] t option =
   if o == Obj.repr ()
@@ -72,4 +65,3 @@ let parent x = object_option (parent x)
 
 external children : [> `QObject] t -> Obj.t = "cuite_children"
 let children x = object_option (children x)
-

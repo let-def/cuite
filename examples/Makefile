@@ -14,7 +14,7 @@ example_1: example_1.ml
 	$(CUITEOPT) -o $@ $^
 
 abook_addresswidget: abook_addresswidget.ml
-	$(CUITEOPT) -o $@ $^
+	$(CUITEOPT) -o $@ $^ -no-alias-deps
 
 test: test.ml
 	$(CUITEOPT) -o $@ $^
