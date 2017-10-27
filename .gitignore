@@ -1,4 +1,7 @@
 *.o
 *.cmo
 *.cmi
+*.cmx
+*.cma
+*.cmxa
 *.gen.*
