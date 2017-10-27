@@ -316,18 +316,18 @@ let qtype_c_negname qtype = match qtype with
 
 let qtype_ml_posname qtype = match qtype with
   | QClass { cl_qual = (`pointer | `ref); cl; _ } ->
-    sprint "%s Qt.t" (String.uncapitalize_ascii cl.cl_name)
+    sprint "%s qt" (String.uncapitalize_ascii cl.cl_name)
   | QClass { cl_qual = `optional; cl; _ } ->
-    sprint "%s Qt.t option" (String.uncapitalize_ascii cl.cl_name)
+    sprint "%s qt option" (String.uncapitalize_ascii cl.cl_name)
   | QEnum en -> ml_val_mangle (en.ens ^ "::" ^ en.ename)
   | QFlags fl -> ml_val_mangle (fl.fns ^ "::" ^ fl.fname)
   | Custom t -> t.ml_posname
 
 let qtype_ml_negname qtype = match qtype with
   | QClass { cl_qual = (`pointer | `ref); cl; _ } ->
-    sprint "[> %s] Qt.t" (String.uncapitalize_ascii cl.cl_name)
+    sprint "[> %s] qt" (String.uncapitalize_ascii cl.cl_name)
   | QClass { cl_qual = `optional; cl; _ } ->
-    sprint "[> %s] Qt.t option" (String.uncapitalize_ascii cl.cl_name)
+    sprint "[> %s] qt option" (String.uncapitalize_ascii cl.cl_name)
   | QEnum en -> ml_val_mangle (en.ens ^ "::" ^ en.ename)
   | QFlags fl -> ml_val_mangle (fl.fns ^ "::" ^ fl.fname)
   | Custom t -> t.ml_negname
