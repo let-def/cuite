@@ -10,12 +10,20 @@ clean:
 distclean: clean
 	rm -f *.a *.so
 
-CPP_SOURCES=$(wildcard *.gen.cpp) mlqt_models.cpp cuite_stubs.cpp mlqt_support.cpp mlqt_lib.cpp mlqt_qvariant.cpp mlqt_csupport.c cuite_const.cpp
+CPP_SOURCES=$(wildcard *.gen.cpp) \
+						cuite_models.cpp cuite_stubs.cpp cuite_support.cpp \
+						cuite_wrappers.cpp cuite_variant.cpp cuite_csupport.c
 
 libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $^
 
-ML_SOURCES= qflags.mli qflags.ml qt_ref.mli qt_ref.ml qt.mli qt.ml cuite_types.ml qVariant.mli qVariant.ml qModels.ml cuite.ml
+ML_SOURCES = 													 \
+	cuite__flags.mli   cuite__flags.ml 	 \
+	cuite__alloc.mli   cuite__alloc.ml 	 \
+	cuite__qt.mli		   cuite__qt.ml      \
+	cuite__variant.mli cuite__variant.ml \
+	cuite__models.ml 										 \
+	cuite.ml
 
 ## RULES
 

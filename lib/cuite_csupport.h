@@ -1,5 +1,5 @@
-#ifndef MLQT_CSUPPORT
-#define MLQT_CSUPPORT
+#ifndef CUITE_CSUPPORT
+#define CUITE_CSUPPORT
 
 #include "caml/mlvalues.h"
 
@@ -7,20 +7,20 @@
 extern "C" {
 #endif
 
-#define mlqt_assert(x) if (!(x)) abort()
+#define cuite_assert(x) if (!(x)) abort()
 
 typedef struct {
   void *block;
   int fill;
-} mlqt_region_t;
+} cuite_region_t;
 
-mlqt_region_t mlqt_region_enter(void);
-void mlqt_region_leave(mlqt_region_t region);
-value *mlqt_region_alloc(void);
-value *mlqt_region_allocn(int count);
+cuite_region_t cuite_region_enter(void);
+void cuite_region_leave(cuite_region_t region);
+value *cuite_region_alloc(void);
+value *cuite_region_allocn(int count);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* MLQT_SUPPORT */
+#endif /* CUITE_SUPPORT */

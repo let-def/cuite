@@ -3,9 +3,9 @@
 
 #include <caml/memory.h>
 
-#include "mlqt_support.h"
-#include "mlqt_lib.h"
-#include "mlqt_qvariant.h"
+#include "cuite_support.h"
+#include "cuite_wrappers.h"
+#include "cuite_qvariant.h"
 
 #include <QtWidgets>
 #include "cuite_const.h"

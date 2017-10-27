@@ -1,4 +1,4 @@
-#include "mlqt_csupport.h"
+#include "cuite_csupport.h"
 #include "caml/alloc.h"
 #include "caml/memory.h"
 #include "caml/callback.h"
@@ -24,7 +24,7 @@ static region_t *region_alloc()
   else
     result = malloc(sizeof(region_t) + sizeof(value) * 1024);
 
-  mlqt_assert (result);
+  cuite_assert (result);
   result->desc.next = NULL;
   result->desc.nitems = 0;
   result->desc.ntables = 1;
@@ -41,7 +41,7 @@ static void region_release(region_t *region)
     spare_region = region;
 }
 
-mlqt_region_t mlqt_region_enter(void)
+cuite_region_t cuite_region_enter(void)
 {
   if (region_root == NULL)
   {
@@ -50,15 +50,15 @@ mlqt_region_t mlqt_region_enter(void)
 
     root_sentinel.next = &region_root->desc;
     caml_local_roots = &root_sentinel;
-    return (mlqt_region_t){ .block = region_root, .fill = -1 };
+    return (cuite_region_t){ .block = region_root, .fill = -1 };
   }
   else
-    return (mlqt_region_t){ .block = region_root, .fill = region_root->desc.nitems };
+    return (cuite_region_t){ .block = region_root, .fill = region_root->desc.nitems };
 }
 
-void mlqt_region_leave(mlqt_region_t region)
+void cuite_region_leave(cuite_region_t region)
 {
-  mlqt_assert (region_root);
+  cuite_assert (region_root);
   while (region.block != root_sentinel.next)
   {
     region_t *current = (region_t*)root_sentinel.next;
@@ -67,7 +67,7 @@ void mlqt_region_leave(mlqt_region_t region)
   }
   if (region.fill == -1)
   {
-    mlqt_assert (caml_local_roots == &root_sentinel);
+    cuite_assert (caml_local_roots == &root_sentinel);
     caml_local_roots = region_root->desc.next;
     region_release(region_root);
     region_root = NULL;
@@ -76,9 +76,9 @@ void mlqt_region_leave(mlqt_region_t region)
     root_sentinel.next->nitems = region.fill;
 }
 
-value *mlqt_region_alloc(void)
+value *cuite_region_alloc(void)
 {
-  mlqt_assert (region_root);
+  cuite_assert (region_root);
   value *result;
 
   if (root_sentinel.next->nitems < 1024)
@@ -102,9 +102,9 @@ value *mlqt_region_alloc(void)
   return result;
 }
 
-value *mlqt_region_allocn(int count)
+value *cuite_region_allocn(int count)
 {
-  mlqt_assert (region_root && count <= 1024);
+  cuite_assert (region_root && count <= 1024);
   value *result;
 
   if (root_sentinel.next->nitems + count <= 1024)

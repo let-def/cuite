@@ -2,9 +2,9 @@
 #include <caml/callback.h>
 #include <QAbstractTableModel>
 #include <QtGui>
-#include "mlqt_support.h"
-#include "mlqt_lib.h"
-#include "mlqt_qvariant.h"
+#include "cuite_support.h"
+#include "cuite_wrappers.h"
+#include "cuite_qvariant.h"
 #include "cuite_const.h"
 
 class QOCamlTableModel : public QAbstractTableModel
@@ -38,14 +38,14 @@ QOCamlTableModel::QOCamlTableModel()
 {
 }
 
-external value mlqt_new_QOCamlTableModel(value _callbacks, value _payload)
+external value cuite_new_QOCamlTableModel(value _callbacks, value _payload)
 {
-  MLQT_Region region;
-  value& callbacks = mlqt_region_register(_callbacks);
-  value& payload = mlqt_region_register(_payload);
+  CUITE_Region region;
+  value& callbacks = cuite_region_register(_callbacks);
+  value& payload = cuite_region_register(_payload);
 
   QOCamlTableModel *model = new QOCamlTableModel();
-  value& v(mlqt_QObject_allocate_value(model, 2));
+  value& v(cuite_QObject_allocate_value(model, 2));
   Store_field(v, QObject_fields_count + 0, payload);
   Store_field(v, QObject_fields_count + 1, callbacks);
   printf("callbacks = %08x\nv = %08x\n", callbacks, v);
@@ -56,21 +56,21 @@ external value mlqt_new_QOCamlTableModel(value _callbacks, value _payload)
 
 #define PREPARE_CALL(n)                            \
   {                                                \
-    MLQT_Region region;                            \
-    value *_call_args = mlqt_region_allocn((n)+1); \
+    CUITE_Region region;                            \
+    value *_call_args = cuite_region_allocn((n)+1); \
     value *_call_top = _call_args
 
 #define CALL_CLOSURE(result, inj, closure)                                        \
     *_call_top = caml_callbackN_exn(closure, _call_top - _call_args, _call_args); \
     if (Is_exception_result(*_call_top))                                          \
-      mlqt_debug_aborted_callback(__func__, Extract_exception(*_call_top));       \
+      cuite_debug_aborted_callback(__func__, Extract_exception(*_call_top));       \
     else                                                                          \
       result = inj(*_call_top);                                                   \
   }
 
 #define PREPARE_METHOD(n, obj)                 \
   PREPARE_CALL((n)+2);                             \
-    value& _call_this = mlqt_QObject_to_ocaml(obj); \
+    value& _call_this = cuite_QObject_to_ocaml(obj); \
     PUSH_ARG(QOCamlTableModel_payload(_call_this)); \
     PUSH_ARG(_call_this)
 
@@ -81,7 +81,7 @@ int QOCamlTableModel::rowCount(const QModelIndex& parent) const
 {
   int result = 0;
   PREPARE_METHOD(1, this);
-    PUSH_ARG(mlqt_QModelIndex_to_ocaml(&parent));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(&parent));
     value cb = QOCamlTableModel_callback(_call_this, meth_row_count);
   CALL_CLOSURE(result, Long_val, cb);
   return result;
@@ -91,7 +91,7 @@ int QOCamlTableModel::columnCount(const QModelIndex& parent) const
 {
   int result = 0;
   PREPARE_METHOD(1, this);
-    PUSH_ARG(mlqt_QModelIndex_to_ocaml(&parent));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(&parent));
   CALL_METHOD(result, Long_val, meth_column_count);
   return result;
 }
@@ -100,9 +100,9 @@ QVariant QOCamlTableModel::data(const QModelIndex& index, int role) const
 {
   QVariant result;
   PREPARE_METHOD(2, this);
-    PUSH_ARG(mlqt_QModelIndex_to_ocaml(&index));
-    PUSH_ARG(mlqt_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
-  CALL_METHOD(result, mlqt_QVariant_from_ocaml, meth_data);
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
+  CALL_METHOD(result, cuite_QVariant_from_ocaml, meth_data);
   return result;
 }
 
@@ -111,9 +111,9 @@ QVariant QOCamlTableModel::headerData(int section, Qt::Orientation orientation, 
   QVariant result;
   PREPARE_METHOD(3, this);
     PUSH_ARG(Val_long(section));
-    PUSH_ARG(mlqt_Qt_Orientation_to_ocaml(orientation));
-    PUSH_ARG(mlqt_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
-  CALL_METHOD(result, mlqt_QVariant_from_ocaml, meth_header_data);
+    PUSH_ARG(cuite_Qt_Orientation_to_ocaml(orientation));
+    PUSH_ARG(cuite_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
+  CALL_METHOD(result, cuite_QVariant_from_ocaml, meth_header_data);
   return result;
 }
 
@@ -121,8 +121,8 @@ Qt::ItemFlags QOCamlTableModel::flags(const QModelIndex &index) const
 {
   Qt::ItemFlags result = 0;
   PREPARE_METHOD(1, this);
-    PUSH_ARG(mlqt_QModelIndex_to_ocaml(&index));
-  CALL_METHOD(result, mlqt_Qt_ItemFlags_from_ocaml, meth_flags);
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
+  CALL_METHOD(result, cuite_Qt_ItemFlags_from_ocaml, meth_flags);
   return result;
 }
 
@@ -130,9 +130,9 @@ bool QOCamlTableModel::setData(const QModelIndex &index, const QVariant &v, int 
 {
   bool result = false;
   PREPARE_METHOD(3, this);
-    PUSH_ARG(mlqt_QModelIndex_to_ocaml(&index));
-    PUSH_ARG(mlqt_QVariant_to_ocaml(&v));
-    PUSH_ARG(mlqt_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_QVariant_to_ocaml(&v));
+    PUSH_ARG(cuite_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
   CALL_METHOD(result, Val_bool, meth_set_data);
   return result;
 }
@@ -145,7 +145,7 @@ bool QOCamlTableModel::insertRows(int position, int rows, const QModelIndex &ind
   PREPARE_METHOD(3, this);
     PUSH_ARG(Val_long(position));
     PUSH_ARG(Val_long(rows));
-    PUSH_ARG(mlqt_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
   CALL_METHOD(result, ID, meth_insert_rows);
 
   if (result == Val_unit)
@@ -166,7 +166,7 @@ bool QOCamlTableModel::removeRows(int position, int rows, const QModelIndex &ind
   PREPARE_METHOD(3, this);
     PUSH_ARG(Val_long(position));
     PUSH_ARG(Val_long(rows));
-    PUSH_ARG(mlqt_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
   CALL_METHOD(result, ID, meth_remove_rows);
 
   if (result == Val_unit)

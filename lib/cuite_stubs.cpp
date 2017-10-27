@@ -1,8 +1,8 @@
 #include "cuite_stubs.h"
 
-external value mlqt_QApplication_new_(value args)
+external value cuite_QApplication_new_(value args)
 {
-  MLQT_Region region;
+  CUITE_Region region;
 
   static int argc;
   static char **argv = NULL;
@@ -19,6 +19,6 @@ external value mlqt_QApplication_new_(value args)
     argv[i] = strdup(String_val(Field(args, i)));
 
   QApplication *app = new QApplication(argc, argv);
-  mlqt_QObject_register_root(app, true);
-  return mlqt_QObject_to_ocaml(app);
+  cuite_QObject_register_root(app, true);
+  return cuite_QObject_to_ocaml(app);
 }

@@ -27,4 +27,4 @@ let qOCamlTableModel'callback
       insert_rows ; remove_rows }
 
 external new'QOCamlTableModel : 'a qOCamlTableModel'callback -> 'a -> 'a qOCamlTableModel qt =
-  "mlqt_new_QOCamlTableModel"
+  "cuite_new_QOCamlTableModel"
