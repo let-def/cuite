@@ -1,6 +1,7 @@
 OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
 CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib)
+PWD=$(shell pwd)
 
 all: libcuite.so cuite.cma cuite.cmxa
 
@@ -10,28 +11,11 @@ clean:
 distclean: clean
 	rm -f *.a *.so
 
+## C++ COMPILATION
+
 CPP_SOURCES=$(wildcard *.gen.cpp) \
 						cuite_models.cpp cuite_stubs.cpp cuite_support.cpp \
 						cuite_wrappers.cpp cuite_variant.cpp cuite_csupport.c
-
-libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
-	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $^
-
-BOOT_SOURCES =												 \
-	cuite__flags.mli   cuite__flags.ml 	 \
-	cuite__alloc.mli   cuite__alloc.ml 	 \
-	cuite__qt.mli		   cuite__qt.ml
-
-BOOT_CMO = $(patsubst %.ml,%.cmo, $(patsubst %.mli,, $(BOOT_SOURCES)))
-BOOT_CMX = $(patsubst %.ml,%.cmx, $(patsubst %.mli,, $(BOOT_SOURCES)))
-
-OTHER_SOURCES = 											 \
-	cuite__variant.mli cuite__variant.ml \
-	cuite__models.ml
-
-GEN_SOURCES = $(shell ocamldep.opt -sort cuite___*.ml)
-
-## RULES
 
 %.o: %.cpp %.h %.gen.cpp %.gen.h
 	$(CXX) -c $<
@@ -48,17 +32,19 @@ GEN_SOURCES = $(shell ocamldep.opt -sort cuite___*.ml)
 %.o: %.c
 	$(OCAMLC) -ccopt -fPIC -c $<
 
-PWD=$(shell pwd)
+libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
+	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $^
 
-pre.cmo: $(BOOT_SOURCES)
-	$(OCAMLC) -c $^
+## ML COMPILATION
 
-pre.cmx: $(BOOT_SOURCES)
-	$(OCAMLOPT) -c $^
+PRE_SOURCES = cuite__flags.mli cuite__flags.ml cuite__alloc.mli cuite__alloc.ml cuite__qt.mli cuite__qt.ml cuite.ml
+include Makefile.gen
+POST_SOURCES = cuite__variant.mli cuite__variant.ml cuite__models.ml
 
-$(BOOT_CMO): pre.cmo
-
-$(BOOT_CMX): pre.cmx
+PRE_BYTECODE  = $(patsubst %.ml,%.cmo,$(patsubst %.mli,%.cmi,$(PRE_SOURCES)))
+PRE_NATIVE    = $(patsubst %.ml,%.cmx,$(patsubst %.mli,%.cmi,$(PRE_SOURCES)))
+POST_BYTECODE = $(patsubst %.ml,%.cmo,$(patsubst %.mli,%.cmi,$(POST_SOURCES)))
+POST_NATIVE   = $(patsubst %.ml,%.cmx,$(patsubst %.mli,%.cmi,$(POST_SOURCES)))
 
 %.cmi: %.mli
 	$(OCAMLC) -c $<
@@ -69,14 +55,14 @@ $(BOOT_CMX): pre.cmx
 %.cmx: %.ml
 	$(OCAMLOPT) -c $<
 
-cuite.cmo: cuite.ml | pre.cmo
+cuite.cmo: cuite.ml
 	$(OCAMLC) -c -no-alias-deps $^
 
-cuite.cmx: cuite.ml | pre.cmx
+cuite.cmx: cuite.ml
 	$(OCAMLOPT) -c -no-alias-deps $^
 
-cuite.cma: $(BOOT_CMO) cuite.cmo $(OTHER_SOURCES) $(GEN_SOURCES) | libcuite.so
+cuite.cma: $(PRE_BYTECODE) $(GEN_BYTECODE) $(POST_BYTECODE) | libcuite.so
 	$(OCAMLC) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(PWD) $^
 
-cuite.cmxa: $(BOOT_CMX) cuite.cmx $(OTHER_SOURCES) $(GEN_SOURCES) | libcuite.so
+cuite.cmxa: $(PRE_NATIVE) $(GEN_NATIVE) $(POST_NATIVE) | libcuite.so
 	$(OCAMLOPT) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(PWD) $^
