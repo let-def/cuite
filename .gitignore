@@ -5,4 +5,5 @@
 *.cma
 *.cmxa
 *.gen.*
+cuite.ml
 cuite___*.ml
