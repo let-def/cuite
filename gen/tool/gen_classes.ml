@@ -29,7 +29,7 @@ let unique_name =
   let table = Hashtbl.create 7 in
   fun {cl} name ->
     let name = match name with
-      | "match" | "end" | "type" | "open" | "done" as kw -> kw^"_"
+      | "match" | "begin" | "end" | "type" | "open" | "done" | "object" as kw -> kw^"_"
       | name -> name
     in
     let key = (cl_c_name cl) ^ "_" ^ name in

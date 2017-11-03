@@ -1,5 +1,184 @@
 open Shared
 open QtCore_classes
+open QtGui_classes
+open QtGui_enum
+
+let () = with_class qSyntaxHighlighter [
+    (*constructor "" [arg "parent" qObject];*)
+    (*constructor "" [arg "parent" qTextDocument];*)
+    dynamic "setDocument" [arg "doc" qTextDocument];
+    dynamic "document" [] ~ret:qTextDocument;
+    dynamic "rehighlight" [];
+    dynamic "rehighlightBlock" [arg "block" qTextBlock];
+  ]
+let () = with_class qTextDocument [
+    constructor "" [arg "parent" qObject];
+    constructor "" [arg "text" qString;arg "parent" qObject];
+    dynamic "clone" [arg "parent" qObject] ~ret:qTextDocument;
+    dynamic "isEmpty" [] ~ret:bool;
+    dynamic "clear" [];
+    dynamic "setUndoRedoEnabled" [arg "enable" bool];
+    dynamic "isUndoRedoEnabled" [] ~ret:bool;
+    dynamic "isUndoAvailable" [] ~ret:bool;
+    dynamic "isRedoAvailable" [] ~ret:bool;
+    dynamic "availableUndoSteps" [] ~ret:int;
+    dynamic "availableRedoSteps" [] ~ret:int;
+    dynamic "revision" [] ~ret:int;
+    dynamic "setDocumentLayout" [arg "layout" qAbstractTextDocumentLayout];
+    dynamic "documentLayout" [] ~ret:qAbstractTextDocumentLayout;
+    dynamic "setMetaInformation" [arg "info" qTextDocument'MetaInformation; arg "string" qString];
+    dynamic "metaInformation" [arg "info" qTextDocument'MetaInformation] ~ret:qString;
+    dynamic "toHtml" [arg "encoding" qByteArray] ~ret:qString;
+    dynamic "setHtml" [arg "html" qString];
+    dynamic "toRawText" [] ~ret:qString;
+    dynamic "toPlainText" [] ~ret:qString;
+    dynamic "setPlainText" [arg "text" qString];
+    dynamic "characterAt" [arg "pos" int] ~ret:(reference qChar);
+    dynamic "find" [arg "subString" qString;arg "position" int;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
+    dynamic "find" [arg "subString" qString;arg "cursor" qTextCursor;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
+    dynamic "find" [arg "expr" qRegExp;arg "from" int;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
+    dynamic "find" [arg "expr" qRegExp;arg "cursor" qTextCursor;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
+    dynamic "find" [arg "expr" qRegularExpression;arg "from" int;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
+    dynamic "find" [arg "expr" qRegularExpression;arg "cursor" qTextCursor;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
+    dynamic "rootFrame" [] ~ret:qTextFrame;
+    dynamic "object" [arg "objectIndex" int] ~ret:qTextObject;
+    dynamic "objectForFormat" [arg "f" qTextFormat] ~ret:qTextObject;
+    dynamic "findBlock" [arg "pos" int] ~ret:qTextBlock;
+    dynamic "findBlockByNumber" [arg "blockNumber" int] ~ret:qTextBlock;
+    dynamic "findBlockByLineNumber" [arg "lineNumber" int] ~ret:qTextBlock;
+    dynamic "begin" [] ~ret:qTextBlock;
+    dynamic "end" [] ~ret:qTextBlock;
+    dynamic "firstBlock" [] ~ret:qTextBlock;
+    dynamic "lastBlock" [] ~ret:qTextBlock;
+    dynamic "setPageSize" [arg "size" qSizeF];
+    dynamic "pageSize" [] ~ret:qSizeF;
+    dynamic "setDefaultFont" [arg "font" qFont];
+    dynamic "defaultFont" [] ~ret:qFont;
+    dynamic "pageCount" [] ~ret:int;
+    dynamic "isModified" [] ~ret:bool;
+    (*dynamic "print" [arg "printer" qPagedPaintDevice];*)
+    dynamic "resource" [arg "type" int;arg "name" qUrl] ~ret:qVariant;
+    dynamic "addResource" [arg "type" int;arg "name" qUrl;arg "resource" qVariant];
+    (*dynamic "allFormats" [] ~ret:qVector<QTextFormat>;*)
+    dynamic "markContentsDirty" [arg "position" int;arg "length" int];
+    dynamic "setUseDesignMetrics" [arg "b" bool];
+    dynamic "useDesignMetrics" [] ~ret:bool;
+    dynamic "drawContents" [arg "p" qPainter;arg "rect" qRectF];
+    dynamic "setTextWidth" [arg "width" qreal];
+    dynamic "textWidth" [] ~ret:qreal;
+    dynamic "idealWidth" [] ~ret:qreal;
+    dynamic "indentWidth" [] ~ret:qreal;
+    dynamic "setIndentWidth" [arg "width" qreal];
+    dynamic "documentMargin" [] ~ret:qreal;
+    dynamic "setDocumentMargin" [arg "margin" qreal];
+    dynamic "adjustSize" [];
+    dynamic "size" [] ~ret:qSizeF;
+    dynamic "blockCount" [] ~ret:int;
+    dynamic "lineCount" [] ~ret:int;
+    dynamic "characterCount" [] ~ret:int;
+    dynamic "setDefaultStyleSheet" [arg "sheet" qString];
+    dynamic "defaultStyleSheet" [] ~ret:qString;
+    dynamic "undo" [arg "cursor" (pointer qTextCursor)];
+    dynamic "redo" [arg "cursor" (pointer qTextCursor)];
+    (*dynamic "clearUndoRedoStacks" [arg "stacksToClear" stacks];*)
+    dynamic "maximumBlockCount" [] ~ret:int;
+    dynamic "setMaximumBlockCount" [arg "maximum" int];
+    (*dynamic "defaultTextOption" [] ~ret:qTextOption;*)
+    (*dynamic "setDefaultTextOption" [arg "option" qTextOption];*)
+    dynamic "baseUrl" [] ~ret:qUrl;
+    dynamic "setBaseUrl" [arg "url" qUrl];
+    dynamic "defaultCursorMoveStyle" [] ~ret:QtCore_enum.qt'CursorMoveStyle;
+    dynamic "setDefaultCursorMoveStyle" [arg "style" QtCore_enum.qt'CursorMoveStyle];
+    dynamic "contentsChange" [arg "position" int;arg "charsRemoved" int;arg "charsAdded" int];
+    dynamic "contentsChanged" [];
+    dynamic "undoAvailable" [arg "available" bool];
+    dynamic "redoAvailable" [arg "available" bool];
+    dynamic "undoCommandAdded" [];
+    dynamic "modificationChanged" [arg "changed" bool];
+    dynamic "cursorPositionChanged" [arg "cursor" qTextCursor];
+    dynamic "blockCountChanged" [arg "newBlockCount" int];
+    dynamic "baseUrlChanged" [arg "url" qUrl];
+    dynamic "documentLayoutChanged" [];
+    dynamic "undo" [];
+    dynamic "redo" [];
+    dynamic "setModified" [arg "m" bool];
+  ]
+
+let () = with_class qFont [
+    constructor "" [];
+    constructor "" [arg "family" qString;arg "pointSize" int;arg "weight" int;arg "italic" bool];
+    (*constructor "" [arg "font" qFont;arg "pd" qPaintDevice];*)
+    constructor "" [arg "font" qFont];
+    (*dynamic "swap" [arg "other" qFont];*)
+    dynamic "family" [] ~ret:qString;
+    dynamic "setFamily" [arg "family" qString];
+    dynamic "styleName" [] ~ret:qString;
+    dynamic "setStyleName" [arg "styleName" qString];
+    dynamic "pointSize" [] ~ret:int;
+    dynamic "setPointSize" [arg "pointSize" int];
+    dynamic "pointSizeF" [] ~ret:qreal;
+    dynamic "setPointSizeF" [arg "pointSize" qreal];
+    dynamic "pixelSize" [] ~ret:int;
+    dynamic "setPixelSize" [arg "pixelSize" int];
+    dynamic "weight" [] ~ret:int;
+    dynamic "setWeight" [arg "weight" int];
+    dynamic "bold" [] ~ret:bool;
+    dynamic "setBold" [arg "enable" bool];
+    dynamic "setStyle" [arg "style" qFont'Style];
+    dynamic "style" [] ~ret:qFont'Style;
+    dynamic "italic" [] ~ret:bool;
+    dynamic "setItalic" [arg "enable" bool];
+    dynamic "underline" [] ~ret:bool;
+    dynamic "setUnderline" [arg "enable" bool];
+    dynamic "overline" [] ~ret:bool;
+    dynamic "setOverline" [arg "enable" bool];
+    dynamic "strikeOut" [] ~ret:bool;
+    dynamic "setStrikeOut" [arg "enable" bool];
+    dynamic "fixedPitch" [] ~ret:bool;
+    dynamic "setFixedPitch" [arg "enable" bool];
+    dynamic "kerning" [] ~ret:bool;
+    dynamic "setKerning" [arg "enable" bool];
+    dynamic "styleHint" [] ~ret:qFont'StyleHint;
+    dynamic "styleStrategy" [] ~ret:qFont'StyleStrategy;
+    dynamic "setStyleHint" [arg "hint" qFont'StyleHint;arg "strategy" qFont'StyleStrategy];
+    dynamic "setStyleStrategy" [arg "s" qFont'StyleStrategy];
+    dynamic "stretch" [] ~ret:int;
+    dynamic "setStretch" [arg "factor" int];
+    dynamic "letterSpacing" [] ~ret:qreal;
+    dynamic "letterSpacingType" [] ~ret:qFont'SpacingType;
+    dynamic "setLetterSpacing" [arg "type" qFont'SpacingType;arg "spacing" qreal];
+    dynamic "wordSpacing" [] ~ret:qreal;
+    dynamic "setWordSpacing" [arg "spacing" qreal];
+    dynamic "setCapitalization" [arg "caps" qFont'Capitalization];
+    dynamic "capitalization" [] ~ret:qFont'Capitalization;
+    dynamic "setHintingPreference" [arg "hintingPreference" qFont'HintingPreference];
+    dynamic "hintingPreference" [] ~ret:qFont'HintingPreference;
+    dynamic "rawMode" [] ~ret:bool;
+    dynamic "setRawMode" [arg "enable" bool];
+    dynamic "exactMatch" [] ~ret:bool;
+    (*dynamic "operator=" [arg "font" qFont] ~ret:qFont;*)
+    (*dynamic "operator==" [arg "f" qFont] ~ret:bool;*)
+    (*dynamic "operator!=" [arg "f" qFont] ~ret:bool;*)
+    (*dynamic "operator<" [arg "f" qFont] ~ret:bool;*)
+    dynamic "isCopyOf" [arg "f" qFont] ~ret:bool;
+    (*dynamic "operator=" [arg "other" qFont] ~ret:qFont;*)
+    dynamic "setRawName" [arg "name" qString];
+    dynamic "rawName" [] ~ret:qString;
+    dynamic "key" [] ~ret:qString;
+    dynamic "toString" [] ~ret:qString;
+    dynamic "fromString" [arg "descrip" qString] ~ret:bool;
+    static  "substitute" [arg "familyName" qString] ~ret:qString;
+    static  "substitutes" [arg "familyName" qString] ~ret:qStringList;
+    static  "substitutions" [] ~ret:qStringList;
+    static  "insertSubstitution" [arg "familyName" qString;arg "substituteName" qString];
+    static  "insertSubstitutions" [arg "familyName" qString;arg "substituteNames" qStringList];
+    static  "removeSubstitutions" [arg "familyName" qString];
+    (*static  "removeSubstitution" [arg "familyName" qString];*)
+    dynamic "defaultFamily" [] ~ret:qString;
+    dynamic "lastResortFamily" [] ~ret:qString;
+    dynamic "lastResortFont" [] ~ret:qString;
+    dynamic "resolve" [arg "other" qFont] ~ret:qFont;
+  ]
 
 (*let () = with_class qGuiApplication [
     constructor "" [(*arg "argc" int;arg "argv" char*)];
@@ -2755,82 +2934,6 @@ let () = with_class qTransform [
     dynamic "operator-=" [arg "scalar" qreal] ~ret:qTransform;
     static  "fromTranslate" [arg "dx" qreal;arg "dy" qreal] ~ret:qTransform;
     static  "fromScale" [arg "sx" qreal;arg "sy" qreal] ~ret:qTransform;
-  ]
-let () = with_class qFont [
-    constructor "" [];
-    constructor "" [arg "family" qString;arg "pointSize" int;arg "weight" int;arg "italic" bool];
-    constructor "" [arg "font" qFont;arg "pd" qPaintDevice];
-    constructor "" [arg "font" qFont];
-    dynamic "swap" [arg "other" qFont];
-    dynamic "family" [] ~ret:qString;
-    dynamic "setFamily" [arg "family" qString];
-    dynamic "styleName" [] ~ret:qString;
-    dynamic "setStyleName" [arg "styleName" qString];
-    dynamic "pointSize" [] ~ret:int;
-    dynamic "setPointSize" [arg "pointSize" int];
-    dynamic "pointSizeF" [] ~ret:qreal;
-    dynamic "setPointSizeF" [arg "pointSize" qreal];
-    dynamic "pixelSize" [] ~ret:int;
-    dynamic "setPixelSize" [arg "pixelSize" int];
-    dynamic "weight" [] ~ret:int;
-    dynamic "setWeight" [arg "weight" int];
-    dynamic "bold" [] ~ret:bool;
-    dynamic "setBold" [arg "enable" bool];
-    dynamic "setStyle" [arg "style" style];
-    dynamic "style" [] ~ret:style;
-    dynamic "italic" [] ~ret:bool;
-    dynamic "setItalic" [arg "enable" bool];
-    dynamic "underline" [] ~ret:bool;
-    dynamic "setUnderline" [arg "enable" bool];
-    dynamic "overline" [] ~ret:bool;
-    dynamic "setOverline" [arg "enable" bool];
-    dynamic "strikeOut" [] ~ret:bool;
-    dynamic "setStrikeOut" [arg "enable" bool];
-    dynamic "fixedPitch" [] ~ret:bool;
-    dynamic "setFixedPitch" [arg "enable" bool];
-    dynamic "kerning" [] ~ret:bool;
-    dynamic "setKerning" [arg "enable" bool];
-    dynamic "styleHint" [] ~ret:styleHint;
-    dynamic "styleStrategy" [] ~ret:styleStrategy;
-    dynamic "setStyleHint" [arg "hint" styleHint;arg "strategy" styleStrategy];
-    dynamic "setStyleStrategy" [arg "s" styleStrategy];
-    dynamic "stretch" [] ~ret:int;
-    dynamic "setStretch" [arg "factor" int];
-    dynamic "letterSpacing" [] ~ret:qreal;
-    dynamic "letterSpacingType" [] ~ret:spacingType;
-    dynamic "setLetterSpacing" [arg "type" spacingType;arg "spacing" qreal];
-    dynamic "wordSpacing" [] ~ret:qreal;
-    dynamic "setWordSpacing" [arg "spacing" qreal];
-    dynamic "setCapitalization" [arg "caps" capitalization];
-    dynamic "capitalization" [] ~ret:capitalization;
-    dynamic "setHintingPreference" [arg "hintingPreference" hintingPreference];
-    dynamic "hintingPreference" [] ~ret:hintingPreference;
-    dynamic "rawMode" [] ~ret:bool;
-    dynamic "setRawMode" [arg "enable" bool];
-    dynamic "exactMatch" [] ~ret:bool;
-    dynamic "operator=" [arg "font" qFont] ~ret:qFont;
-    dynamic "operator==" [arg "f" qFont] ~ret:bool;
-    dynamic "operator!=" [arg "f" qFont] ~ret:bool;
-    dynamic "operator<" [arg "f" qFont] ~ret:bool;
-    constructor "" [];
-    dynamic "isCopyOf" [arg "f" qFont] ~ret:bool;
-    dynamic "operator=" [arg "other" qFont] ~ret:qFont;
-    dynamic "setRawName" [arg "name" qString];
-    dynamic "rawName" [] ~ret:qString;
-    dynamic "key" [] ~ret:qString;
-    dynamic "toString" [] ~ret:qString;
-    dynamic "fromString" [arg "descrip" qString] ~ret:bool;
-    static  "substitute" [arg "familyName" qString] ~ret:qString;
-    static  "substitutes" [arg "familyName" qString] ~ret:qStringList;
-    static  "substitutions" [] ~ret:qStringList;
-    static  "insertSubstitution" [arg "familyName" qString;arg "substituteName" qString];
-    static  "insertSubstitutions" [arg "familyName" qString;arg "substituteNames" qStringList];
-    static  "removeSubstitutions" [arg "familyName" qString];
-    static  "removeSubstitution" [arg "familyName" qString];
-    dynamic "defaultFamily" [] ~ret:qString;
-    dynamic "lastResortFamily" [] ~ret:qString;
-    dynamic "lastResortFont" [] ~ret:qString;
-    dynamic "resolve" [arg "other" qFont] ~ret:qFont;
   ]
 let () = with_class qPointingDeviceUniqueId [
     constructor "" [];
@@ -19821,106 +19924,6 @@ let () = with_class qAbstractTextDocumentLayout [
     dynamic "updateBlock" [arg "block" qTextBlock];
     dynamic "documentSizeChanged" [arg "newSize" qSizeF];
     dynamic "pageCountChanged" [arg "newPages" int];
-  ]
-let () = with_class qSyntaxHighlighter [
-    constructor "" [arg "parent" qObject];
-    constructor "" [arg "parent" qTextDocument];
-    dynamic "setDocument" [arg "doc" qTextDocument];
-    dynamic "document" [] ~ret:qTextDocument;
-    dynamic "rehighlight" [];
-    dynamic "rehighlightBlock" [arg "block" qTextBlock];
-  ]
-let () = with_class qTextDocument [
-    constructor "" [arg "parent" qObject];
-    constructor "" [arg "text" qString;arg "parent" qObject];
-    dynamic "clone" [arg "parent" qObject] ~ret:qTextDocument;
-    dynamic "isEmpty" [] ~ret:bool;
-    dynamic "clear" [];
-    dynamic "setUndoRedoEnabled" [arg "enable" bool];
-    dynamic "isUndoRedoEnabled" [] ~ret:bool;
-    dynamic "isUndoAvailable" [] ~ret:bool;
-    dynamic "isRedoAvailable" [] ~ret:bool;
-    dynamic "availableUndoSteps" [] ~ret:int;
-    dynamic "availableRedoSteps" [] ~ret:int;
-    dynamic "revision" [] ~ret:int;
-    dynamic "setDocumentLayout" [arg "layout" qAbstractTextDocumentLayout];
-    dynamic "documentLayout" [] ~ret:qAbstractTextDocumentLayout;
-    dynamic "setMetaInformation" [arg "info" metaInformation;arg "string" qString];
-    dynamic "metaInformation" [arg "info" metaInformation] ~ret:qString;
-    dynamic "toHtml" [arg "encoding" qByteArray] ~ret:qString;
-    dynamic "setHtml" [arg "html" qString];
-    dynamic "toRawText" [] ~ret:qString;
-    dynamic "toPlainText" [] ~ret:qString;
-    dynamic "setPlainText" [arg "text" qString];
-    dynamic "characterAt" [arg "pos" int] ~ret:qChar;
-    dynamic "find" [arg "subString" qString;arg "position" int;arg "options" findFlags] ~ret:qTextCursor;
-    dynamic "find" [arg "subString" qString;arg "cursor" qTextCursor;arg "options" findFlags] ~ret:qTextCursor;
-    dynamic "find" [arg "expr" qRegExp;arg "from" int;arg "options" findFlags] ~ret:qTextCursor;
-    dynamic "find" [arg "expr" qRegExp;arg "cursor" qTextCursor;arg "options" findFlags] ~ret:qTextCursor;
-    dynamic "find" [arg "expr" qRegularExpression;arg "from" int;arg "options" findFlags] ~ret:qTextCursor;
-    dynamic "find" [arg "expr" qRegularExpression;arg "cursor" qTextCursor;arg "options" findFlags] ~ret:qTextCursor;
-    dynamic "rootFrame" [] ~ret:qTextFrame;
-    dynamic "object" [arg "objectIndex" int] ~ret:qTextObject;
-    dynamic "objectForFormat" [arg "f" qTextFormat] ~ret:qTextObject;
-    dynamic "findBlock" [arg "pos" int] ~ret:qTextBlock;
-    dynamic "findBlockByNumber" [arg "blockNumber" int] ~ret:qTextBlock;
-    dynamic "findBlockByLineNumber" [arg "lineNumber" int] ~ret:qTextBlock;
-    dynamic "begin" [] ~ret:qTextBlock;
-    dynamic "end" [] ~ret:qTextBlock;
-    dynamic "firstBlock" [] ~ret:qTextBlock;
-    dynamic "lastBlock" [] ~ret:qTextBlock;
-    dynamic "setPageSize" [arg "size" qSizeF];
-    dynamic "pageSize" [] ~ret:qSizeF;
-    dynamic "setDefaultFont" [arg "font" qFont];
-    dynamic "defaultFont" [] ~ret:qFont;
-    dynamic "pageCount" [] ~ret:int;
-    dynamic "isModified" [] ~ret:bool;
-    dynamic "print" [arg "printer" qPagedPaintDevice];
-    dynamic "resource" [arg "type" int;arg "name" qUrl] ~ret:qVariant;
-    dynamic "addResource" [arg "type" int;arg "name" qUrl;arg "resource" qVariant];
-    dynamic "allFormats" [] ~ret:qVector<QTextFormat>;
-    dynamic "markContentsDirty" [arg "position" int;arg "length" int];
-    dynamic "setUseDesignMetrics" [arg "b" bool];
-    dynamic "useDesignMetrics" [] ~ret:bool;
-    dynamic "drawContents" [arg "p" qPainter;arg "rect" qRectF];
-    dynamic "setTextWidth" [arg "width" qreal];
-    dynamic "textWidth" [] ~ret:qreal;
-    dynamic "idealWidth" [] ~ret:qreal;
-    dynamic "indentWidth" [] ~ret:qreal;
-    dynamic "setIndentWidth" [arg "width" qreal];
-    dynamic "documentMargin" [] ~ret:qreal;
-    dynamic "setDocumentMargin" [arg "margin" qreal];
-    dynamic "adjustSize" [];
-    dynamic "size" [] ~ret:qSizeF;
-    dynamic "blockCount" [] ~ret:int;
-    dynamic "lineCount" [] ~ret:int;
-    dynamic "characterCount" [] ~ret:int;
-    dynamic "setDefaultStyleSheet" [arg "sheet" qString];
-    dynamic "defaultStyleSheet" [] ~ret:qString;
-    dynamic "undo" [arg "cursor" qTextCursor];
-    dynamic "redo" [arg "cursor" qTextCursor];
-    dynamic "clearUndoRedoStacks" [arg "stacksToClear" stacks];
-    dynamic "maximumBlockCount" [] ~ret:int;
-    dynamic "setMaximumBlockCount" [arg "maximum" int];
-    dynamic "defaultTextOption" [] ~ret:qTextOption;
-    dynamic "setDefaultTextOption" [arg "option" qTextOption];
-    dynamic "baseUrl" [] ~ret:qUrl;
-    dynamic "setBaseUrl" [arg "url" qUrl];
-    dynamic "defaultCursorMoveStyle" [] ~ret:qt'CursorMoveStyle;
-    dynamic "setDefaultCursorMoveStyle" [arg "style" qt'CursorMoveStyle];
-    dynamic "contentsChange" [arg "position" int;arg "charsRemoved" int;arg "charsAdded" int];
-    dynamic "contentsChanged" [];
-    dynamic "undoAvailable" [arg "available" bool];
-    dynamic "redoAvailable" [arg "available" bool];
-    dynamic "undoCommandAdded" [];
-    dynamic "modificationChanged" [arg "changed" bool];
-    dynamic "cursorPositionChanged" [arg "cursor" qTextCursor];
-    dynamic "blockCountChanged" [arg "newBlockCount" int];
-    dynamic "baseUrlChanged" [arg "url" qUrl];
-    dynamic "documentLayoutChanged" [];
-    dynamic "undo" [];
-    dynamic "redo" [];
-    dynamic "setModified" [arg "m" bool];
   ]
 let () = with_class qTextObject [
     dynamic "format" [] ~ret:qTextFormat;

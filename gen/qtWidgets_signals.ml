@@ -728,6 +728,11 @@ let () = (
   slot ~cl:qWindow "showMinimized" [];
   slot ~cl:qWindow "showNormal" [];
 
+  signal ~cl:qItemSelectionModel "selectionChanged"     [qItemSelection; qItemSelection];
+  signal ~cl:qItemSelectionModel "currentChanged"       [qModelIndex; qModelIndex];
+  signal ~cl:qItemSelectionModel "currentRowChanged"    [qModelIndex; qModelIndex];
+  signal ~cl:qItemSelectionModel "currentColumnChanged" [qModelIndex; qModelIndex];
+  signal ~cl:qItemSelectionModel "modelChanged"         [qAbstractItemModel];
   slot ~cl:qItemSelectionModel "setCurrentIndex" [qModelIndex; qItemSelectionModel'SelectionFlags];
   slot ~cl:qItemSelectionModel "select" [qModelIndex; qItemSelectionModel'SelectionFlags];
   slot ~cl:qItemSelectionModel "select" [qItemSelection; qItemSelectionModel'SelectionFlags];
@@ -735,9 +740,27 @@ let () = (
   slot ~cl:qItemSelectionModel "reset" [];
   slot ~cl:qItemSelectionModel "clearSelection" [];
   slot ~cl:qItemSelectionModel "clearCurrentIndex" [];
-  signal ~cl:qItemSelectionModel "selectionChanged"     [qItemSelection; qItemSelection];
-  signal ~cl:qItemSelectionModel "currentChanged"       [qModelIndex; qModelIndex];
-  signal ~cl:qItemSelectionModel "currentRowChanged"    [qModelIndex; qModelIndex];
-  signal ~cl:qItemSelectionModel "currentColumnChanged" [qModelIndex; qModelIndex];
-  signal ~cl:qItemSelectionModel "modelChanged"         [qAbstractItemModel];
+
+  (*signal ~cl:qCoreApplication "aboutToQuit" [];*)
+  slot ~cl:qCoreApplication "quit" [];
+  signal ~cl:qGuiApplication "applicationDisplayNameChanged" [];
+  signal ~cl:qGuiApplication "applicationStateChanged" [qt'ApplicationState];
+  (*signal ~cl:qGuiApplication "commitDataRequest" [QSessionManager &manager];*)
+  signal ~cl:qGuiApplication "focusObjectChanged" [qObject];
+  signal ~cl:qGuiApplication "focusWindowChanged" [qWindow];
+  signal ~cl:qGuiApplication "fontDatabaseChanged" [];
+  signal ~cl:qGuiApplication "lastWindowClosed" [];
+  signal ~cl:qGuiApplication "layoutDirectionChanged" [qt'LayoutDirection];
+  signal ~cl:qGuiApplication "paletteChanged" [reference (const qPalette)];
+  (*signal ~cl:qGuiApplication "primaryScreenChanged" [QScreen *screen];*)
+  (*signal ~cl:qGuiApplication "saveStateRequest" [QSessionManager &manager];*)
+  (*signal ~cl:qGuiApplication "screenAdded" [QScreen *screen];*)
+  (*signal ~cl:qGuiApplication "screenRemoved" [QScreen *screen];*)
+  signal ~cl:qApplication "focusChanged" [optional qWidget; optional qWidget];
+  slot ~cl:qApplication "aboutQt" [];
+  slot ~cl:qApplication "autoSipEnabled" [];
+  slot ~cl:qApplication "closeAllWindows" [];
+  slot ~cl:qApplication "setAutoSipEnabled" [bool];
+  slot ~cl:qApplication "setStyleSheet" [qString];
+
 )

@@ -1,7 +1,7 @@
 OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
 
-all: abook_addresswidget test example_1
+all: abook_addresswidget test example_1 syntaxhl
 
 clean:
 	rm -f *.o *.cm* *.gen.*
@@ -17,5 +17,8 @@ abook_addresswidget: abook_addresswidget.ml
 	$(CUITEOPT) -o $@ $^ -no-alias-deps
 
 test: test.ml
+	$(CUITEOPT) -o $@ $^
+
+syntaxhl: syntaxhl.ml
 	$(CUITEOPT) -o $@ $^
 

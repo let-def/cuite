@@ -1,11 +1,44 @@
 #include <caml/memory.h>
 #include <caml/callback.h>
 #include <QAbstractTableModel>
+#include <QSyntaxHighlighter>
 #include <QtGui>
 #include "cuite_support.h"
 #include "cuite_wrappers.h"
 #include "cuite_variant.h"
 #include "cuite_const.h"
+
+#define model_payload(v) Field(v, QObject_fields_count + 0)
+#define model_callback(v, n) Field(Field(v, QObject_fields_count + 1), n)
+
+#define ID(x) x
+
+#define PUSH_ARG(v) *_call_top = (v); _call_top += 1
+
+#define PREPARE_CALL(n)                            \
+  {                                                \
+    CUITE_Region region;                            \
+    value *_call_args = cuite_region_allocn((n)+1); \
+    value *_call_top = _call_args
+
+#define CALL_CLOSURE(result, inj, closure)                                        \
+    *_call_top = caml_callbackN_exn(closure, _call_top - _call_args, _call_args); \
+    if (Is_exception_result(*_call_top))                                          \
+      cuite_debug_aborted_callback(__func__, Extract_exception(*_call_top));       \
+    else                                                                          \
+      result = inj(*_call_top);                                                   \
+  }
+
+#define PREPARE_METHOD(n, obj)                 \
+  PREPARE_CALL((n)+2);                             \
+    value& _call_this = cuite_QObject_to_ocaml(obj); \
+    PUSH_ARG(model_payload(_call_this)); \
+    PUSH_ARG(_call_this)
+
+#define CALL_METHOD(result, inj, offset) \
+  CALL_CLOSURE(result, inj, model_callback(_call_this, offset))
+
+/* QAbstractTableModel */
 
 class QOCamlTableModel : public QAbstractTableModel
 {
@@ -22,8 +55,6 @@ class QOCamlTableModel : public QAbstractTableModel
     bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex()) override;
 };
 
-#define QOCamlTableModel_payload(v) Field(v, QObject_fields_count + 0)
-#define QOCamlTableModel_callback(v, n) Field(Field(v, QObject_fields_count + 1), n)
 #define meth_row_count    0
 #define meth_column_count 1
 #define meth_data         2
@@ -52,38 +83,12 @@ external value cuite_new_QOCamlTableModel(value _callbacks, value _payload)
   return v;
 }
 
-#define PUSH_ARG(v) *_call_top = (v); _call_top += 1
-
-#define PREPARE_CALL(n)                            \
-  {                                                \
-    CUITE_Region region;                            \
-    value *_call_args = cuite_region_allocn((n)+1); \
-    value *_call_top = _call_args
-
-#define CALL_CLOSURE(result, inj, closure)                                        \
-    *_call_top = caml_callbackN_exn(closure, _call_top - _call_args, _call_args); \
-    if (Is_exception_result(*_call_top))                                          \
-      cuite_debug_aborted_callback(__func__, Extract_exception(*_call_top));       \
-    else                                                                          \
-      result = inj(*_call_top);                                                   \
-  }
-
-#define PREPARE_METHOD(n, obj)                 \
-  PREPARE_CALL((n)+2);                             \
-    value& _call_this = cuite_QObject_to_ocaml(obj); \
-    PUSH_ARG(QOCamlTableModel_payload(_call_this)); \
-    PUSH_ARG(_call_this)
-
-#define CALL_METHOD(result, inj, offset) \
-  CALL_CLOSURE(result, inj, QOCamlTableModel_callback(_call_this, offset))
-
 int QOCamlTableModel::rowCount(const QModelIndex& parent) const
 {
   int result = 0;
   PREPARE_METHOD(1, this);
     PUSH_ARG(cuite_QModelIndex_to_ocaml(&parent));
-    value cb = QOCamlTableModel_callback(_call_this, meth_row_count);
-  CALL_CLOSURE(result, Long_val, cb);
+  CALL_METHOD(result, Long_val, meth_row_count);
   return result;
 }
 
@@ -179,4 +184,48 @@ bool QOCamlTableModel::removeRows(int position, int rows, const QModelIndex &ind
   endRemoveRows();
 
   return true;
+}
+
+
+/* QSyntaxHighlighter */
+
+class QOCamlSyntaxHighlighter : public QSyntaxHighlighter
+{
+  public:
+    QOCamlSyntaxHighlighter(QObject *parent);
+    //QOCamlSyntaxHighlighter(QTextDocument *parent);
+
+  protected:
+    void highlightBlock(const QString &text) override;
+};
+
+#define meth_highlight_block    0
+
+QOCamlSyntaxHighlighter::QOCamlSyntaxHighlighter(QObject *parent)
+  : QSyntaxHighlighter(parent) {}
+
+//QOCamlSyntaxHighlighter::QOCamlSyntaxHighlighter(QTextDocument *parent)
+//  : QSyntaxHighlighter(parent) {}
+
+external value cuite_new_QOCamlSyntaxHighlighter(value _callbacks, value _payload, value _parent)
+{
+  CUITE_Region region;
+  value& callbacks = cuite_region_register(_callbacks);
+  value& payload = cuite_region_register(_payload);
+  value& parent = cuite_region_register(_parent);
+
+  QOCamlSyntaxHighlighter *model = new QOCamlSyntaxHighlighter(cuite_QObject_option_from_ocaml(parent));
+  value& v(cuite_QObject_allocate_value(model, 2));
+  Store_field(v, QObject_fields_count + 0, payload);
+  Store_field(v, QObject_fields_count + 1, callbacks);
+  printf("callbacks = %08x\nv = %08x\n", callbacks, v);
+  return v;
+}
+
+void QOCamlSyntaxHighlighter::highlightBlock(const QString &text)
+{
+  value result;
+  PREPARE_METHOD(1, this);
+    PUSH_ARG(cuite_QString_to_ocaml(text));
+  CALL_METHOD(result, ID, meth_highlight_block);
 }

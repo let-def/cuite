@@ -1,5 +1,6 @@
 open Cuite
 
+(* QAbstractTableModel *)
 type 'a qOCamlTableModel = [ `QOCamlTableModel of 'a | qAbstractTableModel ]
 
 type 'a qOCamlTableModel'callback = {
@@ -27,3 +28,17 @@ let qOCamlTableModel'callback
 
 external new'QOCamlTableModel : 'a qOCamlTableModel'callback -> 'a -> 'a qOCamlTableModel qt =
   "cuite_new_QOCamlTableModel"
+
+(* QSyntaxHighlighter *)
+
+type 'a qOCamlSyntaxHighlighter = [ `QOCamlSyntaxHighlighter of 'a | qSyntaxHighlighter ]
+
+type 'a qOCamlSyntaxHighlighter'callback = {
+  highlight_block : 'a -> 'a qOCamlSyntaxHighlighter qt -> string -> unit;
+}
+
+let qOCamlSyntaxHighlighter'callback ~highlight_block = { highlight_block }
+
+external new'QOCamlSyntaxHighlighter : 'a qOCamlSyntaxHighlighter'callback -> 'a ->
+  [> qObject] qt option -> 'a qOCamlSyntaxHighlighter qt =
+  "cuite_new_QOCamlSyntaxHighlighter"
