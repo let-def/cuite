@@ -1,7 +1,11 @@
 open Cuite
 
 let simple_highlighter =
-  { QModels.highlight_block = fun () self block -> () }
+  let color = (QColor.fromRgb 128 128 128 128) in
+  { QModels.highlight_block = fun () self block ->
+        QModels.OCamlSyntaxHighlighter.setFormatColor self
+          0 (min (String.length block) 5) color
+  }
 
 type mainwindow = {
   self: qMainWindow qt;

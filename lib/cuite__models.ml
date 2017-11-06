@@ -42,3 +42,25 @@ let qOCamlSyntaxHighlighter'callback ~highlight_block = { highlight_block }
 external new'QOCamlSyntaxHighlighter : 'a qOCamlSyntaxHighlighter'callback -> 'a ->
   [> qObject] qt option -> 'a qOCamlSyntaxHighlighter qt =
   "cuite_new_QOCamlSyntaxHighlighter"
+
+module OCamlSyntaxHighlighter = struct
+  external currentBlock : 'a qOCamlSyntaxHighlighter qt -> qTextBlock qt =
+    "cuite_QOCamlSyntaxHighlighter_currentBlock"
+  external currentBlockState : 'a qOCamlSyntaxHighlighter qt -> int =
+    "cuite_QOCamlSyntaxHighlighter_currentBlockState"
+  (*currentBlockUserData() const*)
+  external format : 'a qOCamlSyntaxHighlighter qt -> int -> qTextCharFormat qt =
+    "cuite_QOCamlSyntaxHighlighter_format"
+  external previousBlockState : 'a qOCamlSyntaxHighlighter qt -> int =
+    "cuite_QOCamlSyntaxHighlighter_previousBlockState"
+  external setCurrentBlockState : 'a qOCamlSyntaxHighlighter qt -> int -> unit =
+    "cuite_QOCamlSyntaxHighlighter_setCurrentBlockState"
+      (*setCurrentBlockUserData(QTextBlockUserData *data)*)
+  external setFormat : 'a qOCamlSyntaxHighlighter qt -> int -> int -> [> qTextCharFormat] qt -> unit =
+    "cuite_QOCamlSyntaxHighlighter_setFormat"
+  external setFormatColor : 'a qOCamlSyntaxHighlighter qt -> int -> int -> [> qColor] qt -> unit =
+    "cuite_QOCamlSyntaxHighlighter_setFormatColor"
+  external setFormatFont : 'a qOCamlSyntaxHighlighter qt -> int -> int -> [> qFont] qt -> unit =
+    "cuite_QOCamlSyntaxHighlighter_setFormatFont"
+
+end

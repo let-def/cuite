@@ -180,6 +180,116 @@ let () = with_class qFont [
     dynamic "resolve" [arg "other" qFont] ~ret:qFont;
   ]
 
+let () = with_class qColor [
+    constructor "" [];
+    (*constructor "" [arg "color" qt'GlobalColor];*)
+    constructor "" [arg "r" int;arg "g" int;arg "b" int;arg "a" int];
+    (*constructor "" [arg "color" qRgb];*)
+    (*constructor "" [arg "arg0" qRgba64 rgba64];*)
+    constructor "" [arg "name" qString];
+    (*constructor "" [arg "name" char];*)
+    (*constructor "" [arg "name" qLatin1String];*)
+    constructor "" [arg "color" qColor];
+    (*dynamic "operator=" [arg "other" qColor] ~ret:qColor;*)
+    (*dynamic "operator=" [arg "color" qColor] ~ret:qColor;*)
+    (*dynamic "operator=" [arg "color" qt'GlobalColor] ~ret:qColor;*)
+    dynamic "isValid" [] ~ret:bool;
+    dynamic "name" [] ~ret:qString;
+    (*dynamic "name" [arg "format" nameFormat] ~ret:qString;*)
+    dynamic "setNamedColor" [arg "name" qString];
+    (*dynamic "setNamedColor" [arg "name" qLatin1String];*)
+    static  "colorNames" [] ~ret:qStringList;
+    (*dynamic "spec" [] ~ret:spec;*)
+    dynamic "alpha" [] ~ret:int;
+    dynamic "setAlpha" [arg "alpha" int];
+    dynamic "alphaF" [] ~ret:qreal;
+    dynamic "setAlphaF" [arg "alpha" qreal];
+    dynamic "red" [] ~ret:int;
+    dynamic "green" [] ~ret:int;
+    dynamic "blue" [] ~ret:int;
+    dynamic "setRed" [arg "red" int];
+    dynamic "setGreen" [arg "green" int];
+    dynamic "setBlue" [arg "blue" int];
+    dynamic "redF" [] ~ret:qreal;
+    dynamic "greenF" [] ~ret:qreal;
+    dynamic "blueF" [] ~ret:qreal;
+    dynamic "setRedF" [arg "red" qreal];
+    dynamic "setGreenF" [arg "green" qreal];
+    dynamic "setBlueF" [arg "blue" qreal];
+    (*dynamic "getRgb" [arg "r" int;arg "g" int;arg "b" int;arg "a" int];*)
+    dynamic "setRgb" [arg "r" int;arg "g" int;arg "b" int;arg "a" int];
+    (*dynamic "getRgbF" [arg "r" qreal;arg "g" qreal;arg "b" qreal;arg "a" qreal];*)
+    dynamic "setRgbF" [arg "r" qreal;arg "g" qreal;arg "b" qreal;arg "a" qreal];
+    (*dynamic "rgba64" [] ~ret:qRgba64;*)
+    (*dynamic "setRgba64" [arg "rgba" qRgba64];*)
+    (*dynamic "rgba" [] ~ret:qRgb;*)
+    (*dynamic "setRgba" [arg "rgba" qRgb];*)
+    (*dynamic "rgb" [] ~ret:qRgb;*)
+    (*dynamic "setRgb" [arg "rgb" qRgb];*)
+    dynamic "hue" [] ~ret:int;
+    dynamic "saturation" [] ~ret:int;
+    dynamic "hsvHue" [] ~ret:int;
+    dynamic "hsvSaturation" [] ~ret:int;
+    dynamic "value" [] ~ret:int;
+    dynamic "hueF" [] ~ret:qreal;
+    dynamic "saturationF" [] ~ret:qreal;
+    dynamic "hsvHueF" [] ~ret:qreal;
+    dynamic "hsvSaturationF" [] ~ret:qreal;
+    dynamic "valueF" [] ~ret:qreal;
+    (*dynamic "getHsv" [arg "h" int;arg "s" int;arg "v" int;arg "a" int];*)
+    dynamic "setHsv" [arg "h" int;arg "s" int;arg "v" int;arg "a" int];
+    (*dynamic "getHsvF" [arg "h" qreal;arg "s" qreal;arg "v" qreal;arg "a" qreal];*)
+    dynamic "setHsvF" [arg "h" qreal;arg "s" qreal;arg "v" qreal;arg "a" qreal];
+    dynamic "cyan" [] ~ret:int;
+    dynamic "magenta" [] ~ret:int;
+    dynamic "yellow" [] ~ret:int;
+    dynamic "black" [] ~ret:int;
+    dynamic "cyanF" [] ~ret:qreal;
+    dynamic "magentaF" [] ~ret:qreal;
+    dynamic "yellowF" [] ~ret:qreal;
+    dynamic "blackF" [] ~ret:qreal;
+    (*dynamic "getCmyk" [arg "c" int;arg "m" int;arg "y" int;arg "k" int;arg "a" int];*)
+    dynamic "setCmyk" [arg "c" int;arg "m" int;arg "y" int;arg "k" int;arg "a" int];
+    (*dynamic "getCmykF" [arg "c" qreal;arg "m" qreal;arg "y" qreal;arg "k" qreal;arg "a" qreal];*)
+    dynamic "setCmykF" [arg "c" qreal;arg "m" qreal;arg "y" qreal;arg "k" qreal;arg "a" qreal];
+    dynamic "hslHue" [] ~ret:int;
+    dynamic "hslSaturation" [] ~ret:int;
+    dynamic "lightness" [] ~ret:int;
+    dynamic "hslHueF" [] ~ret:qreal;
+    dynamic "hslSaturationF" [] ~ret:qreal;
+    dynamic "lightnessF" [] ~ret:qreal;
+    (*dynamic "getHsl" [arg "h" int;arg "s" int;arg "l" int;arg "a" int];*)
+    dynamic "setHsl" [arg "h" int;arg "s" int;arg "l" int;arg "a" int];
+    (*dynamic "getHslF" [arg "h" qreal;arg "s" qreal;arg "l" qreal;arg "a" qreal];*)
+    dynamic "setHslF" [arg "h" qreal;arg "s" qreal;arg "l" qreal;arg "a" qreal];
+    dynamic "toRgb" [] ~ret:qColor;
+    dynamic "toHsv" [] ~ret:qColor;
+    dynamic "toCmyk" [] ~ret:qColor;
+    dynamic "toHsl" [] ~ret:qColor;
+    (*dynamic "convertTo" [arg "colorSpec" spec] ~ret:qColor;*)
+    (*static  "fromRgb" [arg "rgb" qRgb] ~ret:qColor;*)
+    (*static  "fromRgba" [arg "rgba" qRgb] ~ret:qColor;*)
+    static  "fromRgb" [arg "r" int;arg "g" int;arg "b" int;arg "a" int] ~ret:qColor;
+    static  "fromRgbF" [arg "r" qreal;arg "g" qreal;arg "b" qreal;arg "a" qreal] ~ret:qColor;
+    (*static  "fromRgba64" [arg "r" ushort;arg "g" ushort;arg "b" ushort;arg "a" ushort] ~ret:qColor;*)
+    (*static  "fromRgba64" [arg "arg0" qRgba64 rgba64] ~ret:qColor;*)
+    static  "fromHsv" [arg "h" int;arg "s" int;arg "v" int;arg "a" int] ~ret:qColor;
+    static  "fromHsvF" [arg "h" qreal;arg "s" qreal;arg "v" qreal;arg "a" qreal] ~ret:qColor;
+    static  "fromCmyk" [arg "c" int;arg "m" int;arg "y" int;arg "k" int;arg "a" int] ~ret:qColor;
+    static  "fromCmykF" [arg "c" qreal;arg "m" qreal;arg "y" qreal;arg "k" qreal;arg "a" qreal] ~ret:qColor;
+    static  "fromHsl" [arg "h" int;arg "s" int;arg "l" int;arg "a" int] ~ret:qColor;
+    static  "fromHslF" [arg "h" qreal;arg "s" qreal;arg "l" qreal;arg "a" qreal] ~ret:qColor;
+    dynamic "light" [arg "factor" int] ~ret:qColor;
+    dynamic "lighter" [arg "factor" int] ~ret:qColor;
+    dynamic "dark" [arg "factor" int] ~ret:qColor;
+    dynamic "darker" [arg "factor" int] ~ret:qColor;
+    (*dynamic "operator==" [arg "color" qColor] ~ret:bool;*)
+    (*dynamic "operator!=" [arg "color" qColor] ~ret:bool;*)
+    constructor "" [];
+    (*static  "isValidColor" [arg "name" qString] ~ret:bool;*)
+    (*static  "isValidColor" [arg "name" qLatin1String] ~ret:bool;*)
+  ]
+
 (*let () = with_class qGuiApplication [
     constructor "" [(*arg "argc" int;arg "argv" char*)];
     static  "setApplicationDisplayName" [arg "name" qString];
@@ -2095,116 +2205,6 @@ let () = with_class qTextFormat [
     dynamic "setForeground" [arg "brush" qBrush];
     dynamic "foreground" [] ~ret:qBrush;
     dynamic "clearForeground" [];
-  ]
-let () = with_class qColor [
-    constructor "" [];
-    constructor "" [arg "color" qt'GlobalColor];
-    constructor "" [arg "r" int;arg "g" int;arg "b" int;arg "a" int];
-    constructor "" [arg "color" qRgb];
-    constructor "" [arg "arg0" qRgba64 rgba64];
-    constructor "" [arg "name" qString];
-    constructor "" [arg "name" char];
-    constructor "" [arg "name" qLatin1String];
-    constructor "" [arg "color" qColor];
-    constructor "" [arg "other" qColor];
-    dynamic "operator=" [arg "other" qColor] ~ret:qColor;
-    dynamic "operator=" [arg "color" qColor] ~ret:qColor;
-    dynamic "operator=" [arg "color" qt'GlobalColor] ~ret:qColor;
-    dynamic "isValid" [] ~ret:bool;
-    dynamic "name" [] ~ret:qString;
-    dynamic "name" [arg "format" nameFormat] ~ret:qString;
-    dynamic "setNamedColor" [arg "name" qString];
-    dynamic "setNamedColor" [arg "name" qLatin1String];
-    static  "colorNames" [] ~ret:qStringList;
-    dynamic "spec" [] ~ret:spec;
-    dynamic "alpha" [] ~ret:int;
-    dynamic "setAlpha" [arg "alpha" int];
-    dynamic "alphaF" [] ~ret:qreal;
-    dynamic "setAlphaF" [arg "alpha" qreal];
-    dynamic "red" [] ~ret:int;
-    dynamic "green" [] ~ret:int;
-    dynamic "blue" [] ~ret:int;
-    dynamic "setRed" [arg "red" int];
-    dynamic "setGreen" [arg "green" int];
-    dynamic "setBlue" [arg "blue" int];
-    dynamic "redF" [] ~ret:qreal;
-    dynamic "greenF" [] ~ret:qreal;
-    dynamic "blueF" [] ~ret:qreal;
-    dynamic "setRedF" [arg "red" qreal];
-    dynamic "setGreenF" [arg "green" qreal];
-    dynamic "setBlueF" [arg "blue" qreal];
-    dynamic "getRgb" [arg "r" int;arg "g" int;arg "b" int;arg "a" int];
-    dynamic "setRgb" [arg "r" int;arg "g" int;arg "b" int;arg "a" int];
-    dynamic "getRgbF" [arg "r" qreal;arg "g" qreal;arg "b" qreal;arg "a" qreal];
-    dynamic "setRgbF" [arg "r" qreal;arg "g" qreal;arg "b" qreal;arg "a" qreal];
-    dynamic "rgba64" [] ~ret:qRgba64;
-    dynamic "setRgba64" [arg "rgba" qRgba64];
-    dynamic "rgba" [] ~ret:qRgb;
-    dynamic "setRgba" [arg "rgba" qRgb];
-    dynamic "rgb" [] ~ret:qRgb;
-    dynamic "setRgb" [arg "rgb" qRgb];
-    dynamic "hue" [] ~ret:int;
-    dynamic "saturation" [] ~ret:int;
-    dynamic "hsvHue" [] ~ret:int;
-    dynamic "hsvSaturation" [] ~ret:int;
-    dynamic "value" [] ~ret:int;
-    dynamic "hueF" [] ~ret:qreal;
-    dynamic "saturationF" [] ~ret:qreal;
-    dynamic "hsvHueF" [] ~ret:qreal;
-    dynamic "hsvSaturationF" [] ~ret:qreal;
-    dynamic "valueF" [] ~ret:qreal;
-    dynamic "getHsv" [arg "h" int;arg "s" int;arg "v" int;arg "a" int];
-    dynamic "setHsv" [arg "h" int;arg "s" int;arg "v" int;arg "a" int];
-    dynamic "getHsvF" [arg "h" qreal;arg "s" qreal;arg "v" qreal;arg "a" qreal];
-    dynamic "setHsvF" [arg "h" qreal;arg "s" qreal;arg "v" qreal;arg "a" qreal];
-    dynamic "cyan" [] ~ret:int;
-    dynamic "magenta" [] ~ret:int;
-    dynamic "yellow" [] ~ret:int;
-    dynamic "black" [] ~ret:int;
-    dynamic "cyanF" [] ~ret:qreal;
-    dynamic "magentaF" [] ~ret:qreal;
-    dynamic "yellowF" [] ~ret:qreal;
-    dynamic "blackF" [] ~ret:qreal;
-    dynamic "getCmyk" [arg "c" int;arg "m" int;arg "y" int;arg "k" int;arg "a" int];
-    dynamic "setCmyk" [arg "c" int;arg "m" int;arg "y" int;arg "k" int;arg "a" int];
-    dynamic "getCmykF" [arg "c" qreal;arg "m" qreal;arg "y" qreal;arg "k" qreal;arg "a" qreal];
-    dynamic "setCmykF" [arg "c" qreal;arg "m" qreal;arg "y" qreal;arg "k" qreal;arg "a" qreal];
-    dynamic "hslHue" [] ~ret:int;
-    dynamic "hslSaturation" [] ~ret:int;
-    dynamic "lightness" [] ~ret:int;
-    dynamic "hslHueF" [] ~ret:qreal;
-    dynamic "hslSaturationF" [] ~ret:qreal;
-    dynamic "lightnessF" [] ~ret:qreal;
-    dynamic "getHsl" [arg "h" int;arg "s" int;arg "l" int;arg "a" int];
-    dynamic "setHsl" [arg "h" int;arg "s" int;arg "l" int;arg "a" int];
-    dynamic "getHslF" [arg "h" qreal;arg "s" qreal;arg "l" qreal;arg "a" qreal];
-    dynamic "setHslF" [arg "h" qreal;arg "s" qreal;arg "l" qreal;arg "a" qreal];
-    dynamic "toRgb" [] ~ret:qColor;
-    dynamic "toHsv" [] ~ret:qColor;
-    dynamic "toCmyk" [] ~ret:qColor;
-    dynamic "toHsl" [] ~ret:qColor;
-    dynamic "convertTo" [arg "colorSpec" spec] ~ret:qColor;
-    static  "fromRgb" [arg "rgb" qRgb] ~ret:qColor;
-    static  "fromRgba" [arg "rgba" qRgb] ~ret:qColor;
-    static  "fromRgb" [arg "r" int;arg "g" int;arg "b" int;arg "a" int] ~ret:qColor;
-    static  "fromRgbF" [arg "r" qreal;arg "g" qreal;arg "b" qreal;arg "a" qreal] ~ret:qColor;
-    static  "fromRgba64" [arg "r" ushort;arg "g" ushort;arg "b" ushort;arg "a" ushort] ~ret:qColor;
-    static  "fromRgba64" [arg "arg0" qRgba64 rgba64] ~ret:qColor;
-    static  "fromHsv" [arg "h" int;arg "s" int;arg "v" int;arg "a" int] ~ret:qColor;
-    static  "fromHsvF" [arg "h" qreal;arg "s" qreal;arg "v" qreal;arg "a" qreal] ~ret:qColor;
-    static  "fromCmyk" [arg "c" int;arg "m" int;arg "y" int;arg "k" int;arg "a" int] ~ret:qColor;
-    static  "fromCmykF" [arg "c" qreal;arg "m" qreal;arg "y" qreal;arg "k" qreal;arg "a" qreal] ~ret:qColor;
-    static  "fromHsl" [arg "h" int;arg "s" int;arg "l" int;arg "a" int] ~ret:qColor;
-    static  "fromHslF" [arg "h" qreal;arg "s" qreal;arg "l" qreal;arg "a" qreal] ~ret:qColor;
-    dynamic "light" [arg "factor" int] ~ret:qColor;
-    dynamic "lighter" [arg "factor" int] ~ret:qColor;
-    dynamic "dark" [arg "factor" int] ~ret:qColor;
-    dynamic "darker" [arg "factor" int] ~ret:qColor;
-    dynamic "operator==" [arg "color" qColor] ~ret:bool;
-    dynamic "operator!=" [arg "color" qColor] ~ret:bool;
-    constructor "" [];
-    static  "isValidColor" [arg "name" qString] ~ret:bool;
-    static  "isValidColor" [arg "name" qLatin1String] ~ret:bool;
   ]
 let () = with_class qMatrix4x4 [
     constructor "" [];

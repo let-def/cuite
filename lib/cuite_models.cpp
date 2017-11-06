@@ -195,6 +195,25 @@ class QOCamlSyntaxHighlighter : public QSyntaxHighlighter
     QOCamlSyntaxHighlighter(QObject *parent);
     //QOCamlSyntaxHighlighter(QTextDocument *parent);
 
+    inline QTextBlock call_currentBlock() const
+    { return this->currentBlock(); }
+    inline int call_currentBlockState() const
+    { return this->currentBlockState(); }
+    inline QTextBlockUserData* call_currentBlockUserData() const
+    { return this->currentBlockUserData(); }
+    inline QTextCharFormat call_format(int position) const
+    { return this->format(position); }
+    inline int call_previousBlockState() const
+    { return this->previousBlockState(); }
+    inline void call_setCurrentBlockState(int newState)
+    { this->setCurrentBlockState(newState); }
+    inline void call_setFormat(int start, int count, const QTextCharFormat &format)
+    { this->setFormat(start, count, format); }
+    inline void call_setFormat(int start, int count, const QColor &color)
+    { this->setFormat(start, count, color); }
+    inline void call_setFormat(int start, int count, const QFont &font)
+    { this->setFormat(start, count, font); }
+
   protected:
     void highlightBlock(const QString &text) override;
 };
@@ -228,4 +247,86 @@ void QOCamlSyntaxHighlighter::highlightBlock(const QString &text)
   PREPARE_METHOD(1, this);
     PUSH_ARG(cuite_QString_to_ocaml(text));
   CALL_METHOD(result, ID, meth_highlight_block);
+}
+
+external value cuite_QOCamlSyntaxHighlighter_currentBlock(value _self)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  QTextBlock block(self->call_currentBlock());
+  return cuite_QTextBlock_to_ocaml(&block);
+}
+
+external value cuite_QOCamlSyntaxHighlighter_currentBlockState(value _self)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  return Val_long(self->call_currentBlockState());
+}
+
+external value cuite_QOCamlSyntaxHighlighter_format(value _self, value position)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  QTextCharFormat result(self->call_format(Long_val(position)));
+  return cuite_QTextCharFormat_to_ocaml(&result);
+}
+
+external value cuite_QOCamlSyntaxHighlighter_previousBlockState(value _self)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  return Val_long(self->call_previousBlockState());
+}
+
+external value cuite_QOCamlSyntaxHighlighter_setCurrentBlockState(value _self, value newState)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  self->call_setCurrentBlockState(Long_val(newState));
+  return Val_unit;
+}
+
+external value cuite_QOCamlSyntaxHighlighter_setFormat(value _self, value start, value count, value _format)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  value& mlself = cuite_region_register(_self);
+  value& mlformat = cuite_region_register(_format);
+  QOCamlSyntaxHighlighter *self =
+    (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(mlself);
+  QTextCharFormat *format = cuite_QTextCharFormat_from_ocaml(mlformat);
+  self->call_setFormat(Long_val(start), Long_val(count), *format);
+  return Val_unit;
+}
+
+external value cuite_QOCamlSyntaxHighlighter_setFormatColor(value _self, value start, value count, value _color)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  value& mlself = cuite_region_register(_self);
+  value& mlcolor = cuite_region_register(_color);
+  QOCamlSyntaxHighlighter *self =
+    (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(mlself);
+  QColor *color = cuite_QColor_from_ocaml(mlcolor);
+  self->call_setFormat(Long_val(start), Long_val(count), *color);
+  return Val_unit;
+}
+
+external value cuite_QOCamlSyntaxHighlighter_setFormatFont(value _self, value start, value count, value _font)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  value& mlself = cuite_region_register(_self);
+  value& mlfont = cuite_region_register(_font);
+  QOCamlSyntaxHighlighter *self =
+    (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(mlself);
+  QFont *font = cuite_QFont_from_ocaml(mlfont);
+  self->call_setFormat(Long_val(start), Long_val(count), *font);
+  return Val_unit;
 }
