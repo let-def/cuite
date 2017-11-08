@@ -11,7 +11,8 @@ default:
 
 install:
 	ocamlfind install cuite lib/META lib/cuite.a lib/cuite.cma lib/cuite.cmxa \
-		$(filter-out lib/cuite__alloc.%,$(wildcard lib/cuite_*.cmi))
+		lib/cuite.cmi $(filter-out lib/cuite__alloc.%,$(wildcard lib/cuite_*.cmi)) \
+		lib/cuite.cmx lib/cuite__qt.cmx lib/cuite__flags.cmx lib/cuite__models.cmx
 	install -t $(LIB_PREFIX) lib/libcuite.so
 
 uninstall:

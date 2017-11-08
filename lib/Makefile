@@ -77,7 +77,7 @@ cuite.cmx: cuite.ml
 	$(OCAMLOPT) -c -no-alias-deps $^
 
 cuite.cma: $(PRE_BYTECODE) $(GEN_BYTECODE) | libcuite.so
-	$(OCAMLC) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(LIB_PREFIX) $(patsubst %.cmi,,$^)
+	$(OCAMLC) -a -o $@ -cclib -L$(LIB_PREFIX) -cclib -lcuite -cclib -Wl,-rpath,$(LIB_PREFIX) $(patsubst %.cmi,,$^)
 
 cuite.cmxa: $(PRE_NATIVE) $(GEN_NATIVE) | libcuite.so
-	$(OCAMLOPT) -a -o $@ -cclib -lcuite -cclib -Wl,-rpath,$(LIB_PREFIX) $(patsubst %.cmi,,$^)
+	$(OCAMLOPT) -a -o $@ -cclib -L$(LIB_PREFIX) -cclib -lcuite -cclib -Wl,-rpath,$(LIB_PREFIX) $(patsubst %.cmi,,$^)
