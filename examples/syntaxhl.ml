@@ -17,7 +17,8 @@ let load_file editor path =
   match open_in path with
   | ic ->
     let b = Buffer.create 1024 in
-    (try Buffer.add_channel b ic max_int with End_of_file -> ());
+    let len = in_channel_length ic in
+    (try Buffer.add_channel b ic len with End_of_file -> ());
     QTextEdit.setPlainText editor (Buffer.contents b);
     close_in_noerr ic
   | exception _ -> ()
