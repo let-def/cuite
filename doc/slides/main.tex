@@ -280,7 +280,7 @@ val show : [> qWidget] qt -> unit
     \item a descendant of QObject can define signals and slots
     \item a {\bf signal} can be connected to {\bf slots} and {\bf closures}
     \item a signal can be emitted
-    \item the slots and closures that are connected are notified
+    \item the slots and closures that are connected are executed
   \end{itemize}
 \end{frame}
 
@@ -378,6 +378,12 @@ connect action1 (QAction.slot'triggered())
 
 \end{frame}
 
+\begin{frame}
+  \frametitle{Models}
+
+  \includegraphics[width=0.9\textwidth]{model}
+\end{frame}
+
 \subsection{Memory management}
 
 \begin{frame}
@@ -463,6 +469,10 @@ let () =
 
 \end{frame}
 
+\begin{frame}
+  \includegraphics[width=\textwidth]{closeme}
+\end{frame}
+
 \section{Workflow and future development}
 
 \begin{frame}
@@ -508,8 +518,8 @@ let () =
   \begin{itemize}
     \item Qt-designer support (seems "easy", a PPX could do)
     \item Lwt/Async integration
-    \item targeting mobile platforms 
-    \item a multi-theading story?
+    \item targetting mobile platforms 
+    \item a multi-threading story?
     \item cleaning up ad-hoc polymorphism/overloading mess
   \end{itemize}
 \end{frame}
