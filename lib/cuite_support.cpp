@@ -4,6 +4,9 @@
 #include "caml/callback.h"
 #include "caml/custom.h"
 #include "caml/printexc.h"
+extern "C" {
+#include "caml/weak.h"
+}
 #include <QEvent>
 #include <QDebug>
 #include <QCoreApplication>
@@ -410,15 +413,14 @@ value& cuite_QObject_to_ocaml(const QObject *obj)
   if (proxy->id == 0)
     return cuite_QObject_initialize_proxy(obj, proxy, 0);
 
-  static value *deref = NULL;
-  if (deref == NULL)
-    deref = caml_named_value("cuite_deref");
+  static value *table = NULL;
+  if (table == NULL)
+    table = caml_named_value("cuite_table");
 
-  value block = caml_callback_exn(*deref, proxy->id);
-  printf("accessing id %ld = 0x%016x from thread 0x%016x\n", Long_val(proxy->id), block, pthread_self());
-  if (Is_exception_result(block))
+  value block = Val_unit;
+  if (!caml_weak_array_get(Field(*table,0), Long_val(proxy->id), &block))
   {
-    cuite_debug_aborted_callback("cuite_QObject_to_ocaml(deref)", Extract_exception(block));
+    cuite_debug_aborted_callback("cuite_QObject_to_ocaml(table)", Extract_exception(block));
     abort();
   }
 
@@ -707,12 +709,12 @@ external value cuitecb_set_id(value vobj, value id)
 void cuitecb_call(intnat *cbid, value arg)
 {
   CAMLparam1(arg);
-  static value *deref = NULL;
-  if (deref == NULL)
-    deref = caml_named_value("cuitecb_deref");
+  static value *table = NULL;
+  if (table == NULL)
+    table = caml_named_value("cuitecb_table");
 
-  value block = caml_callback_exn(*deref, *cbid);
-  cuite_assert(!Is_exception_result(block));
+  value block = Val_unit;
+  cuite_assert(caml_weak_array_get(Field(*table,0), Long_val(*cbid), &block));
 
   cuiteconn_inst *inst = cuiteconn_val(Field(block, Cb_field_custom));
 

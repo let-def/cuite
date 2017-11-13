@@ -24,14 +24,12 @@ let () =
     Gc.finalise finalise_delete x;
     Cuite__alloc.wref qt_table x
   in
-  let qt_deref x = Cuite__alloc.wderef qt_table x in
   Callback.register "cuite_alloc" qt_alloc;
-  Callback.register "cuite_deref" qt_deref;
+  Callback.register "cuite_table" qt_table;
   let cb_table = Cuite__alloc.create ~compact:cb_set_id 64 in
   let cb_alloc x = Cuite__alloc.wref cb_table x in
-  let cb_deref x = Cuite__alloc.wderef cb_table x in
   Callback.register "cuitecb_alloc" cb_alloc;
-  Callback.register "cuitecb_deref" cb_deref;
+  Callback.register "cuitecb_table" cb_table;
   prerr_endline "registered cuite callbacks"
 
 type connection

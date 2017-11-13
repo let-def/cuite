@@ -1,6 +1,8 @@
 OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
-CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib)
+#CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib)
+CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlc -config | grep standard_library_default | cut -d ' ' -f 1 --complement)
+
 
 PWD=$(shell pwd)
 LIB_PREFIX ?= $(PWD)
