@@ -6,6 +6,8 @@ open QtGui_classes
 open QtWidgets_enum
 open QtWidgets_classes
 
+let protected = true
+
 let () = with_class qApplication [
     constructor "" [arg "args" (custom_type ~ml_pos:"string array" "string_array")] ~custom:true;
     static  "style" [] ~ret:qStyle;
@@ -352,7 +354,7 @@ let () = with_class qWidget [
     slot "showMinimized" [];
     slot "showNormal" [];
     slot "update" [];
-    slot "updateMicroFocus" [];
+    slot ~protected "updateMicroFocus" [];
   ]
 
 let () = with_class qAbstractButton [
@@ -498,7 +500,7 @@ let () = with_class qMenu [
     dynamic "aboutToHide" [];
     dynamic "triggered" [arg "action" qAction];
     dynamic "hovered" [arg "action" qAction];
-    slot "internalDelayedPopup" [];
+    slot ~protected "internalDelayedPopup" [];
     slot "_q_actionHovered" [];
     slot "_q_actionTriggered" [];
     slot "_q_overrideMenuActionDestroyed" [];
@@ -2843,7 +2845,7 @@ let () = with_class qProgressDialog [
     dynamic "setMinimumDuration" [arg "ms" int];
     dynamic "canceled" [];
     slot "cancel" [];
-    slot "forceShow" [];
+    slot ~protected "forceShow" [];
     slot "_q_disconnectOnClose" [];
     slot "reset" [];
     slot "setCancelButtonText" [qString];
@@ -2964,7 +2966,7 @@ let () = with_class qMdiArea [
     slot "_q_moveTab" [int;int];
     slot "_q_processWindowStateChanged" [qt'WindowStates;qt'WindowStates];
     slot "setActiveSubWindow" [qMdiSubWindow];
-    slot "setupViewport" [qWidget];
+    slot ~protected "setupViewport" [qWidget];
     slot "tileSubWindows" [];
     signal "subWindowActivated" [qMdiSubWindow];
   ]
@@ -3241,13 +3243,13 @@ let () = with_class qHeaderView [
     slot "headerDataChanged" [qt'Orientation;int;int];
     slot "_q_layoutAboutToBeChanged" [];
     slot "_q_sectionsRemoved" [qModelIndex;int;int];
-    slot "resizeSections" [];
-    slot "sectionsAboutToBeRemoved" [qModelIndex;int;int];
-    slot "sectionsInserted" [qModelIndex;int;int];
+    slot ~protected "resizeSections" [];
+    slot ~protected "sectionsAboutToBeRemoved" [qModelIndex;int;int];
+    slot ~protected "sectionsInserted" [qModelIndex;int;int];
     slot "setOffset" [int];
     slot "setOffsetToLastSection" [];
     slot "setOffsetToSectionPosition" [int];
-    slot "updateSection" [int];
+    slot ~protected "updateSection" [int];
     signal "geometriesChanged" [];
     signal "sectionClicked" [int];
     signal "sectionCountChanged" [int;int];
@@ -3344,9 +3346,9 @@ let () = with_class qTableView [
     dynamic "resizeColumnsToContents" [];
     dynamic "sortByColumn" [arg "column" int];
     dynamic "setShowGrid" [arg "show" bool];
-    slot "columnCountChanged" [int;int];
-    slot "columnMoved" [int;int;int];
-    slot "columnResized" [int;int;int];
+    slot ~protected "columnCountChanged" [int;int];
+    slot ~protected "columnMoved" [int;int;int];
+    slot ~protected "columnResized" [int;int;int];
     slot "hideColumn" [int];
     slot "hideRow" [int];
     slot "_q_selectColumn" [int];
@@ -3359,9 +3361,9 @@ let () = with_class qTableView [
     slot "resizeColumnToContents" [int];
     slot "resizeRowsToContents" [];
     slot "resizeRowToContents" [int];
-    slot "rowCountChanged" [int;int];
-    slot "rowMoved" [int;int;int];
-    slot "rowResized" [int;int;int];
+    slot ~protected "rowCountChanged" [int;int];
+    slot ~protected "rowMoved" [int;int;int];
+    slot ~protected "rowResized" [int;int;int];
     slot "selectColumn" [int];
     slot "selectRow" [int];
     slot "setShowGrid" [bool];
@@ -3557,9 +3559,9 @@ let () = with_class qTreeView [
 
     slot "collapseAll" [];
     slot "collapse" [qModelIndex];
-    slot "columnCountChanged" [int;int];
-    slot "columnMoved" [];
-    slot "columnResized" [int;int;int];
+    slot ~protected "columnCountChanged" [int;int];
+    slot ~protected "columnMoved" [];
+    slot ~protected "columnResized" [int;int;int];
     slot "expandAll" [];
     slot "expand" [qModelIndex];
     slot "expandToDepth" [int];
@@ -3567,9 +3569,9 @@ let () = with_class qTreeView [
     slot "_q_endAnimatedOperation" [];
     slot "_q_modelAboutToBeReset" [];
     slot "_q_sortIndicatorChanged" [int;qt'SortOrder];
-    slot "reexpand" [];
+    slot ~protected "reexpand" [];
     slot "resizeColumnToContents" [int];
-    slot "rowsRemoved" [qModelIndex;int;int];
+    slot ~protected "rowsRemoved" [qModelIndex;int;int];
     slot "showColumn" [int];
     slot "sortByColumn" [int];
     signal "collapsed" [qModelIndex];
@@ -5660,14 +5662,14 @@ let () = with_class qAbstractItemView [
     slot "clearSelection" [];
     (*  slot "closeEditor" [qWidget*;QAbstractItemDelegate::EndEditHint];*)
     (*  slot "commitData" [qWidget];*)
-    slot "currentChanged" [qModelIndex;qModelIndex];
-    slot "dataChanged" [qModelIndex;qModelIndex];
+    slot ~protected "currentChanged" [qModelIndex;qModelIndex];
+    slot ~protected "dataChanged" [qModelIndex;qModelIndex];
     (*slot "dataChanged" [qModelIndex;qModelIndex;QVector<int>];*)
     slot "doItemsLayout" [];
     (*  slot "editorDestroyed" [qObject];*)
     slot "edit" [qModelIndex];
-    slot "horizontalScrollbarAction" [int];
-    slot "horizontalScrollbarValueChanged" [int];
+    slot ~protected "horizontalScrollbarAction" [int];
+    slot ~protected "horizontalScrollbarValueChanged" [int];
     slot "_q_columnsAboutToBeRemoved" [qModelIndex;int;int];
     slot "_q_columnsInserted" [qModelIndex;int;int];
     slot "_q_columnsMoved" [qModelIndex;int;int;qModelIndex;int];
@@ -5680,20 +5682,20 @@ let () = with_class qAbstractItemView [
     slot "_q_rowsRemoved" [qModelIndex;int;int];
     slot "_q_scrollerStateChanged" [];
     slot "reset" [];
-    slot "rowsAboutToBeRemoved" [qModelIndex;int;int];
-    slot "rowsInserted" [qModelIndex;int;int];
+    slot ~protected "rowsAboutToBeRemoved" [qModelIndex;int;int];
+    slot ~protected "rowsInserted" [qModelIndex;int;int];
     slot "scrollToBottom" [];
     slot "scrollToTop" [];
     slot "selectAll" [];
-    slot "selectionChanged" [qItemSelection;qItemSelection];
+    slot ~protected "selectionChanged" [qItemSelection;qItemSelection];
     slot "setCurrentIndex" [qModelIndex];
     slot "setRootIndex" [qModelIndex];
-    slot "updateEditorData" [];
-    slot "updateEditorGeometries" [];
-    slot "updateGeometries" [];
+    slot ~protected "updateEditorData" [];
+    slot ~protected "updateEditorGeometries" [];
+    slot ~protected "updateGeometries" [];
     slot "update" [qModelIndex];
-    slot "verticalScrollbarAction" [int];
-    slot "verticalScrollbarValueChanged" [int];
+    slot ~protected "verticalScrollbarAction" [int];
+    slot ~protected "verticalScrollbarValueChanged" [int];
     signal "activated" [qModelIndex];
     signal "clicked" [qModelIndex];
     signal "doubleClicked" [qModelIndex];

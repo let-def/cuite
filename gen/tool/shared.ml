@@ -190,9 +190,18 @@ let static ?(custom=false) ?ret name args ~cl =
   let cl = qclass_of_typ cl in
   cl.cl_fields <- Static_method (ret, name, args, custom) :: cl.cl_fields
 
-let slot name args ~cl =
+let slot ?(protected=false) name args ~cl =
   let cl = qclass_of_typ cl in
-  cl.cl_fields <- Slot (name, args) :: cl.cl_fields
+  let arg i arg = ("arg" ^ string_of_int i, arg) in
+  let fields = Slot (name, args) :: cl.cl_fields in
+  let fields =
+    if protected ||
+       (String.length name >= 3 &&
+        name.[0] = '_' && name.[1] = 'q' && name.[2] = '_')
+    then fields
+    else Dynamic_method (None, name, List.mapi arg args, false) :: fields
+  in
+  cl.cl_fields <- fields
 
 let signal name args ~cl =
   let cl = qclass_of_typ cl in
