@@ -13,9 +13,11 @@ let () =
   let click_then_close connection () =
     Qt.disconnect connection;
     prerr_endline "clicked";
-    Qt.connect_slot' button (QAbstractButton.signal'released1()) widget (QWidget.slot'close1())
+    Qt.connect_slot
+      button QAbstractButton.signal'released
+      widget QWidget.slot'close
   in
-  let _ = Qt.connect button (QAbstractButton.signal'released1()) click_then_close in
+  let _ = Qt.connect' button QAbstractButton.signal'released click_then_close in
   prerr_endline ("class of button: " ^ Qt.class_name (Qt.class_of button));
   Gc.full_major ();
   ignore (QApplication.exec());

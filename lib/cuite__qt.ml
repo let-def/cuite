@@ -37,16 +37,45 @@ let () =
 type connection
 external disconnect : connection -> unit = "cuite_disconnect"
 
-type (-'a, +'b) signal
+type (-'a, +'b, +'c) signal
+type (-'a, -'b, -'c) slot
+type 'a stub = unit -> 'a
 
-type (-'a, -'b) slot
-external slot_ignore : ('a, unit) slot -> ('a, _) slot = "%identity"
+external connect
+  : 'a t -> ('a, 't, _) signal -> ('t -> unit) -> unit
+  = "cuite_connect0"
 
-external connect_slot : 'a t -> ('a, 't) signal -> 'b t -> ('b, 't) slot -> connection = "cuite_connect_slot"
-external connect_slot' : 'a t -> ('a, 't) signal -> 'b t -> ('b, 't) slot -> unit = "cuite_connect_slot0" [@@noalloc]
-external connect : 'a t -> ('a, 't) signal -> (connection -> 't -> unit) -> connection = "cuite_connect"
-external connect' : 'a t -> ('a, 't) signal -> ('t -> unit) -> unit = "cuite_connect0"
-external connect_by_name : 'a t -> string -> 'b t -> string -> unit = "cuite_connect_by_name0"
+let connect a signal f =
+  connect a (signal ()) f
+
+external connect_slot
+  : 'a t -> ('a, _, 't) signal -> 'b t -> ('b, _, 't) slot -> unit
+  = "cuite_connect_slot0" [@@noalloc]
+
+let connect_slot a signal b slot =
+  connect_slot a (signal ()) b (slot ())
+
+external connect'
+  : 'a t -> ('a, 't, _) signal -> (connection -> 't -> unit) -> connection
+  = "cuite_connect1"
+
+let connect' a signal f =
+  connect' a (signal ()) f
+
+external connect_slot'
+  : 'a t -> ('a, _, 't) signal -> 'b t -> ('b, _, 't) slot -> connection
+  = "cuite_connect_slot1"
+
+let connect_slot' a signal b slot =
+  connect_slot' a (signal ()) b (slot ())
+
+external connect_by_name
+  : 'a t -> string -> 'b t -> string -> unit
+  = "cuite_connect_by_name0"
+
+(*external trigger_slot
+  : 'a t -> ('a, 'b, _) slot -> 'b -> unit
+  = "cuite_trigger_slot0"*)
 
 (* Object hierarchy *)
 let object_option (o : Obj.t) : [`QObject] t option =

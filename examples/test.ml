@@ -69,15 +69,14 @@ let create_dialog () =
   QWidget.setLayout dialog (Some mainlayout);
   QWidget.setWindowTitle dialog "Basic Layouts";
   List.iter (fun btn ->
-      Qt.connect_slot' btn (QPushButton.signal'clicked1())
-        dialog
-        (Qt.slot_ignore (QWidget.slot'close1 ()))
-
+      Qt.connect_slot
+        btn QPushButton.signal'clicked
+        dialog QWidget.slot'close
     ) btns;
   dialog
 
 let () =
-  let app = new'QApplication Sys.argv in
+  ignore (new'QApplication Sys.argv : _ qt);
   (*let dialog' = create_dialog () in
     Qt.delete dialog';
     assert (Qt.is_deleted dialog');*)

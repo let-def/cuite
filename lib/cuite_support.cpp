@@ -609,11 +609,11 @@ static struct custom_operations cuiteconn_custom_ops = {
 
 value& cuite_Connection_to_ocaml(const QMetaObject::Connection& sg, intnat *cbid)
 {
-    value& root = cuite_region_register(caml_alloc_custom(&cuiteconn_custom_ops, sizeof(QMetaObject::Connection *), 0, 1));
-    cuiteconn_inst *inst = cuiteconn_val(root);
-    inst->conn = new QMetaObject::Connection(sg);
-    inst->id = cbid;
-    return root;
+  value& root = cuite_region_register(caml_alloc_custom(&cuiteconn_custom_ops, sizeof(QMetaObject::Connection *), 0, 1));
+  cuiteconn_inst *inst = cuiteconn_val(root);
+  inst->conn = new QMetaObject::Connection(sg);
+  inst->id = cbid;
+  return root;
 }
 
 const QMetaObject::Connection& cuite_Connection_from_ocaml(value v)
@@ -760,15 +760,16 @@ cuite_connect_slot_gen(value vsource, value vsig, value vtarget, value vslot)
   return QObject::connect(source, signal.name, target, slot.name);
 }
 
-external value cuite_connect_slot(value vsource, value vsig, value vtarget, value vslot)
-{
-  return cuite_Connection_to_ocaml(cuite_connect_slot_gen(vsource, vsig, vtarget, vslot), NULL);
-}
-
 external value cuite_connect_slot0(value vsource, value vsig, value vtarget, value vslot)
 {
   (void)cuite_connect_slot_gen(vsource, vsig, vtarget, vslot);
   return Val_unit;
+}
+
+external value cuite_connect_slot1(value vsource, value vsig, value vtarget, value vslot)
+{
+  CUITE_Region region;
+  return cuite_Connection_to_ocaml(cuite_connect_slot_gen(vsource, vsig, vtarget, vslot), NULL);
 }
 
 static value cuite_connect_gen(value vsource, value vsig, value vfn, bool witness)
@@ -799,14 +800,14 @@ static value cuite_connect_gen(value vsource, value vsig, value vfn, bool witnes
   }
 }
 
-external value cuite_connect(value vsource, value vsig, value vfn)
-{
-  return cuite_connect_gen(vsource, vsig, vfn, true);
-}
-
 external value cuite_connect0(value vsource, value vsig, value vfn)
 {
   return cuite_connect_gen(vsource, vsig, vfn, false);
+}
+
+external value cuite_connect1(value vsource, value vsig, value vfn)
+{
+  return cuite_connect_gen(vsource, vsig, vfn, true);
 }
 
 external value cuite_connect_by_name0(value vsource, value vsig, value vtarget, value vslot)

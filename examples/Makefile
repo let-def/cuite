@@ -1,10 +1,12 @@
 OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
 
-all: abook_addresswidget test example_1 syntaxhl
+TARGETS=abook_addresswidget test example_1 syntaxhl
+
+all: $(TARGETS)
 
 clean:
-	rm -f *.o *.cm* *.gen.*
+	rm -f *.o *.cm* *.gen.* $(TARGETS)
 
 ## EXAMPLES
 

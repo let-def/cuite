@@ -763,4 +763,8 @@ let () = (
   slot ~cl:qApplication "setAutoSipEnabled" [bool];
   slot ~cl:qApplication "setStyleSheet" [qString];
 
+  signal ~cl:qSignalMapper "mapped" [int];
+  signal ~cl:qSignalMapper "mapped" [qString];
+  signal ~cl:qSignalMapper "mapped" [qWidget];
+  signal ~cl:qSignalMapper "mapped" [qObject];
 )

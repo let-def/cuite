@@ -24,12 +24,12 @@ let add_dialog ?edit parent =
   let main_layout = new'QVBoxLayout () in
   QVBoxLayout.addLayout main_layout grid_layout 0;
   QDialog.setLayout dialog (Some main_layout);
-  Qt.connect_slot' ok_button
-    (QPushButton.signal'clicked1()) dialog
-    (Qt.slot_ignore (QDialog.slot'accept1()));
-  Qt.connect_slot' cancel_button
-    (QPushButton.signal'clicked1()) dialog
-    (Qt.slot_ignore (QDialog.slot'reject1()));
+  Qt.connect_slot
+    ok_button QPushButton.signal'clicked
+    dialog QDialog.slot'accept;
+  Qt.connect_slot
+    cancel_button QPushButton.signal'clicked
+    dialog QDialog.slot'reject;
   begin match edit with
     | None -> QWidget.setWindowTitle dialog "Add a Contact"
     | Some (name, address) ->
@@ -54,7 +54,7 @@ let new_address_tab ~send_details parent =
        Click Add to add new contacts." None QFlags.empty
   in
   let add_button = new'QPushButton'1 "Add" None in
-  Qt.connect' add_button (QPushButton.signal'clicked1 ()) (fun _ ->
+  Qt.connect add_button QPushButton.signal'clicked (fun _ ->
       match add_dialog None with
       | Some (name, address) -> send_details name address
       | None -> ()
@@ -83,8 +83,8 @@ let setup_tab self table group ~selection_changed =
     setSortingEnabled tableview true;
   );
   ignore (QTabWidget.addTab self tableview group : int);
-  Qt.connect' (QTableView.selectionModel tableview)
-    (QItemSelectionModel.signal'selectionChanged1())
+  Qt.connect
+    (QTableView.selectionModel tableview) QItemSelectionModel.signal'selectionChanged
     selection_changed
 
 let setup_tabs self table ~selection_changed =
@@ -262,28 +262,29 @@ let main_window () =
     let file_menu = QMenuBar.addMenu1 menu_bar "&File" in
     let open_act = QMenu.addAction file_menu "&Open" in
     ignore open_act;
-    Qt.connect' open_act (QAction.signal'triggered1()) open_file;
+    Qt.connect open_act QAction.signal'triggered open_file;
     let save_act = QMenu.addAction file_menu "&Save As..." in
     ignore save_act;
-    Qt.connect' save_act (QAction.signal'triggered1()) save_file;
+    Qt.connect save_act QAction.signal'triggered save_file;
     let _ = QMenu.addSeparator file_menu in
     let exit_act = QMenu.addAction file_menu "E&xit" in
     ignore exit_act;
-    Qt.connect_slot' exit_act (QAction.signal'triggered1())
-      self (Qt.slot_ignore (QWidget.slot'close1()));
+    Qt.connect_slot
+      exit_act QAction.signal'triggered
+      self QWidget.slot'close;
     let tool_menu = QMenuBar.addMenu1 menu_bar "&Tools" in
     let add_act = QMenu.addAction tool_menu "&Add Entry..." in
-    Qt.connect' add_act (QAction.signal'triggered1())
+    Qt.connect add_act QAction.signal'triggered
       (address_widget_show_add_entry_dialog address_widget);
     ignore add_act;
     let edit_act = QMenu.addAction tool_menu "&Edit Entry..." in
     QAction.setEnabled edit_act false;
-    Qt.connect' edit_act (QAction.signal'triggered1())
+    Qt.connect edit_act QAction.signal'triggered
       (address_widget_edit_entry table address_widget);
     let _ = QMenu.addSeparator tool_menu in
     let remove_act = QMenu.addAction tool_menu "&Remove Entry..." in
     QAction.setEnabled remove_act false;
-    Qt.connect' remove_act (QAction.signal'triggered1())
+    Qt.connect remove_act QAction.signal'triggered
       (address_widget_remove_entry new_address_tab table address_widget);
     update_actions := (fun (selected,_) ->
         prerr_endline "selection changed";

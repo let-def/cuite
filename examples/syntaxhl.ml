@@ -59,17 +59,21 @@ let mainwindow_openfile state path =
 
 let mainwindow_setup_menu state =
   let menu = QMenuBar.addMenu1 (QMainWindow.menuBar state.self) "&File" in
-  Qt.connect' (QMenu.addAction menu "&New") (QAction.signal'triggered1())
+  Qt.connect
+    (QMenu.addAction menu "&New") QAction.signal'triggered
     (fun _ -> mainwindow_newfile state);
-  Qt.connect' (QMenu.addAction menu "&Open...") (QAction.signal'triggered1())
+  Qt.connect
+    (QMenu.addAction menu "&Open...") QAction.signal'triggered
     (fun _ -> mainwindow_openfile state "");
-  Qt.connect_slot' (QMenu.addAction menu "E&xit") (QAction.signal'triggered1())
-    state.app (Qt.slot_ignore (QApplication.slot'quit ()));
+  Qt.connect_slot (QMenu.addAction menu "E&xit") QAction.signal'triggered
+    state.app QApplication.slot'quit;
   let help = QMenuBar.addMenu1 (QMainWindow.menuBar state.self) "&Help" in
-  Qt.connect' (QMenu.addAction help "&About") (QAction.signal'triggered1())
+  Qt.connect
+    (QMenu.addAction help "&About") QAction.signal'triggered
     (fun _ -> mainwindow_about state);
-  Qt.connect_slot' (QMenu.addAction help "About &Qt") (QAction.signal'triggered1())
-    state.app (Qt.slot_ignore (QApplication.slot'aboutQt1 ()))
+  Qt.connect_slot
+    (QMenu.addAction help "About &Qt") QAction.signal'triggered
+    state.app QApplication.slot'aboutQt
 
 let mainwindow app parent =
   let state =

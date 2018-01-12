@@ -10,14 +10,18 @@ val cast : [>`QObject] t -> 'a qt_class -> 'a t option
 type connection
 val disconnect : connection -> unit
 
-type (-'a, +'b) signal
-type (-'a, -'b) slot
-val slot_ignore : ('a, unit) slot -> ('a, _) slot
+type (-'a, +'b, +'c) signal
+type (-'a, -'b, -'c) slot
+type 'a stub = unit -> 'a
 
-val connect_slot : 'a t -> ('a, 't) signal -> 'b t -> ('b, 't) slot -> connection
-val connect_slot' : 'a t -> ('a, 't) signal -> 'b t -> ('b, 't) slot -> unit
-val connect : 'a t -> ('a, 't) signal -> (connection -> 't -> unit) -> connection
-val connect' : 'a t -> ('a, 't) signal -> ('t -> unit) -> unit
+val connect : 'a t -> ('a, 't, _) signal stub -> ('t -> unit) -> unit
+val connect_slot : 'a t -> ('a, _, 't) signal stub -> 'b t -> ('b, _, 't) slot stub -> unit
+
+val connect' : 'a t -> ('a, 't, _) signal stub -> (connection -> 't -> unit) -> connection
+val connect_slot' : 'a t -> ('a, _, 't) signal stub -> 'b t -> ('b, _, 't) slot stub -> connection
+
+(*val trigger_slot : 'a t -> ('a, 'b, _) slot stub -> 'b -> unit*)
+
 val connect_by_name : 'a t -> string -> 'b t -> string -> unit
 
 (* Deterministic memory management *)

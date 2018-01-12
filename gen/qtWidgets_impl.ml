@@ -169,8 +169,8 @@ let () = with_class qWidget [
     dynamic "setStyleSheet" [arg "styleSheet" qString];
     dynamic "styleSheet" [] ~ret:qString;
     dynamic "windowTitle" [] ~ret:qString;
-    (*dynamic "setWindowIcon" [arg "icon" qIcon];*)
-    (*dynamic "windowIcon" [] ~ret:qIcon;*)
+    dynamic "setWindowIcon" [arg "icon" qIcon];
+    dynamic "windowIcon" [] ~ret:qIcon;
     dynamic "setWindowIconText" [arg "arg0" qString];
     dynamic "windowIconText" [] ~ret:qString;
     dynamic "setWindowRole" [arg "role" qString];
