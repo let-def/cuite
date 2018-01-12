@@ -50,6 +50,18 @@ value& cuite_intnat_to_ocaml(const intnat v)
   return cuite_region_register(caml_copy_nativeint(v));
 }
 
+/* qint64 */
+
+qint64 cuite_qint64_from_ocaml(const value& v)
+{
+  return Int64_val(v);
+}
+
+value& cuite_qint64_to_ocaml(const qint64 v)
+{
+  return cuite_region_register(caml_copy_int64(v));
+}
+
 /* pchar */
 
 pchar cuite_pchar_from_ocaml(const value& v)
@@ -230,6 +242,7 @@ CUITE_RELOCATABLE_CONVERTER(QPalette);
 CUITE_RELOCATABLE_CONVERTER(QRegExp);
 CUITE_RELOCATABLE_CONVERTER(QRegion);
 CUITE_RELOCATABLE_CONVERTER(QStringList);
+CUITE_RELOCATABLE_CONVERTER(QSurfaceFormat);
 CUITE_RELOCATABLE_CONVERTER(QTextBlock);
 CUITE_RELOCATABLE_CONVERTER(QTextCursor);
 CUITE_RELOCATABLE_CONVERTER(QTextFormat);

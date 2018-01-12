@@ -10,8 +10,8 @@ val cast : [>`QObject] t -> 'a qt_class -> 'a t option
 type connection
 val disconnect : connection -> unit
 
-type (-'a, +'b, +'c) signal
-type (-'a, -'b, -'c) slot
+type (-'t, +'ml, +'qt) signal
+type (-'t, -'ml, -'qt) slot
 type 'a stub = unit -> 'a
 
 val connect : 'a t -> ('a, 't, _) signal stub -> ('t -> unit) -> unit

@@ -69,6 +69,12 @@ let () = with_class qApplication [
     dynamic "autoSipEnabled" [] ~ret:bool;
     static  "closeAllWindows" [];
     static  "aboutQt" [];
+    signal  "focusChanged" [optional qWidget; optional qWidget];
+    slot    "aboutQt" [];
+    slot    "autoSipEnabled" [];
+    slot    "closeAllWindows" [];
+    slot    "setAutoSipEnabled" [bool];
+    slot    "setStyleSheet" [qString];
   ]
 
 let () = with_class qWidget [
@@ -321,6 +327,32 @@ let () = with_class qWidget [
     (*dynamic "inputMethodQuery" [arg "query" qt'InputMethodQuery] ~ret:qVariant;*)
     (*dynamic "inputMethodHints" [] ~ret:qt'InputMethodHints;*)
     (*dynamic "setInputMethodHints" [arg "hints" qt'InputMethodHints];*)
+
+    signal "customContextMenuRequested" [const qPoint];
+    signal "windowIconChanged" [qIcon];
+    signal "windowIconTextChanged" [qString];
+    signal "windowTitleChanged" [qString];
+    slot "close" [];
+    slot "hide" [];
+    slot "lower" [];
+    slot "_q_showIfNotHidden" [];
+    slot "raise" [];
+    slot "repaint" [];
+    slot "setDisabled" [bool];
+    slot "setEnabled" [bool];
+    slot "setFocus" [];
+    slot "setHidden" [bool];
+    slot "setStyleSheet" [qString];
+    slot "setVisible" [bool];
+    slot "setWindowModified" [bool];
+    slot "setWindowTitle" [qString];
+    slot "show" [];
+    slot "showFullScreen" [];
+    slot "showMaximized" [];
+    slot "showMinimized" [];
+    slot "showNormal" [];
+    slot "update" [];
+    slot "updateMicroFocus" [];
   ]
 
 let () = with_class qAbstractButton [
@@ -354,6 +386,17 @@ let () = with_class qAbstractButton [
     dynamic "released" [];
     dynamic "clicked" [arg "checked" bool];
     dynamic "toggled" [arg "checked" bool];
+    slot "animateClick" [];
+    slot "animateClick" [int];
+    slot "click" [];
+    slot "setChecked" [bool];
+    slot "setIconSize" [qSize];
+    slot "toggle" [];
+    (*signal "clicked" [];*)
+    signal "clicked" [bool];
+    signal "pressed" [];
+    signal "released" [];
+    signal "toggled" [bool];
   ]
 
 let () = with_class qPushButton [
@@ -371,6 +414,8 @@ let () = with_class qPushButton [
     dynamic "setFlat" [arg "arg0" bool];
     dynamic "isFlat" [] ~ret:bool;
     dynamic "showMenu" [];
+    slot "_q_popupPressed" [];
+    slot "showMenu" [];
   ]
 
 let () = with_class qGroupBox [
@@ -389,6 +434,11 @@ let () = with_class qGroupBox [
     dynamic "setChecked" [arg "checked" bool];
     dynamic "clicked" [arg "checked" bool];
     dynamic "toggled" [arg "on" bool];
+    slot "_q_setChildrenEnabled" [bool];
+    slot "setChecked" [bool];
+    (*signal "clicked" [];*)
+    signal "clicked" [bool];
+    signal "toggled" [bool];
   ]
 
 let () = with_class qMenu [
@@ -448,6 +498,15 @@ let () = with_class qMenu [
     dynamic "aboutToHide" [];
     dynamic "triggered" [arg "action" qAction];
     dynamic "hovered" [arg "action" qAction];
+    slot "internalDelayedPopup" [];
+    slot "_q_actionHovered" [];
+    slot "_q_actionTriggered" [];
+    slot "_q_overrideMenuActionDestroyed" [];
+    slot "_q_platformMenuAboutToShow" [];
+    signal "aboutToHide" [];
+    signal "aboutToShow" [];
+    signal "hovered" [qAction];
+    signal "triggered" [qAction];
   ]
 
 let () = with_class qMenuBar [
@@ -478,6 +537,13 @@ let () = with_class qMenuBar [
     dynamic "setVisible" [arg "visible" bool];
     dynamic "triggered" [arg "action" qAction];
     dynamic "hovered" [arg "action" qAction];
+    slot "_q_actionHovered" [];
+    slot "_q_actionTriggered" [];
+    slot "_q_internalShortcutActivated" [int];
+    slot "_q_updateLayout" [];
+    slot "setVisible" [bool];
+    signal "hovered" [qAction];
+    signal "triggered" [qAction];
   ]
 
 let () = with_class qGridLayout [
@@ -677,6 +743,45 @@ let () = with_class qTextEdit [
     dynamic "copyAvailable" [arg "yes" bool];
     dynamic "selectionChanged" [];
     dynamic "cursorPositionChanged" [];
+    slot "append" [qString];
+    slot "clear" [];
+    slot "copy" [];
+    slot "cut" [];
+    slot "insertHtml" [qString];
+    slot "insertPlainText" [qString];
+    slot "paste" [];
+    slot "_q_adjustScrollbars" [];
+    (*slot "_q_currentCharFormatChanged" [qTextCharFormat];*)
+    slot "_q_cursorPositionChanged" [];
+    slot "_q_ensureVisible" [qRectF];
+    slot "_q_repaintContents" [qRectF];
+    slot "redo" [];
+    slot "scrollToAnchor" [qString];
+    slot "selectAll" [];
+    slot "setAlignment" [qt'Alignment];
+    slot "setCurrentFont" [qFont];
+    slot "setFontFamily" [qString];
+    slot "setFontItalic" [bool];
+    slot "setFontPointSize" [double];
+    slot "setFontUnderline" [bool];
+    slot "setFontWeight" [int];
+    slot "setHtml" [qString];
+    slot "setPlainText" [qString];
+    slot "setTextBackgroundColor" [qColor];
+    slot "setTextColor" [qColor];
+    slot "setText" [qString];
+    slot "undo" [];
+    slot "zoomIn" [];
+    slot "zoomIn" [int];
+    slot "zoomOut" [];
+    slot "zoomOut" [int];
+    signal "copyAvailable" [bool];
+    (*signal "currentCharFormatChanged" [qTextCharFormat];*)
+    signal "cursorPositionChanged" [];
+    signal "redoAvailable" [bool];
+    signal "selectionChanged" [];
+    signal "textChanged" [];
+    signal "undoAvailable" [bool];
   ]
 
 let () = with_class qLineEdit [
@@ -755,6 +860,28 @@ let () = with_class qLineEdit [
     dynamic "selectionChanged" [];
     (*dynamic "inputMethodQuery" [arg "property" qt'InputMethodQuery] ~ret:qVariant;*)
     dynamic "event" [arg "e" qEvent] ~ret:bool;
+    slot "clear" [];
+    slot "copy" [];
+    slot "cut" [];
+    slot "paste" [];
+    slot "_q_clearButtonClicked" [];
+    slot "_q_completionHighlighted" [qString];
+    slot "_q_cursorPositionChanged" [int;int];
+    slot "_q_handleWindowActivate" [];
+    slot "_q_selectionChanged" [];
+    slot "_q_textChanged" [qString];
+    slot "_q_textEdited" [qString];
+    slot "_q_updateNeeded" [qRect];
+    slot "redo" [];
+    slot "selectAll" [];
+    slot "setText" [qString];
+    slot "undo" [];
+    signal "cursorPositionChanged" [int;int];
+    signal "editingFinished" [];
+    signal "returnPressed" [];
+    signal "selectionChanged" [];
+    signal "textChanged" [qString];
+    signal "textEdited" [qString];
   ]
 
 let () = with_class qLabel [
@@ -798,6 +925,18 @@ let () = with_class qLabel [
     dynamic "clear" [];
     dynamic "linkActivated" [arg "link" qString];
     dynamic "linkHovered" [arg "link" qString];
+    slot "clear" [];
+    slot "_q_linkHovered" [qString];
+    slot "_q_movieResized" [qSize];
+    slot "_q_movieUpdated" [qRect];
+    (*  slot "setMovie" [qMovie];*)
+    slot "setNum" [double];
+    slot "setNum" [int];
+    (*slot "setPicture" [qPicture];*)
+    slot "setPixmap" [qPixmap];
+    slot "setText" [qString];
+    signal "linkActivated" [qString];
+    signal "linkHovered" [qString];
   ]
 
 let () = with_class qBoxLayout [
@@ -982,6 +1121,17 @@ let () = with_class qAction [
     dynamic "triggered" [arg "checked" bool];
     dynamic "hovered" [];
     dynamic "toggled" [arg "checked" bool];
+    slot "hover" [];
+    slot "setChecked" [bool];
+    slot "setDisabled" [bool];
+    slot "setEnabled" [bool];
+    slot "setVisible" [bool];
+    slot "toggle" [];
+    slot "trigger" [];
+    signal "changed" [];
+    signal "hovered" [];
+    signal "toggled" [bool];
+    signal "triggered" [bool];
   ]
 let () = with_class qActionGroup [
     constructor "" [arg "parent" qObject];
@@ -1113,6 +1263,14 @@ let () = with_class qButtonGroup [
     dynamic "buttonReleased" [arg "id" int];
     dynamic "buttonToggled" [arg "button" qAbstractButton;arg "checked" bool];
     dynamic "buttonToggled" [arg "id" int;arg "checked" bool];
+    signal "buttonClicked" [int];
+    signal "buttonClicked" [qAbstractButton];
+    signal "buttonPressed" [int];
+    signal "buttonPressed" [qAbstractButton];
+    signal "buttonReleased" [int];
+    signal "buttonReleased" [qAbstractButton];
+    signal "buttonToggled" [int;bool];
+    signal "buttonToggled" [qAbstractButton;bool];
   ]
 let () = with_class qWidgetAction [
     constructor "" [arg "parent" qObject];
@@ -1222,6 +1380,15 @@ let () = with_class qDialog [
     dynamic "accept" [];
     dynamic "reject" [];
     dynamic "showExtension" [arg "showIt" bool];
+    slot "accept" [];
+    slot "done" [int];
+    slot "exec" [];
+    slot "open" [];
+    slot "reject" [];
+    slot "showExtension" [bool];
+    signal "accepted" [];
+    signal "finished" [int];
+    signal "rejected" [];
   ]
 let () = with_class qWizardPage [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1293,6 +1460,15 @@ let () = with_class qAbstractSlider [
     dynamic "sliderReleased" [];
     dynamic "rangeChanged" [arg "min" int;arg "max" int];
     dynamic "actionTriggered" [arg "action" int];
+    slot "setOrientation" [qt'Orientation];
+    slot "setRange" [int;int];
+    slot "setValue" [int];
+    signal "actionTriggered" [int];
+    signal "rangeChanged" [int;int];
+    signal "sliderMoved" [int];
+    signal "sliderPressed" [];
+    signal "sliderReleased" [];
+    signal "valueChanged" [int];
   ]
 let () = with_class qAbstractSpinBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1331,6 +1507,13 @@ let () = with_class qAbstractSpinBox [
     dynamic "selectAll" [];
     dynamic "clear" [];
     dynamic "editingFinished" [];
+    slot "clear" [];
+    slot "_q_editorCursorPositionChanged" [int;int];
+    slot "_q_editorTextChanged" [qString];
+    slot "selectAll" [];
+    slot "stepDown" [];
+    slot "stepUp" [];
+    signal "editingFinished" [];
   ]
 let () = with_class qCalendarWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1379,6 +1562,30 @@ let () = with_class qCalendarWidget [
     dynamic "clicked" [arg "date" qDate];
     dynamic "activated" [arg "date" qDate];
     dynamic "currentPageChanged" [arg "year" int;arg "month" int];
+    slot "_q_editingFinished" [];
+    slot "_q_monthChanged" [qAction];
+    slot "_q_nextMonthClicked" [];
+    slot "_q_prevMonthClicked" [];
+    slot "_q_slotChangeDate" [qDate];
+    slot "_q_slotChangeDate" [qDate;bool];
+    slot "_q_slotShowDate" [qDate];
+    slot "_q_yearClicked" [];
+    slot "_q_yearEditingFinished" [];
+    slot "setCurrentPage" [int;int];
+    slot "setDateRange" [qDate;qDate];
+    slot "setGridVisible" [bool];
+    slot "setNavigationBarVisible" [bool];
+    slot "setSelectedDate" [qDate];
+    slot "showNextMonth" [];
+    slot "showNextYear" [];
+    slot "showPreviousMonth" [];
+    slot "showPreviousYear" [];
+    slot "showSelectedDate" [];
+    slot "showToday" [];
+    signal "activated" [qDate];
+    signal "clicked" [qDate];
+    signal "currentPageChanged" [int;int];
+    signal "selectionChanged" [];
   ]
 let () = with_class qComboBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1459,6 +1666,32 @@ let () = with_class qComboBox [
     dynamic "currentIndexChanged" [arg "index" int];
     dynamic "currentIndexChanged" [arg "text" qString];
     dynamic "currentTextChanged" [arg "text" qString];
+    slot "clear" [];
+    slot "clearEditText" [];
+    slot "_q_completerActivated" [qModelIndex];
+    slot "_q_dataChanged" [qModelIndex;qModelIndex];
+    slot "_q_editingFinished" [];
+    slot "_q_emitCurrentIndexChanged" [qModelIndex];
+    slot "_q_emitHighlighted" [qModelIndex];
+    slot "_q_itemSelected" [qModelIndex];
+    slot "_q_modelDestroyed" [];
+    slot "_q_modelReset" [];
+    slot "_q_resetButton" [];
+    slot "_q_returnPressed" [];
+    slot "_q_rowsInserted" [qModelIndex;int;int];
+    slot "_q_rowsRemoved" [qModelIndex;int;int];
+    slot "_q_updateIndexBeforeChange" [];
+    slot "setCurrentIndex" [int];
+    slot "setCurrentText" [qString];
+    slot "setEditText" [qString];
+    signal "activated" [int];
+    signal "activated" [qString];
+    signal "currentIndexChanged" [int];
+    signal "currentIndexChanged" [qString];
+    signal "currentTextChanged" [qString];
+    signal "editTextChanged" [qString];
+    signal "highlighted" [int];
+    signal "highlighted" [qString];
   ]
 let () = with_class qDialogButtonBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1505,6 +1738,13 @@ let () = with_class qDockWidget [
     dynamic "allowedAreasChanged" [arg "allowedAreas" qt'DockWidgetAreas];
     dynamic "visibilityChanged" [arg "visible" bool];
     dynamic "dockLocationChanged" [arg "area" qt'DockWidgetArea];
+    slot "_q_toggleTopLevel" [];
+    slot "_q_toggleView" [bool];
+    signal "allowedAreasChanged" [qt'DockWidgetAreas];
+    signal "dockLocationChanged" [qt'DockWidgetArea];
+    signal "featuresChanged" [qDockWidget'DockWidgetFeatures];
+    signal "topLevelChanged" [bool];
+    signal "visibilityChanged" [bool];
   ]
 let () = with_class qFocusFrame [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1593,6 +1833,12 @@ let () = with_class qMainWindow [
     dynamic "iconSizeChanged" [arg "iconSize" qSize];
     dynamic "toolButtonStyleChanged" [arg "toolButtonStyle" qt'ToolButtonStyle];
     dynamic "tabifiedDockWidgetActivated" [arg "dockWidget" qDockWidget];
+    slot "setAnimated" [bool];
+    slot "setDockNestingEnabled" [bool];
+    slot "setUnifiedTitleAndToolBarOnMac" [bool];
+    signal "iconSizeChanged" [qSize];
+    signal "tabifiedDockWidgetActivated" [qDockWidget];
+    signal "toolButtonStyleChanged" [qt'ToolButtonStyle];
   ]
 let () = with_class qMdiSubWindow [
     constructor "" [arg "parent" (optional qWidget);arg "flags" qt'WindowFlags];
@@ -1614,6 +1860,13 @@ let () = with_class qMdiSubWindow [
     dynamic "aboutToActivate" [];
     dynamic "showSystemMenu" [];
     dynamic "showShaded" [];
+    slot "_q_enterInteractiveMode" [];
+    slot "_q_processFocusChanged" [qWidget;qWidget];
+    slot "_q_updateStaysOnTopHint" [];
+    slot "showShaded" [];
+    slot "showSystemMenu" [];
+    signal "aboutToActivate" [];
+    signal "windowStateChanged" [qt'WindowStates;qt'WindowStates];
   ]
 let () = with_class qProgressBar [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1642,6 +1895,13 @@ let () = with_class qProgressBar [
     dynamic "setValue" [arg "value" int];
     dynamic "setOrientation" [arg "arg0" qt'Orientation];
     dynamic "valueChanged" [arg "value" int];
+    slot "reset" [];
+    slot "setMaximum" [int];
+    slot "setMinimum" [int];
+    slot "setOrientation" [qt'Orientation];
+    slot "setRange" [int;int];
+    slot "setValue" [int];
+    signal "valueChanged" [int];
   ]
 let () = with_class qRubberBand [
     constructor "" [arg "s" qRubberBand'Shape;arg "p" (optional qWidget)];
@@ -1657,6 +1917,7 @@ let () = with_class qSizeGrip [
     constructor "" [arg "parent" (optional qWidget)];
     dynamic "sizeHint" [] ~ret:qSize;
     dynamic "setVisible" [arg "visible" bool];
+    slot "_q_showIfNotHidden" [];
   ]
 let () = with_class qSplashScreen [
     (*constructor "" [arg "pixmap" qPixmap;arg "f" qt'WindowFlags];*)
@@ -1683,6 +1944,10 @@ let () = with_class qStatusBar [
     dynamic "showMessage" [arg "message" qString;arg "timeout" int];
     dynamic "clearMessage" [];
     dynamic "messageChanged" [arg "message" qString];
+    slot "clearMessage" [];
+    slot "showMessage" [qString];
+    slot "showMessage" [qString;int];
+    signal "messageChanged" [qString];
   ]
 let () = with_class qTabBar [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1746,6 +2011,14 @@ let () = with_class qTabBar [
     dynamic "tabMoved" [arg "from" int;arg "to" int];
     dynamic "tabBarClicked" [arg "index" int];
     dynamic "tabBarDoubleClicked" [arg "index" int];
+    slot "_q_closeTab" [];
+    slot "_q_scrollTabs" [];
+    slot "setCurrentIndex" [int];
+    signal "currentChanged" [int];
+    signal "tabBarClicked" [int];
+    signal "tabBarDoubleClicked" [int];
+    signal "tabCloseRequested" [int];
+    signal "tabMoved" [int;int];
   ]
 let () = with_class qTabWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1801,6 +2074,15 @@ let () = with_class qTabWidget [
     dynamic "tabCloseRequested" [arg "index" int];
     dynamic "tabBarClicked" [arg "index" int];
     dynamic "tabBarDoubleClicked" [arg "index" int];
+    slot "_q_removeTab" [int];
+    slot "_q_showTab" [int];
+    slot "_q_tabMoved" [int;int];
+    slot "setCurrentIndex" [int];
+    (*  slot "setCurrentWidget" [qWidget*];*)
+    signal "currentChanged" [int];
+    signal "tabBarClicked" [int];
+    signal "tabBarDoubleClicked" [int];
+    signal "tabCloseRequested" [int];
   ]
 let () = with_class qToolBar [
     constructor "" [arg "title" qString;arg "parent" (optional qWidget)];
@@ -1846,6 +2128,19 @@ let () = with_class qToolBar [
     dynamic "toolButtonStyleChanged" [arg "toolButtonStyle" qt'ToolButtonStyle];
     dynamic "topLevelChanged" [arg "topLevel" bool];
     dynamic "visibilityChanged" [arg "visible" bool];
+    slot "_q_toggleView" [bool];
+    slot "_q_updateIconSize" [qSize];
+    slot "_q_updateToolButtonStyle" [qt'ToolButtonStyle];
+    slot "setIconSize" [qSize];
+    slot "setToolButtonStyle" [qt'ToolButtonStyle];
+    signal "actionTriggered" [qAction];
+    signal "allowedAreasChanged" [qt'ToolBarAreas];
+    signal "iconSizeChanged" [qSize];
+    signal "movableChanged" [bool];
+    signal "orientationChanged" [qt'Orientation];
+    signal "toolButtonStyleChanged" [qt'ToolButtonStyle];
+    signal "topLevelChanged" [bool];
+    signal "visibilityChanged" [bool];
   ]
 let () = with_class qStackedLayout [
     constructor "" [];
@@ -1894,6 +2189,9 @@ let () = with_class qAbstractScrollArea [
     dynamic "setupViewport" [arg "viewport" qWidget];
     dynamic "sizeAdjustPolicy" [] ~ret:qAbstractScrollArea'SizeAdjustPolicy;
     dynamic "setSizeAdjustPolicy" [arg "policy" qAbstractScrollArea'SizeAdjustPolicy];
+    slot "_q_hslide" [int];
+    slot "_q_showOrHideScrollBars" [];
+    slot "_q_vslide" [int];
   ]
 let () = with_class qLCDNumber [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1919,6 +2217,15 @@ let () = with_class qLCDNumber [
     dynamic "setBinMode" [];
     dynamic "setSmallDecimalPoint" [arg "arg0" bool];
     dynamic "overflow" [];
+    slot "display" [double];
+    slot "display" [int];
+    slot "display" [qString];
+    slot "setBinMode" [];
+    slot "setDecMode" [];
+    slot "setHexMode" [];
+    slot "setOctMode" [];
+    slot "setSmallDecimalPoint" [bool];
+    signal "overflow" [];
   ]
 let () = with_class qSplitter [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1950,6 +2257,7 @@ let () = with_class qSplitter [
     dynamic "handle" [arg "index" int] ~ret:qSplitterHandle;
     dynamic "setStretchFactor" [arg "index" int;arg "stretch" int];
     dynamic "splitterMoved" [arg "pos" int;arg "index" int];
+    signal "splitterMoved" [int;int];
   ]
 let () = with_class qStackedWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1965,6 +2273,10 @@ let () = with_class qStackedWidget [
     dynamic "setCurrentWidget" [arg "widget" qWidget];
     dynamic "currentChanged" [arg "index" int];
     dynamic "widgetRemoved" [arg "index" int];
+    slot "setCurrentIndex" [int];
+    slot "setCurrentWidget" [qWidget];
+    signal "currentChanged" [int];
+    signal "widgetRemoved" [int];
   ]
 let () = with_class qToolBox [
     constructor "" [arg "parent" (optional qWidget);arg "f" qt'WindowFlags];
@@ -1989,6 +2301,11 @@ let () = with_class qToolBox [
     dynamic "setCurrentIndex" [arg "index" int];
     dynamic "setCurrentWidget" [arg "widget" qWidget];
     dynamic "currentChanged" [arg "index" int];
+    slot "_q_buttonClicked" [];
+    slot "_q_widgetDestroyed" [qObject];
+    slot "setCurrentIndex" [int];
+    slot "setCurrentWidget" [qWidget];
+    signal "currentChanged" [int];
   ]
 let () = with_class qFontComboBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2000,6 +2317,10 @@ let () = with_class qFontComboBox [
     dynamic "sizeHint" [] ~ret:qSize;
     dynamic "setCurrentFont" [arg "f" qFont];
     dynamic "currentFontChanged" [arg "font" qFont];
+    slot "_q_currentChanged" [qString];
+    slot "_q_updateModel" [];
+    slot "setCurrentFont" [qFont];
+    signal "currentFontChanged" [qFont];
   ]
 let () = with_class qDateTimeEdit [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2078,6 +2399,9 @@ let () = with_class qSpinBox [
     dynamic "setValue" [arg "val" int];
     dynamic "valueChanged" [arg "i" int];
     dynamic "valueChanged" [arg "text" qString];
+    slot "setValue" [int];
+    signal "valueChanged" [int];
+    signal "valueChanged" [qString];
   ]
 let () = with_class qDoubleSpinBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2103,6 +2427,9 @@ let () = with_class qDoubleSpinBox [
     dynamic "setValue" [arg "val" double];
     dynamic "valueChanged" [arg "d" double];
     dynamic "valueChanged" [arg "text" qString];
+    slot "setValue" [double];
+    signal "valueChanged" [double];
+    signal "valueChanged" [qString];
   ]
 let () = with_class qDial [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2143,6 +2470,7 @@ let () = with_class qCheckBox [
     dynamic "checkState" [] ~ret:qt'CheckState;
     dynamic "setCheckState" [arg "state" qt'CheckState];
     dynamic "stateChanged" [arg "state" int];
+    signal "stateChanged" [int];
   ]
 let () = with_class qRadioButton [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2168,6 +2496,15 @@ let () = with_class qToolButton [
     dynamic "setToolButtonStyle" [arg "style" qt'ToolButtonStyle];
     dynamic "setDefaultAction" [arg "action" qAction];
     dynamic "triggered" [arg "action" qAction];
+    slot "_q_actionTriggered" [];
+    slot "_q_buttonPressed" [];
+    slot "_q_buttonReleased" [];
+    slot "_q_menuTriggered" [qAction];
+    slot "_q_updateButtonDown" [];
+    slot "setDefaultAction" [qAction];
+    slot "setToolButtonStyle" [qt'ToolButtonStyle];
+    slot "showMenu" [];
+    signal "triggered" [qAction];
   ]
 let () = with_class qColorDialog [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2190,6 +2527,16 @@ let () = with_class qColorDialog [
     static  "setStandardColor" [arg "index" int;arg "color" qColor];
     dynamic "currentColorChanged" [arg "color" qColor];
     dynamic "colorSelected" [arg "color" qColor];
+    slot "_q_addCustom" [];
+    (*slot "_q_newColorTypedIn" [qRgb];*)
+    slot "_q_newCustom" [int;int];
+    slot "_q_newHsv" [int;int;int];
+    slot "_q_newStandard" [int;int];
+    slot "_q_nextCustom" [int;int];
+    slot "_q_pickScreenColor" [];
+    slot "_q_updateColorPicking" [];
+    signal "colorSelected" [qColor];
+    signal "currentColorChanged" [qColor];
   ]
 let () = with_class qErrorMessage [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2275,6 +2622,42 @@ let () = with_class qFileDialog [
     (*static  "getExistingDirectoryUrl" [arg "parent" qWidget;arg "caption" qString;arg "dir" qUrl;arg "options" qFileDialog'Options;arg "supportedSchemes" qStringList] ~ret:qUrl;*)
     (*static  "getOpenFileNames" [arg "parent" qWidget;arg "caption" qString;arg "dir" qString;arg "filter" qString;arg "selectedFilter" qString;arg "options" qFileDialog'Options] ~ret:qStringList;*)
     (*static  "getOpenFileUrls" [arg "parent" qWidget;arg "caption" qString;arg "dir" qUrl;arg "filter" qString;arg "selectedFilter" qString;arg "options" options;arg "supportedSchemes" qStringList] ~ret:qList<QUrl>;*)
+    slot "_q_autoCompleteFileName" [qString];
+    slot "_q_createDirectory" [];
+    slot "_q_currentChanged" [qModelIndex];
+    slot "_q_deleteCurrent" [];
+    slot "_q_emitUrlSelected" [qUrl];
+    (*slot "_q_emitUrlsSelected" [qList<QUrl>];*)
+    slot "_q_enterDirectory" [qModelIndex];
+    slot "_q_fileRenamed" [qString;qString;qString];
+    slot "_q_goHome" [];
+    slot "_q_goToDirectory" [qString];
+    slot "_q_goToUrl" [qUrl];
+    slot "_q_nativeCurrentChanged" [qUrl];
+    slot "_q_nativeEnterDirectory" [qUrl];
+    slot "_q_navigateBackward" [];
+    slot "_q_navigateForward" [];
+    slot "_q_navigateToParent" [];
+    slot "_q_pathChanged" [qString];
+    slot "_q_renameCurrent" [];
+    slot "_q_rowsInserted" [qModelIndex];
+    slot "_q_selectionChanged" [];
+    slot "_q_showContextMenu" [qPoint];
+    slot "_q_showDetailsView" [];
+    slot "_q_showHeader" [qAction];
+    slot "_q_showHidden" [];
+    slot "_q_showListView" [];
+    slot "_q_updateOkButton" [];
+    slot "_q_useNameFilter" [int];
+    signal "currentChanged" [qString];
+    signal "currentUrlChanged" [qUrl];
+    signal "directoryEntered" [qString];
+    signal "directoryUrlEntered" [qUrl];
+    signal "fileSelected" [qString];
+    signal "filesSelected" [const qStringList];
+    signal "filterSelected" [qString];
+    signal "urlSelected" [qUrl];
+    (*signal "urlsSelected" [qList<QUrl>];*)
   ]
 let () = with_class qFontDialog [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2292,6 +2675,14 @@ let () = with_class qFontDialog [
     (*static  "getFont" [arg "ok" bool;arg "initial" qFont;arg "parent" qWidget;arg "title" qString;arg "options" qFontDialog'FontDialogOptions] ~ret:qFont;*)
     dynamic "currentFontChanged" [arg "font" qFont];
     dynamic "fontSelected" [arg "font" qFont];
+    slot "_q_familyHighlighted" [int];
+    slot "_q_sizeChanged" [qString];
+    slot "_q_sizeHighlighted" [int];
+    slot "_q_styleHighlighted" [int];
+    slot "_q_updateSample" [];
+    slot "_q_writingSystemHighlighted" [int];
+    signal "currentFontChanged" [qFont];
+    signal "fontSelected" [qFont];
   ]
 let () = with_class qInputDialog [
     constructor "" [arg "parent" (optional qWidget);arg "flags" qt'WindowFlags];
@@ -2350,6 +2741,15 @@ let () = with_class qInputDialog [
     dynamic "doubleValueChanged" [arg "value" double];
     dynamic "doubleValueSelected" [arg "value" double];
     dynamic "done" [arg "result" int];
+    slot "_q_currentRowChanged" [qModelIndex;qModelIndex];
+    slot "_q_plainTextEditTextChanged" [];
+    slot "_q_textChanged" [qString];
+    signal "doubleValueChanged" [float];
+    signal "doubleValueSelected" [float];
+    signal "intValueChanged" [int];
+    signal "intValueSelected" [int];
+    signal "textValueChanged" [qString];
+    signal "textValueSelected" [qString];
   ]
 let () = with_class qMessageBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2410,6 +2810,9 @@ let () = with_class qMessageBox [
     (*static  "standardIcon" [arg "icon" qMessageBox'Icon] ~ret:qPixmap;*)
     dynamic "buttonClicked" [arg "button" qAbstractButton];
     dynamic "exec" [] ~ret:int;
+    signal "buttonClicked" [qAbstractButton];
+    slot "_q_buttonClicked" [qAbstractButton];
+    (*slot "_q_clicked" [qPlatformDialogHelper'StandardButton;qPlatformDialogHelper'ButtonRole];*)
   ]
 let () = with_class qProgressDialog [
     constructor "" [arg "parent" (optional qWidget);arg "f" qt'WindowFlags];
@@ -2439,6 +2842,18 @@ let () = with_class qProgressDialog [
     dynamic "setCancelButtonText" [arg "cancelButtonText" qString];
     dynamic "setMinimumDuration" [arg "ms" int];
     dynamic "canceled" [];
+    slot "cancel" [];
+    slot "forceShow" [];
+    slot "_q_disconnectOnClose" [];
+    slot "reset" [];
+    slot "setCancelButtonText" [qString];
+    slot "setLabelText" [qString];
+    slot "setMaximum" [int];
+    slot "setMinimumDuration" [int];
+    slot "setMinimum" [int];
+    slot "setRange" [int;int];
+    slot "setValue" [int];
+    signal "canceled" [];
   ]
 let () = with_class qWizard [
     constructor "" [arg "parent" (optional qWidget);arg "flags" qt'WindowFlags];
@@ -2538,6 +2953,20 @@ let () = with_class qMdiArea [
     dynamic "closeAllSubWindows" [];
     dynamic "activateNextSubWindow" [];
     dynamic "activatePreviousSubWindow" [];
+    slot "activateNextSubWindow" [];
+    slot "activatePreviousSubWindow" [];
+    slot "cascadeSubWindows" [];
+    slot "closeActiveSubWindow" [];
+    slot "closeAllSubWindows" [];
+    slot "_q_closeTab" [int];
+    slot "_q_currentTabChanged" [int];
+    slot "_q_deactivateAllWindows" [];
+    slot "_q_moveTab" [int;int];
+    slot "_q_processWindowStateChanged" [qt'WindowStates;qt'WindowStates];
+    slot "setActiveSubWindow" [qMdiSubWindow];
+    slot "setupViewport" [qWidget];
+    slot "tileSubWindows" [];
+    signal "subWindowActivated" [qMdiSubWindow];
   ]
 let () = with_class qPlainTextEdit [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2618,6 +3047,35 @@ let () = with_class qPlainTextEdit [
     dynamic "updateRequest" [arg "rect" qRect;arg "dy" int];
     dynamic "blockCountChanged" [arg "newBlockCount" int];
     dynamic "modificationChanged" [arg "changed" bool];
+    slot "appendHtml" [qString];
+    slot "appendPlainText" [qString];
+    slot "centerCursor" [];
+    slot "clear" [];
+    slot "copy" [];
+    slot "cut" [];
+    slot "insertPlainText" [qString];
+    slot "paste" [];
+    slot "_q_adjustScrollbars" [];
+    slot "_q_cursorPositionChanged" [];
+    slot "_q_repaintContents" [qRectF];
+    slot "_q_verticalScrollbarActionTriggered" [int];
+    slot "redo" [];
+    slot "selectAll" [];
+    slot "setPlainText" [qString];
+    slot "undo" [];
+    slot "zoomIn" [];
+    slot "zoomIn" [int];
+    slot "zoomOut" [];
+    slot "zoomOut" [int];
+    signal "blockCountChanged" [int];
+    signal "copyAvailable" [bool];
+    signal "cursorPositionChanged" [];
+    signal "modificationChanged" [bool];
+    signal "redoAvailable" [bool];
+    signal "selectionChanged" [];
+    signal "textChanged" [];
+    signal "undoAvailable" [bool];
+    signal "updateRequest" [const qRect;int];
   ]
 let () = with_class qScrollArea [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2662,6 +3120,21 @@ let () = with_class qTextBrowser [
     dynamic "highlighted" [arg "link" qUrl];
     dynamic "highlighted" [arg "link" qString];
     dynamic "anchorClicked" [arg "link" qUrl];
+    slot "backward" [];
+    slot "forward" [];
+    slot "home" [];
+    slot "_q_activateAnchor" [qString];
+    slot "_q_documentModified" [];
+    slot "_q_highlightLink" [qString];
+    slot "reload" [];
+    slot "setSource" [qUrl];
+    signal "anchorClicked" [qUrl];
+    signal "backwardAvailable" [bool];
+    signal "forwardAvailable" [bool];
+    signal "highlighted" [qString];
+    signal "highlighted" [qUrl];
+    signal "historyChanged" [];
+    signal "sourceChanged" [qUrl];
   ]
 let () = with_class qColumnView [
     dynamic "updatePreviewWidget" [arg "index" qModelIndex];
@@ -2765,6 +3238,26 @@ let () = with_class qHeaderView [
     dynamic "sectionHandleDoubleClicked" [arg "logicalIndex" int];
     dynamic "geometriesChanged" [];
     dynamic "sortIndicatorChanged" [arg "logicalIndex" int;arg "order" qt'SortOrder];
+    slot "headerDataChanged" [qt'Orientation;int;int];
+    slot "_q_layoutAboutToBeChanged" [];
+    slot "_q_sectionsRemoved" [qModelIndex;int;int];
+    slot "resizeSections" [];
+    slot "sectionsAboutToBeRemoved" [qModelIndex;int;int];
+    slot "sectionsInserted" [qModelIndex;int;int];
+    slot "setOffset" [int];
+    slot "setOffsetToLastSection" [];
+    slot "setOffsetToSectionPosition" [int];
+    slot "updateSection" [int];
+    signal "geometriesChanged" [];
+    signal "sectionClicked" [int];
+    signal "sectionCountChanged" [int;int];
+    signal "sectionDoubleClicked" [int];
+    signal "sectionEntered" [int];
+    signal "sectionHandleDoubleClicked" [int];
+    signal "sectionMoved" [int;int;int];
+    signal "sectionPressed" [int];
+    signal "sectionResized" [int;int;int];
+    signal "sortIndicatorChanged" [int;qt'SortOrder];
   ]
 let () = with_class qListView [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2801,6 +3294,7 @@ let () = with_class qListView [
     dynamic "scrollTo" [arg "index" qModelIndex;arg "hint" qAbstractItemView'ScrollHint];
     dynamic "indexAt" [arg "p" qPoint] ~ret:qModelIndex;
     dynamic "indexesMoved" [arg "indexes" qModelIndexList];
+    (*signal "indexesMoved" [qModelIndexList];*)
   ]
 let () = with_class qTableView [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2850,6 +3344,30 @@ let () = with_class qTableView [
     dynamic "resizeColumnsToContents" [];
     dynamic "sortByColumn" [arg "column" int];
     dynamic "setShowGrid" [arg "show" bool];
+    slot "columnCountChanged" [int;int];
+    slot "columnMoved" [int;int;int];
+    slot "columnResized" [int;int;int];
+    slot "hideColumn" [int];
+    slot "hideRow" [int];
+    slot "_q_selectColumn" [int];
+    slot "_q_selectRow" [int];
+    slot "_q_updateSpanInsertedColumns" [qModelIndex;int;int];
+    slot "_q_updateSpanInsertedRows" [qModelIndex;int;int];
+    slot "_q_updateSpanRemovedColumns" [qModelIndex;int;int];
+    slot "_q_updateSpanRemovedRows" [qModelIndex;int;int];
+    slot "resizeColumnsToContents" [];
+    slot "resizeColumnToContents" [int];
+    slot "resizeRowsToContents" [];
+    slot "resizeRowToContents" [int];
+    slot "rowCountChanged" [int;int];
+    slot "rowMoved" [int;int;int];
+    slot "rowResized" [int;int;int];
+    slot "selectColumn" [int];
+    slot "selectRow" [int];
+    slot "setShowGrid" [bool];
+    slot "showColumn" [int];
+    slot "showRow" [int];
+    slot "sortByColumn" [int];
   ]
 let () = with_class qListWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2901,6 +3419,28 @@ let () = with_class qListWidget [
     dynamic "currentTextChanged" [arg "currentText" qString];
     dynamic "currentRowChanged" [arg "currentRow" int];
     dynamic "itemSelectionChanged" [];
+    slot "clear" [];
+    slot "_q_dataChanged" [qModelIndex;qModelIndex];
+    slot "_q_emitCurrentItemChanged" [qModelIndex;qModelIndex];
+    slot "_q_emitItemActivated" [qModelIndex];
+    slot "_q_emitItemChanged" [qModelIndex];
+    slot "_q_emitItemClicked" [qModelIndex];
+    slot "_q_emitItemDoubleClicked" [qModelIndex];
+    slot "_q_emitItemEntered" [qModelIndex];
+    slot "_q_emitItemPressed" [qModelIndex];
+    slot "_q_sort" [];
+    slot "scrollToItem" [qListWidgetItem];
+    slot "scrollToItem" [qListWidgetItem;qAbstractItemView'ScrollHint];
+    signal "currentItemChanged" [qListWidgetItem;qListWidgetItem];
+    signal "currentRowChanged" [int];
+    signal "currentTextChanged" [qString];
+    signal "itemActivated" [qListWidgetItem];
+    signal "itemChanged" [qListWidgetItem];
+    signal "itemClicked" [qListWidgetItem];
+    signal "itemDoubleClicked" [qListWidgetItem];
+    signal "itemEntered" [qListWidgetItem];
+    signal "itemPressed" [qListWidgetItem];
+    signal "itemSelectionChanged" [];
   ]
 let () = with_class qListWidgetItem [
     constructor "" [arg "parent" qListWidget;arg "type" int];
@@ -3014,6 +3554,26 @@ let () = with_class qTreeView [
     dynamic "expandAll" [];
     dynamic "collapseAll" [];
     dynamic "expandToDepth" [arg "depth" int];
+
+    slot "collapseAll" [];
+    slot "collapse" [qModelIndex];
+    slot "columnCountChanged" [int;int];
+    slot "columnMoved" [];
+    slot "columnResized" [int;int;int];
+    slot "expandAll" [];
+    slot "expand" [qModelIndex];
+    slot "expandToDepth" [int];
+    slot "hideColumn" [int];
+    slot "_q_endAnimatedOperation" [];
+    slot "_q_modelAboutToBeReset" [];
+    slot "_q_sortIndicatorChanged" [int;qt'SortOrder];
+    slot "reexpand" [];
+    slot "resizeColumnToContents" [int];
+    slot "rowsRemoved" [qModelIndex;int;int];
+    slot "showColumn" [int];
+    slot "sortByColumn" [int];
+    signal "collapsed" [qModelIndex];
+    signal "expanded" [qModelIndex];
   ]
 let () = with_class qTreeWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3075,6 +3635,33 @@ let () = with_class qTreeWidget [
     dynamic "itemCollapsed" [arg "item" qTreeWidgetItem];
     dynamic "currentItemChanged" [arg "current" qTreeWidgetItem;arg "previous" qTreeWidgetItem];
     dynamic "itemSelectionChanged" [];
+    slot "clear" [];
+    (*  slot "collapseItem" [const qTreeWidgetItem];*)
+    (*  slot "expandItem" [const qTreeWidgetItem];*)
+    slot "_q_dataChanged" [qModelIndex;qModelIndex];
+    slot "_q_emitCurrentItemChanged" [qModelIndex;qModelIndex];
+    slot "_q_emitItemActivated" [qModelIndex];
+    slot "_q_emitItemChanged" [qModelIndex];
+    slot "_q_emitItemClicked" [qModelIndex];
+    slot "_q_emitItemCollapsed" [qModelIndex];
+    slot "_q_emitItemDoubleClicked" [qModelIndex];
+    slot "_q_emitItemEntered" [qModelIndex];
+    slot "_q_emitItemExpanded" [qModelIndex];
+    slot "_q_emitItemPressed" [qModelIndex];
+    (*slot "_q_selectionChanged" [qItemSelection;qItemSelection];*)
+    slot "_q_sort" [];
+    (*  slot "scrollToItem" [const qTreeWidgetItem];*)
+    (*  slot "scrollToItem" [const qTreeWidgetItem;QAbstractItemView::ScrollHint];*)
+    (*  signal "currentItemChanged" [qTreeWidgetItem*;QTreeWidgetItem*];*)
+    (*  signal "itemActivated" [qTreeWidgetItem*;int];*)
+    (*  signal "itemChanged" [qTreeWidgetItem*;int];*)
+    (*  signal "itemClicked" [qTreeWidgetItem*;int];*)
+    (*  signal "itemCollapsed" [qTreeWidgetItem*];*)
+    (*  signal "itemDoubleClicked" [qTreeWidgetItem*;int];*)
+    (*  signal "itemEntered" [qTreeWidgetItem*;int];*)
+    (*  signal "itemExpanded" [qTreeWidgetItem*];*)
+    (*  signal "itemPressed" [qTreeWidgetItem*;int];*)
+    signal "itemSelectionChanged" [];
   ]
 let () = with_class qTableWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3145,6 +3732,38 @@ let () = with_class qTableWidget [
     dynamic "cellEntered" [arg "row" int;arg "column" int];
     dynamic "cellChanged" [arg "row" int;arg "column" int];
     dynamic "currentCellChanged" [arg "currentRow" int;arg "currentColumn" int;arg "previousRow" int;arg "previousColumn" int];
+    slot "clear" [];
+    slot "clearContents" [];
+    slot "insertColumn" [int];
+    slot "insertRow" [int];
+    slot "_q_dataChanged" [qModelIndex;qModelIndex];
+    slot "_q_emitCurrentItemChanged" [qModelIndex;qModelIndex];
+    slot "_q_emitItemActivated" [qModelIndex];
+    slot "_q_emitItemChanged" [qModelIndex];
+    slot "_q_emitItemClicked" [qModelIndex];
+    slot "_q_emitItemDoubleClicked" [qModelIndex];
+    slot "_q_emitItemEntered" [qModelIndex];
+    slot "_q_emitItemPressed" [qModelIndex];
+    slot "_q_sort" [];
+    slot "removeColumn" [int];
+    slot "removeRow" [int];
+    (*  slot "scrollToItem" [const qTableWidgetItem];*)
+    (*  slot "scrollToItem" [const qTableWidgetItem*;QAbstractItemView::ScrollHint];*)
+    signal "cellActivated" [int;int];
+    signal "cellChanged" [int;int];
+    signal "cellClicked" [int;int];
+    signal "cellDoubleClicked" [int;int];
+    signal "cellEntered" [int;int];
+    signal "cellPressed" [int;int];
+    signal "currentCellChanged" [int;int;int;int];
+    (*  signal "currentItemChanged" [qTableWidgetItem;qTableWidgetItem];*)
+    (*  signal "itemActivated" [qTableWidgetItem];*)
+    (*  signal "itemChanged" [qTableWidgetItem];*)
+    (*  signal "itemClicked" [qTableWidgetItem];*)
+    (*  signal "itemDoubleClicked" [qTableWidgetItem];*)
+    (*  signal "itemEntered" [qTableWidgetItem];*)
+    (*  signal "itemPressed" [qTableWidgetItem];*)
+    signal "itemSelectionChanged" [];
   ]
 let () = with_class qTreeWidgetItem [
     constructor "" [arg "type" int];
@@ -3255,11 +3874,11 @@ let () = with_class qTableWidgetSelectionRange [
     constructor "" [arg "horizontalRule" qt'TileRule;arg "verticalRule" qt'TileRule];
     constructor "" [arg "rule" qt'TileRule];
   ]
-let () = with_class qItemEditorCreatorBase [
+  let () = with_class qItemEditorCreatorBase [
     dynamic "createWidget" [arg "parent" qWidget] ~ret:qWidget;
     dynamic "valuePropertyName" [] ~ret:qByteArray;
   ]
-let () = with_class qGestureRecognizer [
+  let () = with_class qGestureRecognizer [
     constructor "" [];
     dynamic "create" [arg "target" qObject] ~ret:qGesture;
     dynamic "recognize" [arg "gesture" qGesture;arg "watched" qObject;arg "event" qEvent] ~ret:result;
@@ -3267,7 +3886,7 @@ let () = with_class qGestureRecognizer [
     static  "registerRecognizer" [arg "recognizer" qGestureRecognizer] ~ret:qt'GestureType;
     static  "unregisterRecognizer" [arg "type" qt'GestureType];
   ]
-let () = with_class qTreeWidgetItemIterator [
+  let () = with_class qTreeWidgetItemIterator [
     constructor "" [arg "it" qTreeWidgetItemIterator];
     constructor "" [arg "widget" qTreeWidget;arg "flags" iteratorFlags];
     constructor "" [arg "item" qTreeWidgetItem;arg "flags" iteratorFlags];
@@ -3280,11 +3899,11 @@ let () = with_class qTreeWidgetItemIterator [
     (*dynamic "operator-=" [arg "n" int] ~ret:qTreeWidgetItemIterator;*)
     (*dynamic "operator*" [] ~ret:qTreeWidgetItem;*)
   ]
-let () = with_class qStyleFactory [
+  let () = with_class qStyleFactory [
     static  "keys" [] ~ret:qStringList;
     static  "create" [arg "key" qString] ~ret:qStyle;
   ]
-let () = with_class qGraphicsLayoutItem [
+  let () = with_class qGraphicsLayoutItem [
     constructor "" [arg "parent" qGraphicsLayoutItem;arg "isLayout" bool];
     dynamic "setSizePolicy" [arg "policy" qSizePolicy];
     dynamic "setSizePolicy" [arg "hPolicy" qSizePolicy'Policy;arg "vPolicy" qSizePolicy'Policy;arg "controlType" qSizePolicy'ControlType];
@@ -3322,7 +3941,7 @@ let () = with_class qGraphicsLayoutItem [
     dynamic "graphicsItem" [] ~ret:qGraphicsItem;
     dynamic "ownedByLayout" [] ~ret:bool;
   ]
-let () = with_class qItemEditorFactory [
+  let () = with_class qItemEditorFactory [
     constructor "" [];
     dynamic "createEditor" [arg "userType" int;arg "parent" qWidget] ~ret:qWidget;
     dynamic "valuePropertyName" [arg "userType" int] ~ret:qByteArray;
@@ -3330,7 +3949,7 @@ let () = with_class qItemEditorFactory [
     static  "defaultFactory" [] ~ret:qItemEditorFactory;
     static  "setDefaultFactory" [arg "factory" qItemEditorFactory];
   ]
-let () = with_class qWhatsThis [
+  let () = with_class qWhatsThis [
     static  "enterWhatsThisMode" [];
     static  "inWhatsThisMode" [] ~ret:bool;
     static  "leaveWhatsThisMode" [];
@@ -3338,7 +3957,7 @@ let () = with_class qWhatsThis [
     static  "hideText" [];
     static  "createAction" [arg "parent" qObject] ~ret:qAction;
   ]
-let () = with_class qScrollerProperties [
+  let () = with_class qScrollerProperties [
     constructor "" [];
     constructor "" [arg "sp" qScrollerProperties];
     (*dynamic "operator=" [arg "sp" qScrollerProperties] ~ret:qScrollerProperties;*)
@@ -3349,7 +3968,7 @@ let () = with_class qScrollerProperties [
     dynamic "scrollMetric" [arg "metric" scrollMetric] ~ret:qVariant;
     dynamic "setScrollMetric" [arg "metric" scrollMetric;arg "value" qVariant];
   ]
-let () = with_class qTableWidgetItem [
+  let () = with_class qTableWidgetItem [
     constructor "" [arg "type" int];
     constructor "" [arg "text" qString;arg "type" int];
     constructor "" [arg "icon" qIcon;arg "text" qString;arg "type" int];
@@ -3396,7 +4015,7 @@ let () = with_class qTableWidgetItem [
     (*dynamic "operator=" [arg "other" qTableWidgetItem] ~ret:qTableWidgetItem;*)
     dynamic "type" [] ~ret:int;
   ]
-let () = with_class qGraphicsItem [
+  let () = with_class qGraphicsItem [
     constructor "" [arg "parent" qGraphicsItem];
     dynamic "scene" [] ~ret:qGraphicsScene;
     dynamic "parentItem" [] ~ret:qGraphicsItem;
@@ -3588,7 +4207,7 @@ let () = with_class qGraphicsItem [
     dynamic "installSceneEventFilter" [arg "filterItem" qGraphicsItem];
     dynamic "removeSceneEventFilter" [arg "filterItem" qGraphicsItem];
   ]
-let () = with_class qToolTip [
+  let () = with_class qToolTip [
     static  "showText" [arg "pos" qPoint;arg "text" qString;arg "w" qWidget];
     static  "showText" [arg "pos" qPoint;arg "text" qString;arg "w" qWidget;arg "rect" qRect];
     static  "showText" [arg "pos" qPoint;arg "text" qString;arg "w" qWidget;arg "rect" qRect;arg "msecDisplayTime" int];
@@ -3600,7 +4219,7 @@ let () = with_class qToolTip [
     static  "font" [] ~ret:qFont;
     static  "setFont" [arg "font" qFont];
   ]
-let () = with_class qColormap [
+  let () = with_class qColormap [
     static  "instance" [arg "screen" int] ~ret:qColormap;
     constructor "" [arg "colormap" qColormap];
     (*dynamic "operator=" [arg "colormap" qColormap] ~ret:qColormap;*)
@@ -3611,7 +4230,7 @@ let () = with_class qColormap [
     dynamic "colorAt" [arg "pixel" uint] ~ret:qColor;
     (*dynamic "colormap" [] ~ret:qVector<QColor>;*)
   ]
-let () = with_class qUndoCommand [
+  let () = with_class qUndoCommand [
     constructor "" [arg "parent" qUndoCommand];
     constructor "" [arg "text" qString;arg "parent" qUndoCommand];
     dynamic "undo" [];
@@ -3626,14 +4245,14 @@ let () = with_class qUndoCommand [
     dynamic "childCount" [] ~ret:int;
     dynamic "child" [arg "index" int] ~ret:qUndoCommand;
   ]
-let () = with_class qTextEdit'ExtraSelection [
+  let () = with_class qTextEdit'ExtraSelection [
   ]
-let () = with_class qFormLayout'TakeRowResult [
+  let () = with_class qFormLayout'TakeRowResult [
   ]
-let () = with_class qStyleHintReturn [
+  let () = with_class qStyleHintReturn [
     constructor "" [arg "version" int;arg "type" int];
   ]
-let () = with_class qLayoutItem [
+  let () = with_class qLayoutItem [
     constructor "" [arg "alignment" qt'Alignment];
     dynamic "sizeHint" [] ~ret:qSize;
     dynamic "minimumSize" [] ~ret:qSize;
@@ -3653,14 +4272,14 @@ let () = with_class qLayoutItem [
     dynamic "setAlignment" [arg "alignment" qt'Alignment];
     dynamic "controlTypes" [] ~ret:qSizePolicy'ControlTypes;
   ]
-let () = with_class qStyleOption [
+  let () = with_class qStyleOption [
     constructor "" [arg "version" int;arg "type" int];
     constructor "" [arg "other" qStyleOption];
     dynamic "init" [arg "widget" qWidget];
     dynamic "initFrom" [arg "widget" qWidget];
     (*dynamic "operator=" [arg "other" qStyleOption] ~ret:qStyleOption;*)
   ]
-let () = with_class qSizePolicy [
+  let () = with_class qSizePolicy [
     constructor "" [];
     constructor "" [arg "horizontal" policy;arg "vertical" policy;arg "type" controlType];
     dynamic "horizontalPolicy" [] ~ret:policy;
@@ -3686,7 +4305,7 @@ let () = with_class qSizePolicy [
     dynamic "transpose" [];
     dynamic "transposed" [] ~ret:qSizePolicy;
   ]
-let () = with_class qKeyEventTransition [
+  let () = with_class qKeyEventTransition [
     constructor "" [arg "sourceState" qState];
     constructor "" [arg "object" qObject;arg "type" qEvent'Type;arg "key" int;arg "sourceState" qState];
     dynamic "key" [] ~ret:int;
@@ -3694,7 +4313,7 @@ let () = with_class qKeyEventTransition [
     dynamic "modifierMask" [] ~ret:qt'KeyboardModifiers;
     dynamic "setModifierMask" [arg "modifierMask" qt'KeyboardModifiers];
   ]
-let () = with_class qMouseEventTransition [
+  let () = with_class qMouseEventTransition [
     constructor "" [arg "sourceState" qState];
     constructor "" [arg "object" qObject;arg "type" qEvent'Type;arg "button" qt'MouseButton;arg "sourceState" qState];
     dynamic "button" [] ~ret:qt'MouseButton;
@@ -3704,7 +4323,7 @@ let () = with_class qMouseEventTransition [
     dynamic "hitTestPath" [] ~ret:qPainterPath;
     dynamic "setHitTestPath" [arg "path" qPainterPath];
   ]
-let () = with_class qFileSystemModel [
+  let () = with_class qFileSystemModel [
     dynamic "rootPathChanged" [arg "newPath" qString];
     dynamic "fileRenamed" [arg "path" qString;arg "oldName" qString;arg "newName" qString];
     dynamic "directoryLoaded" [arg "path" qString];
@@ -3756,7 +4375,7 @@ let () = with_class qFileSystemModel [
     dynamic "fileInfo" [arg "index" qModelIndex] ~ret:qFileInfo;
     dynamic "remove" [arg "index" qModelIndex] ~ret:bool;
   ]
-let () = with_class qDirModel [
+  let () = with_class qDirModel [
     constructor "" [arg "nameFilters" qStringList;arg "filters" qDir'Filters;arg "sort" qDir'SortFlags;arg "parent" qObject];
     constructor "" [arg "parent" qObject];
     dynamic "index" [arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:qModelIndex;
@@ -3798,72 +4417,72 @@ let () = with_class qDirModel [
     dynamic "fileInfo" [arg "index" qModelIndex] ~ret:qFileInfo;
     dynamic "refresh" [arg "parent" qModelIndex];
   ]
-let () = with_class qStyleOptionFocusRect [
+  let () = with_class qStyleOptionFocusRect [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionFocusRect];
   ]
-let () = with_class qStyleOptionFrame [
+  let () = with_class qStyleOptionFrame [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionFrame];
   ]
-let () = with_class qStyleOptionTabWidgetFrame [
+  let () = with_class qStyleOptionTabWidgetFrame [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionTabWidgetFrame];
   ]
-let () = with_class qStyleOptionTabBarBase [
+  let () = with_class qStyleOptionTabBarBase [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionTabBarBase];
   ]
-let () = with_class qStyleOptionHeader [
+  let () = with_class qStyleOptionHeader [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionHeader];
   ]
-let () = with_class qStyleOptionButton [
+  let () = with_class qStyleOptionButton [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionButton];
   ]
-let () = with_class qStyleOptionTab [
+  let () = with_class qStyleOptionTab [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionTab];
   ]
-let () = with_class qStyleOptionToolBar [
+  let () = with_class qStyleOptionToolBar [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionToolBar];
   ]
-let () = with_class qStyleOptionProgressBar [
+  let () = with_class qStyleOptionProgressBar [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionProgressBar];
   ]
-let () = with_class qStyleOptionMenuItem [
+  let () = with_class qStyleOptionMenuItem [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionMenuItem];
   ]
-let () = with_class qStyleOptionDockWidget [
+  let () = with_class qStyleOptionDockWidget [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionDockWidget];
   ]
-let () = with_class qStyleOptionViewItem [
+  let () = with_class qStyleOptionViewItem [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionViewItem];
   ]
-let () = with_class qStyleOptionToolBox [
+  let () = with_class qStyleOptionToolBox [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionToolBox];
   ]
-let () = with_class qStyleOptionRubberBand [
+  let () = with_class qStyleOptionRubberBand [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionRubberBand];
   ]
-let () = with_class qStyleOptionComplex [
+  let () = with_class qStyleOptionComplex [
     constructor "" [arg "version" int;arg "type" int];
     constructor "" [arg "other" qStyleOptionComplex];
   ]
-let () = with_class qStyleOptionGraphicsItem [
+  let () = with_class qStyleOptionGraphicsItem [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionGraphicsItem];
     static  "levelOfDetailFromTransform" [arg "worldTransform" qTransform] ~ret:qreal;
   ]
-let () = with_class qSpacerItem [
+  let () = with_class qSpacerItem [
     constructor "" [arg "w" int;arg "h" int;arg "hPolicy" qSizePolicy'Policy;arg "vPolicy" qSizePolicy'Policy];
     dynamic "changeSize" [arg "w" int;arg "h" int;arg "hPolicy" qSizePolicy'Policy;arg "vPolicy" qSizePolicy'Policy];
     dynamic "sizeHint" [] ~ret:qSize;
@@ -3876,7 +4495,7 @@ let () = with_class qSpacerItem [
     dynamic "spacerItem" [] ~ret:qSpacerItem;
     dynamic "sizePolicy" [] ~ret:qSizePolicy;
   ]
-let () = with_class qWidgetItem [
+  let () = with_class qWidgetItem [
     constructor "" [arg "widget" (optional qWidget)];
     dynamic "sizeHint" [] ~ret:qSize;
     dynamic "minimumSize" [] ~ret:qSize;
@@ -3890,13 +4509,13 @@ let () = with_class qWidgetItem [
     dynamic "heightForWidth" [arg "w" int] ~ret:int;
     dynamic "controlTypes" [] ~ret:qSizePolicy'ControlTypes;
   ]
-let () = with_class qStyleHintReturnMask [
+  let () = with_class qStyleHintReturnMask [
     constructor "" [];
   ]
-let () = with_class qStyleHintReturnVariant [
+  let () = with_class qStyleHintReturnVariant [
     constructor "" [];
   ]
-let () = with_class qStylePainter [
+  let () = with_class qStylePainter [
     constructor "" [];
     constructor "" [arg "widget" (optional qWidget)];
     constructor "" [arg "pd" qPaintDevice;arg "widget" (optional qWidget)];
@@ -3909,7 +4528,7 @@ let () = with_class qStylePainter [
     dynamic "drawItemPixmap" [arg "rect" qRect;arg "flags" int;arg "pixmap" qPixmap];
     dynamic "style" [] ~ret:qStyle;
   ]
-let () = with_class qGraphicsObject [
+  let () = with_class qGraphicsObject [
     constructor "" [arg "parent" qGraphicsItem];
     dynamic "grabGesture" [arg "gesture" qt'GestureType;arg "flags" qt'GestureFlags];
     dynamic "ungrabGesture" [arg "gesture" qt'GestureType];
@@ -3923,7 +4542,7 @@ let () = with_class qGraphicsObject [
     dynamic "rotationChanged" [];
     dynamic "scaleChanged" [];
   ]
-let () = with_class qAbstractGraphicsShapeItem [
+  let () = with_class qAbstractGraphicsShapeItem [
     constructor "" [arg "parent" qGraphicsItem];
     dynamic "pen" [] ~ret:qPen;
     dynamic "setPen" [arg "pen" qPen];
@@ -3932,7 +4551,7 @@ let () = with_class qAbstractGraphicsShapeItem [
     dynamic "isObscuredBy" [arg "item" qGraphicsItem] ~ret:bool;
     dynamic "opaqueArea" [] ~ret:qPainterPath;
   ]
-let () = with_class qGraphicsLineItem [
+  let () = with_class qGraphicsLineItem [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "line" qLineF;arg "parent" qGraphicsItem];
     constructor "" [arg "arg0" qreal x1;arg "arg1" qreal y1;arg "arg2" qreal x2;arg "arg3" qreal y2;arg "parent" qGraphicsItem];
@@ -3949,7 +4568,7 @@ let () = with_class qGraphicsLineItem [
     dynamic "opaqueArea" [] ~ret:qPainterPath;
     dynamic "type" [] ~ret:int;
   ]
-let () = with_class qGraphicsPixmapItem [
+  let () = with_class qGraphicsPixmapItem [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "pixmap" qPixmap;arg "parent" qGraphicsItem];
     dynamic "pixmap" [] ~ret:qPixmap;
@@ -3969,7 +4588,7 @@ let () = with_class qGraphicsPixmapItem [
     dynamic "shapeMode" [] ~ret:shapeMode;
     dynamic "setShapeMode" [arg "mode" shapeMode];
   ]
-let () = with_class qGraphicsItemGroup [
+  let () = with_class qGraphicsItemGroup [
     constructor "" [arg "parent" qGraphicsItem];
     dynamic "addToGroup" [arg "item" qGraphicsItem];
     dynamic "removeFromGroup" [arg "item" qGraphicsItem];
@@ -3979,7 +4598,7 @@ let () = with_class qGraphicsItemGroup [
     dynamic "opaqueArea" [] ~ret:qPainterPath;
     dynamic "type" [] ~ret:int;
   ]
-let () = with_class qPlainTextDocumentLayout [
+  let () = with_class qPlainTextDocumentLayout [
     constructor "" [arg "document" qTextDocument];
     dynamic "draw" [arg "arg0" qPainter;arg "arg1" paintContext];
     dynamic "hitTest" [arg "arg0" qPointF;arg "arg1" qt'HitTestAccuracy] ~ret:int;
@@ -3992,7 +4611,7 @@ let () = with_class qPlainTextDocumentLayout [
     dynamic "cursorWidth" [] ~ret:int;
     dynamic "requestUpdate" [];
   ]
-let () = with_class qGraphicsLayout [
+  let () = with_class qGraphicsLayout [
     constructor "" [arg "parent" qGraphicsLayoutItem];
     dynamic "setContentsMargins" [arg "left" qreal;arg "top" qreal;arg "right" qreal;arg "bottom" qreal];
     dynamic "getContentsMargins" [arg "left" qreal;arg "top" qreal;arg "right" qreal;arg "bottom" qreal];
@@ -4005,20 +4624,20 @@ let () = with_class qGraphicsLayout [
     dynamic "itemAt" [arg "i" int] ~ret:qGraphicsLayoutItem;
     dynamic "removeAt" [arg "index" int];
   ]
-let () = with_class qItemEditorCreator [
+  let () = with_class qItemEditorCreator [
     constructor "" [arg "valuePropertyName" qByteArray];
     dynamic "createWidget" [arg "parent" qWidget] ~ret:qWidget;
     dynamic "valuePropertyName" [] ~ret:qByteArray;
   ]
-let () = with_class qStandardItemEditorCreator [
+  let () = with_class qStandardItemEditorCreator [
     constructor "" [];
     dynamic "createWidget" [arg "parent" qWidget] ~ret:qWidget;
     dynamic "valuePropertyName" [] ~ret:qByteArray;
   ]
-let () = with_class qGraphicsSceneEvent [
+  let () = with_class qGraphicsSceneEvent [
     dynamic "widget" [] ~ret:qWidget;
   ]
-let () = with_class qGestureEvent [
+  let () = with_class qGestureEvent [
     (*constructor "" [arg "gestures" qList<QGesture *>];*)
     (*dynamic "gestures" [] ~ret:qList<QGesture *>;*)
     dynamic "gesture" [arg "type" qt'GestureType] ~ret:qGesture;
@@ -4035,7 +4654,7 @@ let () = with_class qGestureEvent [
     dynamic "widget" [] ~ret:qWidget;
     dynamic "mapToGraphicsScene" [arg "gesturePoint" qPointF] ~ret:qPointF;
   ]
-let () = with_class qGraphicsEffect [
+  let () = with_class qGraphicsEffect [
     constructor "" [arg "parent" qObject];
     dynamic "boundingRectFor" [arg "rect" qRectF] ~ret:qRectF;
     dynamic "boundingRect" [] ~ret:qRectF;
@@ -4044,14 +4663,14 @@ let () = with_class qGraphicsEffect [
     dynamic "update" [];
     dynamic "enabledChanged" [arg "enabled" bool];
   ]
-let () = with_class qGraphicsAnchor [
+  let () = with_class qGraphicsAnchor [
     dynamic "setSpacing" [arg "spacing" qreal];
     dynamic "unsetSpacing" [];
     dynamic "spacing" [] ~ret:qreal;
     dynamic "setSizePolicy" [arg "policy" qSizePolicy'Policy];
     dynamic "sizePolicy" [] ~ret:qSizePolicy'Policy;
   ]
-let () = with_class qGraphicsItemAnimation [
+  let () = with_class qGraphicsItemAnimation [
     constructor "" [arg "parent" qObject];
     dynamic "item" [] ~ret:qGraphicsItem;
     dynamic "setItem" [arg "item" qGraphicsItem];
@@ -4080,7 +4699,7 @@ let () = with_class qGraphicsItemAnimation [
     dynamic "setStep" [arg "step" qreal];
     dynamic "reset" [];
   ]
-let () = with_class qGraphicsScene [
+  let () = with_class qGraphicsScene [
     constructor "" [arg "parent" qObject];
     constructor "" [arg "sceneRect" qRectF;arg "parent" qObject];
     constructor "" [arg "x" qreal;arg "y" qreal;arg "width" qreal;arg "height" qreal;arg "parent" qObject];
@@ -4170,11 +4789,11 @@ let () = with_class qGraphicsScene [
     dynamic "selectionChanged" [];
     dynamic "focusItemChanged" [arg "newFocusItem" qGraphicsItem;arg "oldFocusItem" qGraphicsItem;arg "reason" qt'FocusReason];
   ]
-let () = with_class qGraphicsTransform [
+  let () = with_class qGraphicsTransform [
     constructor "" [arg "parent" qObject];
     dynamic "applyTo" [arg "matrix" (pointer qMatrix4x4)];
   ]
-let () = with_class qAbstractItemDelegate [
+  let () = with_class qAbstractItemDelegate [
     constructor "" [arg "parent" qObject];
     dynamic "paint" [arg "painter" qPainter;arg "option" qStyleOptionViewItem;arg "index" qModelIndex];
     dynamic "sizeHint" [arg "option" qStyleOptionViewItem;arg "index" qModelIndex] ~ret:qSize;
@@ -4190,7 +4809,7 @@ let () = with_class qAbstractItemDelegate [
     dynamic "closeEditor" [arg "editor" qWidget;arg "hint" qAbstractItemDelegate'EndEditHint];
     dynamic "sizeHintChanged" [arg "index" qModelIndex];
   ]
-let () = with_class qStyle [
+  let () = with_class qStyle [
     constructor "" [];
     dynamic "polish" [arg "widget" qWidget];
     dynamic "unpolish" [arg "widget" qWidget];
@@ -4224,11 +4843,11 @@ let () = with_class qStyle [
     dynamic "combinedLayoutSpacing" [arg "arg0" qSizePolicy'ControlTypes controls1;arg "arg1" qSizePolicy'ControlTypes controls2;arg "orientation" qt'Orientation;arg "option" qStyleOption;arg "widget" qWidget] ~ret:int;
     dynamic "proxy" [] ~ret:qStyle;
   ]
-let () = with_class qStylePlugin [
+  let () = with_class qStylePlugin [
     constructor "" [arg "parent" qObject];
     dynamic "create" [arg "key" qString] ~ret:qStyle;
   ]
-let () = with_class qScroller [
+  let () = with_class qScroller [
     static  "hasScroller" [arg "target" qObject] ~ret:bool;
     static  "scroller" [arg "target" qObject] ~ret:qScroller;
     static  "scroller" [arg "target" qObject] ~ret:qScroller;
@@ -4257,7 +4876,7 @@ let () = with_class qScroller [
     dynamic "stateChanged" [arg "newState" qScroller'State];
     dynamic "scrollerPropertiesChanged" [arg "newProperties" qScrollerProperties];
   ]
-let () = with_class qCommonStyle [
+  let () = with_class qCommonStyle [
     constructor "" [];
     dynamic "drawPrimitive" [arg "pe" primitiveElement;arg "opt" qStyleOption;arg "p" qPainter;arg "widget" qWidget];
     dynamic "drawControl" [arg "element" controlElement;arg "opt" qStyleOption;arg "p" qPainter;arg "widget" qWidget];
@@ -4277,7 +4896,7 @@ let () = with_class qCommonStyle [
     dynamic "unpolish" [arg "widget" qWidget];
     dynamic "unpolish" [arg "application" qApplication];
   ]
-let () = with_class qPanGesture [
+  let () = with_class qPanGesture [
     dynamic "lastOffset" [] ~ret:qPointF;
     dynamic "offset" [] ~ret:qPointF;
     dynamic "delta" [] ~ret:qPointF;
@@ -4286,7 +4905,7 @@ let () = with_class qPanGesture [
     dynamic "setOffset" [arg "value" qPointF];
     dynamic "setAcceleration" [arg "value" qreal];
   ]
-let () = with_class qPinchGesture [
+  let () = with_class qPinchGesture [
     dynamic "totalChangeFlags" [] ~ret:changeFlags;
     dynamic "setTotalChangeFlags" [arg "value" changeFlags];
     dynamic "changeFlags" [] ~ret:changeFlags;
@@ -4310,23 +4929,23 @@ let () = with_class qPinchGesture [
     dynamic "setLastRotationAngle" [arg "value" qreal];
     dynamic "setRotationAngle" [arg "value" qreal];
   ]
-let () = with_class qSwipeGesture [
+  let () = with_class qSwipeGesture [
     dynamic "horizontalDirection" [] ~ret:swipeDirection;
     dynamic "verticalDirection" [] ~ret:swipeDirection;
     dynamic "swipeAngle" [] ~ret:qreal;
     dynamic "setSwipeAngle" [arg "value" qreal];
   ]
-let () = with_class qTapGesture [
+  let () = with_class qTapGesture [
     dynamic "position" [] ~ret:qPointF;
     dynamic "setPosition" [arg "pos" qPointF];
   ]
-let () = with_class qTapAndHoldGesture [
+  let () = with_class qTapAndHoldGesture [
     dynamic "position" [] ~ret:qPointF;
     dynamic "setPosition" [arg "pos" qPointF];
     static  "setTimeout" [arg "msecs" int];
     static  "timeout" [] ~ret:int;
   ]
-let () = with_class qGraphicsSceneMouseEvent [
+  let () = with_class qGraphicsSceneMouseEvent [
     dynamic "pos" [] ~ret:qPointF;
     dynamic "scenePos" [] ~ret:qPointF;
     dynamic "screenPos" [] ~ret:qPoint;
@@ -4342,7 +4961,7 @@ let () = with_class qGraphicsSceneMouseEvent [
     dynamic "source" [] ~ret:qt'MouseEventSource;
     dynamic "flags" [] ~ret:qt'MouseEventFlags;
   ]
-let () = with_class qGraphicsSceneWheelEvent [
+  let () = with_class qGraphicsSceneWheelEvent [
     dynamic "pos" [] ~ret:qPointF;
     dynamic "scenePos" [] ~ret:qPointF;
     dynamic "screenPos" [] ~ret:qPoint;
@@ -4351,14 +4970,14 @@ let () = with_class qGraphicsSceneWheelEvent [
     dynamic "delta" [] ~ret:int;
     dynamic "orientation" [] ~ret:qt'Orientation;
   ]
-let () = with_class qGraphicsSceneContextMenuEvent [
+  let () = with_class qGraphicsSceneContextMenuEvent [
     dynamic "pos" [] ~ret:qPointF;
     dynamic "scenePos" [] ~ret:qPointF;
     dynamic "screenPos" [] ~ret:qPoint;
     dynamic "modifiers" [] ~ret:qt'KeyboardModifiers;
     dynamic "reason" [] ~ret:reason;
   ]
-let () = with_class qGraphicsSceneHoverEvent [
+  let () = with_class qGraphicsSceneHoverEvent [
     dynamic "pos" [] ~ret:qPointF;
     dynamic "scenePos" [] ~ret:qPointF;
     dynamic "screenPos" [] ~ret:qPoint;
@@ -4367,11 +4986,11 @@ let () = with_class qGraphicsSceneHoverEvent [
     dynamic "lastScreenPos" [] ~ret:qPoint;
     dynamic "modifiers" [] ~ret:qt'KeyboardModifiers;
   ]
-let () = with_class qGraphicsSceneHelpEvent [
+  let () = with_class qGraphicsSceneHelpEvent [
     dynamic "scenePos" [] ~ret:qPointF;
     dynamic "screenPos" [] ~ret:qPoint;
   ]
-let () = with_class qGraphicsSceneDragDropEvent [
+  let () = with_class qGraphicsSceneDragDropEvent [
     dynamic "pos" [] ~ret:qPointF;
     dynamic "scenePos" [] ~ret:qPointF;
     dynamic "screenPos" [] ~ret:qPoint;
@@ -4385,17 +5004,17 @@ let () = with_class qGraphicsSceneDragDropEvent [
     dynamic "source" [] ~ret:qWidget;
     dynamic "mimeData" [] ~ret:qMimeData;
   ]
-let () = with_class qGraphicsSceneResizeEvent [
+  let () = with_class qGraphicsSceneResizeEvent [
     constructor "" [];
     dynamic "oldSize" [] ~ret:qSizeF;
     dynamic "newSize" [] ~ret:qSizeF;
   ]
-let () = with_class qGraphicsSceneMoveEvent [
+  let () = with_class qGraphicsSceneMoveEvent [
     constructor "" [];
     dynamic "oldPos" [] ~ret:qPointF;
     dynamic "newPos" [] ~ret:qPointF;
   ]
-let () = with_class qGraphicsAnchorLayout [
+  let () = with_class qGraphicsAnchorLayout [
     constructor "" [arg "parent" qGraphicsLayoutItem];
     dynamic "addAnchor" [arg "firstItem" qGraphicsLayoutItem;arg "firstEdge" qt'AnchorPoint;arg "secondItem" qGraphicsLayoutItem;arg "secondEdge" qt'AnchorPoint] ~ret:qGraphicsAnchor;
     dynamic "addCornerAnchors" [arg "firstItem" qGraphicsLayoutItem;arg "firstCorner" qt'Corner;arg "secondItem" qGraphicsLayoutItem;arg "secondCorner" qt'Corner];
@@ -4411,7 +5030,7 @@ let () = with_class qGraphicsAnchorLayout [
     dynamic "itemAt" [arg "index" int] ~ret:qGraphicsLayoutItem;
     dynamic "invalidate" [];
   ]
-let () = with_class qGraphicsGridLayout [
+  let () = with_class qGraphicsGridLayout [
     constructor "" [arg "parent" qGraphicsLayoutItem];
     dynamic "addItem" [arg "item" qGraphicsLayoutItem;arg "row" int;arg "column" int;arg "rowSpan" int;arg "columnSpan" int;arg "alignment" qt'Alignment];
     dynamic "addItem" [arg "item" qGraphicsLayoutItem;arg "row" int;arg "column" int;arg "alignment" qt'Alignment];
@@ -4459,7 +5078,7 @@ let () = with_class qGraphicsGridLayout [
     dynamic "setGeometry" [arg "rect" qRectF];
     dynamic "sizeHint" [arg "which" qt'SizeHint;arg "constraint" qSizeF] ~ret:qSizeF;
   ]
-let () = with_class qGraphicsLinearLayout [
+  let () = with_class qGraphicsLinearLayout [
     constructor "" [arg "parent" qGraphicsLayoutItem];
     constructor "" [arg "orientation" qt'Orientation;arg "parent" qGraphicsLayoutItem];
     dynamic "setOrientation" [arg "orientation" qt'Orientation];
@@ -4484,7 +5103,7 @@ let () = with_class qGraphicsLinearLayout [
     dynamic "invalidate" [];
     dynamic "sizeHint" [arg "which" qt'SizeHint;arg "constraint" qSizeF] ~ret:qSizeF;
   ]
-let () = with_class qGraphicsPathItem [
+  let () = with_class qGraphicsPathItem [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "path" qPainterPath;arg "parent" qGraphicsItem];
     dynamic "path" [] ~ret:qPainterPath;
@@ -4497,7 +5116,7 @@ let () = with_class qGraphicsPathItem [
     dynamic "opaqueArea" [] ~ret:qPainterPath;
     dynamic "type" [] ~ret:int;
   ]
-let () = with_class qGraphicsRectItem [
+  let () = with_class qGraphicsRectItem [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "rect" qRectF;arg "parent" qGraphicsItem];
     constructor "" [arg "x" qreal;arg "y" qreal;arg "width" qreal;arg "height" qreal;arg "parent" qGraphicsItem];
@@ -4512,7 +5131,7 @@ let () = with_class qGraphicsRectItem [
     dynamic "opaqueArea" [] ~ret:qPainterPath;
     dynamic "type" [] ~ret:int;
   ]
-let () = with_class qGraphicsEllipseItem [
+  let () = with_class qGraphicsEllipseItem [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "rect" qRectF;arg "parent" qGraphicsItem];
     constructor "" [arg "x" qreal;arg "y" qreal;arg "width" qreal;arg "height" qreal;arg "parent" qGraphicsItem];
@@ -4531,7 +5150,7 @@ let () = with_class qGraphicsEllipseItem [
     dynamic "opaqueArea" [] ~ret:qPainterPath;
     dynamic "type" [] ~ret:int;
   ]
-let () = with_class qGraphicsPolygonItem [
+  let () = with_class qGraphicsPolygonItem [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "polygon" qPolygonF;arg "parent" qGraphicsItem];
     dynamic "polygon" [] ~ret:qPolygonF;
@@ -4546,7 +5165,7 @@ let () = with_class qGraphicsPolygonItem [
     dynamic "opaqueArea" [] ~ret:qPainterPath;
     dynamic "type" [] ~ret:int;
   ]
-let () = with_class qGraphicsSimpleTextItem [
+  let () = with_class qGraphicsSimpleTextItem [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "text" qString;arg "parent" qGraphicsItem];
     dynamic "setText" [arg "text" qString];
@@ -4561,7 +5180,7 @@ let () = with_class qGraphicsSimpleTextItem [
     dynamic "opaqueArea" [] ~ret:qPainterPath;
     dynamic "type" [] ~ret:int;
   ]
-let () = with_class qGraphicsTextItem [
+  let () = with_class qGraphicsTextItem [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "text" qString;arg "parent" qGraphicsItem];
     dynamic "toHtml" [] ~ret:qString;
@@ -4595,7 +5214,7 @@ let () = with_class qGraphicsTextItem [
     dynamic "linkActivated" [arg "link" qString];
     dynamic "linkHovered" [arg "link" qString];
   ]
-let () = with_class qGraphicsWidget [
+  let () = with_class qGraphicsWidget [
     constructor "" [arg "parent" qGraphicsItem;arg "wFlags" qt'WindowFlags];
     dynamic "layout" [] ~ret:qGraphicsLayout;
     dynamic "setLayout" [arg "layout" qGraphicsLayout];
@@ -4654,7 +5273,7 @@ let () = with_class qGraphicsWidget [
     dynamic "geometryChanged" [];
     dynamic "close" [] ~ret:bool;
   ]
-let () = with_class qDesktopWidget [
+  let () = with_class qDesktopWidget [
     dynamic "isVirtualDesktop" [] ~ret:bool;
     dynamic "numScreens" [] ~ret:int;
     dynamic "screenCount" [] ~ret:int;
@@ -4672,8 +5291,14 @@ let () = with_class qDesktopWidget [
     dynamic "workAreaResized" [arg "screen" int];
     dynamic "screenCountChanged" [arg "newCount" int];
     dynamic "primaryScreenChanged" [];
+  slot "_q_availableGeometryChanged" [];
+  slot "_q_updateScreens" [];
+  signal "primaryScreenChanged" [];
+  signal "resized" [int];
+  signal "screenCountChanged" [int];
+  signal "workAreaResized" [int];
   ]
-let () = with_class qSplitterHandle [
+  let () = with_class qSplitterHandle [
     constructor "" [arg "orientation" qt'Orientation;arg "parent" qSplitter];
     dynamic "setOrientation" [arg "orientation" qt'Orientation];
     dynamic "orientation" [] ~ret:qt'Orientation;
@@ -4681,35 +5306,35 @@ let () = with_class qSplitterHandle [
     dynamic "splitter" [] ~ret:qSplitter;
     dynamic "sizeHint" [] ~ret:qSize;
   ]
-let () = with_class qStyleOptionSlider [
+  let () = with_class qStyleOptionSlider [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionSlider];
   ]
-let () = with_class qStyleOptionSpinBox [
+  let () = with_class qStyleOptionSpinBox [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionSpinBox];
   ]
-let () = with_class qStyleOptionToolButton [
+  let () = with_class qStyleOptionToolButton [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionToolButton];
   ]
-let () = with_class qStyleOptionComboBox [
+  let () = with_class qStyleOptionComboBox [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionComboBox];
   ]
-let () = with_class qStyleOptionTitleBar [
+  let () = with_class qStyleOptionTitleBar [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionTitleBar];
   ]
-let () = with_class qStyleOptionGroupBox [
+  let () = with_class qStyleOptionGroupBox [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionGroupBox];
   ]
-let () = with_class qStyleOptionSizeGrip [
+  let () = with_class qStyleOptionSizeGrip [
     constructor "" [];
     constructor "" [arg "other" qStyleOptionSizeGrip];
   ]
-let () = with_class qGraphicsProxyWidget [
+  let () = with_class qGraphicsProxyWidget [
     constructor "" [arg "parent" qGraphicsItem;arg "wFlags" qt'WindowFlags];
     dynamic "setWidget" [arg "widget" qWidget];
     dynamic "widget" [] ~ret:qWidget;
@@ -4719,7 +5344,7 @@ let () = with_class qGraphicsProxyWidget [
     dynamic "type" [] ~ret:int;
     dynamic "createProxyForChildWidget" [arg "child" qWidget] ~ret:qGraphicsProxyWidget;
   ]
-let () = with_class qProxyStyle [
+  let () = with_class qProxyStyle [
     constructor "" [arg "style" qStyle];
     constructor "" [arg "key" qString];
     dynamic "baseStyle" [] ~ret:qStyle;
@@ -4748,17 +5373,17 @@ let () = with_class qProxyStyle [
     dynamic "unpolish" [arg "widget" qWidget];
     dynamic "unpolish" [arg "app" qApplication];
   ]
-let () = with_class qMacCocoaViewContainer [
+  let () = with_class qMacCocoaViewContainer [
     constructor "" [arg "cocoaViewToWrap" nSView;arg "parent" (optional qWidget)];
     dynamic "setCocoaView" [arg "view" nSView];
     dynamic "cocoaView" [] ~ret:nSView;
   ]
-let () = with_class qMacNativeWidget [
+  let () = with_class qMacNativeWidget [
     constructor "" [arg "parentView" nSView];
     dynamic "sizeHint" [] ~ret:qSize;
     dynamic "nativeView" [] ~ret:nSView;
   ]
-let () = with_class qAccessibleWidget [
+  let () = with_class qAccessibleWidget [
     constructor "" [arg "w" (optional qWidget);arg "role" qAccessible'Role;arg "name" qString];
     dynamic "isValid" [] ~ret:bool;
     dynamic "window" [] ~ret:qWindow;
@@ -4778,7 +5403,7 @@ let () = with_class qAccessibleWidget [
     dynamic "doAction" [arg "actionName" qString];
     dynamic "keyBindingsForAction" [arg "actionName" qString] ~ret:qStringList;
   ]
-let () = with_class qUndoGroup [
+  let () = with_class qUndoGroup [
     constructor "" [arg "parent" qObject];
     dynamic "addStack" [arg "stack" qUndoStack];
     dynamic "removeStack" [arg "stack" qUndoStack];
@@ -4802,7 +5427,7 @@ let () = with_class qUndoGroup [
     dynamic "undoTextChanged" [arg "undoText" qString];
     dynamic "redoTextChanged" [arg "redoText" qString];
   ]
-let () = with_class qUndoStack [
+  let () = with_class qUndoStack [
     constructor "" [arg "parent" qObject];
     dynamic "clear" [];
     dynamic "push" [arg "cmd" qUndoCommand];
@@ -4836,7 +5461,7 @@ let () = with_class qUndoStack [
     dynamic "undoTextChanged" [arg "undoText" qString];
     dynamic "redoTextChanged" [arg "redoText" qString];
   ]
-let () = with_class qItemDelegate [
+  let () = with_class qItemDelegate [
     constructor "" [arg "parent" qObject];
     dynamic "hasClipping" [] ~ret:bool;
     dynamic "setClipping" [arg "clip" bool];
@@ -4849,7 +5474,7 @@ let () = with_class qItemDelegate [
     dynamic "itemEditorFactory" [] ~ret:qItemEditorFactory;
     dynamic "setItemEditorFactory" [arg "factory" qItemEditorFactory];
   ]
-let () = with_class qStyledItemDelegate [
+  let () = with_class qStyledItemDelegate [
     constructor "" [arg "parent" qObject];
     dynamic "paint" [arg "painter" qPainter;arg "option" qStyleOptionViewItem;arg "index" qModelIndex];
     dynamic "sizeHint" [arg "option" qStyleOptionViewItem;arg "index" qModelIndex] ~ret:qSize;
@@ -4861,7 +5486,7 @@ let () = with_class qStyledItemDelegate [
     dynamic "setItemEditorFactory" [arg "factory" qItemEditorFactory];
     (*dynamic "displayText" [arg "value" qVariant;arg "locale" qLocale] ~ret:qString;*)
   ]
-let () = with_class qGraphicsView [
+  let () = with_class qGraphicsView [
     constructor "" [arg "parent" (optional qWidget)];
     constructor "" [arg "scene" qGraphicsScene;arg "parent" (optional qWidget)];
     dynamic "sizeHint" [] ~ret:qSize;
@@ -4944,6 +5569,15 @@ let () = with_class qGraphicsView [
     dynamic "invalidateScene" [arg "rect" qRectF;arg "layers" qGraphicsScene'SceneLayers];
     dynamic "updateSceneRect" [arg "rect" qRectF];
     dynamic "rubberBandChanged" [arg "rubberBandRect" qRect;arg "fromScenePoint" qPointF;arg "toScenePoint" qPointF];
+  slot "invalidateScene" [];
+  slot "invalidateScene" [qRectF];
+  slot "invalidateScene" [qRectF;qGraphicsScene'SceneLayers];
+  slot "_q_setViewportCursor" [qCursor];
+  slot "_q_unsetViewportCursor" [];
+  slot "setupViewport" [qWidget];
+  (*slot "updateScene" [qList<QRectF>];*)
+  slot "updateSceneRect" [qRectF];
+  signal "rubberBandChanged" [qRect;qPointF;qPointF];
   ]
 *)
 let () = with_class qAbstractItemView [
@@ -5023,4 +5657,57 @@ let () = with_class qAbstractItemView [
     dynamic "entered" [arg "index" qModelIndex];
     dynamic "viewportEntered" [];
     dynamic "iconSizeChanged" [arg "size" qSize];
+    slot "clearSelection" [];
+    (*  slot "closeEditor" [qWidget*;QAbstractItemDelegate::EndEditHint];*)
+    (*  slot "commitData" [qWidget];*)
+    slot "currentChanged" [qModelIndex;qModelIndex];
+    slot "dataChanged" [qModelIndex;qModelIndex];
+    (*slot "dataChanged" [qModelIndex;qModelIndex;QVector<int>];*)
+    slot "doItemsLayout" [];
+    (*  slot "editorDestroyed" [qObject];*)
+    slot "edit" [qModelIndex];
+    slot "horizontalScrollbarAction" [int];
+    slot "horizontalScrollbarValueChanged" [int];
+    slot "_q_columnsAboutToBeRemoved" [qModelIndex;int;int];
+    slot "_q_columnsInserted" [qModelIndex;int;int];
+    slot "_q_columnsMoved" [qModelIndex;int;int;qModelIndex;int];
+    slot "_q_columnsRemoved" [qModelIndex;int;int];
+    slot "_q_headerDataChanged" [];
+    slot "_q_layoutChanged" [];
+    slot "_q_modelDestroyed" [];
+    slot "_q_rowsInserted" [qModelIndex;int;int];
+    slot "_q_rowsMoved" [qModelIndex;int;int;qModelIndex;int];
+    slot "_q_rowsRemoved" [qModelIndex;int;int];
+    slot "_q_scrollerStateChanged" [];
+    slot "reset" [];
+    slot "rowsAboutToBeRemoved" [qModelIndex;int;int];
+    slot "rowsInserted" [qModelIndex;int;int];
+    slot "scrollToBottom" [];
+    slot "scrollToTop" [];
+    slot "selectAll" [];
+    slot "selectionChanged" [qItemSelection;qItemSelection];
+    slot "setCurrentIndex" [qModelIndex];
+    slot "setRootIndex" [qModelIndex];
+    slot "updateEditorData" [];
+    slot "updateEditorGeometries" [];
+    slot "updateGeometries" [];
+    slot "update" [qModelIndex];
+    slot "verticalScrollbarAction" [int];
+    slot "verticalScrollbarValueChanged" [int];
+    signal "activated" [qModelIndex];
+    signal "clicked" [qModelIndex];
+    signal "doubleClicked" [qModelIndex];
+    signal "entered" [qModelIndex];
+    signal "iconSizeChanged" [qSize];
+    signal "pressed" [qModelIndex];
+    signal "viewportEntered" [];
+  ]
+
+(* From QtCore but references QWidget *)
+
+let () = with_class qSignalMapper [
+    dynamic "setMapping" [arg "sender" qObject;arg "widget" qWidget];
+    dynamic "mapping" [arg "widget" qWidget] ~ret:qObject;
+    dynamic "mapped" [arg "widget" qWidget];
+    signal "mapped" [qWidget];
   ]

@@ -2,6 +2,30 @@ open Shared
 open QtCore_enum
 open QtCore_classes
 
+  (* signal ~cl:qPrintDialog "accepted" [qPrinter*];
+     slot ~cl:qPrintDialog "_q_checkFields" [];
+     slot ~cl:qPrintDialog "_q_collapseOrExpandDialog" [];
+     slot ~cl:qPrintDialog "_q_togglePageSetCombo" [bool];*)
+
+let () = with_class qSignalMapper [
+    constructor "" [arg "parent" (optional qObject)];
+    dynamic "setMapping" [arg "sender" qObject;arg "id" int];
+    dynamic "setMapping" [arg "sender" qObject;arg "text" qString];
+    dynamic "setMapping" [arg "sender" qObject;arg "object" qObject];
+    dynamic "removeMappings" [arg "sender" qObject];
+    dynamic "mapping" [arg "id" int] ~ret:qObject;
+    dynamic "mapping" [arg "id" qString] ~ret:qObject;
+    dynamic "mapping" [arg "object" qObject] ~ret:qObject;
+    dynamic "mapped" [arg "i" int];
+    dynamic "mapped" [arg "text" qString];
+    dynamic "mapped" [arg "object" qObject];
+    dynamic "map" [];
+    dynamic "map" [arg "sender" qObject];
+    signal "mapped" [int];
+    signal "mapped" [qString];
+    signal "mapped" [qObject];
+  ]
+
 let () = with_class qRegExp [
     constructor "" [];
     constructor "" [arg "pattern" qString;arg "cs" qt'CaseSensitivity;arg "syntax" qRegExp'PatternSyntax];
@@ -221,6 +245,19 @@ let () = with_class qItemSelectionModel [
     dynamic "currentRowChanged" [arg "current" qModelIndex;arg "previous" qModelIndex];
     dynamic "currentColumnChanged" [arg "current" qModelIndex;arg "previous" qModelIndex];
     dynamic "modelChanged" [arg "model" qAbstractItemModel];
+
+    signal  "selectionChanged"     [qItemSelection; qItemSelection];
+    signal  "currentChanged"       [qModelIndex; qModelIndex];
+    signal  "currentRowChanged"    [qModelIndex; qModelIndex];
+    signal  "currentColumnChanged" [qModelIndex; qModelIndex];
+    signal  "modelChanged"         [qAbstractItemModel];
+    slot  "setCurrentIndex" [qModelIndex; qItemSelectionModel'SelectionFlags];
+    slot  "select" [qModelIndex; qItemSelectionModel'SelectionFlags];
+    slot  "select" [qItemSelection; qItemSelectionModel'SelectionFlags];
+    slot  "clear" [];
+    slot  "reset" [];
+    slot  "clearSelection" [];
+    slot  "clearCurrentIndex" [];
   ]
 let () = with_class qAbstractProxyModel [
     (*constructor "" [arg "parent" (optional qObject)];*)
@@ -342,6 +379,65 @@ let () = with_class qItemSelectionRange [
     dynamic "isValid" [] ~ret:bool;
     dynamic "isEmpty" [] ~ret:bool;
     dynamic "indexes" [] ~ret:qModelIndexList;
+  ]
+
+let () = with_class qCoreApplication [
+    (*constructor "" [arg "argc" int;arg "argv" pchar];*)
+    (*static  "arguments" [] ~ret:qStringList;*)
+    (*static  "setAttribute" [arg "attribute" qt'ApplicationAttribute;arg "on" bool];*)
+    (*static  "testAttribute" [arg "attribute" qt'ApplicationAttribute] ~ret:bool;*)
+    static  "setOrganizationDomain" [arg "orgDomain" qString];
+    static  "organizationDomain" [] ~ret:qString;
+    static  "setOrganizationName" [arg "orgName" qString];
+    static  "organizationName" [] ~ret:qString;
+    static  "setApplicationName" [arg "application" qString];
+    static  "applicationName" [] ~ret:qString;
+    static  "setApplicationVersion" [arg "version" qString];
+    static  "applicationVersion" [] ~ret:qString;
+    static  "setSetuidAllowed" [arg "allow" bool];
+    static  "isSetuidAllowed" [] ~ret:bool;
+    static  "instance" [] ~ret:qCoreApplication;
+    static  "exec" [] ~ret:int;
+    (*static  "processEvents" [arg "flags" qEventLoop'ProcessEventsFlags];*)
+    (*static  "processEvents" [arg "flags" qEventLoop'ProcessEventsFlags;arg "maxtime" int];*)
+    static  "exit" [arg "returnCode" int];
+    static  "sendEvent" [arg "receiver" qObject;arg "event" qEvent] ~ret:bool;
+    static  "postEvent" [arg "receiver" qObject;arg "event" qEvent;arg "priority" int];
+    static  "sendPostedEvents" [arg "receiver" qObject;arg "event_type" int];
+    static  "removePostedEvents" [arg "receiver" qObject;arg "eventType" int];
+    static  "hasPendingEvents" [] ~ret:bool;
+    (*static  "eventDispatcher" [] ~ret:qAbstractEventDispatcher;*)
+    (*static  "setEventDispatcher" [arg "eventDispatcher" qAbstractEventDispatcher];*)
+    dynamic "notify" [arg "receiver" qObject;arg "event" qEvent] ~ret:bool;
+    static  "startingUp" [] ~ret:bool;
+    static  "closingDown" [] ~ret:bool;
+    static  "applicationDirPath" [] ~ret:qString;
+    static  "applicationFilePath" [] ~ret:qString;
+    static  "applicationPid" [] ~ret:qint64;
+    (*static  "setLibraryPaths" [arg "paths" qStringList];*)
+    (*static  "libraryPaths" [] ~ret:qStringList;*)
+    static  "addLibraryPath" [arg "path" qString];
+    static  "removeLibraryPath" [arg "path" qString];
+    (*static  "installTranslator" [arg "translationFile" qTranslator] ~ret:bool;*)
+    (*static  "removeTranslator" [arg "translationFile" qTranslator] ~ret:bool;*)
+    static  "translate" [arg "context" pchar;arg "sourceText" pchar;arg "disambiguation" pchar;arg "n" int] ~ret:qString;
+    (*static  "translate" [arg "context" pchar;arg "key" pchar;arg "disambiguation" pchar;arg "encoding" encoding;arg "n" int] ~ret:qString;*)
+    static  "flush" [];
+    (*dynamic "installNativeEventFilter" [arg "filterObj" qAbstractNativeEventFilter];*)
+    (*dynamic "removeNativeEventFilter" [arg "filterObject" qAbstractNativeEventFilter];*)
+    static  "isQuitLockEnabled" [] ~ret:bool;
+    static  "setQuitLockEnabled" [arg "enabled" bool];
+    static  "quit" [];
+    (*dynamic "aboutToQuit" [];*)
+    (*signal "aboutToQuit" [];*)
+    slot "quit" [];
+  ]
+
+let () = with_class qObject [
+    (*signal "objectNameChanged" [qString];*)
+    signal "destroyed" [qObject];
+    slot "deleteLater" [];
+    (*  slot "_q_reregisterTimers" [void*];*)
   ]
 
 (*let () = with_class qObject [
@@ -5264,55 +5360,6 @@ let () = with_class qAbstractEventDispatcher [
     dynamic "aboutToBlock" [];
     dynamic "awake" [];
   ]
-let () = with_class qCoreApplication [
-    constructor "" [arg "argc" int;arg "argv" pchar];
-    (*static  "arguments" [] ~ret:qStringList;*)
-    (*static  "setAttribute" [arg "attribute" qt'ApplicationAttribute;arg "on" bool];*)
-    (*static  "testAttribute" [arg "attribute" qt'ApplicationAttribute] ~ret:bool;*)
-    static  "setOrganizationDomain" [arg "orgDomain" qString];
-    static  "organizationDomain" [] ~ret:qString;
-    static  "setOrganizationName" [arg "orgName" qString];
-    static  "organizationName" [] ~ret:qString;
-    static  "setApplicationName" [arg "application" qString];
-    static  "applicationName" [] ~ret:qString;
-    static  "setApplicationVersion" [arg "version" qString];
-    static  "applicationVersion" [] ~ret:qString;
-    static  "setSetuidAllowed" [arg "allow" bool];
-    static  "isSetuidAllowed" [] ~ret:bool;
-    static  "instance" [] ~ret:qCoreApplication;
-    static  "exec" [] ~ret:int;
-    (*static  "processEvents" [arg "flags" qEventLoop'ProcessEventsFlags];*)
-    (*static  "processEvents" [arg "flags" qEventLoop'ProcessEventsFlags;arg "maxtime" int];*)
-    static  "exit" [arg "returnCode" int];
-    static  "sendEvent" [arg "receiver" qObject;arg "event" qEvent] ~ret:bool;
-    static  "postEvent" [arg "receiver" qObject;arg "event" qEvent;arg "priority" int];
-    static  "sendPostedEvents" [arg "receiver" qObject;arg "event_type" int];
-    static  "removePostedEvents" [arg "receiver" qObject;arg "eventType" int];
-    static  "hasPendingEvents" [] ~ret:bool;
-    (*static  "eventDispatcher" [] ~ret:qAbstractEventDispatcher;*)
-    (*static  "setEventDispatcher" [arg "eventDispatcher" qAbstractEventDispatcher];*)
-    dynamic "notify" [arg "receiver" qObject;arg "event" qEvent] ~ret:bool;
-    static  "startingUp" [] ~ret:bool;
-    static  "closingDown" [] ~ret:bool;
-    static  "applicationDirPath" [] ~ret:qString;
-    static  "applicationFilePath" [] ~ret:qString;
-    static  "applicationPid" [] ~ret:qint64;
-    (*static  "setLibraryPaths" [arg "paths" qStringList];*)
-    (*static  "libraryPaths" [] ~ret:qStringList;*)
-    static  "addLibraryPath" [arg "path" qString];
-    static  "removeLibraryPath" [arg "path" qString];
-    (*static  "installTranslator" [arg "translationFile" qTranslator] ~ret:bool;*)
-    (*static  "removeTranslator" [arg "translationFile" qTranslator] ~ret:bool;*)
-    static  "translate" [arg "context" pchar;arg "sourceText" pchar;arg "disambiguation" pchar;arg "n" int] ~ret:qString;
-    (*static  "translate" [arg "context" pchar;arg "key" pchar;arg "disambiguation" pchar;arg "encoding" encoding;arg "n" int] ~ret:qString;*)
-    static  "flush" [];
-    (*dynamic "installNativeEventFilter" [arg "filterObj" qAbstractNativeEventFilter];*)
-    (*dynamic "removeNativeEventFilter" [arg "filterObject" qAbstractNativeEventFilter];*)
-    static  "isQuitLockEnabled" [] ~ret:bool;
-    static  "setQuitLockEnabled" [arg "enabled" bool];
-    static  "quit" [];
-    dynamic "aboutToQuit" [];
-  ]
 let () = with_class qEventLoop [
     constructor "" [arg "parent" (optional qObject)];
     dynamic "processEvents" [arg "flags" processEventsFlags] ~ret:bool;
@@ -5374,24 +5421,6 @@ let () = with_class qSharedMemory [
     dynamic "unlock" [] ~ret:bool;
     dynamic "error" [] ~ret:sharedMemoryError;
     dynamic "errorString" [] ~ret:qString;
-  ]
-let () = with_class qSignalMapper [
-    constructor "" [arg "parent" (optional qObject)];
-    dynamic "setMapping" [arg "sender" qObject;arg "id" int];
-    dynamic "setMapping" [arg "sender" qObject;arg "text" qString];
-    dynamic "setMapping" [arg "sender" qObject;arg "widget" qWidget];
-    dynamic "setMapping" [arg "sender" qObject;arg "object" qObject];
-    dynamic "removeMappings" [arg "sender" qObject];
-    dynamic "mapping" [arg "id" int] ~ret:qObject;
-    dynamic "mapping" [arg "id" qString] ~ret:qObject;
-    dynamic "mapping" [arg "widget" qWidget] ~ret:qObject;
-    dynamic "mapping" [arg "object" qObject] ~ret:qObject;
-    dynamic "mapped" [arg "i" int];
-    dynamic "mapped" [arg "text" qString];
-    dynamic "mapped" [arg "widget" qWidget];
-    dynamic "mapped" [arg "object" qObject];
-    dynamic "map" [];
-    dynamic "map" [arg "sender" qObject];
   ]
 let () = with_class qSocketNotifier [
     constructor "" [arg "socket" qintptr;arg "type" type;arg "parent" (optional qObject)];

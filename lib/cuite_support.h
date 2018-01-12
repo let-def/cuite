@@ -98,9 +98,9 @@ typedef struct {
 value cuite_slot_to_ocaml(const cuiteslot& slot);
 const cuiteslot& cuite_slot_from_ocaml(value v);
 
-external value cuite_connect_slot(value vobj, value vsig, value vtarget, value vslot);
+external value cuite_connect_slot1(value vobj, value vsig, value vtarget, value vslot);
 external value cuite_connect_slot0(value vobj, value vsig, value vtarget, value vslot);
-external value cuite_connect(value vobj, value vsig, value fn);
+external value cuite_connect1(value vobj, value vsig, value fn);
 external value cuite_connect0(value vobj, value vsig, value fn);
 
 /* Reified classes */
@@ -112,20 +112,20 @@ external value cuite_metaobject_name(value vmeta);
 external value cuite_metaobject_get(value vobj);
 external value cuite_metaobject_cast(value vobj, value vmeta);
 
-#define CUITE_CLASS(name)                                                   \
+#define CUITE_CLASS(name)                                                  \
   external value cuite_class_##name(value unit)                            \
   {                                                                        \
     return cuite_QMetaObject_to_ocaml(&name::staticMetaObject);            \
   }
 
-#define CUITE_SLOT(class_name, slot_name, proto)                            \
+#define CUITE_SLOT(class_name, slot_name, proto)                           \
   external value cuite_slot_##class_name##_##slot_name(value unit)         \
   {                                                                        \
     static cuiteslot slot = { .name = SLOT(proto) };                       \
     return cuite_slot_to_ocaml(slot);                                      \
   }
 
-#define CUITE_SIGNAL(class_name, mangled_name, signal_name, proto, cb)      \
+#define CUITE_SIGNAL(class_name, mangled_name, signal_name, proto, cb)     \
   static QMetaObject::Connection                                           \
   connect_signal_##class_name##_##mangled_name(QObject *obj, intnat *cbid) \
   {                                                                        \

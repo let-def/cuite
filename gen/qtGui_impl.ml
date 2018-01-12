@@ -1,7 +1,89 @@
 open Shared
 open QtCore_classes
+open QtCore_enum
 open QtGui_classes
 open QtGui_enum
+
+let () = with_class qGuiApplication [
+    (*constructor "" [(*arg "argc" int;arg "argv" char*)];*)
+    static  "setApplicationDisplayName" [arg "name" qString];
+    static  "applicationDisplayName" [] ~ret:qString;
+    static  "setDesktopFileName" [arg "name" qString];
+    static  "desktopFileName" [] ~ret:qString;
+    (*static  "allWindows" [] ~ret:qWindowList;
+      static  "topLevelWindows" [] ~ret:qWindowList;*)
+    static  "topLevelAt" [arg "pos" qPoint] ~ret:qWindow;
+    (*static  "setWindowIcon" [arg "icon" qIcon];
+      static  "windowIcon" [] ~ret:qIcon;*)
+    static  "platformName" [] ~ret:qString;
+    static  "modalWindow" [] ~ret:qWindow;
+    static  "focusWindow" [] ~ret:qWindow;
+    static  "focusObject" [] ~ret:qObject;
+    (*static  "primaryScreen" [] ~ret:qScreen;*)
+    (*static  "screens" [] ~ret:qList<QScreen *>;*)
+    dynamic "devicePixelRatio" [] ~ret:qreal;
+    (*static  "overrideCursor" [] ~ret:qCursor;*)
+    (*static  "setOverrideCursor" [arg "cursor" qCursor];*)
+    (*static  "changeOverrideCursor" [arg "cursor" qCursor];*)
+    static  "restoreOverrideCursor" [];
+    (*static  "font" [] ~ret:qFont;*)
+    (*static  "setFont" [arg "font" qFont];*)
+    (*static  "clipboard" [] ~ret:qClipboard;*)
+    (*static  "palette" [] ~ret:qPalette;
+      static  "setPalette" [arg "pal" qPalette];*)
+    (*static  "keyboardModifiers" [] ~ret:qt'KeyboardModifiers;*)
+    (*static  "queryKeyboardModifiers" [] ~ret:qt'KeyboardModifiers;*)
+    (*static  "mouseButtons" [] ~ret:qt'MouseButtons;*)
+    (*static  "setLayoutDirection" [arg "direction" qt'LayoutDirection];*)
+    (*static  "layoutDirection" [] ~ret:qt'LayoutDirection;*)
+    static  "isRightToLeft" [] ~ret:bool;
+    static  "isLeftToRight" [] ~ret:bool;
+    (*static  "styleHints" [] ~ret:qStyleHints;*)
+    static  "setDesktopSettingsAware" [arg "on" bool];
+    static  "desktopSettingsAware" [] ~ret:bool;
+    (*static  "inputMethod" [] ~ret:qInputMethod;*)
+    (*static  "platformNativeInterface" [] ~ret:qPlatformNativeInterface;*)
+    (*static  "platformFunction" [arg "function" qByteArray] ~ret:qFunctionPointer;*)
+    static  "setQuitOnLastWindowClosed" [arg "quit" bool];
+    static  "quitOnLastWindowClosed" [] ~ret:bool;
+    (*static  "applicationState" [] ~ret:qt'ApplicationState;*)
+    static  "exec" [] ~ret:int;
+    dynamic "notify" [arg "object" qObject;arg "event" qEvent] ~ret:bool;
+    dynamic "isSessionRestored" [] ~ret:bool;
+    dynamic "sessionId" [] ~ret:qString;
+    dynamic "sessionKey" [] ~ret:qString;
+    dynamic "isSavingSession" [] ~ret:bool;
+    static  "isFallbackSessionManagementEnabled" [] ~ret:bool;
+    static  "setFallbackSessionManagementEnabled" [arg "enabled" bool];
+    static  "sync" [];
+    dynamic "fontDatabaseChanged" [];
+    (*dynamic "screenAdded" [arg "screen" qScreen];*)
+    (*dynamic "screenRemoved" [arg "screen" qScreen];*)
+    (*dynamic "primaryScreenChanged" [arg "screen" qScreen];*)
+    dynamic "lastWindowClosed" [];
+    dynamic "focusObjectChanged" [arg "focusObject" qObject];
+    dynamic "focusWindowChanged" [arg "focusWindow" qWindow];
+    (*dynamic "applicationStateChanged" [arg "state" qt'ApplicationState];*)
+    (*dynamic "layoutDirectionChanged" [arg "direction" qt'LayoutDirection];*)
+    (*dynamic "commitDataRequest" [arg "manager" qSessionManager];*)
+    (*dynamic "saveStateRequest" [arg "manager" qSessionManager];*)
+    (*dynamic "paletteChanged" [arg "palette" qPalette];*)
+    dynamic "applicationDisplayNameChanged" [];
+
+    signal  "applicationDisplayNameChanged" [];
+    signal  "applicationStateChanged" [qt'ApplicationState];
+    (*signal "commitDataRequest" [QSessionManager &manager];*)
+    signal "focusObjectChanged" [qObject];
+    signal "focusWindowChanged" [qWindow];
+    signal "fontDatabaseChanged" [];
+    signal "lastWindowClosed" [];
+    signal "layoutDirectionChanged" [qt'LayoutDirection];
+    signal "paletteChanged" [reference (const qPalette)];
+    (*signal "primaryScreenChanged" [QScreen *screen];*)
+    (*signal "saveStateRequest" [QSessionManager &manager];*)
+    (*signal "screenAdded" [QScreen *screen];*)
+    (*signal "screenRemoved" [QScreen *screen];*)
+  ]
 
 let () = with_class qSyntaxHighlighter [
     (*constructor "" [arg "parent" qObject];*)
@@ -290,79 +372,179 @@ let () = with_class qColor [
     (*static  "isValidColor" [arg "name" qLatin1String] ~ret:bool;*)
   ]
 
-(*let () = with_class qGuiApplication [
-    constructor "" [(*arg "argc" int;arg "argv" char*)];
-    static  "setApplicationDisplayName" [arg "name" qString];
-    static  "applicationDisplayName" [] ~ret:qString;
-    static  "setDesktopFileName" [arg "name" qString];
-    static  "desktopFileName" [] ~ret:qString;
-    (*static  "allWindows" [] ~ret:qWindowList;
-    static  "topLevelWindows" [] ~ret:qWindowList;*)
-    static  "topLevelAt" [arg "pos" qPoint] ~ret:qWindow;
-    (*static  "setWindowIcon" [arg "icon" qIcon];
-    static  "windowIcon" [] ~ret:qIcon;*)
-    static  "platformName" [] ~ret:qString;
-    static  "modalWindow" [] ~ret:qWindow;
-    static  "focusWindow" [] ~ret:qWindow;
-    static  "focusObject" [] ~ret:qObject;
-    (*static  "primaryScreen" [] ~ret:qScreen;*)
-    (*static  "screens" [] ~ret:qList<QScreen *>;*)
+let () = with_class qWindow [
+    constructor "" [arg "targetScreen" qScreen];
+    constructor "" [arg "parent" qWindow];
+    dynamic "setSurfaceType" [arg "surfaceType" qSurface'SurfaceType];
+    dynamic "surfaceType" [] ~ret:qSurface'SurfaceType;
+    dynamic "isVisible" [] ~ret:bool;
+    dynamic "visibility" [] ~ret:qWindow'Visibility;
+    dynamic "setVisibility" [arg "v" qWindow'Visibility];
+    dynamic "create" [];
+    (*dynamic "winId" [] ~ret:wId;*)
+    dynamic "parent" [arg "mode" qWindow'AncestorMode] ~ret:qWindow;
+    dynamic "parent" [] ~ret:qWindow;
+    dynamic "setParent" [arg "parent" qWindow];
+    dynamic "isTopLevel" [] ~ret:bool;
+    dynamic "isModal" [] ~ret:bool;
+    dynamic "modality" [] ~ret:qt'WindowModality;
+    dynamic "setModality" [arg "modality" qt'WindowModality];
+    dynamic "setFormat" [arg "format" qSurfaceFormat];
+    dynamic "format" [] ~ret:qSurfaceFormat;
+    dynamic "requestedFormat" [] ~ret:qSurfaceFormat;
+    dynamic "setFlags" [arg "flags" qt'WindowFlags];
+    dynamic "flags" [] ~ret:qt'WindowFlags;
+    dynamic "setFlag" [arg "flag" qt'WindowType;arg "on" bool];
+    dynamic "type" [] ~ret:qt'WindowType;
+    dynamic "title" [] ~ret:qString;
+    dynamic "setOpacity" [arg "level" qreal];
+    dynamic "opacity" [] ~ret:qreal;
+    dynamic "setMask" [arg "region" qRegion];
+    dynamic "mask" [] ~ret:qRegion;
+    dynamic "isActive" [] ~ret:bool;
+    dynamic "reportContentOrientationChange" [arg "orientation" qt'ScreenOrientation];
+    dynamic "contentOrientation" [] ~ret:qt'ScreenOrientation;
     dynamic "devicePixelRatio" [] ~ret:qreal;
-    (*static  "overrideCursor" [] ~ret:qCursor;*)
-    (*static  "setOverrideCursor" [arg "cursor" qCursor];*)
-    (*static  "changeOverrideCursor" [arg "cursor" qCursor];*)
-    static  "restoreOverrideCursor" [];
-    (*static  "font" [] ~ret:qFont;*)
-    (*static  "setFont" [arg "font" qFont];*)
-    (*static  "clipboard" [] ~ret:qClipboard;*)
-    (*static  "palette" [] ~ret:qPalette;
-    static  "setPalette" [arg "pal" qPalette];*)
-    (*static  "keyboardModifiers" [] ~ret:qt'KeyboardModifiers;*)
-    (*static  "queryKeyboardModifiers" [] ~ret:qt'KeyboardModifiers;*)
-    (*static  "mouseButtons" [] ~ret:qt'MouseButtons;*)
-    (*static  "setLayoutDirection" [arg "direction" qt'LayoutDirection];*)
-    (*static  "layoutDirection" [] ~ret:qt'LayoutDirection;*)
-    static  "isRightToLeft" [] ~ret:bool;
-    static  "isLeftToRight" [] ~ret:bool;
-    (*static  "styleHints" [] ~ret:qStyleHints;*)
-    static  "setDesktopSettingsAware" [arg "on" bool];
-    static  "desktopSettingsAware" [] ~ret:bool;
-    (*static  "inputMethod" [] ~ret:qInputMethod;*)
-    (*static  "platformNativeInterface" [] ~ret:qPlatformNativeInterface;*)
-    (*static  "platformFunction" [arg "function" qByteArray] ~ret:qFunctionPointer;*)
-    static  "setQuitOnLastWindowClosed" [arg "quit" bool];
-    static  "quitOnLastWindowClosed" [] ~ret:bool;
-    (*static  "applicationState" [] ~ret:qt'ApplicationState;*)
-    static  "exec" [] ~ret:int;
-    dynamic "notify" [arg "object" qObject;arg "event" qEvent] ~ret:bool;
-    dynamic "isSessionRestored" [] ~ret:bool;
-    dynamic "sessionId" [] ~ret:qString;
-    dynamic "sessionKey" [] ~ret:qString;
-    dynamic "isSavingSession" [] ~ret:bool;
-    static  "isFallbackSessionManagementEnabled" [] ~ret:bool;
-    static  "setFallbackSessionManagementEnabled" [arg "enabled" bool];
-    static  "sync" [];
-    dynamic "fontDatabaseChanged" [];
-    (*dynamic "screenAdded" [arg "screen" qScreen];*)
-    (*dynamic "screenRemoved" [arg "screen" qScreen];*)
-    (*dynamic "primaryScreenChanged" [arg "screen" qScreen];*)
-    dynamic "lastWindowClosed" [];
-    dynamic "focusObjectChanged" [arg "focusObject" qObject];
-    dynamic "focusWindowChanged" [arg "focusWindow" qWindow];
-    (*dynamic "applicationStateChanged" [arg "state" qt'ApplicationState];*)
-    (*dynamic "layoutDirectionChanged" [arg "direction" qt'LayoutDirection];*)
-    (*dynamic "commitDataRequest" [arg "manager" qSessionManager];*)
-    (*dynamic "saveStateRequest" [arg "manager" qSessionManager];*)
-    (*dynamic "paletteChanged" [arg "palette" qPalette];*)
-    dynamic "applicationDisplayNameChanged" [];
+    dynamic "windowState" [] ~ret:qt'WindowState;
+    dynamic "setWindowState" [arg "state" qt'WindowState];
+    dynamic "setTransientParent" [arg "parent" qWindow];
+    dynamic "transientParent" [] ~ret:qWindow;
+    dynamic "isAncestorOf" [arg "child" qWindow;arg "mode" qWindow'AncestorMode] ~ret:bool;
+    dynamic "isExposed" [] ~ret:bool;
+    dynamic "minimumWidth" [] ~ret:int;
+    dynamic "minimumHeight" [] ~ret:int;
+    dynamic "maximumWidth" [] ~ret:int;
+    dynamic "maximumHeight" [] ~ret:int;
+    dynamic "minimumSize" [] ~ret:qSize;
+    dynamic "maximumSize" [] ~ret:qSize;
+    dynamic "baseSize" [] ~ret:qSize;
+    dynamic "sizeIncrement" [] ~ret:qSize;
+    dynamic "setMinimumSize" [arg "size" qSize];
+    dynamic "setMaximumSize" [arg "size" qSize];
+    dynamic "setBaseSize" [arg "size" qSize];
+    dynamic "setSizeIncrement" [arg "size" qSize];
+    dynamic "setGeometry" [arg "posx" int;arg "posy" int;arg "w" int;arg "h" int];
+    dynamic "setGeometry" [arg "rect" qRect];
+    dynamic "geometry" [] ~ret:qRect;
+    dynamic "frameMargins" [] ~ret:(reference qMargins);
+    dynamic "frameGeometry" [] ~ret:qRect;
+    dynamic "framePosition" [] ~ret:qPoint;
+    dynamic "setFramePosition" [arg "point" qPoint];
+    dynamic "width" [] ~ret:int;
+    dynamic "height" [] ~ret:int;
+    dynamic "x" [] ~ret:int;
+    dynamic "y" [] ~ret:int;
+    dynamic "size" [] ~ret:qSize;
+    dynamic "position" [] ~ret:qPoint;
+    dynamic "setPosition" [arg "pt" qPoint];
+    dynamic "setPosition" [arg "posx" int;arg "posy" int];
+    dynamic "resize" [arg "newSize" qSize];
+    dynamic "resize" [arg "w" int;arg "h" int];
+    dynamic "setFilePath" [arg "filePath" qString];
+    dynamic "filePath" [] ~ret:qString;
+    dynamic "setIcon" [arg "icon" qIcon];
+    dynamic "icon" [] ~ret:qIcon;
+    dynamic "destroy" [];
+    dynamic "setKeyboardGrabEnabled" [arg "grab" bool] ~ret:bool;
+    dynamic "setMouseGrabEnabled" [arg "grab" bool] ~ret:bool;
+    dynamic "screen" [] ~ret:qScreen;
+    dynamic "setScreen" [arg "newScreen" qScreen];
+    dynamic "focusObject" [] ~ret:qObject;
+    dynamic "mapToGlobal" [arg "pos" qPoint] ~ret:qPoint;
+    dynamic "mapFromGlobal" [arg "pos" qPoint] ~ret:qPoint;
+    dynamic "cursor" [] ~ret:(reference qCursor); (* CHECKME *)
+    dynamic "setCursor" [arg "cursor" (reference qCursor)];
+    dynamic "unsetCursor" [];
+    (*static  "fromWinId" [arg "id" wId] ~ret:qWindow;*)
+    dynamic "requestActivate" [];
+    dynamic "setVisible" [arg "visible" bool];
+    dynamic "show" [];
+    dynamic "hide" [];
+    dynamic "showMinimized" [];
+    dynamic "showMaximized" [];
+    dynamic "showFullScreen" [];
+    dynamic "showNormal" [];
+    dynamic "close" [] ~ret:bool;
+    dynamic "raise" [];
+    dynamic "lower" [];
+    dynamic "setTitle" [arg "arg0" qString];
+    dynamic "setX" [arg "arg" int];
+    dynamic "setY" [arg "arg" int];
+    dynamic "setWidth" [arg "arg" int];
+    dynamic "setHeight" [arg "arg" int];
+    dynamic "setMinimumWidth" [arg "w" int];
+    dynamic "setMinimumHeight" [arg "h" int];
+    dynamic "setMaximumWidth" [arg "w" int];
+    dynamic "setMaximumHeight" [arg "h" int];
+    dynamic "alert" [arg "msec" int];
+    dynamic "requestUpdate" [];
+    dynamic "screenChanged" [arg "screen" qScreen];
+    dynamic "modalityChanged" [arg "modality" qt'WindowModality];
+    dynamic "windowStateChanged" [arg "windowState" qt'WindowState];
+    dynamic "windowTitleChanged" [arg "title" qString];
+    dynamic "xChanged" [arg "arg" int];
+    dynamic "yChanged" [arg "arg" int];
+    dynamic "widthChanged" [arg "arg" int];
+    dynamic "heightChanged" [arg "arg" int];
+    dynamic "minimumWidthChanged" [arg "arg" int];
+    dynamic "minimumHeightChanged" [arg "arg" int];
+    dynamic "maximumWidthChanged" [arg "arg" int];
+    dynamic "maximumHeightChanged" [arg "arg" int];
+    dynamic "visibleChanged" [arg "arg" bool];
+    dynamic "visibilityChanged" [arg "visibility" qWindow'Visibility];
+    dynamic "activeChanged" [];
+    dynamic "contentOrientationChanged" [arg "orientation" qt'ScreenOrientation];
+    dynamic "focusObjectChanged" [arg "object" qObject];
+    dynamic "opacityChanged" [arg "opacity" qreal];
+    signal "activeChanged" [];
+    signal "contentOrientationChanged" [qt'ScreenOrientation];
+    signal "focusObjectChanged" [qObject];
+    signal "heightChanged" [int];
+    signal "maximumHeightChanged" [int];
+    signal "maximumWidthChanged" [int];
+    signal "minimumHeightChanged" [int];
+    signal "minimumWidthChanged" [int];
+    signal "modalityChanged" [qt'WindowModality];
+    signal "opacityChanged" [float];
+    (*  signal "screenChanged" [qScreen];*)
+    signal "visibilityChanged" [qWindow'Visibility];
+    signal "visibleChanged" [bool];
+    signal "widthChanged" [int];
+    signal "windowStateChanged" [qt'WindowState];
+    signal "windowTitleChanged" [qString];
+    signal "xChanged" [int];
+    signal "yChanged" [int];
+    slot "alert" [int];
+    slot "close" [];
+    slot "hide" [];
+    slot "lower" [];
+    slot "_q_clearAlert" [];
+    slot "raise" [];
+    slot "requestActivate" [];
+    slot "requestUpdate" [];
+    slot "setHeight" [int];
+    slot "setMaximumHeight" [int];
+    slot "setMaximumWidth" [int];
+    slot "setMinimumHeight" [int];
+    slot "setMinimumWidth" [int];
+    slot "setTitle" [qString];
+    slot "setVisible" [bool];
+    slot "setWidth" [int];
+    slot "setX" [int];
+    slot "setY" [int];
+    slot "show" [];
+    slot "showFullScreen" [];
+    slot "showMaximized" [];
+    slot "showMinimized" [];
+    slot "showNormal" [];
   ]
 
-let () = with_class qAccessibleEditableTextInterface [
+(*let () = with_class qAccessibleEditableTextInterface [
     dynamic "deleteText" [arg "startOffset" int;arg "endOffset" int];
     dynamic "insertText" [arg "offset" int;arg "text" qString];
     dynamic "replaceText" [arg "startOffset" int;arg "endOffset" int;arg "text" qString];
   ]
-let () = with_class qAccessibleInterface [
+  let () = with_class qAccessibleInterface [
     dynamic "isValid" [] ~ret:bool;
     dynamic "object" [] ~ret:qObject;
     dynamic "window" [] ~ret:qWindow;
@@ -387,7 +569,7 @@ let () = with_class qAccessibleInterface [
     dynamic "tableCellInterface" [] ~ret:qAccessibleTableCellInterface;
     dynamic "interface_cast" [arg "type" qAccessible'InterfaceType] ~ret:void;
   ]
-let () = with_class qTextLength [
+  let () = with_class qTextLength [
     constructor "" [];
     constructor "" [arg "type" type;arg "value" qreal];
     dynamic "type" [] ~ret:type;
@@ -397,7 +579,7 @@ let () = with_class qTextLength [
     dynamic "operator!=" [arg "other" qTextLength] ~ret:bool;
     constructor "" [];
   ]
-let () = with_class qPaintEngine [
+  let () = with_class qPaintEngine [
     constructor "" [arg "caps" paintEngineFeatures];
     dynamic "isActive" [] ~ret:bool;
     dynamic "setActive" [arg "state" bool];
@@ -424,7 +606,7 @@ let () = with_class qPaintEngine [
     dynamic "hasFeature" [arg "feature" paintEngineFeatures] ~ret:bool;
     dynamic "painter" [] ~ret:qPainter;
   ]
-let () = with_class qTextBlock [
+  let () = with_class qTextBlock [
     constructor "" [arg "other" qTextBlock];
     dynamic "operator=" [arg "other" qTextBlock] ~ret:qTextBlock;
     dynamic "isValid" [] ~ret:bool;
@@ -462,7 +644,7 @@ let () = with_class qTextBlock [
     dynamic "next" [] ~ret:qTextBlock;
     dynamic "previous" [] ~ret:qTextBlock;
   ]
-let () = with_class qTextOption [
+  let () = with_class qTextOption [
     constructor "" [];
     constructor "" [arg "alignment" qt'Alignment];
     constructor "" [arg "other" qTextOption];
@@ -484,7 +666,7 @@ let () = with_class qTextOption [
     dynamic "setUseDesignMetrics" [arg "enable" bool];
     dynamic "useDesignMetrics" [] ~ret:bool;
   ]
-let () = with_class qRgba64 [
+  let () = with_class qRgba64 [
     constructor "" [];
     static  "fromRgba64" [arg "c" quint64] ~ret:qRgba64;
     static  "fromRgba64" [arg "r" quint16;arg "g" quint16;arg "b" quint16;arg "a" quint16] ~ret:qRgba64;
@@ -511,7 +693,7 @@ let () = with_class qRgba64 [
     constructor "" [];
     dynamic "operator=" [arg "rgba" quint64] ~ret:qRgba64;
   ]
-let () = with_class qQuaternion [
+  let () = with_class qQuaternion [
     constructor "" [];
     constructor "" [arg "scalar" float;arg "xpos" float;arg "ypos" float;arg "zpos" float];
     constructor "" [arg "scalar" float;arg "vector" qVector3D];
@@ -562,7 +744,7 @@ let () = with_class qQuaternion [
     static  "slerp" [arg "arg0" qQuaternion &q1;arg "arg1" qQuaternion &q2;arg "t" float] ~ret:qQuaternion;
     static  "nlerp" [arg "arg0" qQuaternion &q1;arg "arg1" qQuaternion &q2;arg "t" float] ~ret:qQuaternion;
   ]
-let () = with_class qMatrix [
+  let () = with_class qMatrix [
     constructor "" [];
     constructor "" [arg "arg0" qreal m11;arg "arg1" qreal m12;arg "arg2" qreal m21;arg "arg3" qreal m22;arg "dx" qreal;arg "dy" qreal];
     dynamic "operator=" [arg "other" qMatrix] ~ret:qMatrix;
@@ -604,14 +786,14 @@ let () = with_class qMatrix [
     dynamic "operator*" [arg "matrix" qMatrix] ~ret:qMatrix;
     constructor "" [];
   ]
-let () = with_class qAccessibleValueInterface [
+  let () = with_class qAccessibleValueInterface [
     dynamic "currentValue" [] ~ret:qVariant;
     dynamic "setCurrentValue" [arg "value" qVariant];
     dynamic "maximumValue" [] ~ret:qVariant;
     dynamic "minimumValue" [] ~ret:qVariant;
     dynamic "minimumStepSize" [] ~ret:qVariant;
   ]
-let () = with_class qTextItem [
+  let () = with_class qTextItem [
     dynamic "descent" [] ~ret:qreal;
     dynamic "ascent" [] ~ret:qreal;
     dynamic "width" [] ~ret:qreal;
@@ -619,7 +801,7 @@ let () = with_class qTextItem [
     dynamic "text" [] ~ret:qString;
     dynamic "font" [] ~ret:qFont;
   ]
-let () = with_class qTextLine [
+  let () = with_class qTextLine [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
     dynamic "rect" [] ~ret:qRectF;
@@ -649,7 +831,7 @@ let () = with_class qTextLine [
     dynamic "draw" [arg "painter" qPainter;arg "position" qPointF;arg "selection" qTextLayout'FormatRange];
     dynamic "glyphRuns" [arg "from" int;arg "length" int] ~ret:qList<QGlyphRun>;
   ]
-let () = with_class qTextInlineObject [
+  let () = with_class qTextInlineObject [
     dynamic "isValid" [] ~ret:bool;
     dynamic "rect" [] ~ret:qRectF;
     dynamic "width" [] ~ret:qreal;
@@ -664,13 +846,13 @@ let () = with_class qTextInlineObject [
     dynamic "formatIndex" [] ~ret:int;
     dynamic "format" [] ~ret:qTextFormat;
   ]
-let () = with_class qTextBlockUserData [
+  let () = with_class qTextBlockUserData [
   ]
-let () = with_class qGenericPluginFactory [
+  let () = with_class qGenericPluginFactory [
     static  "keys" [] ~ret:qStringList;
     static  "create" [arg "key" qString;arg "specification" qString] ~ret:qObject;
   ]
-let () = with_class qSurfaceFormat [
+  let () = with_class qSurfaceFormat [
     constructor "" [];
     constructor "" [arg "options" formatOptions];
     constructor "" [arg "other" qSurfaceFormat];
@@ -715,7 +897,7 @@ let () = with_class qSurfaceFormat [
     static  "setDefaultFormat" [arg "format" qSurfaceFormat];
     static  "defaultFormat" [] ~ret:qSurfaceFormat;
   ]
-let () = with_class qOpenGLPixelTransferOptions [
+  let () = with_class qOpenGLPixelTransferOptions [
     constructor "" [];
     dynamic "setAlignment" [arg "alignment" int];
     dynamic "alignment" [] ~ret:int;
@@ -734,7 +916,7 @@ let () = with_class qOpenGLPixelTransferOptions [
     dynamic "setSwapBytesEnabled" [arg "swapBytes" bool];
     dynamic "isSwapBytesEnabled" [] ~ret:bool;
   ]
-let () = with_class qOpenGLFramebufferObjectFormat [
+  let () = with_class qOpenGLFramebufferObjectFormat [
     constructor "" [];
     constructor "" [arg "other" qOpenGLFramebufferObjectFormat];
     dynamic "operator=" [arg "other" qOpenGLFramebufferObjectFormat] ~ret:qOpenGLFramebufferObjectFormat;
@@ -751,7 +933,7 @@ let () = with_class qOpenGLFramebufferObjectFormat [
     dynamic "operator==" [arg "other" qOpenGLFramebufferObjectFormat] ~ret:bool;
     dynamic "operator!=" [arg "other" qOpenGLFramebufferObjectFormat] ~ret:bool;
   ]
-let () = with_class qGradient [
+  let () = with_class qGradient [
     dynamic "type" [] ~ret:type;
     dynamic "setSpread" [arg "method" spread];
     dynamic "spread" [] ~ret:spread;
@@ -763,7 +945,7 @@ let () = with_class qGradient [
     dynamic "operator==" [arg "gradient" qGradient] ~ret:bool;
     dynamic "operator!=" [arg "gradient" qGradient] ~ret:bool;
   ]
-let () = with_class qImageReader [
+  let () = with_class qImageReader [
     constructor "" [];
     constructor "" [arg "device" qIODevice;arg "format" qByteArray];
     constructor "" [arg "fileName" qString;arg "format" qByteArray];
@@ -817,10 +999,10 @@ let () = with_class qImageReader [
     static  "supportedImageFormats" [] ~ret:qList<QByteArray>;
     static  "supportedMimeTypes" [] ~ret:qList<QByteArray>;
   ]
-let () = with_class qPainter'PixmapFragment [
+  let () = with_class qPainter'PixmapFragment [
     static  "create" [arg "pos" qPointF;arg "sourceRect" qRectF;arg "scaleX" qreal;arg "scaleY" qreal;arg "rotation" qreal;arg "opacity" qreal] ~ret:pixmapFragment;
   ]
-let () = with_class qTextLayout [
+  let () = with_class qTextLayout [
     constructor "" [];
     constructor "" [arg "text" qString];
     constructor "" [arg "text" qString;arg "font" qFont;arg "paintdevice" qPaintDevice];
@@ -867,7 +1049,7 @@ let () = with_class qTextLayout [
     dynamic "maximumWidth" [] ~ret:qreal;
     dynamic "glyphRuns" [arg "from" int;arg "length" int] ~ret:qList<QGlyphRun>;
   ]
-let () = with_class qPixelFormat [
+  let () = with_class qPixelFormat [
     constructor "" [];
     constructor "" [arg "colorModel" colorModel;arg "firstSize" uchar;arg "secondSize" uchar;arg "thirdSize" uchar;arg "fourthSize" uchar;arg "fifthSize" uchar;arg "alphaSize" uchar;arg "alphaUsage" alphaUsage;arg "alphaPosition" alphaPosition;arg "premultiplied" alphaPremultiplied;arg "typeInterpretation" typeInterpretation;arg "byteOrder" byteOrder;arg "subEnum" uchar];
     dynamic "colorModel" [] ~ret:colorModel;
@@ -892,7 +1074,7 @@ let () = with_class qPixelFormat [
     dynamic "byteOrder" [] ~ret:byteOrder;
     dynamic "yuvLayout" [] ~ret:yUVLayout;
   ]
-let () = with_class qOpenGLTextureBlitter [
+  let () = with_class qOpenGLTextureBlitter [
     constructor "" [];
     dynamic "create" [] ~ret:bool;
     dynamic "isCreated" [] ~ret:bool;
@@ -907,7 +1089,7 @@ let () = with_class qOpenGLTextureBlitter [
     static  "targetTransform" [arg "target" qRectF;arg "viewport" qRect] ~ret:qMatrix4x4;
     static  "sourceTransform" [arg "subTexture" qRectF;arg "textureSize" qSize;arg "origin" origin] ~ret:qMatrix3x3;
   ]
-let () = with_class qCursor [
+  let () = with_class qCursor [
     constructor "" [];
     constructor "" [arg "shape" qt'CursorShape];
     constructor "" [arg "bitmap" qBitmap;arg "mask" qBitmap;arg "hotX" int;arg "hotY" int];
@@ -931,14 +1113,14 @@ let () = with_class qCursor [
     static  "setPos" [arg "p" qPoint];
     static  "setPos" [arg "screen" qScreen;arg "p" qPoint];
   ]
-let () = with_class qDesktopServices [
+  let () = with_class qDesktopServices [
     static  "openUrl" [arg "url" qUrl] ~ret:bool;
     static  "setUrlHandler" [arg "scheme" qString;arg "receiver" qObject;arg "method" char];
     static  "unsetUrlHandler" [arg "scheme" qString];
     static  "storageLocation" [arg "type" standardLocation] ~ret:qString;
     static  "displayName" [arg "type" standardLocation] ~ret:qString;
   ]
-let () = with_class qTextCursor [
+  let () = with_class qTextCursor [
     constructor "" [];
     constructor "" [arg "document" qTextDocument];
     constructor "" [arg "frame" qTextFrame];
@@ -1019,7 +1201,7 @@ let () = with_class qTextCursor [
     dynamic "columnNumber" [] ~ret:int;
     dynamic "document" [] ~ret:qTextDocument;
   ]
-let () = with_class qVector4D [
+  let () = with_class qVector4D [
     constructor "" [];
     constructor "" [arg "xpos" float;arg "ypos" float;arg "zpos" float;arg "wpos" float];
     constructor "" [arg "point" qPoint];
@@ -1058,7 +1240,7 @@ let () = with_class qVector4D [
     dynamic "toPointF" [] ~ret:qPointF;
     constructor "" [];
   ]
-let () = with_class qTextDocumentFragment [
+  let () = with_class qTextDocumentFragment [
     constructor "" [];
     constructor "" [arg "document" qTextDocument];
     constructor "" [arg "cursor" qTextCursor];
@@ -1071,7 +1253,7 @@ let () = with_class qTextDocumentFragment [
     static  "fromHtml" [arg "text" qString] ~ret:qTextDocumentFragment;
     static  "fromHtml" [arg "text" qString;arg "resourceProvider" qTextDocument] ~ret:qTextDocumentFragment;
   ]
-let () = with_class qAccessibleEvent [
+  let () = with_class qAccessibleEvent [
     constructor "" [arg "object" qObject;arg "type" qAccessible'Event];
     constructor "" [arg "interface" qAccessibleInterface;arg "type" qAccessible'Event];
     dynamic "type" [] ~ret:qAccessible'Event;
@@ -1080,7 +1262,7 @@ let () = with_class qAccessibleEvent [
     dynamic "child" [] ~ret:int;
     dynamic "accessibleInterface" [] ~ret:qAccessibleInterface;
   ]
-let () = with_class qOpenGLTexture [
+  let () = with_class qOpenGLTexture [
     constructor "" [arg "target" target];
     constructor "" [arg "image" qImage;arg "genMipMaps" mipMapGeneration];
     dynamic "target" [] ~ret:target;
@@ -1184,7 +1366,7 @@ let () = with_class qOpenGLTexture [
     dynamic "setLevelofDetailBias" [arg "bias" float];
     dynamic "levelofDetailBias" [] ~ret:float;
   ]
-let () = with_class qPageSize [
+  let () = with_class qPageSize [
     constructor "" [];
     constructor "" [arg "pageSize" pageSizeId];
     constructor "" [arg "pointSize" qSize;arg "name" qString;arg "matchPolicy" sizeMatchPolicy];
@@ -1219,7 +1401,7 @@ let () = with_class qPageSize [
     static  "sizePoints" [arg "pageSizeId" pageSizeId] ~ret:qSize;
     static  "sizePixels" [arg "pageSizeId" pageSizeId;arg "resolution" int] ~ret:qSize;
   ]
-let () = with_class qTouchEvent'TouchPoint [
+  let () = with_class qTouchEvent'TouchPoint [
     constructor "" [arg "other" touchPoint];
     dynamic "id" [] ~ret:int;
     dynamic "uniqueId" [] ~ret:qPointingDeviceUniqueId;
@@ -1246,7 +1428,7 @@ let () = with_class qTouchEvent'TouchPoint [
     dynamic "flags" [] ~ret:infoFlags;
     dynamic "rawScreenPositions" [] ~ret:qVector<QPointF>;
   ]
-let () = with_class qTouchDevice [
+  let () = with_class qTouchDevice [
     constructor "" [];
     static  "devices" [] ~ret:qList<const QTouchDevice *>;
     dynamic "name" [] ~ret:qString;
@@ -1258,7 +1440,7 @@ let () = with_class qTouchDevice [
     dynamic "setCapabilities" [arg "caps" capabilities];
     dynamic "setMaximumTouchPoints" [arg "max" int];
   ]
-let () = with_class qPictureIO [
+  let () = with_class qPictureIO [
     constructor "" [];
     constructor "" [arg "ioDevice" qIODevice;arg "format" char];
     constructor "" [arg "fileName" qString;arg "format" char];
@@ -1288,11 +1470,11 @@ let () = with_class qPictureIO [
     static  "outputFormats" [] ~ret:qList<QByteArray>;
     static  "defineIOHandler" [arg "format" char;arg "header" char;arg "flags" char;arg "readPicture" picture_io_handler;arg "writePicture" picture_io_handler];
   ]
-let () = with_class qInputMethodEvent'Attribute [
+  let () = with_class qInputMethodEvent'Attribute [
     constructor "" [arg "type" attributeType;arg "start" int;arg "length" int;arg "value" qVariant];
     constructor "" [arg "type" attributeType;arg "start" int;arg "length" int];
   ]
-let () = with_class qFontInfo [
+  let () = with_class qFontInfo [
     constructor "" [arg "font" qFont];
     constructor "" [arg "fi" qFontInfo];
     dynamic "operator=" [arg "fi" qFontInfo] ~ret:qFontInfo;
@@ -1311,7 +1493,7 @@ let () = with_class qFontInfo [
     dynamic "rawMode" [] ~ret:bool;
     dynamic "exactMatch" [] ~ret:bool;
   ]
-let () = with_class qStaticText [
+  let () = with_class qStaticText [
     constructor "" [];
     constructor "" [arg "text" qString];
     constructor "" [arg "other" qStaticText];
@@ -1333,7 +1515,7 @@ let () = with_class qStaticText [
     dynamic "operator==" [arg "other" qStaticText] ~ret:bool;
     dynamic "operator!=" [arg "other" qStaticText] ~ret:bool;
   ]
-let () = with_class qPainterPath [
+  let () = with_class qPainterPath [
     constructor "" [];
     constructor "" [arg "startPoint" qPointF];
     constructor "" [arg "path" qPainterPath];
@@ -1416,7 +1598,7 @@ let () = with_class qPainterPath [
     dynamic "operator+=" [arg "other" qPainterPath] ~ret:qPainterPath;
     dynamic "operator-=" [arg "other" qPainterPath] ~ret:qPainterPath;
   ]
-let () = with_class qPaintEngineState [
+  let () = with_class qPaintEngineState [
     dynamic "state" [] ~ret:qPaintEngine'DirtyFlags;
     dynamic "pen" [] ~ret:qPen;
     dynamic "brush" [] ~ret:qBrush;
@@ -1437,7 +1619,7 @@ let () = with_class qPaintEngineState [
     dynamic "brushNeedsResolving" [] ~ret:bool;
     dynamic "penNeedsResolving" [] ~ret:bool;
   ]
-let () = with_class qOpenGLFramebufferObject [
+  let () = with_class qOpenGLFramebufferObject [
     constructor "" [arg "size" qSize;arg "target" gLenum];
     constructor "" [arg "width" int;arg "height" int;arg "target" gLenum];
     constructor "" [arg "size" qSize;arg "attachment" attachment;arg "target" gLenum;arg "internalFormat" gLenum];
@@ -1473,7 +1655,7 @@ let () = with_class qOpenGLFramebufferObject [
     static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "targetRect" qRect;arg "source" qOpenGLFramebufferObject;arg "sourceRect" qRect;arg "buffers" gLbitfield;arg "filter" gLenum];
     static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "source" qOpenGLFramebufferObject;arg "buffers" gLbitfield;arg "filter" gLenum];
   ]
-let () = with_class qIcon [
+  let () = with_class qIcon [
     constructor "" [];
     constructor "" [arg "pixmap" qPixmap];
     constructor "" [arg "other" qIcon];
@@ -1509,15 +1691,15 @@ let () = with_class qIcon [
     static  "themeName" [] ~ret:qString;
     static  "setThemeName" [arg "name" qString];
   ]
-let () = with_class qTextOption'Tab [
+  let () = with_class qTextOption'Tab [
     constructor "" [];
     constructor "" [arg "pos" qreal;arg "tabType" tabType;arg "delim" qChar];
     dynamic "operator==" [arg "other" tab] ~ret:bool;
     dynamic "operator!=" [arg "other" tab] ~ret:bool;
   ]
-let () = with_class qAbstractOpenGLFunctions [
+  let () = with_class qAbstractOpenGLFunctions [
   ]
-let () = with_class qAccessibleTextInterface [
+  let () = with_class qAccessibleTextInterface [
     dynamic "selection" [arg "selectionIndex" int;arg "startOffset" int;arg "endOffset" int];
     dynamic "selectionCount" [] ~ret:int;
     dynamic "addSelection" [arg "startOffset" int;arg "endOffset" int];
@@ -1535,7 +1717,7 @@ let () = with_class qAccessibleTextInterface [
     dynamic "scrollToSubstring" [arg "startIndex" int;arg "endIndex" int];
     dynamic "attributes" [arg "offset" int;arg "startOffset" int;arg "endOffset" int] ~ret:qString;
   ]
-let () = with_class qTextBlock'iterator [
+  let () = with_class qTextBlock'iterator [
     constructor "" [];
     constructor "" [arg "other" iterator];
     dynamic "fragment" [] ~ret:qTextFragment;
@@ -1547,7 +1729,7 @@ let () = with_class qTextBlock'iterator [
     dynamic "operator--" [] ~ret:iterator;
     dynamic "operator--" [arg "arg0" int] ~ret:iterator;
   ]
-let () = with_class qPaintDevice [
+  let () = with_class qPaintDevice [
     dynamic "paintingActive" [] ~ret:bool;
     dynamic "paintEngine" [] ~ret:qPaintEngine;
     dynamic "width" [] ~ret:int;
@@ -1563,7 +1745,7 @@ let () = with_class qPaintDevice [
     dynamic "colorCount" [] ~ret:int;
     dynamic "depth" [] ~ret:int;
   ]
-let () = with_class qPalette [
+  let () = with_class qPalette [
     constructor "" [];
     constructor "" [arg "button" qColor];
     constructor "" [arg "button" qt'GlobalColor];
@@ -1617,7 +1799,7 @@ let () = with_class qPalette [
     dynamic "cacheKey" [] ~ret:qint64;
     dynamic "resolve" [arg "other" qPalette] ~ret:qPalette;
   ]
-let () = with_class qFontMetricsF [
+  let () = with_class qFontMetricsF [
     constructor "" [arg "font" qFont];
     constructor "" [arg "font" qFont;arg "paintdevice" qPaintDevice];
     constructor "" [arg "fontMetrics" qFontMetrics];
@@ -1656,7 +1838,7 @@ let () = with_class qFontMetricsF [
     dynamic "operator==" [arg "other" qFontMetricsF] ~ret:bool;
     dynamic "operator!=" [arg "other" qFontMetricsF] ~ret:bool;
   ]
-let () = with_class qRawFont [
+  let () = with_class qRawFont [
     constructor "" [];
     constructor "" [arg "fileName" qString;arg "pixelSize" qreal;arg "hintingPreference" qFont'HintingPreference];
     constructor "" [arg "fontData" qByteArray;arg "pixelSize" qreal;arg "hintingPreference" qFont'HintingPreference];
@@ -1701,7 +1883,7 @@ let () = with_class qRawFont [
     dynamic "fontTable" [arg "tagName" char] ~ret:qByteArray;
     static  "fromFont" [arg "font" qFont;arg "writingSystem" qFontDatabase'WritingSystem] ~ret:qRawFont;
   ]
-let () = with_class qFontMetrics [
+  let () = with_class qFontMetrics [
     constructor "" [arg "font" qFont];
     constructor "" [arg "font" qFont;arg "paintdevice" qPaintDevice];
     constructor "" [arg "fm" qFontMetrics];
@@ -1740,7 +1922,7 @@ let () = with_class qFontMetrics [
     dynamic "operator==" [arg "other" qFontMetrics] ~ret:bool;
     dynamic "operator!=" [arg "other" qFontMetrics] ~ret:bool;
   ]
-let () = with_class qAccessibleTableInterface [
+  let () = with_class qAccessibleTableInterface [
     dynamic "caption" [] ~ret:qAccessibleInterface;
     dynamic "summary" [] ~ret:qAccessibleInterface;
     dynamic "cellAt" [arg "row" int;arg "column" int] ~ret:qAccessibleInterface;
@@ -1762,7 +1944,7 @@ let () = with_class qAccessibleTableInterface [
     dynamic "unselectColumn" [arg "column" int] ~ret:bool;
     dynamic "modelChange" [arg "event" qAccessibleTableModelChangeEvent];
   ]
-let () = with_class qOpenGLDebugMessage [
+  let () = with_class qOpenGLDebugMessage [
     constructor "" [];
     constructor "" [arg "debugMessage" qOpenGLDebugMessage];
     dynamic "operator=" [arg "debugMessage" qOpenGLDebugMessage] ~ret:qOpenGLDebugMessage;
@@ -1778,7 +1960,7 @@ let () = with_class qOpenGLDebugMessage [
     dynamic "operator==" [arg "debugMessage" qOpenGLDebugMessage] ~ret:bool;
     dynamic "operator!=" [arg "debugMessage" qOpenGLDebugMessage] ~ret:bool;
   ]
-let () = with_class qPainter [
+  let () = with_class qPainter [
     constructor "" [];
     constructor "" [arg "device" qPaintDevice];
     dynamic "device" [] ~ret:qPaintDevice;
@@ -1985,7 +2167,7 @@ let () = with_class qPainter [
     dynamic "beginNativePainting" [];
     dynamic "endNativePainting" [];
   ]
-let () = with_class qOpenGLFunctions [
+  let () = with_class qOpenGLFunctions [
     constructor "" [];
     constructor "" [arg "context" qOpenGLContext];
     dynamic "openGLFeatures" [] ~ret:qOpenGLFunctions'OpenGLFeatures;
@@ -2135,7 +2317,7 @@ let () = with_class qOpenGLFunctions [
     dynamic "glVertexAttrib4fv" [arg "indx" gLuint;arg "values" gLfloat];
     dynamic "glVertexAttribPointer" [arg "indx" gLuint;arg "size" gLint;arg "type" gLenum;arg "normalized" gLboolean;arg "stride" gLsizei;arg "ptr" void];
   ]
-let () = with_class qBackingStore [
+  let () = with_class qBackingStore [
     constructor "" [arg "window" qWindow];
     dynamic "window" [] ~ret:qWindow;
     dynamic "paintDevice" [] ~ret:qPaintDevice;
@@ -2150,7 +2332,7 @@ let () = with_class qBackingStore [
     dynamic "hasStaticContents" [] ~ret:bool;
     dynamic "handle" [] ~ret:qPlatformBackingStore;
   ]
-let () = with_class qTextFormat [
+  let () = with_class qTextFormat [
     constructor "" [];
     constructor "" [arg "type" int];
     constructor "" [arg "other" qTextFormat];
@@ -2206,7 +2388,7 @@ let () = with_class qTextFormat [
     dynamic "foreground" [] ~ret:qBrush;
     dynamic "clearForeground" [];
   ]
-let () = with_class qMatrix4x4 [
+  let () = with_class qMatrix4x4 [
     constructor "" [];
     constructor "" [arg "values" float];
     constructor "" [arg "arg0" float m11;arg "arg1" float m12;arg "arg2" float m13;arg "arg3" float m14;arg "arg4" float m21;arg "arg5" float m22;arg "arg6" float m23;arg "arg7" float m24;arg "arg8" float m31;arg "arg9" float m32;arg "arg10" float m33;arg "arg11" float m34;arg "arg12" float m41;arg "arg13" float m42;arg "arg14" float m43;arg "arg15" float m44];
@@ -2271,7 +2453,7 @@ let () = with_class qMatrix4x4 [
     dynamic "optimize" [];
     constructor "" [];
   ]
-let () = with_class qAccessible [
+  let () = with_class qAccessible [
     static  "installFactory" [arg "factory" interfaceFactory];
     static  "removeFactory" [arg "factory" interfaceFactory];
     static  "queryAccessibleInterface" [arg "object" qObject] ~ret:qAccessibleInterface;
@@ -2284,7 +2466,7 @@ let () = with_class qAccessible [
     static  "isActive" [] ~ret:bool;
     static  "setRootObject" [arg "object" qObject];
   ]
-let () = with_class qPixmapCache [
+  let () = with_class qPixmapCache [
     static  "cacheLimit" [] ~ret:int;
     static  "setCacheLimit" [arg "n" int];
     static  "find" [arg "key" qString] ~ret:qPixmap;
@@ -2298,7 +2480,7 @@ let () = with_class qPixmapCache [
     static  "remove" [arg "key" key];
     static  "clear" [];
   ]
-let () = with_class qVector2D [
+  let () = with_class qVector2D [
     constructor "" [];
     constructor "" [arg "xpos" float;arg "ypos" float];
     constructor "" [arg "point" qPoint];
@@ -2331,10 +2513,10 @@ let () = with_class qVector2D [
     dynamic "toPointF" [] ~ret:qPointF;
     constructor "" [];
   ]
-let () = with_class qAccessible'State [
+  let () = with_class qAccessible'State [
     constructor "" [];
   ]
-let () = with_class qPainterPathStroker [
+  let () = with_class qPainterPathStroker [
     constructor "" [];
     constructor "" [arg "pen" qPen];
     dynamic "setWidth" [arg "width" qreal];
@@ -2354,12 +2536,12 @@ let () = with_class qPainterPathStroker [
     dynamic "dashOffset" [] ~ret:qreal;
     dynamic "createStroke" [arg "path" qPainterPath] ~ret:qPainterPath;
   ]
-let () = with_class qOpenGLVertexArrayObject'Binder [
+  let () = with_class qOpenGLVertexArrayObject'Binder [
     constructor "" [arg "v" qOpenGLVertexArrayObject];
     dynamic "release" [];
     dynamic "rebind" [];
   ]
-let () = with_class qImageIOHandler [
+  let () = with_class qImageIOHandler [
     constructor "" [];
     dynamic "setDevice" [arg "device" qIODevice];
     dynamic "device" [] ~ret:qIODevice;
@@ -2381,7 +2563,7 @@ let () = with_class qImageIOHandler [
     dynamic "currentImageNumber" [] ~ret:int;
     dynamic "currentImageRect" [] ~ret:qRect;
   ]
-let () = with_class qRegion [
+  let () = with_class qRegion [
     constructor "" [];
     constructor "" [arg "x" int;arg "y" int;arg "w" int;arg "h" int;arg "t" regionType];
     constructor "" [arg "r" qRect;arg "t" regionType];
@@ -2444,7 +2626,7 @@ let () = with_class qRegion [
     dynamic "operator!=" [arg "other" qRegion] ~ret:bool;
     constructor "" [];
   ]
-let () = with_class qTextFrame'iterator [
+  let () = with_class qTextFrame'iterator [
     constructor "" [];
     constructor "" [arg "other" iterator];
     dynamic "operator=" [arg "other" iterator] ~ret:iterator;
@@ -2461,7 +2643,7 @@ let () = with_class qTextFrame'iterator [
     dynamic "operator--" [] ~ret:iterator;
     dynamic "operator--" [arg "arg0" int] ~ret:iterator;
   ]
-let () = with_class qAccessibleActionInterface [
+  let () = with_class qAccessibleActionInterface [
     dynamic "actionNames" [] ~ret:qStringList;
     dynamic "localizedActionName" [arg "actionName" qString] ~ret:qString;
     dynamic "localizedActionDescription" [arg "actionName" qString] ~ret:qString;
@@ -2480,7 +2662,7 @@ let () = with_class qAccessibleActionInterface [
     static  "nextPageAction" [] ~ret:qString;
     static  "previousPageAction" [] ~ret:qString;
   ]
-let () = with_class qFontDatabase [
+  let () = with_class qFontDatabase [
     static  "standardSizes" [] ~ret:qList<int>;
     constructor "" [];
     dynamic "writingSystems" [] ~ret:qList<WritingSystem>;
@@ -2510,7 +2692,7 @@ let () = with_class qFontDatabase [
     static  "supportsThreadedFontRendering" [] ~ret:bool;
     static  "systemFont" [arg "type" systemFont] ~ret:qFont;
   ]
-let () = with_class qIconEngine [
+  let () = with_class qIconEngine [
     constructor "" [];
     dynamic "paint" [arg "painter" qPainter;arg "rect" qRect;arg "mode" qIcon'Mode;arg "state" qIcon'State];
     dynamic "actualSize" [arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qSize;
@@ -2527,11 +2709,11 @@ let () = with_class qIconEngine [
     dynamic "scaledPixmap" [arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State;arg "scale" qreal] ~ret:qPixmap;
     dynamic "virtual_hook" [arg "id" int;arg "data" void];
   ]
-let () = with_class qTextObjectInterface [
+  let () = with_class qTextObjectInterface [
     dynamic "intrinsicSize" [arg "doc" qTextDocument;arg "posInDocument" int;arg "format" qTextFormat] ~ret:qSizeF;
     dynamic "drawObject" [arg "painter" qPainter;arg "rect" qRectF;arg "doc" qTextDocument;arg "posInDocument" int;arg "format" qTextFormat];
   ]
-let () = with_class qTextTableCell [
+  let () = with_class qTextTableCell [
     constructor "" [];
     constructor "" [arg "other" qTextTableCell];
     dynamic "operator=" [arg "other" qTextTableCell] ~ret:qTextTableCell;
@@ -2550,18 +2732,18 @@ let () = with_class qTextTableCell [
     dynamic "end" [] ~ret:qTextFrame'iterator;
     dynamic "tableCellFormatIndex" [] ~ret:int;
   ]
-let () = with_class qPixmapCache'Key [
+  let () = with_class qPixmapCache'Key [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
   ]
-let () = with_class qSupportedWritingSystems [
+  let () = with_class qSupportedWritingSystems [
     constructor "" [];
     constructor "" [arg "other" qSupportedWritingSystems];
     dynamic "operator=" [arg "other" qSupportedWritingSystems] ~ret:qSupportedWritingSystems;
     dynamic "setSupported" [arg "writingSystem" qFontDatabase'WritingSystem;arg "support" bool];
     dynamic "supported" [arg "writingSystem" qFontDatabase'WritingSystem] ~ret:bool;
   ]
-let () = with_class qImageWriter [
+  let () = with_class qImageWriter [
     constructor "" [];
     constructor "" [arg "device" qIODevice;arg "format" qByteArray];
     constructor "" [arg "fileName" qString;arg "format" qByteArray];
@@ -2597,7 +2779,7 @@ let () = with_class qImageWriter [
     static  "supportedImageFormats" [] ~ret:qList<QByteArray>;
     static  "supportedMimeTypes" [] ~ret:qList<QByteArray>;
   ]
-let () = with_class qBrush [
+  let () = with_class qBrush [
     constructor "" [];
     constructor "" [arg "style" qt'BrushStyle];
     constructor "" [arg "color" qColor;arg "style" qt'BrushStyle];
@@ -2630,7 +2812,7 @@ let () = with_class qBrush [
     dynamic "operator==" [arg "brush" qBrush] ~ret:bool;
     dynamic "operator!=" [arg "brush" qBrush] ~ret:bool;
   ]
-let () = with_class qPageLayout [
+  let () = with_class qPageLayout [
     constructor "" [];
     constructor "" [arg "pageSize" qPageSize;arg "orientation" orientation;arg "margins" qMarginsF;arg "units" unit;arg "minMargins" qMarginsF];
     constructor "" [arg "other" qPageLayout];
@@ -2668,7 +2850,7 @@ let () = with_class qPageLayout [
     dynamic "paintRectPoints" [] ~ret:qRect;
     dynamic "paintRectPixels" [arg "resolution" int] ~ret:qRect;
   ]
-let () = with_class qPainterPath'Element [
+  let () = with_class qPainterPath'Element [
     dynamic "isMoveTo" [] ~ret:bool;
     dynamic "isLineTo" [] ~ret:bool;
     dynamic "isCurveTo" [] ~ret:bool;
@@ -2676,7 +2858,7 @@ let () = with_class qPainterPath'Element [
     dynamic "operator==" [arg "other" element] ~ret:bool;
     dynamic "operator!=" [arg "other" element] ~ret:bool;
   ]
-let () = with_class qTextFragment [
+  let () = with_class qTextFragment [
     constructor "" [];
     constructor "" [arg "other" qTextFragment];
     dynamic "operator=" [arg "other" qTextFragment] ~ret:qTextFragment;
@@ -2692,7 +2874,7 @@ let () = with_class qTextFragment [
     dynamic "text" [] ~ret:qString;
     dynamic "glyphRuns" [arg "pos" int;arg "len" int] ~ret:qList<QGlyphRun>;
   ]
-let () = with_class qAccessibleTableCellInterface [
+  let () = with_class qAccessibleTableCellInterface [
     dynamic "isSelected" [] ~ret:bool;
     dynamic "columnHeaderCells" [] ~ret:qList<QAccessibleInterface *>;
     dynamic "rowHeaderCells" [] ~ret:qList<QAccessibleInterface *>;
@@ -2702,7 +2884,7 @@ let () = with_class qAccessibleTableCellInterface [
     dynamic "rowExtent" [] ~ret:int;
     dynamic "table" [] ~ret:qAccessibleInterface;
   ]
-let () = with_class qStandardItem [
+  let () = with_class qStandardItem [
     constructor "" [];
     constructor "" [arg "text" qString];
     constructor "" [arg "icon" qIcon;arg "text" qString];
@@ -2792,7 +2974,7 @@ let () = with_class qStandardItem [
     dynamic "write" [arg "out" qDataStream];
     dynamic "operator<" [arg "other" qStandardItem] ~ret:bool;
   ]
-let () = with_class qOpenGLBuffer [
+  let () = with_class qOpenGLBuffer [
     constructor "" [];
     constructor "" [arg "type" qOpenGLBuffer'Type];
     constructor "" [arg "other" qOpenGLBuffer];
@@ -2816,7 +2998,7 @@ let () = with_class qOpenGLBuffer [
     dynamic "mapRange" [arg "offset" int;arg "count" int;arg "access" qOpenGLBuffer'RangeAccessFlags] ~ret:void;
     dynamic "unmap" [] ~ret:bool;
   ]
-let () = with_class qGlyphRun [
+  let () = with_class qGlyphRun [
     constructor "" [];
     constructor "" [arg "other" qGlyphRun];
     dynamic "operator=" [arg "other" qGlyphRun] ~ret:qGlyphRun;
@@ -2847,7 +3029,7 @@ let () = with_class qGlyphRun [
     dynamic "boundingRect" [] ~ret:qRectF;
     dynamic "isEmpty" [] ~ret:bool;
   ]
-let () = with_class qGenericMatrix [
+  let () = with_class qGenericMatrix [
     constructor "" [];
     constructor "" [arg "values" t];
     dynamic "operator()" [arg "row" int;arg "column" int] ~ret:t;
@@ -2867,7 +3049,7 @@ let () = with_class qGenericMatrix [
     dynamic "data" [] ~ret:t;
     dynamic "constData" [] ~ret:t;
   ]
-let () = with_class qTransform [
+  let () = with_class qTransform [
     constructor "" [];
     constructor "" [arg "arg0" qreal m11;arg "arg1" qreal m12;arg "arg2" qreal m13;arg "arg3" qreal m21;arg "arg4" qreal m22;arg "arg5" qreal m23;arg "arg6" qreal m31;arg "arg7" qreal m32;arg "arg8" qreal m33];
     constructor "" [arg "arg0" qreal m11;arg "arg1" qreal m12;arg "arg2" qreal m21;arg "arg3" qreal m22;arg "dx" qreal;arg "dy" qreal];
@@ -2935,13 +3117,13 @@ let () = with_class qTransform [
     static  "fromTranslate" [arg "dx" qreal;arg "dy" qreal] ~ret:qTransform;
     static  "fromScale" [arg "sx" qreal;arg "sy" qreal] ~ret:qTransform;
   ]
-let () = with_class qPointingDeviceUniqueId [
+  let () = with_class qPointingDeviceUniqueId [
     constructor "" [];
     static  "fromNumericId" [arg "id" qint64] ~ret:qPointingDeviceUniqueId;
     dynamic "isValid" [] ~ret:bool;
     dynamic "numericId" [] ~ret:qint64;
   ]
-let () = with_class qOpenGLVersionProfile [
+  let () = with_class qOpenGLVersionProfile [
     constructor "" [];
     constructor "" [arg "format" qSurfaceFormat];
     constructor "" [arg "other" qOpenGLVersionProfile];
@@ -2954,7 +3136,7 @@ let () = with_class qOpenGLVersionProfile [
     dynamic "isLegacyVersion" [] ~ret:bool;
     dynamic "isValid" [] ~ret:bool;
   ]
-let () = with_class qPen [
+  let () = with_class qPen [
     constructor "" [];
     constructor "" [arg "style" qt'PenStyle];
     constructor "" [arg "color" qColor];
@@ -2991,7 +3173,7 @@ let () = with_class qPen [
     dynamic "operator!=" [arg "pen" qPen] ~ret:bool;
     constructor "" [];
   ]
-let () = with_class qVector3D [
+  let () = with_class qVector3D [
     constructor "" [];
     constructor "" [arg "xpos" float;arg "ypos" float;arg "zpos" float];
     constructor "" [arg "point" qPoint];
@@ -3034,7 +3216,7 @@ let () = with_class qVector3D [
     dynamic "toPointF" [] ~ret:qPointF;
     constructor "" [];
   ]
-let () = with_class qKeySequence [
+  let () = with_class qKeySequence [
     constructor "" [];
     constructor "" [arg "key" qString;arg "format" sequenceFormat];
     constructor "" [arg "arg0" int k1;arg "arg1" int k2;arg "arg2" int k3;arg "arg3" int k4];
@@ -3063,9 +3245,9 @@ let () = with_class qKeySequence [
     dynamic "operator<=" [arg "other" qKeySequence] ~ret:bool;
     dynamic "operator>=" [arg "other" qKeySequence] ~ret:bool;
   ]
-let () = with_class qTextLayout'FormatRange [
+  let () = with_class qTextLayout'FormatRange [
   ]
-let () = with_class qSurface [
+  let () = with_class qSurface [
     dynamic "surfaceClass" [] ~ret:surfaceClass;
     dynamic "format" [] ~ret:qSurfaceFormat;
     dynamic "surfaceHandle" [] ~ret:qPlatformSurface;
@@ -3073,7 +3255,7 @@ let () = with_class qSurface [
     dynamic "supportsOpenGL" [] ~ret:bool;
     dynamic "size" [] ~ret:qSize;
   ]
-let () = with_class qTextDocumentWriter [
+  let () = with_class qTextDocumentWriter [
     constructor "" [];
     constructor "" [arg "device" qIODevice;arg "format" qByteArray];
     constructor "" [arg "fileName" qString;arg "format" qByteArray];
@@ -3089,7 +3271,7 @@ let () = with_class qTextDocumentWriter [
     dynamic "codec" [] ~ret:qTextCodec;
     static  "supportedDocumentFormats" [] ~ret:qList<QByteArray>;
   ]
-let () = with_class qOffscreenSurface [
+  let () = with_class qOffscreenSurface [
     constructor "" [arg "targetScreen" qScreen];
     dynamic "surfaceType" [] ~ret:surfaceType;
     dynamic "create" [];
@@ -3105,132 +3287,7 @@ let () = with_class qOffscreenSurface [
     dynamic "setNativeHandle" [arg "handle" void];
     dynamic "screenChanged" [arg "screen" qScreen];
   ]
-let () = with_class qWindow [
-    constructor "" [arg "targetScreen" qScreen];
-    constructor "" [arg "parent" qWindow];
-    dynamic "setSurfaceType" [arg "surfaceType" surfaceType];
-    dynamic "surfaceType" [] ~ret:surfaceType;
-    dynamic "isVisible" [] ~ret:bool;
-    dynamic "visibility" [] ~ret:visibility;
-    dynamic "setVisibility" [arg "v" visibility];
-    dynamic "create" [];
-    dynamic "winId" [] ~ret:wId;
-    dynamic "parent" [arg "mode" ancestorMode] ~ret:qWindow;
-    dynamic "parent" [] ~ret:qWindow;
-    dynamic "setParent" [arg "parent" qWindow];
-    dynamic "isTopLevel" [] ~ret:bool;
-    dynamic "isModal" [] ~ret:bool;
-    dynamic "modality" [] ~ret:qt'WindowModality;
-    dynamic "setModality" [arg "modality" qt'WindowModality];
-    dynamic "setFormat" [arg "format" qSurfaceFormat];
-    dynamic "format" [] ~ret:qSurfaceFormat;
-    dynamic "requestedFormat" [] ~ret:qSurfaceFormat;
-    dynamic "setFlags" [arg "flags" qt'WindowFlags];
-    dynamic "flags" [] ~ret:qt'WindowFlags;
-    dynamic "setFlag" [arg "flag" qt'WindowType;arg "on" bool];
-    dynamic "type" [] ~ret:qt'WindowType;
-    dynamic "title" [] ~ret:qString;
-    dynamic "setOpacity" [arg "level" qreal];
-    dynamic "opacity" [] ~ret:qreal;
-    dynamic "setMask" [arg "region" qRegion];
-    dynamic "mask" [] ~ret:qRegion;
-    dynamic "isActive" [] ~ret:bool;
-    dynamic "reportContentOrientationChange" [arg "orientation" qt'ScreenOrientation];
-    dynamic "contentOrientation" [] ~ret:qt'ScreenOrientation;
-    dynamic "devicePixelRatio" [] ~ret:qreal;
-    dynamic "windowState" [] ~ret:qt'WindowState;
-    dynamic "setWindowState" [arg "state" qt'WindowState];
-    dynamic "setTransientParent" [arg "parent" qWindow];
-    dynamic "transientParent" [] ~ret:qWindow;
-    dynamic "isAncestorOf" [arg "child" qWindow;arg "mode" ancestorMode] ~ret:bool;
-    dynamic "isExposed" [] ~ret:bool;
-    dynamic "minimumWidth" [] ~ret:int;
-    dynamic "minimumHeight" [] ~ret:int;
-    dynamic "maximumWidth" [] ~ret:int;
-    dynamic "maximumHeight" [] ~ret:int;
-    dynamic "minimumSize" [] ~ret:qSize;
-    dynamic "maximumSize" [] ~ret:qSize;
-    dynamic "baseSize" [] ~ret:qSize;
-    dynamic "sizeIncrement" [] ~ret:qSize;
-    dynamic "setMinimumSize" [arg "size" qSize];
-    dynamic "setMaximumSize" [arg "size" qSize];
-    dynamic "setBaseSize" [arg "size" qSize];
-    dynamic "setSizeIncrement" [arg "size" qSize];
-    dynamic "setGeometry" [arg "posx" int;arg "posy" int;arg "w" int;arg "h" int];
-    dynamic "setGeometry" [arg "rect" qRect];
-    dynamic "geometry" [] ~ret:qRect;
-    dynamic "frameMargins" [] ~ret:qMargins;
-    dynamic "frameGeometry" [] ~ret:qRect;
-    dynamic "framePosition" [] ~ret:qPoint;
-    dynamic "setFramePosition" [arg "point" qPoint];
-    dynamic "width" [] ~ret:int;
-    dynamic "height" [] ~ret:int;
-    dynamic "x" [] ~ret:int;
-    dynamic "y" [] ~ret:int;
-    dynamic "size" [] ~ret:qSize;
-    dynamic "position" [] ~ret:qPoint;
-    dynamic "setPosition" [arg "pt" qPoint];
-    dynamic "setPosition" [arg "posx" int;arg "posy" int];
-    dynamic "resize" [arg "newSize" qSize];
-    dynamic "resize" [arg "w" int;arg "h" int];
-    dynamic "setFilePath" [arg "filePath" qString];
-    dynamic "filePath" [] ~ret:qString;
-    dynamic "setIcon" [arg "icon" qIcon];
-    dynamic "icon" [] ~ret:qIcon;
-    dynamic "destroy" [];
-    dynamic "setKeyboardGrabEnabled" [arg "grab" bool] ~ret:bool;
-    dynamic "setMouseGrabEnabled" [arg "grab" bool] ~ret:bool;
-    dynamic "screen" [] ~ret:qScreen;
-    dynamic "setScreen" [arg "newScreen" qScreen];
-    dynamic "focusObject" [] ~ret:qObject;
-    dynamic "mapToGlobal" [arg "pos" qPoint] ~ret:qPoint;
-    dynamic "mapFromGlobal" [arg "pos" qPoint] ~ret:qPoint;
-    dynamic "cursor" [] ~ret:qCursor;
-    dynamic "setCursor" [arg "cursor" qCursor];
-    dynamic "unsetCursor" [];
-    static  "fromWinId" [arg "id" wId] ~ret:qWindow;
-    dynamic "requestActivate" [];
-    dynamic "setVisible" [arg "visible" bool];
-    dynamic "show" [];
-    dynamic "hide" [];
-    dynamic "showMinimized" [];
-    dynamic "showMaximized" [];
-    dynamic "showFullScreen" [];
-    dynamic "showNormal" [];
-    dynamic "close" [] ~ret:bool;
-    dynamic "raise" [];
-    dynamic "lower" [];
-    dynamic "setTitle" [arg "arg0" qString];
-    dynamic "setX" [arg "arg" int];
-    dynamic "setY" [arg "arg" int];
-    dynamic "setWidth" [arg "arg" int];
-    dynamic "setHeight" [arg "arg" int];
-    dynamic "setMinimumWidth" [arg "w" int];
-    dynamic "setMinimumHeight" [arg "h" int];
-    dynamic "setMaximumWidth" [arg "w" int];
-    dynamic "setMaximumHeight" [arg "h" int];
-    dynamic "alert" [arg "msec" int];
-    dynamic "requestUpdate" [];
-    dynamic "screenChanged" [arg "screen" qScreen];
-    dynamic "modalityChanged" [arg "modality" qt'WindowModality];
-    dynamic "windowStateChanged" [arg "windowState" qt'WindowState];
-    dynamic "windowTitleChanged" [arg "title" qString];
-    dynamic "xChanged" [arg "arg" int];
-    dynamic "yChanged" [arg "arg" int];
-    dynamic "widthChanged" [arg "arg" int];
-    dynamic "heightChanged" [arg "arg" int];
-    dynamic "minimumWidthChanged" [arg "arg" int];
-    dynamic "minimumHeightChanged" [arg "arg" int];
-    dynamic "maximumWidthChanged" [arg "arg" int];
-    dynamic "maximumHeightChanged" [arg "arg" int];
-    dynamic "visibleChanged" [arg "arg" bool];
-    dynamic "visibilityChanged" [arg "visibility" qWindow'Visibility];
-    dynamic "activeChanged" [];
-    dynamic "contentOrientationChanged" [arg "orientation" qt'ScreenOrientation];
-    dynamic "focusObjectChanged" [arg "object" qObject];
-    dynamic "opacityChanged" [arg "opacity" qreal];
-  ]
-let () = with_class qRasterPaintEngine [
+  let () = with_class qRasterPaintEngine [
     constructor "" [arg "device" qPaintDevice];
     dynamic "begin" [arg "device" qPaintDevice] ~ret:bool;
     dynamic "end" [] ~ret:bool;
@@ -3253,7 +3310,7 @@ let () = with_class qRasterPaintEngine [
     dynamic "type" [] ~ret:type;
     dynamic "shouldDrawCachedGlyphs" [arg "fontEngine" qFontEngine;arg "m" qTransform] ~ret:bool;
   ]
-let () = with_class qStandardItemModel [
+  let () = with_class qStandardItemModel [
     constructor "" [arg "parent" qObject];
     constructor "" [arg "rows" int;arg "columns" int;arg "parent" qObject];
     dynamic "setItemRoleNames" [arg "roleNames" qHash<int,QByteArray>];
@@ -3314,7 +3371,7 @@ let () = with_class qStandardItemModel [
     dynamic "dropMimeData" [arg "data" qMimeData;arg "action" qt'DropAction;arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:bool;
     dynamic "itemChanged" [arg "item" qStandardItem];
   ]
-let () = with_class qTextCharFormat [
+  let () = with_class qTextCharFormat [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
     dynamic "setFont" [arg "font" qFont;arg "behavior" fontPropertiesInheritanceBehavior];
@@ -3372,7 +3429,7 @@ let () = with_class qTextCharFormat [
     dynamic "setAnchorNames" [arg "names" qStringList];
     dynamic "anchorNames" [] ~ret:qStringList;
   ]
-let () = with_class qTextBlockFormat [
+  let () = with_class qTextBlockFormat [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
     dynamic "setAlignment" [arg "alignment" qt'Alignment];
@@ -3400,7 +3457,7 @@ let () = with_class qTextBlockFormat [
     dynamic "setTabPositions" [arg "tabs" qList<QTextOption'Tab>];
     dynamic "tabPositions" [] ~ret:qList<QTextOption'Tab>;
   ]
-let () = with_class qTextListFormat [
+  let () = with_class qTextListFormat [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
     dynamic "setStyle" [arg "style" style];
@@ -3412,7 +3469,7 @@ let () = with_class qTextListFormat [
     dynamic "setNumberSuffix" [arg "numberSuffix" qString];
     dynamic "numberSuffix" [] ~ret:qString;
   ]
-let () = with_class qTextFrameFormat [
+  let () = with_class qTextFrameFormat [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
     dynamic "setPosition" [arg "policy" position];
@@ -3444,7 +3501,7 @@ let () = with_class qTextFrameFormat [
     dynamic "setPageBreakPolicy" [arg "policy" pageBreakFlags];
     dynamic "pageBreakPolicy" [] ~ret:pageBreakFlags;
   ]
-let () = with_class qPolygon [
+  let () = with_class qPolygon [
     constructor "" [];
     constructor "" [arg "size" int];
     constructor "" [arg "points" qVector<QPoint>];
@@ -3474,7 +3531,7 @@ let () = with_class qPolygon [
     dynamic "intersected" [arg "r" qPolygon] ~ret:qPolygon;
     dynamic "subtracted" [arg "r" qPolygon] ~ret:qPolygon;
   ]
-let () = with_class qPolygonF [
+  let () = with_class qPolygonF [
     constructor "" [];
     constructor "" [arg "size" int];
     constructor "" [arg "points" qVector<QPointF>];
@@ -3499,7 +3556,7 @@ let () = with_class qPolygonF [
     dynamic "intersected" [arg "r" qPolygonF] ~ret:qPolygonF;
     dynamic "subtracted" [arg "r" qPolygonF] ~ret:qPolygonF;
   ]
-let () = with_class qOpenGLExtraFunctions [
+  let () = with_class qOpenGLExtraFunctions [
     constructor "" [];
     constructor "" [arg "context" qOpenGLContext];
     dynamic "glReadBuffer" [arg "src" gLenum];
@@ -3675,7 +3732,7 @@ let () = with_class qOpenGLExtraFunctions [
     dynamic "glVertexAttribBinding" [arg "attribindex" gLuint;arg "bindingindex" gLuint];
     dynamic "glVertexBindingDivisor" [arg "bindingindex" gLuint;arg "divisor" gLuint];
   ]
-let () = with_class qImage [
+  let () = with_class qImage [
     constructor "" [];
     constructor "" [arg "size" qSize;arg "format" format];
     constructor "" [arg "width" int;arg "height" int;arg "format" format];
@@ -3788,7 +3845,7 @@ let () = with_class qImage [
     dynamic "setNumColors" [arg "n" int];
     dynamic "numBytes" [] ~ret:int;
   ]
-let () = with_class qPicture [
+  let () = with_class qPicture [
     constructor "" [arg "formatVersion" int];
     constructor "" [arg "pic" qPicture];
     dynamic "isNull" [] ~ret:bool;
@@ -3811,7 +3868,7 @@ let () = with_class qPicture [
     static  "inputFormatList" [] ~ret:qStringList;
     static  "outputFormatList" [] ~ret:qStringList;
   ]
-let () = with_class qPixmap [
+  let () = with_class qPixmap [
     constructor "" [];
     constructor "" [arg "width" int;arg "height" int];
     constructor "" [arg "size" qSize];
@@ -3873,7 +3930,7 @@ let () = with_class qPixmap [
     dynamic "alphaChannel" [] ~ret:qPixmap;
     dynamic "setAlphaChannel" [arg "p" qPixmap];
   ]
-let () = with_class qOpenGLPaintDevice [
+  let () = with_class qOpenGLPaintDevice [
     constructor "" [];
     constructor "" [arg "size" qSize];
     constructor "" [arg "width" int;arg "height" int];
@@ -3890,7 +3947,7 @@ let () = with_class qOpenGLPaintDevice [
     dynamic "paintFlipped" [] ~ret:bool;
     dynamic "ensureActiveTarget" [];
   ]
-let () = with_class qPagedPaintDevice [
+  let () = with_class qPagedPaintDevice [
     constructor "" [];
     dynamic "newPage" [] ~ret:bool;
     dynamic "setPageLayout" [arg "newPageLayout" qPageLayout] ~ret:bool;
@@ -3906,7 +3963,7 @@ let () = with_class qPagedPaintDevice [
     dynamic "setMargins" [arg "margins" margins];
     dynamic "margins" [] ~ret:margins;
   ]
-let () = with_class qOpenGLFunctions_1_0 [
+  let () = with_class qOpenGLFunctions_1_0 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -4216,7 +4273,7 @@ let () = with_class qOpenGLFunctions_1_0 [
     dynamic "glEndList" [];
     dynamic "glNewList" [arg "list" gLuint;arg "mode" gLenum];
   ]
-let () = with_class qOpenGLFunctions_1_1 [
+  let () = with_class qOpenGLFunctions_1_1 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -4556,7 +4613,7 @@ let () = with_class qOpenGLFunctions_1_1 [
     dynamic "glColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
     dynamic "glArrayElement" [arg "i" gLint];
   ]
-let () = with_class qOpenGLFunctions_1_2 [
+  let () = with_class qOpenGLFunctions_1_2 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -4934,7 +4991,7 @@ let () = with_class qOpenGLFunctions_1_2 [
     dynamic "glColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
     dynamic "glColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
   ]
-let () = with_class qOpenGLFunctions_1_3 [
+  let () = with_class qOpenGLFunctions_1_3 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -5358,7 +5415,7 @@ let () = with_class qOpenGLFunctions_1_3 [
     dynamic "glMultiTexCoord1d" [arg "target" gLenum;arg "s" gLdouble];
     dynamic "glClientActiveTexture" [arg "texture" gLenum];
   ]
-let () = with_class qOpenGLFunctions_1_4 [
+  let () = with_class qOpenGLFunctions_1_4 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -5827,7 +5884,7 @@ let () = with_class qOpenGLFunctions_1_4 [
     dynamic "glFogCoordfv" [arg "coord" gLfloat];
     dynamic "glFogCoordf" [arg "coord" gLfloat];
   ]
-let () = with_class qOpenGLFunctions_1_5 [
+  let () = with_class qOpenGLFunctions_1_5 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -6315,7 +6372,7 @@ let () = with_class qOpenGLFunctions_1_5 [
     dynamic "glFogCoordfv" [arg "coord" gLfloat];
     dynamic "glFogCoordf" [arg "coord" gLfloat];
   ]
-let () = with_class qOpenGLFunctions_2_0 [
+  let () = with_class qOpenGLFunctions_2_0 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -6896,7 +6953,7 @@ let () = with_class qOpenGLFunctions_2_0 [
     dynamic "glVertexAttrib1dv" [arg "index" gLuint;arg "v" gLdouble];
     dynamic "glVertexAttrib1d" [arg "index" gLuint;arg "x" gLdouble];
   ]
-let () = with_class qOpenGLFunctions_2_1 [
+  let () = with_class qOpenGLFunctions_2_1 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -7483,7 +7540,7 @@ let () = with_class qOpenGLFunctions_2_1 [
     dynamic "glVertexAttrib1dv" [arg "index" gLuint;arg "v" gLdouble];
     dynamic "glVertexAttrib1d" [arg "index" gLuint;arg "x" gLdouble];
   ]
-let () = with_class qOpenGLFunctions_3_0 [
+  let () = with_class qOpenGLFunctions_3_0 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -8154,7 +8211,7 @@ let () = with_class qOpenGLFunctions_3_0 [
     dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
     dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_3_1 [
+  let () = with_class qOpenGLFunctions_3_1 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -8402,7 +8459,7 @@ let () = with_class qOpenGLFunctions_3_1 [
     dynamic "glDrawElementsInstanced" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei];
     dynamic "glDrawArraysInstanced" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei];
   ]
-let () = with_class qOpenGLFunctions_3_2_Compatibility [
+  let () = with_class qOpenGLFunctions_3_2_Compatibility [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -9104,7 +9161,7 @@ let () = with_class qOpenGLFunctions_3_2_Compatibility [
     dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
     dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_3_2_Core [
+  let () = with_class qOpenGLFunctions_3_2_Core [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -9371,7 +9428,7 @@ let () = with_class qOpenGLFunctions_3_2_Core [
     dynamic "glGetBufferParameteri64v" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint64];
     dynamic "glGetInteger64i_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint64];
   ]
-let () = with_class qOpenGLFunctions_3_3_Compatibility [
+  let () = with_class qOpenGLFunctions_3_3_Compatibility [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -10131,7 +10188,7 @@ let () = with_class qOpenGLFunctions_3_3_Compatibility [
     dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
     dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_3_3_Core [
+  let () = with_class qOpenGLFunctions_3_3_Core [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -10456,813 +10513,7 @@ let () = with_class qOpenGLFunctions_3_3_Core [
     dynamic "glBindFragDataLocationIndexed" [arg "program" gLuint;arg "colorNumber" gLuint;arg "index" gLuint;arg "name" gLchar];
     dynamic "glVertexAttribDivisor" [arg "index" gLuint;arg "divisor" gLuint];
   ]
-let () = with_class qOpenGLFunctions_4_0_Compatibility [
-    constructor "" [];
-    dynamic "initializeOpenGLFunctions" [] ~ret:bool;
-    dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glDepthRange" [arg "nearVal" gLdouble;arg "farVal" gLdouble];
-    dynamic "glIsEnabled" [arg "cap" gLenum] ~ret:gLboolean;
-    dynamic "glGetTexLevelParameteriv" [arg "target" gLenum;arg "level" gLint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexLevelParameterfv" [arg "target" gLenum;arg "level" gLint;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetTexParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetTexImage" [arg "target" gLenum;arg "level" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glGetString" [arg "name" gLenum] ~ret:gLubyte;
-    dynamic "glGetIntegerv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetFloatv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetError" [] ~ret:gLenum;
-    dynamic "glGetDoublev" [arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glGetBooleanv" [arg "pname" gLenum;arg "params" gLboolean];
-    dynamic "glReadPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glReadBuffer" [arg "mode" gLenum];
-    dynamic "glPixelStorei" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glPixelStoref" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glDepthFunc" [arg "func" gLenum];
-    dynamic "glStencilOp" [arg "fail" gLenum;arg "zfail" gLenum;arg "zpass" gLenum];
-    dynamic "glStencilFunc" [arg "func" gLenum;arg "ref" gLint;arg "mask" gLuint];
-    dynamic "glLogicOp" [arg "opcode" gLenum];
-    dynamic "glBlendFunc" [arg "sfactor" gLenum;arg "dfactor" gLenum];
-    dynamic "glFlush" [];
-    dynamic "glFinish" [];
-    dynamic "glEnable" [arg "cap" gLenum];
-    dynamic "glDisable" [arg "cap" gLenum];
-    dynamic "glDepthMask" [arg "flag" gLboolean];
-    dynamic "glColorMask" [arg "red" gLboolean;arg "green" gLboolean;arg "blue" gLboolean;arg "alpha" gLboolean];
-    dynamic "glStencilMask" [arg "mask" gLuint];
-    dynamic "glClearDepth" [arg "depth" gLdouble];
-    dynamic "glClearStencil" [arg "s" gLint];
-    dynamic "glClearColor" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glClear" [arg "mask" gLbitfield];
-    dynamic "glDrawBuffer" [arg "mode" gLenum];
-    dynamic "glTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glTexParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glTexParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glTexParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glScissor" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glPolygonMode" [arg "face" gLenum;arg "mode" gLenum];
-    dynamic "glPointSize" [arg "size" gLfloat];
-    dynamic "glLineWidth" [arg "width" gLfloat];
-    dynamic "glHint" [arg "target" gLenum;arg "mode" gLenum];
-    dynamic "glFrontFace" [arg "mode" gLenum];
-    dynamic "glCullFace" [arg "mode" gLenum];
-    dynamic "glIndexubv" [arg "c" gLubyte];
-    dynamic "glIndexub" [arg "c" gLubyte];
-    dynamic "glIsTexture" [arg "texture" gLuint] ~ret:gLboolean;
-    dynamic "glGenTextures" [arg "n" gLsizei;arg "textures" gLuint];
-    dynamic "glDeleteTextures" [arg "n" gLsizei;arg "textures" gLuint];
-    dynamic "glBindTexture" [arg "target" gLenum;arg "texture" gLuint];
-    dynamic "glTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glCopyTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glCopyTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glCopyTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint];
-    dynamic "glCopyTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "border" gLint];
-    dynamic "glPolygonOffset" [arg "factor" gLfloat;arg "units" gLfloat];
-    dynamic "glGetPointerv" [arg "pname" gLenum;arg "params" gLvoid];
-    dynamic "glDrawElements" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid];
-    dynamic "glDrawArrays" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei];
-    dynamic "glCopyTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glTexImage3D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glDrawRangeElements" [arg "mode" gLenum;arg "start" gLuint;arg "end" gLuint;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid];
-    dynamic "glBlendEquation" [arg "mode" gLenum];
-    dynamic "glBlendColor" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glGetCompressedTexImage" [arg "target" gLenum;arg "level" gLint;arg "img" gLvoid];
-    dynamic "glCompressedTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "width" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexImage3D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glSampleCoverage" [arg "value" gLfloat;arg "invert" gLboolean];
-    dynamic "glActiveTexture" [arg "texture" gLenum];
-    dynamic "glPointParameteriv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glPointParameteri" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glPointParameterfv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glPointParameterf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glMultiDrawElements" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid * const;arg "drawcount" gLsizei];
-    dynamic "glMultiDrawArrays" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "drawcount" gLsizei];
-    dynamic "glBlendFuncSeparate" [arg "sfactorRGB" gLenum;arg "dfactorRGB" gLenum;arg "sfactorAlpha" gLenum;arg "dfactorAlpha" gLenum];
-    dynamic "glGetBufferPointerv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLvoid];
-    dynamic "glGetBufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glUnmapBuffer" [arg "target" gLenum] ~ret:gLboolean;
-    dynamic "glMapBuffer" [arg "target" gLenum;arg "access" gLenum] ~ret:gLvoid;
-    dynamic "glGetBufferSubData" [arg "target" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "data" gLvoid];
-    dynamic "glBufferSubData" [arg "target" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "data" gLvoid];
-    dynamic "glBufferData" [arg "target" gLenum;arg "size" gLsizeiptr;arg "data" gLvoid;arg "usage" gLenum];
-    dynamic "glIsBuffer" [arg "buffer" gLuint] ~ret:gLboolean;
-    dynamic "glGenBuffers" [arg "n" gLsizei;arg "buffers" gLuint];
-    dynamic "glDeleteBuffers" [arg "n" gLsizei;arg "buffers" gLuint];
-    dynamic "glBindBuffer" [arg "target" gLenum;arg "buffer" gLuint];
-    dynamic "glGetQueryObjectuiv" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glGetQueryObjectiv" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetQueryiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glEndQuery" [arg "target" gLenum];
-    dynamic "glBeginQuery" [arg "target" gLenum;arg "id" gLuint];
-    dynamic "glIsQuery" [arg "id" gLuint] ~ret:gLboolean;
-    dynamic "glDeleteQueries" [arg "n" gLsizei;arg "ids" gLuint];
-    dynamic "glGenQueries" [arg "n" gLsizei;arg "ids" gLuint];
-    dynamic "glVertexAttribPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "normalized" gLboolean;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glValidateProgram" [arg "program" gLuint];
-    dynamic "glUniformMatrix4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniform4iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glUniform3iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glUniform2iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glUniform1iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glUniform4fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glUniform3fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glUniform2fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glUniform1fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glUniform4i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1;arg "arg3" gLint v2;arg "arg4" gLint v3];
-    dynamic "glUniform3i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1;arg "arg3" gLint v2];
-    dynamic "glUniform2i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1];
-    dynamic "glUniform1i" [arg "location" gLint;arg "arg1" gLint v0];
-    dynamic "glUniform4f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1;arg "arg3" gLfloat v2;arg "arg4" gLfloat v3];
-    dynamic "glUniform3f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1;arg "arg3" gLfloat v2];
-    dynamic "glUniform2f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1];
-    dynamic "glUniform1f" [arg "location" gLint;arg "arg1" gLfloat v0];
-    dynamic "glUseProgram" [arg "program" gLuint];
-    dynamic "glShaderSource" [arg "shader" gLuint;arg "count" gLsizei;arg "string" gLchar * const;arg "length" gLint];
-    dynamic "glLinkProgram" [arg "program" gLuint];
-    dynamic "glIsShader" [arg "shader" gLuint] ~ret:gLboolean;
-    dynamic "glIsProgram" [arg "program" gLuint] ~ret:gLboolean;
-    dynamic "glGetVertexAttribPointerv" [arg "index" gLuint;arg "pname" gLenum;arg "pointer" gLvoid];
-    dynamic "glGetVertexAttribiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetVertexAttribfv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetVertexAttribdv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glGetUniformiv" [arg "program" gLuint;arg "location" gLint;arg "params" gLint];
-    dynamic "glGetUniformfv" [arg "program" gLuint;arg "location" gLint;arg "params" gLfloat];
-    dynamic "glGetUniformLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
-    dynamic "glGetShaderSource" [arg "shader" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "source" gLchar];
-    dynamic "glGetShaderInfoLog" [arg "shader" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
-    dynamic "glGetShaderiv" [arg "shader" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetProgramInfoLog" [arg "program" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
-    dynamic "glGetProgramiv" [arg "program" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetAttribLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
-    dynamic "glGetAttachedShaders" [arg "program" gLuint;arg "maxCount" gLsizei;arg "count" gLsizei;arg "obj" gLuint];
-    dynamic "glGetActiveUniform" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLint;arg "type" gLenum;arg "name" gLchar];
-    dynamic "glGetActiveAttrib" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLint;arg "type" gLenum;arg "name" gLchar];
-    dynamic "glEnableVertexAttribArray" [arg "index" gLuint];
-    dynamic "glDisableVertexAttribArray" [arg "index" gLuint];
-    dynamic "glDetachShader" [arg "program" gLuint;arg "shader" gLuint];
-    dynamic "glDeleteShader" [arg "shader" gLuint];
-    dynamic "glDeleteProgram" [arg "program" gLuint];
-    dynamic "glCreateShader" [arg "type" gLenum] ~ret:gLuint;
-    dynamic "glCreateProgram" [] ~ret:gLuint;
-    dynamic "glCompileShader" [arg "shader" gLuint];
-    dynamic "glBindAttribLocation" [arg "program" gLuint;arg "index" gLuint;arg "name" gLchar];
-    dynamic "glAttachShader" [arg "program" gLuint;arg "shader" gLuint];
-    dynamic "glStencilMaskSeparate" [arg "face" gLenum;arg "mask" gLuint];
-    dynamic "glStencilFuncSeparate" [arg "face" gLenum;arg "func" gLenum;arg "ref" gLint;arg "mask" gLuint];
-    dynamic "glStencilOpSeparate" [arg "face" gLenum;arg "sfail" gLenum;arg "dpfail" gLenum;arg "dppass" gLenum];
-    dynamic "glDrawBuffers" [arg "n" gLsizei;arg "bufs" gLenum];
-    dynamic "glBlendEquationSeparate" [arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
-    dynamic "glUniformMatrix4x3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix3x4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix4x2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix2x4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix3x2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix2x3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glIsVertexArray" [arg "array" gLuint] ~ret:gLboolean;
-    dynamic "glGenVertexArrays" [arg "n" gLsizei;arg "arrays" gLuint];
-    dynamic "glDeleteVertexArrays" [arg "n" gLsizei;arg "arrays" gLuint];
-    dynamic "glBindVertexArray" [arg "array" gLuint];
-    dynamic "glFlushMappedBufferRange" [arg "target" gLenum;arg "offset" gLintptr;arg "length" gLsizeiptr];
-    dynamic "glMapBufferRange" [arg "target" gLenum;arg "offset" gLintptr;arg "length" gLsizeiptr;arg "access" gLbitfield] ~ret:gLvoid;
-    dynamic "glFramebufferTextureLayer" [arg "target" gLenum;arg "attachment" gLenum;arg "texture" gLuint;arg "level" gLint;arg "layer" gLint];
-    dynamic "glRenderbufferStorageMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glBlitFramebuffer" [arg "arg0" gLint srcX0;arg "arg1" gLint srcY0;arg "arg2" gLint srcX1;arg "arg3" gLint srcY1;arg "arg4" gLint dstX0;arg "arg5" gLint dstY0;arg "arg6" gLint dstX1;arg "arg7" gLint dstY1;arg "mask" gLbitfield;arg "filter" gLenum];
-    dynamic "glGenerateMipmap" [arg "target" gLenum];
-    dynamic "glGetFramebufferAttachmentParameteriv" [arg "target" gLenum;arg "attachment" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glFramebufferRenderbuffer" [arg "target" gLenum;arg "attachment" gLenum;arg "renderbuffertarget" gLenum;arg "renderbuffer" gLuint];
-    dynamic "glFramebufferTexture3D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint;arg "zoffset" gLint];
-    dynamic "glFramebufferTexture2D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint];
-    dynamic "glFramebufferTexture1D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint];
-    dynamic "glCheckFramebufferStatus" [arg "target" gLenum] ~ret:gLenum;
-    dynamic "glGenFramebuffers" [arg "n" gLsizei;arg "framebuffers" gLuint];
-    dynamic "glDeleteFramebuffers" [arg "n" gLsizei;arg "framebuffers" gLuint];
-    dynamic "glBindFramebuffer" [arg "target" gLenum;arg "framebuffer" gLuint];
-    dynamic "glIsFramebuffer" [arg "framebuffer" gLuint] ~ret:gLboolean;
-    dynamic "glGetRenderbufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glRenderbufferStorage" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glGenRenderbuffers" [arg "n" gLsizei;arg "renderbuffers" gLuint];
-    dynamic "glDeleteRenderbuffers" [arg "n" gLsizei;arg "renderbuffers" gLuint];
-    dynamic "glBindRenderbuffer" [arg "target" gLenum;arg "renderbuffer" gLuint];
-    dynamic "glIsRenderbuffer" [arg "renderbuffer" gLuint] ~ret:gLboolean;
-    dynamic "glGetStringi" [arg "name" gLenum;arg "index" gLuint] ~ret:gLubyte;
-    dynamic "glClearBufferfi" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "depth" gLfloat;arg "stencil" gLint];
-    dynamic "glClearBufferfv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLfloat];
-    dynamic "glClearBufferuiv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLuint];
-    dynamic "glClearBufferiv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLint];
-    dynamic "glGetTexParameterIuiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glGetTexParameterIiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexParameterIuiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glTexParameterIiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glUniform4uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glUniform3uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glUniform2uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glUniform1uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glUniform4ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1;arg "arg3" gLuint v2;arg "arg4" gLuint v3];
-    dynamic "glUniform3ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1;arg "arg3" gLuint v2];
-    dynamic "glUniform2ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1];
-    dynamic "glUniform1ui" [arg "location" gLint;arg "arg1" gLuint v0];
-    dynamic "glGetFragDataLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
-    dynamic "glBindFragDataLocation" [arg "program" gLuint;arg "color" gLuint;arg "name" gLchar];
-    dynamic "glGetUniformuiv" [arg "program" gLuint;arg "location" gLint;arg "params" gLuint];
-    dynamic "glGetVertexAttribIuiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glGetVertexAttribIiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glVertexAttribIPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glEndConditionalRender" [];
-    dynamic "glBeginConditionalRender" [arg "id" gLuint;arg "mode" gLenum];
-    dynamic "glClampColor" [arg "target" gLenum;arg "clamp" gLenum];
-    dynamic "glGetTransformFeedbackVarying" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLsizei;arg "type" gLenum;arg "name" gLchar];
-    dynamic "glTransformFeedbackVaryings" [arg "program" gLuint;arg "count" gLsizei;arg "varyings" gLchar * const;arg "bufferMode" gLenum];
-    dynamic "glBindBufferBase" [arg "target" gLenum;arg "index" gLuint;arg "buffer" gLuint];
-    dynamic "glBindBufferRange" [arg "target" gLenum;arg "index" gLuint;arg "buffer" gLuint;arg "offset" gLintptr;arg "size" gLsizeiptr];
-    dynamic "glEndTransformFeedback" [];
-    dynamic "glBeginTransformFeedback" [arg "primitiveMode" gLenum];
-    dynamic "glIsEnabledi" [arg "target" gLenum;arg "index" gLuint] ~ret:gLboolean;
-    dynamic "glDisablei" [arg "target" gLenum;arg "index" gLuint];
-    dynamic "glEnablei" [arg "target" gLenum;arg "index" gLuint];
-    dynamic "glGetIntegeri_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint];
-    dynamic "glGetBooleani_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLboolean];
-    dynamic "glColorMaski" [arg "index" gLuint;arg "r" gLboolean;arg "g" gLboolean;arg "b" gLboolean;arg "a" gLboolean];
-    dynamic "glCopyBufferSubData" [arg "readTarget" gLenum;arg "writeTarget" gLenum;arg "readOffset" gLintptr;arg "writeOffset" gLintptr;arg "size" gLsizeiptr];
-    dynamic "glUniformBlockBinding" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "uniformBlockBinding" gLuint];
-    dynamic "glGetActiveUniformBlockName" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "uniformBlockName" gLchar];
-    dynamic "glGetActiveUniformBlockiv" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetUniformBlockIndex" [arg "program" gLuint;arg "uniformBlockName" gLchar] ~ret:gLuint;
-    dynamic "glGetActiveUniformName" [arg "program" gLuint;arg "uniformIndex" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "uniformName" gLchar];
-    dynamic "glGetActiveUniformsiv" [arg "program" gLuint;arg "uniformCount" gLsizei;arg "uniformIndices" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetUniformIndices" [arg "program" gLuint;arg "uniformCount" gLsizei;arg "uniformNames" gLchar * const;arg "uniformIndices" gLuint];
-    dynamic "glPrimitiveRestartIndex" [arg "index" gLuint];
-    dynamic "glTexBuffer" [arg "target" gLenum;arg "internalformat" gLenum;arg "buffer" gLuint];
-    dynamic "glDrawElementsInstanced" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei];
-    dynamic "glDrawArraysInstanced" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei];
-    dynamic "glSampleMaski" [arg "index" gLuint;arg "mask" gLbitfield];
-    dynamic "glGetMultisamplefv" [arg "pname" gLenum;arg "index" gLuint;arg "val" gLfloat];
-    dynamic "glTexImage3DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "fixedsamplelocations" gLboolean];
-    dynamic "glTexImage2DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "fixedsamplelocations" gLboolean];
-    dynamic "glGetSynciv" [arg "sync" gLsync;arg "pname" gLenum;arg "bufSize" gLsizei;arg "length" gLsizei;arg "values" gLint];
-    dynamic "glGetInteger64v" [arg "pname" gLenum;arg "params" gLint64];
-    dynamic "glWaitSync" [arg "sync" gLsync;arg "flags" gLbitfield;arg "timeout" gLuint64];
-    dynamic "glClientWaitSync" [arg "sync" gLsync;arg "flags" gLbitfield;arg "timeout" gLuint64] ~ret:gLenum;
-    dynamic "glDeleteSync" [arg "sync" gLsync];
-    dynamic "glIsSync" [arg "sync" gLsync] ~ret:gLboolean;
-    dynamic "glFenceSync" [arg "condition" gLenum;arg "flags" gLbitfield] ~ret:gLsync;
-    dynamic "glProvokingVertex" [arg "mode" gLenum];
-    dynamic "glMultiDrawElementsBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid * const;arg "drawcount" gLsizei;arg "basevertex" gLint];
-    dynamic "glDrawElementsInstancedBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei;arg "basevertex" gLint];
-    dynamic "glDrawRangeElementsBaseVertex" [arg "mode" gLenum;arg "start" gLuint;arg "end" gLuint;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "basevertex" gLint];
-    dynamic "glDrawElementsBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "basevertex" gLint];
-    dynamic "glFramebufferTexture" [arg "target" gLenum;arg "attachment" gLenum;arg "texture" gLuint;arg "level" gLint];
-    dynamic "glGetBufferParameteri64v" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint64];
-    dynamic "glGetInteger64i_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint64];
-    dynamic "glVertexAttribP4uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP4ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP3uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP3ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP2uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP2ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP1uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP1ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glSecondaryColorP3uiv" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glSecondaryColorP3ui" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glColorP4uiv" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glColorP4ui" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glColorP3uiv" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glColorP3ui" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glNormalP3uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glNormalP3ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP4uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP4ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP3uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP3ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP2uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP2ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP1uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP1ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP4uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP4ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP3uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP3ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP2uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP2ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP1uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP1ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glVertexP4uiv" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP4ui" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP3uiv" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP3ui" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP2uiv" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP2ui" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glGetQueryObjectui64v" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLuint64];
-    dynamic "glGetQueryObjecti64v" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLint64];
-    dynamic "glQueryCounter" [arg "id" gLuint;arg "target" gLenum];
-    dynamic "glGetSamplerParameterIuiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glGetSamplerParameterfv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetSamplerParameterIiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetSamplerParameteriv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glSamplerParameterIuiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLuint];
-    dynamic "glSamplerParameterIiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glSamplerParameterfv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glSamplerParameterf" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glSamplerParameteriv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glSamplerParameteri" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glBindSampler" [arg "unit" gLuint;arg "sampler" gLuint];
-    dynamic "glIsSampler" [arg "sampler" gLuint] ~ret:gLboolean;
-    dynamic "glDeleteSamplers" [arg "count" gLsizei;arg "samplers" gLuint];
-    dynamic "glGenSamplers" [arg "count" gLsizei;arg "samplers" gLuint];
-    dynamic "glGetFragDataIndex" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
-    dynamic "glBindFragDataLocationIndexed" [arg "program" gLuint;arg "colorNumber" gLuint;arg "index" gLuint;arg "name" gLchar];
-    dynamic "glVertexAttribDivisor" [arg "index" gLuint;arg "divisor" gLuint];
-    dynamic "glGetQueryIndexediv" [arg "target" gLenum;arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glEndQueryIndexed" [arg "target" gLenum;arg "index" gLuint];
-    dynamic "glBeginQueryIndexed" [arg "target" gLenum;arg "index" gLuint;arg "id" gLuint];
-    dynamic "glDrawTransformFeedbackStream" [arg "mode" gLenum;arg "id" gLuint;arg "stream" gLuint];
-    dynamic "glDrawTransformFeedback" [arg "mode" gLenum;arg "id" gLuint];
-    dynamic "glResumeTransformFeedback" [];
-    dynamic "glPauseTransformFeedback" [];
-    dynamic "glIsTransformFeedback" [arg "id" gLuint] ~ret:gLboolean;
-    dynamic "glGenTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
-    dynamic "glDeleteTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
-    dynamic "glBindTransformFeedback" [arg "target" gLenum;arg "id" gLuint];
-    dynamic "glPatchParameterfv" [arg "pname" gLenum;arg "values" gLfloat];
-    dynamic "glPatchParameteri" [arg "pname" gLenum;arg "value" gLint];
-    dynamic "glGetProgramStageiv" [arg "program" gLuint;arg "shadertype" gLenum;arg "pname" gLenum;arg "values" gLint];
-    dynamic "glGetUniformSubroutineuiv" [arg "shadertype" gLenum;arg "location" gLint;arg "params" gLuint];
-    dynamic "glUniformSubroutinesuiv" [arg "shadertype" gLenum;arg "count" gLsizei;arg "indices" gLuint];
-    dynamic "glGetActiveSubroutineName" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "bufsize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
-    dynamic "glGetActiveSubroutineUniformName" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "bufsize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
-    dynamic "glGetActiveSubroutineUniformiv" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "pname" gLenum;arg "values" gLint];
-    dynamic "glGetSubroutineIndex" [arg "program" gLuint;arg "shadertype" gLenum;arg "name" gLchar] ~ret:gLuint;
-    dynamic "glGetSubroutineUniformLocation" [arg "program" gLuint;arg "shadertype" gLenum;arg "name" gLchar] ~ret:gLint;
-    dynamic "glGetUniformdv" [arg "program" gLuint;arg "location" gLint;arg "params" gLdouble];
-    dynamic "glUniformMatrix4x3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix4x2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix3x4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix3x2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix2x4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix2x3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniform4dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glUniform3dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glUniform2dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glUniform1dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glUniform4d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glUniform3d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glUniform2d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glUniform1d" [arg "location" gLint;arg "x" gLdouble];
-    dynamic "glDrawElementsIndirect" [arg "mode" gLenum;arg "type" gLenum;arg "indirect" gLvoid];
-    dynamic "glDrawArraysIndirect" [arg "mode" gLenum;arg "indirect" gLvoid];
-    dynamic "glBlendFuncSeparatei" [arg "buf" gLuint;arg "srcRGB" gLenum;arg "dstRGB" gLenum;arg "srcAlpha" gLenum;arg "dstAlpha" gLenum];
-    dynamic "glBlendFunci" [arg "buf" gLuint;arg "src" gLenum;arg "dst" gLenum];
-    dynamic "glBlendEquationSeparatei" [arg "buf" gLuint;arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
-    dynamic "glBlendEquationi" [arg "buf" gLuint;arg "mode" gLenum];
-    dynamic "glMinSampleShading" [arg "value" gLfloat];
-    dynamic "glTranslatef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glTranslated" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glScalef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glScaled" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glRotatef" [arg "angle" gLfloat;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glRotated" [arg "angle" gLdouble;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glPushMatrix" [];
-    dynamic "glPopMatrix" [];
-    dynamic "glOrtho" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
-    dynamic "glMultMatrixd" [arg "m" gLdouble];
-    dynamic "glMultMatrixf" [arg "m" gLfloat];
-    dynamic "glMatrixMode" [arg "mode" gLenum];
-    dynamic "glLoadMatrixd" [arg "m" gLdouble];
-    dynamic "glLoadMatrixf" [arg "m" gLfloat];
-    dynamic "glLoadIdentity" [];
-    dynamic "glFrustum" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
-    dynamic "glIsList" [arg "list" gLuint] ~ret:gLboolean;
-    dynamic "glGetTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glGetTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetPolygonStipple" [arg "mask" gLubyte];
-    dynamic "glGetPixelMapusv" [arg "map" gLenum;arg "values" gLushort];
-    dynamic "glGetPixelMapuiv" [arg "map" gLenum;arg "values" gLuint];
-    dynamic "glGetPixelMapfv" [arg "map" gLenum;arg "values" gLfloat];
-    dynamic "glGetMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetMapiv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLint];
-    dynamic "glGetMapfv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLfloat];
-    dynamic "glGetMapdv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLdouble];
-    dynamic "glGetLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
-    dynamic "glDrawPixels" [arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glCopyPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "type" gLenum];
-    dynamic "glPixelMapusv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLushort];
-    dynamic "glPixelMapuiv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLuint];
-    dynamic "glPixelMapfv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLfloat];
-    dynamic "glPixelTransferi" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glPixelTransferf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glPixelZoom" [arg "xfactor" gLfloat;arg "yfactor" gLfloat];
-    dynamic "glAlphaFunc" [arg "func" gLenum;arg "ref" gLfloat];
-    dynamic "glEvalPoint2" [arg "i" gLint;arg "j" gLint];
-    dynamic "glEvalMesh2" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2;arg "arg3" gLint j1;arg "arg4" gLint j2];
-    dynamic "glEvalPoint1" [arg "i" gLint];
-    dynamic "glEvalMesh1" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2];
-    dynamic "glEvalCoord2fv" [arg "u" gLfloat];
-    dynamic "glEvalCoord2f" [arg "u" gLfloat;arg "v" gLfloat];
-    dynamic "glEvalCoord2dv" [arg "u" gLdouble];
-    dynamic "glEvalCoord2d" [arg "u" gLdouble;arg "v" gLdouble];
-    dynamic "glEvalCoord1fv" [arg "u" gLfloat];
-    dynamic "glEvalCoord1f" [arg "u" gLfloat];
-    dynamic "glEvalCoord1dv" [arg "u" gLdouble];
-    dynamic "glEvalCoord1d" [arg "u" gLdouble];
-    dynamic "glMapGrid2f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "vn" gLint;arg "arg4" gLfloat v1;arg "arg5" gLfloat v2];
-    dynamic "glMapGrid2d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "vn" gLint;arg "arg4" gLdouble v1;arg "arg5" gLdouble v2];
-    dynamic "glMapGrid1f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2];
-    dynamic "glMapGrid1d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2];
-    dynamic "glMap2f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLfloat v1;arg "arg6" gLfloat v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLfloat];
-    dynamic "glMap2d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLdouble v1;arg "arg6" gLdouble v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLdouble];
-    dynamic "glMap1f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "stride" gLint;arg "order" gLint;arg "points" gLfloat];
-    dynamic "glMap1d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "stride" gLint;arg "order" gLint;arg "points" gLdouble];
-    dynamic "glPushAttrib" [arg "mask" gLbitfield];
-    dynamic "glPopAttrib" [];
-    dynamic "glAccum" [arg "op" gLenum;arg "value" gLfloat];
-    dynamic "glIndexMask" [arg "mask" gLuint];
-    dynamic "glClearIndex" [arg "c" gLfloat];
-    dynamic "glClearAccum" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glPushName" [arg "name" gLuint];
-    dynamic "glPopName" [];
-    dynamic "glPassThrough" [arg "token" gLfloat];
-    dynamic "glLoadName" [arg "name" gLuint];
-    dynamic "glInitNames" [];
-    dynamic "glRenderMode" [arg "mode" gLenum] ~ret:gLint;
-    dynamic "glSelectBuffer" [arg "size" gLsizei;arg "buffer" gLuint];
-    dynamic "glFeedbackBuffer" [arg "size" gLsizei;arg "type" gLenum;arg "buffer" gLfloat];
-    dynamic "glTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexGeni" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glTexGenf" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glTexGend" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLdouble];
-    dynamic "glTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexEnvi" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glTexEnvf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glShadeModel" [arg "mode" gLenum];
-    dynamic "glPolygonStipple" [arg "mask" gLubyte];
-    dynamic "glMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glMateriali" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glMaterialf" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glLineStipple" [arg "factor" gLint;arg "pattern" gLushort];
-    dynamic "glLightModeliv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glLightModeli" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glLightModelfv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glLightModelf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glLighti" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glLightf" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glFogiv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glFogi" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glFogfv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glFogf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glColorMaterial" [arg "face" gLenum;arg "mode" gLenum];
-    dynamic "glClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
-    dynamic "glVertex4sv" [arg "v" gLshort];
-    dynamic "glVertex4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glVertex4iv" [arg "v" gLint];
-    dynamic "glVertex4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glVertex4fv" [arg "v" gLfloat];
-    dynamic "glVertex4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glVertex4dv" [arg "v" gLdouble];
-    dynamic "glVertex4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glVertex3sv" [arg "v" gLshort];
-    dynamic "glVertex3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glVertex3iv" [arg "v" gLint];
-    dynamic "glVertex3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glVertex3fv" [arg "v" gLfloat];
-    dynamic "glVertex3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glVertex3dv" [arg "v" gLdouble];
-    dynamic "glVertex3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glVertex2sv" [arg "v" gLshort];
-    dynamic "glVertex2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glVertex2iv" [arg "v" gLint];
-    dynamic "glVertex2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glVertex2fv" [arg "v" gLfloat];
-    dynamic "glVertex2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glVertex2dv" [arg "v" gLdouble];
-    dynamic "glVertex2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glTexCoord4sv" [arg "v" gLshort];
-    dynamic "glTexCoord4s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
-    dynamic "glTexCoord4iv" [arg "v" gLint];
-    dynamic "glTexCoord4i" [arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
-    dynamic "glTexCoord4fv" [arg "v" gLfloat];
-    dynamic "glTexCoord4f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
-    dynamic "glTexCoord4dv" [arg "v" gLdouble];
-    dynamic "glTexCoord4d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
-    dynamic "glTexCoord3sv" [arg "v" gLshort];
-    dynamic "glTexCoord3s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
-    dynamic "glTexCoord3iv" [arg "v" gLint];
-    dynamic "glTexCoord3i" [arg "s" gLint;arg "t" gLint;arg "r" gLint];
-    dynamic "glTexCoord3fv" [arg "v" gLfloat];
-    dynamic "glTexCoord3f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
-    dynamic "glTexCoord3dv" [arg "v" gLdouble];
-    dynamic "glTexCoord3d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
-    dynamic "glTexCoord2sv" [arg "v" gLshort];
-    dynamic "glTexCoord2s" [arg "s" gLshort;arg "t" gLshort];
-    dynamic "glTexCoord2iv" [arg "v" gLint];
-    dynamic "glTexCoord2i" [arg "s" gLint;arg "t" gLint];
-    dynamic "glTexCoord2fv" [arg "v" gLfloat];
-    dynamic "glTexCoord2f" [arg "s" gLfloat;arg "t" gLfloat];
-    dynamic "glTexCoord2dv" [arg "v" gLdouble];
-    dynamic "glTexCoord2d" [arg "s" gLdouble;arg "t" gLdouble];
-    dynamic "glTexCoord1sv" [arg "v" gLshort];
-    dynamic "glTexCoord1s" [arg "s" gLshort];
-    dynamic "glTexCoord1iv" [arg "v" gLint];
-    dynamic "glTexCoord1i" [arg "s" gLint];
-    dynamic "glTexCoord1fv" [arg "v" gLfloat];
-    dynamic "glTexCoord1f" [arg "s" gLfloat];
-    dynamic "glTexCoord1dv" [arg "v" gLdouble];
-    dynamic "glTexCoord1d" [arg "s" gLdouble];
-    dynamic "glRectsv" [arg "arg0" gLshort *v1;arg "arg1" gLshort *v2];
-    dynamic "glRects" [arg "arg0" gLshort x1;arg "arg1" gLshort y1;arg "arg2" gLshort x2;arg "arg3" gLshort y2];
-    dynamic "glRectiv" [arg "arg0" gLint *v1;arg "arg1" gLint *v2];
-    dynamic "glRecti" [arg "arg0" gLint x1;arg "arg1" gLint y1;arg "arg2" gLint x2;arg "arg3" gLint y2];
-    dynamic "glRectfv" [arg "arg0" gLfloat *v1;arg "arg1" gLfloat *v2];
-    dynamic "glRectf" [arg "arg0" gLfloat x1;arg "arg1" gLfloat y1;arg "arg2" gLfloat x2;arg "arg3" gLfloat y2];
-    dynamic "glRectdv" [arg "arg0" gLdouble *v1;arg "arg1" gLdouble *v2];
-    dynamic "glRectd" [arg "arg0" gLdouble x1;arg "arg1" gLdouble y1;arg "arg2" gLdouble x2;arg "arg3" gLdouble y2];
-    dynamic "glRasterPos4sv" [arg "v" gLshort];
-    dynamic "glRasterPos4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glRasterPos4iv" [arg "v" gLint];
-    dynamic "glRasterPos4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glRasterPos4fv" [arg "v" gLfloat];
-    dynamic "glRasterPos4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glRasterPos4dv" [arg "v" gLdouble];
-    dynamic "glRasterPos4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glRasterPos3sv" [arg "v" gLshort];
-    dynamic "glRasterPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glRasterPos3iv" [arg "v" gLint];
-    dynamic "glRasterPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glRasterPos3fv" [arg "v" gLfloat];
-    dynamic "glRasterPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glRasterPos3dv" [arg "v" gLdouble];
-    dynamic "glRasterPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glRasterPos2sv" [arg "v" gLshort];
-    dynamic "glRasterPos2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glRasterPos2iv" [arg "v" gLint];
-    dynamic "glRasterPos2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glRasterPos2fv" [arg "v" gLfloat];
-    dynamic "glRasterPos2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glRasterPos2dv" [arg "v" gLdouble];
-    dynamic "glRasterPos2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glNormal3sv" [arg "v" gLshort];
-    dynamic "glNormal3s" [arg "nx" gLshort;arg "ny" gLshort;arg "nz" gLshort];
-    dynamic "glNormal3iv" [arg "v" gLint];
-    dynamic "glNormal3i" [arg "nx" gLint;arg "ny" gLint;arg "nz" gLint];
-    dynamic "glNormal3fv" [arg "v" gLfloat];
-    dynamic "glNormal3f" [arg "nx" gLfloat;arg "ny" gLfloat;arg "nz" gLfloat];
-    dynamic "glNormal3dv" [arg "v" gLdouble];
-    dynamic "glNormal3d" [arg "nx" gLdouble;arg "ny" gLdouble;arg "nz" gLdouble];
-    dynamic "glNormal3bv" [arg "v" gLbyte];
-    dynamic "glNormal3b" [arg "nx" gLbyte;arg "ny" gLbyte;arg "nz" gLbyte];
-    dynamic "glIndexsv" [arg "c" gLshort];
-    dynamic "glIndexs" [arg "c" gLshort];
-    dynamic "glIndexiv" [arg "c" gLint];
-    dynamic "glIndexi" [arg "c" gLint];
-    dynamic "glIndexfv" [arg "c" gLfloat];
-    dynamic "glIndexf" [arg "c" gLfloat];
-    dynamic "glIndexdv" [arg "c" gLdouble];
-    dynamic "glIndexd" [arg "c" gLdouble];
-    dynamic "glEnd" [];
-    dynamic "glEdgeFlagv" [arg "flag" gLboolean];
-    dynamic "glEdgeFlag" [arg "flag" gLboolean];
-    dynamic "glColor4usv" [arg "v" gLushort];
-    dynamic "glColor4us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort;arg "alpha" gLushort];
-    dynamic "glColor4uiv" [arg "v" gLuint];
-    dynamic "glColor4ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint;arg "alpha" gLuint];
-    dynamic "glColor4ubv" [arg "v" gLubyte];
-    dynamic "glColor4ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte;arg "alpha" gLubyte];
-    dynamic "glColor4sv" [arg "v" gLshort];
-    dynamic "glColor4s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort;arg "alpha" gLshort];
-    dynamic "glColor4iv" [arg "v" gLint];
-    dynamic "glColor4i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint;arg "alpha" gLint];
-    dynamic "glColor4fv" [arg "v" gLfloat];
-    dynamic "glColor4f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glColor4dv" [arg "v" gLdouble];
-    dynamic "glColor4d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble;arg "alpha" gLdouble];
-    dynamic "glColor4bv" [arg "v" gLbyte];
-    dynamic "glColor4b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte;arg "alpha" gLbyte];
-    dynamic "glColor3usv" [arg "v" gLushort];
-    dynamic "glColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
-    dynamic "glColor3uiv" [arg "v" gLuint];
-    dynamic "glColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
-    dynamic "glColor3ubv" [arg "v" gLubyte];
-    dynamic "glColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
-    dynamic "glColor3sv" [arg "v" gLshort];
-    dynamic "glColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
-    dynamic "glColor3iv" [arg "v" gLint];
-    dynamic "glColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
-    dynamic "glColor3fv" [arg "v" gLfloat];
-    dynamic "glColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
-    dynamic "glColor3dv" [arg "v" gLdouble];
-    dynamic "glColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
-    dynamic "glColor3bv" [arg "v" gLbyte];
-    dynamic "glColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
-    dynamic "glBitmap" [arg "width" gLsizei;arg "height" gLsizei;arg "xorig" gLfloat;arg "yorig" gLfloat;arg "xmove" gLfloat;arg "ymove" gLfloat;arg "bitmap" gLubyte];
-    dynamic "glBegin" [arg "mode" gLenum];
-    dynamic "glListBase" [arg "base" gLuint];
-    dynamic "glGenLists" [arg "range" gLsizei] ~ret:gLuint;
-    dynamic "glDeleteLists" [arg "list" gLuint;arg "range" gLsizei];
-    dynamic "glCallLists" [arg "n" gLsizei;arg "type" gLenum;arg "lists" gLvoid];
-    dynamic "glCallList" [arg "list" gLuint];
-    dynamic "glEndList" [];
-    dynamic "glNewList" [arg "list" gLuint;arg "mode" gLenum];
-    dynamic "glPushClientAttrib" [arg "mask" gLbitfield];
-    dynamic "glPopClientAttrib" [];
-    dynamic "glPrioritizeTextures" [arg "n" gLsizei;arg "textures" gLuint;arg "priorities" gLfloat];
-    dynamic "glAreTexturesResident" [arg "n" gLsizei;arg "textures" gLuint;arg "residences" gLboolean] ~ret:gLboolean;
-    dynamic "glVertexPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glTexCoordPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glNormalPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glInterleavedArrays" [arg "format" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glIndexPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glEnableClientState" [arg "array" gLenum];
-    dynamic "glEdgeFlagPointer" [arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glDisableClientState" [arg "array" gLenum];
-    dynamic "glColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glArrayElement" [arg "i" gLint];
-    dynamic "glResetMinmax" [arg "target" gLenum];
-    dynamic "glResetHistogram" [arg "target" gLenum];
-    dynamic "glMinmax" [arg "target" gLenum;arg "internalformat" gLenum;arg "sink" gLboolean];
-    dynamic "glHistogram" [arg "target" gLenum;arg "width" gLsizei;arg "internalformat" gLenum;arg "sink" gLboolean];
-    dynamic "glGetMinmaxParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetMinmaxParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetMinmax" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
-    dynamic "glGetHistogramParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetHistogramParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetHistogram" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
-    dynamic "glSeparableFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid];
-    dynamic "glGetSeparableFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid;arg "span" gLvoid];
-    dynamic "glGetConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetConvolutionFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glCopyConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glCopyConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glConvolutionParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glConvolutionParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glCopyColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "count" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "data" gLvoid];
-    dynamic "glGetColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetColorTable" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
-    dynamic "glCopyColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
-    dynamic "glMultTransposeMatrixd" [arg "m" gLdouble];
-    dynamic "glMultTransposeMatrixf" [arg "m" gLfloat];
-    dynamic "glLoadTransposeMatrixd" [arg "m" gLdouble];
-    dynamic "glLoadTransposeMatrixf" [arg "m" gLfloat];
-    dynamic "glMultiTexCoord4sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord4s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
-    dynamic "glMultiTexCoord4iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord4i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
-    dynamic "glMultiTexCoord4fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord4f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
-    dynamic "glMultiTexCoord4dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord4d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
-    dynamic "glMultiTexCoord3sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord3s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
-    dynamic "glMultiTexCoord3iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord3i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint];
-    dynamic "glMultiTexCoord3fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord3f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
-    dynamic "glMultiTexCoord3dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord3d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
-    dynamic "glMultiTexCoord2sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord2s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort];
-    dynamic "glMultiTexCoord2iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord2i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint];
-    dynamic "glMultiTexCoord2fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord2f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat];
-    dynamic "glMultiTexCoord2dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord2d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble];
-    dynamic "glMultiTexCoord1sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord1s" [arg "target" gLenum;arg "s" gLshort];
-    dynamic "glMultiTexCoord1iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord1i" [arg "target" gLenum;arg "s" gLint];
-    dynamic "glMultiTexCoord1fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord1f" [arg "target" gLenum;arg "s" gLfloat];
-    dynamic "glMultiTexCoord1dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord1d" [arg "target" gLenum;arg "s" gLdouble];
-    dynamic "glClientActiveTexture" [arg "texture" gLenum];
-    dynamic "glWindowPos3sv" [arg "v" gLshort];
-    dynamic "glWindowPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glWindowPos3iv" [arg "v" gLint];
-    dynamic "glWindowPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glWindowPos3fv" [arg "v" gLfloat];
-    dynamic "glWindowPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glWindowPos3dv" [arg "v" gLdouble];
-    dynamic "glWindowPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glWindowPos2sv" [arg "v" gLshort];
-    dynamic "glWindowPos2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glWindowPos2iv" [arg "v" gLint];
-    dynamic "glWindowPos2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glWindowPos2fv" [arg "v" gLfloat];
-    dynamic "glWindowPos2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glWindowPos2dv" [arg "v" gLdouble];
-    dynamic "glWindowPos2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glSecondaryColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glSecondaryColor3usv" [arg "v" gLushort];
-    dynamic "glSecondaryColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
-    dynamic "glSecondaryColor3uiv" [arg "v" gLuint];
-    dynamic "glSecondaryColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
-    dynamic "glSecondaryColor3ubv" [arg "v" gLubyte];
-    dynamic "glSecondaryColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
-    dynamic "glSecondaryColor3sv" [arg "v" gLshort];
-    dynamic "glSecondaryColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
-    dynamic "glSecondaryColor3iv" [arg "v" gLint];
-    dynamic "glSecondaryColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
-    dynamic "glSecondaryColor3fv" [arg "v" gLfloat];
-    dynamic "glSecondaryColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
-    dynamic "glSecondaryColor3dv" [arg "v" gLdouble];
-    dynamic "glSecondaryColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
-    dynamic "glSecondaryColor3bv" [arg "v" gLbyte];
-    dynamic "glSecondaryColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
-    dynamic "glFogCoordPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glFogCoorddv" [arg "coord" gLdouble];
-    dynamic "glFogCoordd" [arg "coord" gLdouble];
-    dynamic "glFogCoordfv" [arg "coord" gLfloat];
-    dynamic "glFogCoordf" [arg "coord" gLfloat];
-    dynamic "glVertexAttrib4usv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttrib4uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttrib4ubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttrib4sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib4s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glVertexAttrib4iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttrib4fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib4f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glVertexAttrib4dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib4d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glVertexAttrib4bv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttrib4Nusv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttrib4Nuiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttrib4Nubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttrib4Nub" [arg "index" gLuint;arg "x" gLubyte;arg "y" gLubyte;arg "z" gLubyte;arg "w" gLubyte];
-    dynamic "glVertexAttrib4Nsv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib4Niv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttrib4Nbv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttrib3sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib3s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glVertexAttrib3fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib3f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glVertexAttrib3dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib3d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glVertexAttrib2sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib2s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort];
-    dynamic "glVertexAttrib2fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib2f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glVertexAttrib2dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib2d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glVertexAttrib1sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib1s" [arg "index" gLuint;arg "x" gLshort];
-    dynamic "glVertexAttrib1fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib1f" [arg "index" gLuint;arg "x" gLfloat];
-    dynamic "glVertexAttrib1dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib1d" [arg "index" gLuint;arg "x" gLdouble];
-    dynamic "glVertexAttribI4usv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttribI4ubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttribI4sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttribI4bv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttribI4uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI3uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI2uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI1uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI4iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI3iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI2iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI1iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI4ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint;arg "w" gLuint];
-    dynamic "glVertexAttribI3ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint];
-    dynamic "glVertexAttribI2ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint];
-    dynamic "glVertexAttribI1ui" [arg "index" gLuint;arg "x" gLuint];
-    dynamic "glVertexAttribI4i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glVertexAttribI3i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
-    dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
-  ]
-let () = with_class qOpenGLFunctions_4_0_Core [
+  let () = with_class qOpenGLFunctions_4_0_Compatibility [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -11632,465 +10883,6 @@ let () = with_class qOpenGLFunctions_4_0_Core [
     dynamic "glBlendEquationSeparatei" [arg "buf" gLuint;arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
     dynamic "glBlendEquationi" [arg "buf" gLuint;arg "mode" gLenum];
     dynamic "glMinSampleShading" [arg "value" gLfloat];
-  ]
-let () = with_class qOpenGLFunctions_4_1_Compatibility [
-    constructor "" [];
-    dynamic "initializeOpenGLFunctions" [] ~ret:bool;
-    dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glDepthRange" [arg "nearVal" gLdouble;arg "farVal" gLdouble];
-    dynamic "glIsEnabled" [arg "cap" gLenum] ~ret:gLboolean;
-    dynamic "glGetTexLevelParameteriv" [arg "target" gLenum;arg "level" gLint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexLevelParameterfv" [arg "target" gLenum;arg "level" gLint;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetTexParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetTexImage" [arg "target" gLenum;arg "level" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glGetString" [arg "name" gLenum] ~ret:gLubyte;
-    dynamic "glGetIntegerv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetFloatv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetError" [] ~ret:gLenum;
-    dynamic "glGetDoublev" [arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glGetBooleanv" [arg "pname" gLenum;arg "params" gLboolean];
-    dynamic "glReadPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glReadBuffer" [arg "mode" gLenum];
-    dynamic "glPixelStorei" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glPixelStoref" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glDepthFunc" [arg "func" gLenum];
-    dynamic "glStencilOp" [arg "fail" gLenum;arg "zfail" gLenum;arg "zpass" gLenum];
-    dynamic "glStencilFunc" [arg "func" gLenum;arg "ref" gLint;arg "mask" gLuint];
-    dynamic "glLogicOp" [arg "opcode" gLenum];
-    dynamic "glBlendFunc" [arg "sfactor" gLenum;arg "dfactor" gLenum];
-    dynamic "glFlush" [];
-    dynamic "glFinish" [];
-    dynamic "glEnable" [arg "cap" gLenum];
-    dynamic "glDisable" [arg "cap" gLenum];
-    dynamic "glDepthMask" [arg "flag" gLboolean];
-    dynamic "glColorMask" [arg "red" gLboolean;arg "green" gLboolean;arg "blue" gLboolean;arg "alpha" gLboolean];
-    dynamic "glStencilMask" [arg "mask" gLuint];
-    dynamic "glClearDepth" [arg "depth" gLdouble];
-    dynamic "glClearStencil" [arg "s" gLint];
-    dynamic "glClearColor" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glClear" [arg "mask" gLbitfield];
-    dynamic "glDrawBuffer" [arg "mode" gLenum];
-    dynamic "glTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glTexParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glTexParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glTexParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glScissor" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glPolygonMode" [arg "face" gLenum;arg "mode" gLenum];
-    dynamic "glPointSize" [arg "size" gLfloat];
-    dynamic "glLineWidth" [arg "width" gLfloat];
-    dynamic "glHint" [arg "target" gLenum;arg "mode" gLenum];
-    dynamic "glFrontFace" [arg "mode" gLenum];
-    dynamic "glCullFace" [arg "mode" gLenum];
-    dynamic "glIndexubv" [arg "c" gLubyte];
-    dynamic "glIndexub" [arg "c" gLubyte];
-    dynamic "glIsTexture" [arg "texture" gLuint] ~ret:gLboolean;
-    dynamic "glGenTextures" [arg "n" gLsizei;arg "textures" gLuint];
-    dynamic "glDeleteTextures" [arg "n" gLsizei;arg "textures" gLuint];
-    dynamic "glBindTexture" [arg "target" gLenum;arg "texture" gLuint];
-    dynamic "glTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glCopyTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glCopyTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glCopyTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint];
-    dynamic "glCopyTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "border" gLint];
-    dynamic "glPolygonOffset" [arg "factor" gLfloat;arg "units" gLfloat];
-    dynamic "glGetPointerv" [arg "pname" gLenum;arg "params" gLvoid];
-    dynamic "glDrawElements" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid];
-    dynamic "glDrawArrays" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei];
-    dynamic "glCopyTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glTexImage3D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glDrawRangeElements" [arg "mode" gLenum;arg "start" gLuint;arg "end" gLuint;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid];
-    dynamic "glBlendEquation" [arg "mode" gLenum];
-    dynamic "glBlendColor" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glGetCompressedTexImage" [arg "target" gLenum;arg "level" gLint;arg "img" gLvoid];
-    dynamic "glCompressedTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "width" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glCompressedTexImage3D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
-    dynamic "glSampleCoverage" [arg "value" gLfloat;arg "invert" gLboolean];
-    dynamic "glActiveTexture" [arg "texture" gLenum];
-    dynamic "glPointParameteriv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glPointParameteri" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glPointParameterfv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glPointParameterf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glMultiDrawElements" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid * const;arg "drawcount" gLsizei];
-    dynamic "glMultiDrawArrays" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "drawcount" gLsizei];
-    dynamic "glBlendFuncSeparate" [arg "sfactorRGB" gLenum;arg "dfactorRGB" gLenum;arg "sfactorAlpha" gLenum;arg "dfactorAlpha" gLenum];
-    dynamic "glGetBufferPointerv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLvoid];
-    dynamic "glGetBufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glUnmapBuffer" [arg "target" gLenum] ~ret:gLboolean;
-    dynamic "glMapBuffer" [arg "target" gLenum;arg "access" gLenum] ~ret:gLvoid;
-    dynamic "glGetBufferSubData" [arg "target" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "data" gLvoid];
-    dynamic "glBufferSubData" [arg "target" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "data" gLvoid];
-    dynamic "glBufferData" [arg "target" gLenum;arg "size" gLsizeiptr;arg "data" gLvoid;arg "usage" gLenum];
-    dynamic "glIsBuffer" [arg "buffer" gLuint] ~ret:gLboolean;
-    dynamic "glGenBuffers" [arg "n" gLsizei;arg "buffers" gLuint];
-    dynamic "glDeleteBuffers" [arg "n" gLsizei;arg "buffers" gLuint];
-    dynamic "glBindBuffer" [arg "target" gLenum;arg "buffer" gLuint];
-    dynamic "glGetQueryObjectuiv" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glGetQueryObjectiv" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetQueryiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glEndQuery" [arg "target" gLenum];
-    dynamic "glBeginQuery" [arg "target" gLenum;arg "id" gLuint];
-    dynamic "glIsQuery" [arg "id" gLuint] ~ret:gLboolean;
-    dynamic "glDeleteQueries" [arg "n" gLsizei;arg "ids" gLuint];
-    dynamic "glGenQueries" [arg "n" gLsizei;arg "ids" gLuint];
-    dynamic "glVertexAttribPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "normalized" gLboolean;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glValidateProgram" [arg "program" gLuint];
-    dynamic "glUniformMatrix4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniform4iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glUniform3iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glUniform2iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glUniform1iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glUniform4fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glUniform3fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glUniform2fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glUniform1fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glUniform4i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1;arg "arg3" gLint v2;arg "arg4" gLint v3];
-    dynamic "glUniform3i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1;arg "arg3" gLint v2];
-    dynamic "glUniform2i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1];
-    dynamic "glUniform1i" [arg "location" gLint;arg "arg1" gLint v0];
-    dynamic "glUniform4f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1;arg "arg3" gLfloat v2;arg "arg4" gLfloat v3];
-    dynamic "glUniform3f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1;arg "arg3" gLfloat v2];
-    dynamic "glUniform2f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1];
-    dynamic "glUniform1f" [arg "location" gLint;arg "arg1" gLfloat v0];
-    dynamic "glUseProgram" [arg "program" gLuint];
-    dynamic "glShaderSource" [arg "shader" gLuint;arg "count" gLsizei;arg "string" gLchar * const;arg "length" gLint];
-    dynamic "glLinkProgram" [arg "program" gLuint];
-    dynamic "glIsShader" [arg "shader" gLuint] ~ret:gLboolean;
-    dynamic "glIsProgram" [arg "program" gLuint] ~ret:gLboolean;
-    dynamic "glGetVertexAttribPointerv" [arg "index" gLuint;arg "pname" gLenum;arg "pointer" gLvoid];
-    dynamic "glGetVertexAttribiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetVertexAttribfv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetVertexAttribdv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glGetUniformiv" [arg "program" gLuint;arg "location" gLint;arg "params" gLint];
-    dynamic "glGetUniformfv" [arg "program" gLuint;arg "location" gLint;arg "params" gLfloat];
-    dynamic "glGetUniformLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
-    dynamic "glGetShaderSource" [arg "shader" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "source" gLchar];
-    dynamic "glGetShaderInfoLog" [arg "shader" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
-    dynamic "glGetShaderiv" [arg "shader" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetProgramInfoLog" [arg "program" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
-    dynamic "glGetProgramiv" [arg "program" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetAttribLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
-    dynamic "glGetAttachedShaders" [arg "program" gLuint;arg "maxCount" gLsizei;arg "count" gLsizei;arg "obj" gLuint];
-    dynamic "glGetActiveUniform" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLint;arg "type" gLenum;arg "name" gLchar];
-    dynamic "glGetActiveAttrib" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLint;arg "type" gLenum;arg "name" gLchar];
-    dynamic "glEnableVertexAttribArray" [arg "index" gLuint];
-    dynamic "glDisableVertexAttribArray" [arg "index" gLuint];
-    dynamic "glDetachShader" [arg "program" gLuint;arg "shader" gLuint];
-    dynamic "glDeleteShader" [arg "shader" gLuint];
-    dynamic "glDeleteProgram" [arg "program" gLuint];
-    dynamic "glCreateShader" [arg "type" gLenum] ~ret:gLuint;
-    dynamic "glCreateProgram" [] ~ret:gLuint;
-    dynamic "glCompileShader" [arg "shader" gLuint];
-    dynamic "glBindAttribLocation" [arg "program" gLuint;arg "index" gLuint;arg "name" gLchar];
-    dynamic "glAttachShader" [arg "program" gLuint;arg "shader" gLuint];
-    dynamic "glStencilMaskSeparate" [arg "face" gLenum;arg "mask" gLuint];
-    dynamic "glStencilFuncSeparate" [arg "face" gLenum;arg "func" gLenum;arg "ref" gLint;arg "mask" gLuint];
-    dynamic "glStencilOpSeparate" [arg "face" gLenum;arg "sfail" gLenum;arg "dpfail" gLenum;arg "dppass" gLenum];
-    dynamic "glDrawBuffers" [arg "n" gLsizei;arg "bufs" gLenum];
-    dynamic "glBlendEquationSeparate" [arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
-    dynamic "glUniformMatrix4x3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix3x4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix4x2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix2x4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix3x2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glUniformMatrix2x3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glIsVertexArray" [arg "array" gLuint] ~ret:gLboolean;
-    dynamic "glGenVertexArrays" [arg "n" gLsizei;arg "arrays" gLuint];
-    dynamic "glDeleteVertexArrays" [arg "n" gLsizei;arg "arrays" gLuint];
-    dynamic "glBindVertexArray" [arg "array" gLuint];
-    dynamic "glFlushMappedBufferRange" [arg "target" gLenum;arg "offset" gLintptr;arg "length" gLsizeiptr];
-    dynamic "glMapBufferRange" [arg "target" gLenum;arg "offset" gLintptr;arg "length" gLsizeiptr;arg "access" gLbitfield] ~ret:gLvoid;
-    dynamic "glFramebufferTextureLayer" [arg "target" gLenum;arg "attachment" gLenum;arg "texture" gLuint;arg "level" gLint;arg "layer" gLint];
-    dynamic "glRenderbufferStorageMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glBlitFramebuffer" [arg "arg0" gLint srcX0;arg "arg1" gLint srcY0;arg "arg2" gLint srcX1;arg "arg3" gLint srcY1;arg "arg4" gLint dstX0;arg "arg5" gLint dstY0;arg "arg6" gLint dstX1;arg "arg7" gLint dstY1;arg "mask" gLbitfield;arg "filter" gLenum];
-    dynamic "glGenerateMipmap" [arg "target" gLenum];
-    dynamic "glGetFramebufferAttachmentParameteriv" [arg "target" gLenum;arg "attachment" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glFramebufferRenderbuffer" [arg "target" gLenum;arg "attachment" gLenum;arg "renderbuffertarget" gLenum;arg "renderbuffer" gLuint];
-    dynamic "glFramebufferTexture3D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint;arg "zoffset" gLint];
-    dynamic "glFramebufferTexture2D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint];
-    dynamic "glFramebufferTexture1D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint];
-    dynamic "glCheckFramebufferStatus" [arg "target" gLenum] ~ret:gLenum;
-    dynamic "glGenFramebuffers" [arg "n" gLsizei;arg "framebuffers" gLuint];
-    dynamic "glDeleteFramebuffers" [arg "n" gLsizei;arg "framebuffers" gLuint];
-    dynamic "glBindFramebuffer" [arg "target" gLenum;arg "framebuffer" gLuint];
-    dynamic "glIsFramebuffer" [arg "framebuffer" gLuint] ~ret:gLboolean;
-    dynamic "glGetRenderbufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glRenderbufferStorage" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glGenRenderbuffers" [arg "n" gLsizei;arg "renderbuffers" gLuint];
-    dynamic "glDeleteRenderbuffers" [arg "n" gLsizei;arg "renderbuffers" gLuint];
-    dynamic "glBindRenderbuffer" [arg "target" gLenum;arg "renderbuffer" gLuint];
-    dynamic "glIsRenderbuffer" [arg "renderbuffer" gLuint] ~ret:gLboolean;
-    dynamic "glGetStringi" [arg "name" gLenum;arg "index" gLuint] ~ret:gLubyte;
-    dynamic "glClearBufferfi" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "depth" gLfloat;arg "stencil" gLint];
-    dynamic "glClearBufferfv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLfloat];
-    dynamic "glClearBufferuiv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLuint];
-    dynamic "glClearBufferiv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLint];
-    dynamic "glGetTexParameterIuiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glGetTexParameterIiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexParameterIuiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glTexParameterIiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glUniform4uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glUniform3uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glUniform2uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glUniform1uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glUniform4ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1;arg "arg3" gLuint v2;arg "arg4" gLuint v3];
-    dynamic "glUniform3ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1;arg "arg3" gLuint v2];
-    dynamic "glUniform2ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1];
-    dynamic "glUniform1ui" [arg "location" gLint;arg "arg1" gLuint v0];
-    dynamic "glGetFragDataLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
-    dynamic "glBindFragDataLocation" [arg "program" gLuint;arg "color" gLuint;arg "name" gLchar];
-    dynamic "glGetUniformuiv" [arg "program" gLuint;arg "location" gLint;arg "params" gLuint];
-    dynamic "glGetVertexAttribIuiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glGetVertexAttribIiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glVertexAttribIPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glEndConditionalRender" [];
-    dynamic "glBeginConditionalRender" [arg "id" gLuint;arg "mode" gLenum];
-    dynamic "glClampColor" [arg "target" gLenum;arg "clamp" gLenum];
-    dynamic "glGetTransformFeedbackVarying" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLsizei;arg "type" gLenum;arg "name" gLchar];
-    dynamic "glTransformFeedbackVaryings" [arg "program" gLuint;arg "count" gLsizei;arg "varyings" gLchar * const;arg "bufferMode" gLenum];
-    dynamic "glBindBufferBase" [arg "target" gLenum;arg "index" gLuint;arg "buffer" gLuint];
-    dynamic "glBindBufferRange" [arg "target" gLenum;arg "index" gLuint;arg "buffer" gLuint;arg "offset" gLintptr;arg "size" gLsizeiptr];
-    dynamic "glEndTransformFeedback" [];
-    dynamic "glBeginTransformFeedback" [arg "primitiveMode" gLenum];
-    dynamic "glIsEnabledi" [arg "target" gLenum;arg "index" gLuint] ~ret:gLboolean;
-    dynamic "glDisablei" [arg "target" gLenum;arg "index" gLuint];
-    dynamic "glEnablei" [arg "target" gLenum;arg "index" gLuint];
-    dynamic "glGetIntegeri_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint];
-    dynamic "glGetBooleani_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLboolean];
-    dynamic "glColorMaski" [arg "index" gLuint;arg "r" gLboolean;arg "g" gLboolean;arg "b" gLboolean;arg "a" gLboolean];
-    dynamic "glCopyBufferSubData" [arg "readTarget" gLenum;arg "writeTarget" gLenum;arg "readOffset" gLintptr;arg "writeOffset" gLintptr;arg "size" gLsizeiptr];
-    dynamic "glUniformBlockBinding" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "uniformBlockBinding" gLuint];
-    dynamic "glGetActiveUniformBlockName" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "uniformBlockName" gLchar];
-    dynamic "glGetActiveUniformBlockiv" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetUniformBlockIndex" [arg "program" gLuint;arg "uniformBlockName" gLchar] ~ret:gLuint;
-    dynamic "glGetActiveUniformName" [arg "program" gLuint;arg "uniformIndex" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "uniformName" gLchar];
-    dynamic "glGetActiveUniformsiv" [arg "program" gLuint;arg "uniformCount" gLsizei;arg "uniformIndices" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetUniformIndices" [arg "program" gLuint;arg "uniformCount" gLsizei;arg "uniformNames" gLchar * const;arg "uniformIndices" gLuint];
-    dynamic "glPrimitiveRestartIndex" [arg "index" gLuint];
-    dynamic "glTexBuffer" [arg "target" gLenum;arg "internalformat" gLenum;arg "buffer" gLuint];
-    dynamic "glDrawElementsInstanced" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei];
-    dynamic "glDrawArraysInstanced" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei];
-    dynamic "glSampleMaski" [arg "index" gLuint;arg "mask" gLbitfield];
-    dynamic "glGetMultisamplefv" [arg "pname" gLenum;arg "index" gLuint;arg "val" gLfloat];
-    dynamic "glTexImage3DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "fixedsamplelocations" gLboolean];
-    dynamic "glTexImage2DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "fixedsamplelocations" gLboolean];
-    dynamic "glGetSynciv" [arg "sync" gLsync;arg "pname" gLenum;arg "bufSize" gLsizei;arg "length" gLsizei;arg "values" gLint];
-    dynamic "glGetInteger64v" [arg "pname" gLenum;arg "params" gLint64];
-    dynamic "glWaitSync" [arg "sync" gLsync;arg "flags" gLbitfield;arg "timeout" gLuint64];
-    dynamic "glClientWaitSync" [arg "sync" gLsync;arg "flags" gLbitfield;arg "timeout" gLuint64] ~ret:gLenum;
-    dynamic "glDeleteSync" [arg "sync" gLsync];
-    dynamic "glIsSync" [arg "sync" gLsync] ~ret:gLboolean;
-    dynamic "glFenceSync" [arg "condition" gLenum;arg "flags" gLbitfield] ~ret:gLsync;
-    dynamic "glProvokingVertex" [arg "mode" gLenum];
-    dynamic "glMultiDrawElementsBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid * const;arg "drawcount" gLsizei;arg "basevertex" gLint];
-    dynamic "glDrawElementsInstancedBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei;arg "basevertex" gLint];
-    dynamic "glDrawRangeElementsBaseVertex" [arg "mode" gLenum;arg "start" gLuint;arg "end" gLuint;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "basevertex" gLint];
-    dynamic "glDrawElementsBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "basevertex" gLint];
-    dynamic "glFramebufferTexture" [arg "target" gLenum;arg "attachment" gLenum;arg "texture" gLuint;arg "level" gLint];
-    dynamic "glGetBufferParameteri64v" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint64];
-    dynamic "glGetInteger64i_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint64];
-    dynamic "glVertexAttribP4uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP4ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP3uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP3ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP2uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP2ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP1uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glVertexAttribP1ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
-    dynamic "glSecondaryColorP3uiv" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glSecondaryColorP3ui" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glColorP4uiv" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glColorP4ui" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glColorP3uiv" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glColorP3ui" [arg "type" gLenum;arg "color" gLuint];
-    dynamic "glNormalP3uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glNormalP3ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP4uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP4ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP3uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP3ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP2uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP2ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP1uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glMultiTexCoordP1ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP4uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP4ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP3uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP3ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP2uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP2ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP1uiv" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glTexCoordP1ui" [arg "type" gLenum;arg "coords" gLuint];
-    dynamic "glVertexP4uiv" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP4ui" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP3uiv" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP3ui" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP2uiv" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glVertexP2ui" [arg "type" gLenum;arg "value" gLuint];
-    dynamic "glGetQueryObjectui64v" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLuint64];
-    dynamic "glGetQueryObjecti64v" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLint64];
-    dynamic "glQueryCounter" [arg "id" gLuint;arg "target" gLenum];
-    dynamic "glGetSamplerParameterIuiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLuint];
-    dynamic "glGetSamplerParameterfv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetSamplerParameterIiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetSamplerParameteriv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glSamplerParameterIuiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLuint];
-    dynamic "glSamplerParameterIiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glSamplerParameterfv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glSamplerParameterf" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glSamplerParameteriv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glSamplerParameteri" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glBindSampler" [arg "unit" gLuint;arg "sampler" gLuint];
-    dynamic "glIsSampler" [arg "sampler" gLuint] ~ret:gLboolean;
-    dynamic "glDeleteSamplers" [arg "count" gLsizei;arg "samplers" gLuint];
-    dynamic "glGenSamplers" [arg "count" gLsizei;arg "samplers" gLuint];
-    dynamic "glGetFragDataIndex" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
-    dynamic "glBindFragDataLocationIndexed" [arg "program" gLuint;arg "colorNumber" gLuint;arg "index" gLuint;arg "name" gLchar];
-    dynamic "glVertexAttribDivisor" [arg "index" gLuint;arg "divisor" gLuint];
-    dynamic "glGetQueryIndexediv" [arg "target" gLenum;arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glEndQueryIndexed" [arg "target" gLenum;arg "index" gLuint];
-    dynamic "glBeginQueryIndexed" [arg "target" gLenum;arg "index" gLuint;arg "id" gLuint];
-    dynamic "glDrawTransformFeedbackStream" [arg "mode" gLenum;arg "id" gLuint;arg "stream" gLuint];
-    dynamic "glDrawTransformFeedback" [arg "mode" gLenum;arg "id" gLuint];
-    dynamic "glResumeTransformFeedback" [];
-    dynamic "glPauseTransformFeedback" [];
-    dynamic "glIsTransformFeedback" [arg "id" gLuint] ~ret:gLboolean;
-    dynamic "glGenTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
-    dynamic "glDeleteTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
-    dynamic "glBindTransformFeedback" [arg "target" gLenum;arg "id" gLuint];
-    dynamic "glPatchParameterfv" [arg "pname" gLenum;arg "values" gLfloat];
-    dynamic "glPatchParameteri" [arg "pname" gLenum;arg "value" gLint];
-    dynamic "glGetProgramStageiv" [arg "program" gLuint;arg "shadertype" gLenum;arg "pname" gLenum;arg "values" gLint];
-    dynamic "glGetUniformSubroutineuiv" [arg "shadertype" gLenum;arg "location" gLint;arg "params" gLuint];
-    dynamic "glUniformSubroutinesuiv" [arg "shadertype" gLenum;arg "count" gLsizei;arg "indices" gLuint];
-    dynamic "glGetActiveSubroutineName" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "bufsize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
-    dynamic "glGetActiveSubroutineUniformName" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "bufsize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
-    dynamic "glGetActiveSubroutineUniformiv" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "pname" gLenum;arg "values" gLint];
-    dynamic "glGetSubroutineIndex" [arg "program" gLuint;arg "shadertype" gLenum;arg "name" gLchar] ~ret:gLuint;
-    dynamic "glGetSubroutineUniformLocation" [arg "program" gLuint;arg "shadertype" gLenum;arg "name" gLchar] ~ret:gLint;
-    dynamic "glGetUniformdv" [arg "program" gLuint;arg "location" gLint;arg "params" gLdouble];
-    dynamic "glUniformMatrix4x3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix4x2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix3x4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix3x2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix2x4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix2x3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniformMatrix2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glUniform4dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glUniform3dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glUniform2dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glUniform1dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glUniform4d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glUniform3d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glUniform2d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glUniform1d" [arg "location" gLint;arg "x" gLdouble];
-    dynamic "glDrawElementsIndirect" [arg "mode" gLenum;arg "type" gLenum;arg "indirect" gLvoid];
-    dynamic "glDrawArraysIndirect" [arg "mode" gLenum;arg "indirect" gLvoid];
-    dynamic "glBlendFuncSeparatei" [arg "buf" gLuint;arg "srcRGB" gLenum;arg "dstRGB" gLenum;arg "srcAlpha" gLenum;arg "dstAlpha" gLenum];
-    dynamic "glBlendFunci" [arg "buf" gLuint;arg "src" gLenum;arg "dst" gLenum];
-    dynamic "glBlendEquationSeparatei" [arg "buf" gLuint;arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
-    dynamic "glBlendEquationi" [arg "buf" gLuint;arg "mode" gLenum];
-    dynamic "glMinSampleShading" [arg "value" gLfloat];
-    dynamic "glGetDoublei_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLdouble];
-    dynamic "glGetFloati_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLfloat];
-    dynamic "glDepthRangeIndexed" [arg "index" gLuint;arg "n" gLdouble;arg "f" gLdouble];
-    dynamic "glDepthRangeArrayv" [arg "first" gLuint;arg "count" gLsizei;arg "v" gLdouble];
-    dynamic "glScissorIndexedv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glScissorIndexed" [arg "index" gLuint;arg "left" gLint;arg "bottom" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glScissorArrayv" [arg "first" gLuint;arg "count" gLsizei;arg "v" gLint];
-    dynamic "glViewportIndexedfv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glViewportIndexedf" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "w" gLfloat;arg "h" gLfloat];
-    dynamic "glViewportArrayv" [arg "first" gLuint;arg "count" gLsizei;arg "v" gLfloat];
-    dynamic "glGetVertexAttribLdv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glVertexAttribLPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glVertexAttribL4dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttribL3dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttribL2dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttribL1dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttribL4d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glVertexAttribL3d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glVertexAttribL2d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glVertexAttribL1d" [arg "index" gLuint;arg "x" gLdouble];
-    dynamic "glGetProgramPipelineInfoLog" [arg "pipeline" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
-    dynamic "glValidateProgramPipeline" [arg "pipeline" gLuint];
-    dynamic "glProgramUniformMatrix4x3dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix3x4dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix4x2dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix2x4dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix3x2dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix2x3dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix4x3fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniformMatrix3x4fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniformMatrix4x2fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniformMatrix2x4fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniformMatrix3x2fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniformMatrix2x3fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniformMatrix4dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix3dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix2dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
-    dynamic "glProgramUniformMatrix4fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniformMatrix3fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniformMatrix2fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
-    dynamic "glProgramUniform4uiv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glProgramUniform4ui" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLuint v0;arg "arg3" gLuint v1;arg "arg4" gLuint v2;arg "arg5" gLuint v3];
-    dynamic "glProgramUniform4dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glProgramUniform4d" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLdouble v0;arg "arg3" gLdouble v1;arg "arg4" gLdouble v2;arg "arg5" gLdouble v3];
-    dynamic "glProgramUniform4fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glProgramUniform4f" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLfloat v0;arg "arg3" gLfloat v1;arg "arg4" gLfloat v2;arg "arg5" gLfloat v3];
-    dynamic "glProgramUniform4iv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glProgramUniform4i" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLint v0;arg "arg3" gLint v1;arg "arg4" gLint v2;arg "arg5" gLint v3];
-    dynamic "glProgramUniform3uiv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glProgramUniform3ui" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLuint v0;arg "arg3" gLuint v1;arg "arg4" gLuint v2];
-    dynamic "glProgramUniform3dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glProgramUniform3d" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLdouble v0;arg "arg3" gLdouble v1;arg "arg4" gLdouble v2];
-    dynamic "glProgramUniform3fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glProgramUniform3f" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLfloat v0;arg "arg3" gLfloat v1;arg "arg4" gLfloat v2];
-    dynamic "glProgramUniform3iv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glProgramUniform3i" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLint v0;arg "arg3" gLint v1;arg "arg4" gLint v2];
-    dynamic "glProgramUniform2uiv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glProgramUniform2ui" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLuint v0;arg "arg3" gLuint v1];
-    dynamic "glProgramUniform2dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glProgramUniform2d" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLdouble v0;arg "arg3" gLdouble v1];
-    dynamic "glProgramUniform2fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glProgramUniform2f" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLfloat v0;arg "arg3" gLfloat v1];
-    dynamic "glProgramUniform2iv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glProgramUniform2i" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLint v0;arg "arg3" gLint v1];
-    dynamic "glProgramUniform1uiv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
-    dynamic "glProgramUniform1ui" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLuint v0];
-    dynamic "glProgramUniform1dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
-    dynamic "glProgramUniform1d" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLdouble v0];
-    dynamic "glProgramUniform1fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
-    dynamic "glProgramUniform1f" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLfloat v0];
-    dynamic "glProgramUniform1iv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
-    dynamic "glProgramUniform1i" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLint v0];
-    dynamic "glGetProgramPipelineiv" [arg "pipeline" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glIsProgramPipeline" [arg "pipeline" gLuint] ~ret:gLboolean;
-    dynamic "glGenProgramPipelines" [arg "n" gLsizei;arg "pipelines" gLuint];
-    dynamic "glDeleteProgramPipelines" [arg "n" gLsizei;arg "pipelines" gLuint];
-    dynamic "glBindProgramPipeline" [arg "pipeline" gLuint];
-    dynamic "glCreateShaderProgramv" [arg "type" gLenum;arg "count" gLsizei;arg "strings" gLchar * const] ~ret:gLuint;
-    dynamic "glActiveShaderProgram" [arg "pipeline" gLuint;arg "program" gLuint];
-    dynamic "glUseProgramStages" [arg "pipeline" gLuint;arg "stages" gLbitfield;arg "program" gLuint];
-    dynamic "glProgramParameteri" [arg "program" gLuint;arg "pname" gLenum;arg "value" gLint];
-    dynamic "glProgramBinary" [arg "program" gLuint;arg "binaryFormat" gLenum;arg "binary" gLvoid;arg "length" gLsizei];
-    dynamic "glGetProgramBinary" [arg "program" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "binaryFormat" gLenum;arg "binary" gLvoid];
-    dynamic "glClearDepthf" [arg "dd" gLfloat];
-    dynamic "glDepthRangef" [arg "n" gLfloat;arg "f" gLfloat];
-    dynamic "glGetShaderPrecisionFormat" [arg "shadertype" gLenum;arg "precisiontype" gLenum;arg "range" gLint;arg "precision" gLint];
-    dynamic "glShaderBinary" [arg "count" gLsizei;arg "shaders" gLuint;arg "binaryformat" gLenum;arg "binary" gLvoid;arg "length" gLsizei];
-    dynamic "glReleaseShaderCompiler" [];
     dynamic "glTranslatef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
     dynamic "glTranslated" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
     dynamic "glScalef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
@@ -12527,7 +11319,378 @@ let () = with_class qOpenGLFunctions_4_1_Compatibility [
     dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
     dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_4_1_Core [
+  let () = with_class qOpenGLFunctions_4_0_Core [
+    constructor "" [];
+    dynamic "initializeOpenGLFunctions" [] ~ret:bool;
+    dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glDepthRange" [arg "nearVal" gLdouble;arg "farVal" gLdouble];
+    dynamic "glIsEnabled" [arg "cap" gLenum] ~ret:gLboolean;
+    dynamic "glGetTexLevelParameteriv" [arg "target" gLenum;arg "level" gLint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexLevelParameterfv" [arg "target" gLenum;arg "level" gLint;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetTexParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetTexImage" [arg "target" gLenum;arg "level" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glGetString" [arg "name" gLenum] ~ret:gLubyte;
+    dynamic "glGetIntegerv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetFloatv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetError" [] ~ret:gLenum;
+    dynamic "glGetDoublev" [arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glGetBooleanv" [arg "pname" gLenum;arg "params" gLboolean];
+    dynamic "glReadPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glReadBuffer" [arg "mode" gLenum];
+    dynamic "glPixelStorei" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glPixelStoref" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glDepthFunc" [arg "func" gLenum];
+    dynamic "glStencilOp" [arg "fail" gLenum;arg "zfail" gLenum;arg "zpass" gLenum];
+    dynamic "glStencilFunc" [arg "func" gLenum;arg "ref" gLint;arg "mask" gLuint];
+    dynamic "glLogicOp" [arg "opcode" gLenum];
+    dynamic "glBlendFunc" [arg "sfactor" gLenum;arg "dfactor" gLenum];
+    dynamic "glFlush" [];
+    dynamic "glFinish" [];
+    dynamic "glEnable" [arg "cap" gLenum];
+    dynamic "glDisable" [arg "cap" gLenum];
+    dynamic "glDepthMask" [arg "flag" gLboolean];
+    dynamic "glColorMask" [arg "red" gLboolean;arg "green" gLboolean;arg "blue" gLboolean;arg "alpha" gLboolean];
+    dynamic "glStencilMask" [arg "mask" gLuint];
+    dynamic "glClearDepth" [arg "depth" gLdouble];
+    dynamic "glClearStencil" [arg "s" gLint];
+    dynamic "glClearColor" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glClear" [arg "mask" gLbitfield];
+    dynamic "glDrawBuffer" [arg "mode" gLenum];
+    dynamic "glTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glTexParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glTexParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glTexParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glScissor" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glPolygonMode" [arg "face" gLenum;arg "mode" gLenum];
+    dynamic "glPointSize" [arg "size" gLfloat];
+    dynamic "glLineWidth" [arg "width" gLfloat];
+    dynamic "glHint" [arg "target" gLenum;arg "mode" gLenum];
+    dynamic "glFrontFace" [arg "mode" gLenum];
+    dynamic "glCullFace" [arg "mode" gLenum];
+    dynamic "glIndexubv" [arg "c" gLubyte];
+    dynamic "glIndexub" [arg "c" gLubyte];
+    dynamic "glIsTexture" [arg "texture" gLuint] ~ret:gLboolean;
+    dynamic "glGenTextures" [arg "n" gLsizei;arg "textures" gLuint];
+    dynamic "glDeleteTextures" [arg "n" gLsizei;arg "textures" gLuint];
+    dynamic "glBindTexture" [arg "target" gLenum;arg "texture" gLuint];
+    dynamic "glTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glCopyTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glCopyTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glCopyTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint];
+    dynamic "glCopyTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "border" gLint];
+    dynamic "glPolygonOffset" [arg "factor" gLfloat;arg "units" gLfloat];
+    dynamic "glGetPointerv" [arg "pname" gLenum;arg "params" gLvoid];
+    dynamic "glDrawElements" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid];
+    dynamic "glDrawArrays" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei];
+    dynamic "glCopyTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glTexImage3D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glDrawRangeElements" [arg "mode" gLenum;arg "start" gLuint;arg "end" gLuint;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid];
+    dynamic "glBlendEquation" [arg "mode" gLenum];
+    dynamic "glBlendColor" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glGetCompressedTexImage" [arg "target" gLenum;arg "level" gLint;arg "img" gLvoid];
+    dynamic "glCompressedTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "width" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexImage3D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glSampleCoverage" [arg "value" gLfloat;arg "invert" gLboolean];
+    dynamic "glActiveTexture" [arg "texture" gLenum];
+    dynamic "glPointParameteriv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glPointParameteri" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glPointParameterfv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glPointParameterf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glMultiDrawElements" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid * const;arg "drawcount" gLsizei];
+    dynamic "glMultiDrawArrays" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "drawcount" gLsizei];
+    dynamic "glBlendFuncSeparate" [arg "sfactorRGB" gLenum;arg "dfactorRGB" gLenum;arg "sfactorAlpha" gLenum;arg "dfactorAlpha" gLenum];
+    dynamic "glGetBufferPointerv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLvoid];
+    dynamic "glGetBufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glUnmapBuffer" [arg "target" gLenum] ~ret:gLboolean;
+    dynamic "glMapBuffer" [arg "target" gLenum;arg "access" gLenum] ~ret:gLvoid;
+    dynamic "glGetBufferSubData" [arg "target" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "data" gLvoid];
+    dynamic "glBufferSubData" [arg "target" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "data" gLvoid];
+    dynamic "glBufferData" [arg "target" gLenum;arg "size" gLsizeiptr;arg "data" gLvoid;arg "usage" gLenum];
+    dynamic "glIsBuffer" [arg "buffer" gLuint] ~ret:gLboolean;
+    dynamic "glGenBuffers" [arg "n" gLsizei;arg "buffers" gLuint];
+    dynamic "glDeleteBuffers" [arg "n" gLsizei;arg "buffers" gLuint];
+    dynamic "glBindBuffer" [arg "target" gLenum;arg "buffer" gLuint];
+    dynamic "glGetQueryObjectuiv" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glGetQueryObjectiv" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetQueryiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glEndQuery" [arg "target" gLenum];
+    dynamic "glBeginQuery" [arg "target" gLenum;arg "id" gLuint];
+    dynamic "glIsQuery" [arg "id" gLuint] ~ret:gLboolean;
+    dynamic "glDeleteQueries" [arg "n" gLsizei;arg "ids" gLuint];
+    dynamic "glGenQueries" [arg "n" gLsizei;arg "ids" gLuint];
+    dynamic "glVertexAttribPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "normalized" gLboolean;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glValidateProgram" [arg "program" gLuint];
+    dynamic "glUniformMatrix4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniform4iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glUniform3iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glUniform2iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glUniform1iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glUniform4fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glUniform3fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glUniform2fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glUniform1fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glUniform4i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1;arg "arg3" gLint v2;arg "arg4" gLint v3];
+    dynamic "glUniform3i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1;arg "arg3" gLint v2];
+    dynamic "glUniform2i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1];
+    dynamic "glUniform1i" [arg "location" gLint;arg "arg1" gLint v0];
+    dynamic "glUniform4f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1;arg "arg3" gLfloat v2;arg "arg4" gLfloat v3];
+    dynamic "glUniform3f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1;arg "arg3" gLfloat v2];
+    dynamic "glUniform2f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1];
+    dynamic "glUniform1f" [arg "location" gLint;arg "arg1" gLfloat v0];
+    dynamic "glUseProgram" [arg "program" gLuint];
+    dynamic "glShaderSource" [arg "shader" gLuint;arg "count" gLsizei;arg "string" gLchar * const;arg "length" gLint];
+    dynamic "glLinkProgram" [arg "program" gLuint];
+    dynamic "glIsShader" [arg "shader" gLuint] ~ret:gLboolean;
+    dynamic "glIsProgram" [arg "program" gLuint] ~ret:gLboolean;
+    dynamic "glGetVertexAttribPointerv" [arg "index" gLuint;arg "pname" gLenum;arg "pointer" gLvoid];
+    dynamic "glGetVertexAttribiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetVertexAttribfv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetVertexAttribdv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glGetUniformiv" [arg "program" gLuint;arg "location" gLint;arg "params" gLint];
+    dynamic "glGetUniformfv" [arg "program" gLuint;arg "location" gLint;arg "params" gLfloat];
+    dynamic "glGetUniformLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
+    dynamic "glGetShaderSource" [arg "shader" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "source" gLchar];
+    dynamic "glGetShaderInfoLog" [arg "shader" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
+    dynamic "glGetShaderiv" [arg "shader" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetProgramInfoLog" [arg "program" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
+    dynamic "glGetProgramiv" [arg "program" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetAttribLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
+    dynamic "glGetAttachedShaders" [arg "program" gLuint;arg "maxCount" gLsizei;arg "count" gLsizei;arg "obj" gLuint];
+    dynamic "glGetActiveUniform" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLint;arg "type" gLenum;arg "name" gLchar];
+    dynamic "glGetActiveAttrib" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLint;arg "type" gLenum;arg "name" gLchar];
+    dynamic "glEnableVertexAttribArray" [arg "index" gLuint];
+    dynamic "glDisableVertexAttribArray" [arg "index" gLuint];
+    dynamic "glDetachShader" [arg "program" gLuint;arg "shader" gLuint];
+    dynamic "glDeleteShader" [arg "shader" gLuint];
+    dynamic "glDeleteProgram" [arg "program" gLuint];
+    dynamic "glCreateShader" [arg "type" gLenum] ~ret:gLuint;
+    dynamic "glCreateProgram" [] ~ret:gLuint;
+    dynamic "glCompileShader" [arg "shader" gLuint];
+    dynamic "glBindAttribLocation" [arg "program" gLuint;arg "index" gLuint;arg "name" gLchar];
+    dynamic "glAttachShader" [arg "program" gLuint;arg "shader" gLuint];
+    dynamic "glStencilMaskSeparate" [arg "face" gLenum;arg "mask" gLuint];
+    dynamic "glStencilFuncSeparate" [arg "face" gLenum;arg "func" gLenum;arg "ref" gLint;arg "mask" gLuint];
+    dynamic "glStencilOpSeparate" [arg "face" gLenum;arg "sfail" gLenum;arg "dpfail" gLenum;arg "dppass" gLenum];
+    dynamic "glDrawBuffers" [arg "n" gLsizei;arg "bufs" gLenum];
+    dynamic "glBlendEquationSeparate" [arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
+    dynamic "glUniformMatrix4x3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix3x4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix4x2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix2x4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix3x2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix2x3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glIsVertexArray" [arg "array" gLuint] ~ret:gLboolean;
+    dynamic "glGenVertexArrays" [arg "n" gLsizei;arg "arrays" gLuint];
+    dynamic "glDeleteVertexArrays" [arg "n" gLsizei;arg "arrays" gLuint];
+    dynamic "glBindVertexArray" [arg "array" gLuint];
+    dynamic "glFlushMappedBufferRange" [arg "target" gLenum;arg "offset" gLintptr;arg "length" gLsizeiptr];
+    dynamic "glMapBufferRange" [arg "target" gLenum;arg "offset" gLintptr;arg "length" gLsizeiptr;arg "access" gLbitfield] ~ret:gLvoid;
+    dynamic "glFramebufferTextureLayer" [arg "target" gLenum;arg "attachment" gLenum;arg "texture" gLuint;arg "level" gLint;arg "layer" gLint];
+    dynamic "glRenderbufferStorageMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glBlitFramebuffer" [arg "arg0" gLint srcX0;arg "arg1" gLint srcY0;arg "arg2" gLint srcX1;arg "arg3" gLint srcY1;arg "arg4" gLint dstX0;arg "arg5" gLint dstY0;arg "arg6" gLint dstX1;arg "arg7" gLint dstY1;arg "mask" gLbitfield;arg "filter" gLenum];
+    dynamic "glGenerateMipmap" [arg "target" gLenum];
+    dynamic "glGetFramebufferAttachmentParameteriv" [arg "target" gLenum;arg "attachment" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glFramebufferRenderbuffer" [arg "target" gLenum;arg "attachment" gLenum;arg "renderbuffertarget" gLenum;arg "renderbuffer" gLuint];
+    dynamic "glFramebufferTexture3D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint;arg "zoffset" gLint];
+    dynamic "glFramebufferTexture2D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint];
+    dynamic "glFramebufferTexture1D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint];
+    dynamic "glCheckFramebufferStatus" [arg "target" gLenum] ~ret:gLenum;
+    dynamic "glGenFramebuffers" [arg "n" gLsizei;arg "framebuffers" gLuint];
+    dynamic "glDeleteFramebuffers" [arg "n" gLsizei;arg "framebuffers" gLuint];
+    dynamic "glBindFramebuffer" [arg "target" gLenum;arg "framebuffer" gLuint];
+    dynamic "glIsFramebuffer" [arg "framebuffer" gLuint] ~ret:gLboolean;
+    dynamic "glGetRenderbufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glRenderbufferStorage" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glGenRenderbuffers" [arg "n" gLsizei;arg "renderbuffers" gLuint];
+    dynamic "glDeleteRenderbuffers" [arg "n" gLsizei;arg "renderbuffers" gLuint];
+    dynamic "glBindRenderbuffer" [arg "target" gLenum;arg "renderbuffer" gLuint];
+    dynamic "glIsRenderbuffer" [arg "renderbuffer" gLuint] ~ret:gLboolean;
+    dynamic "glGetStringi" [arg "name" gLenum;arg "index" gLuint] ~ret:gLubyte;
+    dynamic "glClearBufferfi" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "depth" gLfloat;arg "stencil" gLint];
+    dynamic "glClearBufferfv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLfloat];
+    dynamic "glClearBufferuiv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLuint];
+    dynamic "glClearBufferiv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLint];
+    dynamic "glGetTexParameterIuiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glGetTexParameterIiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexParameterIuiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glTexParameterIiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glUniform4uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glUniform3uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glUniform2uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glUniform1uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glUniform4ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1;arg "arg3" gLuint v2;arg "arg4" gLuint v3];
+    dynamic "glUniform3ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1;arg "arg3" gLuint v2];
+    dynamic "glUniform2ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1];
+    dynamic "glUniform1ui" [arg "location" gLint;arg "arg1" gLuint v0];
+    dynamic "glGetFragDataLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
+    dynamic "glBindFragDataLocation" [arg "program" gLuint;arg "color" gLuint;arg "name" gLchar];
+    dynamic "glGetUniformuiv" [arg "program" gLuint;arg "location" gLint;arg "params" gLuint];
+    dynamic "glGetVertexAttribIuiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glGetVertexAttribIiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glVertexAttribIPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glEndConditionalRender" [];
+    dynamic "glBeginConditionalRender" [arg "id" gLuint;arg "mode" gLenum];
+    dynamic "glClampColor" [arg "target" gLenum;arg "clamp" gLenum];
+    dynamic "glGetTransformFeedbackVarying" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLsizei;arg "type" gLenum;arg "name" gLchar];
+    dynamic "glTransformFeedbackVaryings" [arg "program" gLuint;arg "count" gLsizei;arg "varyings" gLchar * const;arg "bufferMode" gLenum];
+    dynamic "glBindBufferBase" [arg "target" gLenum;arg "index" gLuint;arg "buffer" gLuint];
+    dynamic "glBindBufferRange" [arg "target" gLenum;arg "index" gLuint;arg "buffer" gLuint;arg "offset" gLintptr;arg "size" gLsizeiptr];
+    dynamic "glEndTransformFeedback" [];
+    dynamic "glBeginTransformFeedback" [arg "primitiveMode" gLenum];
+    dynamic "glIsEnabledi" [arg "target" gLenum;arg "index" gLuint] ~ret:gLboolean;
+    dynamic "glDisablei" [arg "target" gLenum;arg "index" gLuint];
+    dynamic "glEnablei" [arg "target" gLenum;arg "index" gLuint];
+    dynamic "glGetIntegeri_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint];
+    dynamic "glGetBooleani_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLboolean];
+    dynamic "glColorMaski" [arg "index" gLuint;arg "r" gLboolean;arg "g" gLboolean;arg "b" gLboolean;arg "a" gLboolean];
+    dynamic "glCopyBufferSubData" [arg "readTarget" gLenum;arg "writeTarget" gLenum;arg "readOffset" gLintptr;arg "writeOffset" gLintptr;arg "size" gLsizeiptr];
+    dynamic "glUniformBlockBinding" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "uniformBlockBinding" gLuint];
+    dynamic "glGetActiveUniformBlockName" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "uniformBlockName" gLchar];
+    dynamic "glGetActiveUniformBlockiv" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetUniformBlockIndex" [arg "program" gLuint;arg "uniformBlockName" gLchar] ~ret:gLuint;
+    dynamic "glGetActiveUniformName" [arg "program" gLuint;arg "uniformIndex" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "uniformName" gLchar];
+    dynamic "glGetActiveUniformsiv" [arg "program" gLuint;arg "uniformCount" gLsizei;arg "uniformIndices" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetUniformIndices" [arg "program" gLuint;arg "uniformCount" gLsizei;arg "uniformNames" gLchar * const;arg "uniformIndices" gLuint];
+    dynamic "glPrimitiveRestartIndex" [arg "index" gLuint];
+    dynamic "glTexBuffer" [arg "target" gLenum;arg "internalformat" gLenum;arg "buffer" gLuint];
+    dynamic "glDrawElementsInstanced" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei];
+    dynamic "glDrawArraysInstanced" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei];
+    dynamic "glSampleMaski" [arg "index" gLuint;arg "mask" gLbitfield];
+    dynamic "glGetMultisamplefv" [arg "pname" gLenum;arg "index" gLuint;arg "val" gLfloat];
+    dynamic "glTexImage3DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "fixedsamplelocations" gLboolean];
+    dynamic "glTexImage2DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "fixedsamplelocations" gLboolean];
+    dynamic "glGetSynciv" [arg "sync" gLsync;arg "pname" gLenum;arg "bufSize" gLsizei;arg "length" gLsizei;arg "values" gLint];
+    dynamic "glGetInteger64v" [arg "pname" gLenum;arg "params" gLint64];
+    dynamic "glWaitSync" [arg "sync" gLsync;arg "flags" gLbitfield;arg "timeout" gLuint64];
+    dynamic "glClientWaitSync" [arg "sync" gLsync;arg "flags" gLbitfield;arg "timeout" gLuint64] ~ret:gLenum;
+    dynamic "glDeleteSync" [arg "sync" gLsync];
+    dynamic "glIsSync" [arg "sync" gLsync] ~ret:gLboolean;
+    dynamic "glFenceSync" [arg "condition" gLenum;arg "flags" gLbitfield] ~ret:gLsync;
+    dynamic "glProvokingVertex" [arg "mode" gLenum];
+    dynamic "glMultiDrawElementsBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid * const;arg "drawcount" gLsizei;arg "basevertex" gLint];
+    dynamic "glDrawElementsInstancedBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei;arg "basevertex" gLint];
+    dynamic "glDrawRangeElementsBaseVertex" [arg "mode" gLenum;arg "start" gLuint;arg "end" gLuint;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "basevertex" gLint];
+    dynamic "glDrawElementsBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "basevertex" gLint];
+    dynamic "glFramebufferTexture" [arg "target" gLenum;arg "attachment" gLenum;arg "texture" gLuint;arg "level" gLint];
+    dynamic "glGetBufferParameteri64v" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint64];
+    dynamic "glGetInteger64i_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint64];
+    dynamic "glVertexAttribP4uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP4ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP3uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP3ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP2uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP2ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP1uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP1ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glSecondaryColorP3uiv" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glSecondaryColorP3ui" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glColorP4uiv" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glColorP4ui" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glColorP3uiv" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glColorP3ui" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glNormalP3uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glNormalP3ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP4uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP4ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP3uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP3ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP2uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP2ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP1uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP1ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP4uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP4ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP3uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP3ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP2uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP2ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP1uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP1ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glVertexP4uiv" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP4ui" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP3uiv" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP3ui" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP2uiv" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP2ui" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glGetQueryObjectui64v" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLuint64];
+    dynamic "glGetQueryObjecti64v" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLint64];
+    dynamic "glQueryCounter" [arg "id" gLuint;arg "target" gLenum];
+    dynamic "glGetSamplerParameterIuiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glGetSamplerParameterfv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetSamplerParameterIiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetSamplerParameteriv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glSamplerParameterIuiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLuint];
+    dynamic "glSamplerParameterIiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glSamplerParameterfv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glSamplerParameterf" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glSamplerParameteriv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glSamplerParameteri" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glBindSampler" [arg "unit" gLuint;arg "sampler" gLuint];
+    dynamic "glIsSampler" [arg "sampler" gLuint] ~ret:gLboolean;
+    dynamic "glDeleteSamplers" [arg "count" gLsizei;arg "samplers" gLuint];
+    dynamic "glGenSamplers" [arg "count" gLsizei;arg "samplers" gLuint];
+    dynamic "glGetFragDataIndex" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
+    dynamic "glBindFragDataLocationIndexed" [arg "program" gLuint;arg "colorNumber" gLuint;arg "index" gLuint;arg "name" gLchar];
+    dynamic "glVertexAttribDivisor" [arg "index" gLuint;arg "divisor" gLuint];
+    dynamic "glGetQueryIndexediv" [arg "target" gLenum;arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glEndQueryIndexed" [arg "target" gLenum;arg "index" gLuint];
+    dynamic "glBeginQueryIndexed" [arg "target" gLenum;arg "index" gLuint;arg "id" gLuint];
+    dynamic "glDrawTransformFeedbackStream" [arg "mode" gLenum;arg "id" gLuint;arg "stream" gLuint];
+    dynamic "glDrawTransformFeedback" [arg "mode" gLenum;arg "id" gLuint];
+    dynamic "glResumeTransformFeedback" [];
+    dynamic "glPauseTransformFeedback" [];
+    dynamic "glIsTransformFeedback" [arg "id" gLuint] ~ret:gLboolean;
+    dynamic "glGenTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
+    dynamic "glDeleteTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
+    dynamic "glBindTransformFeedback" [arg "target" gLenum;arg "id" gLuint];
+    dynamic "glPatchParameterfv" [arg "pname" gLenum;arg "values" gLfloat];
+    dynamic "glPatchParameteri" [arg "pname" gLenum;arg "value" gLint];
+    dynamic "glGetProgramStageiv" [arg "program" gLuint;arg "shadertype" gLenum;arg "pname" gLenum;arg "values" gLint];
+    dynamic "glGetUniformSubroutineuiv" [arg "shadertype" gLenum;arg "location" gLint;arg "params" gLuint];
+    dynamic "glUniformSubroutinesuiv" [arg "shadertype" gLenum;arg "count" gLsizei;arg "indices" gLuint];
+    dynamic "glGetActiveSubroutineName" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "bufsize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
+    dynamic "glGetActiveSubroutineUniformName" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "bufsize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
+    dynamic "glGetActiveSubroutineUniformiv" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "pname" gLenum;arg "values" gLint];
+    dynamic "glGetSubroutineIndex" [arg "program" gLuint;arg "shadertype" gLenum;arg "name" gLchar] ~ret:gLuint;
+    dynamic "glGetSubroutineUniformLocation" [arg "program" gLuint;arg "shadertype" gLenum;arg "name" gLchar] ~ret:gLint;
+    dynamic "glGetUniformdv" [arg "program" gLuint;arg "location" gLint;arg "params" gLdouble];
+    dynamic "glUniformMatrix4x3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix4x2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix3x4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix3x2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix2x4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix2x3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniform4dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glUniform3dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glUniform2dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glUniform1dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glUniform4d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glUniform3d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glUniform2d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glUniform1d" [arg "location" gLint;arg "x" gLdouble];
+    dynamic "glDrawElementsIndirect" [arg "mode" gLenum;arg "type" gLenum;arg "indirect" gLvoid];
+    dynamic "glDrawArraysIndirect" [arg "mode" gLenum;arg "indirect" gLvoid];
+    dynamic "glBlendFuncSeparatei" [arg "buf" gLuint;arg "srcRGB" gLenum;arg "dstRGB" gLenum;arg "srcAlpha" gLenum;arg "dstAlpha" gLenum];
+    dynamic "glBlendFunci" [arg "buf" gLuint;arg "src" gLenum;arg "dst" gLenum];
+    dynamic "glBlendEquationSeparatei" [arg "buf" gLuint;arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
+    dynamic "glBlendEquationi" [arg "buf" gLuint;arg "mode" gLenum];
+    dynamic "glMinSampleShading" [arg "value" gLfloat];
+  ]
+  let () = with_class qOpenGLFunctions_4_1_Compatibility [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -12985,8 +12148,443 @@ let () = with_class qOpenGLFunctions_4_1_Core [
     dynamic "glGetShaderPrecisionFormat" [arg "shadertype" gLenum;arg "precisiontype" gLenum;arg "range" gLint;arg "precision" gLint];
     dynamic "glShaderBinary" [arg "count" gLsizei;arg "shaders" gLuint;arg "binaryformat" gLenum;arg "binary" gLvoid;arg "length" gLsizei];
     dynamic "glReleaseShaderCompiler" [];
+    dynamic "glTranslatef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glTranslated" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glScalef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glScaled" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glRotatef" [arg "angle" gLfloat;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glRotated" [arg "angle" gLdouble;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glPushMatrix" [];
+    dynamic "glPopMatrix" [];
+    dynamic "glOrtho" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
+    dynamic "glMultMatrixd" [arg "m" gLdouble];
+    dynamic "glMultMatrixf" [arg "m" gLfloat];
+    dynamic "glMatrixMode" [arg "mode" gLenum];
+    dynamic "glLoadMatrixd" [arg "m" gLdouble];
+    dynamic "glLoadMatrixf" [arg "m" gLfloat];
+    dynamic "glLoadIdentity" [];
+    dynamic "glFrustum" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
+    dynamic "glIsList" [arg "list" gLuint] ~ret:gLboolean;
+    dynamic "glGetTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glGetTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetPolygonStipple" [arg "mask" gLubyte];
+    dynamic "glGetPixelMapusv" [arg "map" gLenum;arg "values" gLushort];
+    dynamic "glGetPixelMapuiv" [arg "map" gLenum;arg "values" gLuint];
+    dynamic "glGetPixelMapfv" [arg "map" gLenum;arg "values" gLfloat];
+    dynamic "glGetMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetMapiv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLint];
+    dynamic "glGetMapfv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLfloat];
+    dynamic "glGetMapdv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLdouble];
+    dynamic "glGetLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
+    dynamic "glDrawPixels" [arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glCopyPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "type" gLenum];
+    dynamic "glPixelMapusv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLushort];
+    dynamic "glPixelMapuiv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLuint];
+    dynamic "glPixelMapfv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLfloat];
+    dynamic "glPixelTransferi" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glPixelTransferf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glPixelZoom" [arg "xfactor" gLfloat;arg "yfactor" gLfloat];
+    dynamic "glAlphaFunc" [arg "func" gLenum;arg "ref" gLfloat];
+    dynamic "glEvalPoint2" [arg "i" gLint;arg "j" gLint];
+    dynamic "glEvalMesh2" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2;arg "arg3" gLint j1;arg "arg4" gLint j2];
+    dynamic "glEvalPoint1" [arg "i" gLint];
+    dynamic "glEvalMesh1" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2];
+    dynamic "glEvalCoord2fv" [arg "u" gLfloat];
+    dynamic "glEvalCoord2f" [arg "u" gLfloat;arg "v" gLfloat];
+    dynamic "glEvalCoord2dv" [arg "u" gLdouble];
+    dynamic "glEvalCoord2d" [arg "u" gLdouble;arg "v" gLdouble];
+    dynamic "glEvalCoord1fv" [arg "u" gLfloat];
+    dynamic "glEvalCoord1f" [arg "u" gLfloat];
+    dynamic "glEvalCoord1dv" [arg "u" gLdouble];
+    dynamic "glEvalCoord1d" [arg "u" gLdouble];
+    dynamic "glMapGrid2f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "vn" gLint;arg "arg4" gLfloat v1;arg "arg5" gLfloat v2];
+    dynamic "glMapGrid2d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "vn" gLint;arg "arg4" gLdouble v1;arg "arg5" gLdouble v2];
+    dynamic "glMapGrid1f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2];
+    dynamic "glMapGrid1d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2];
+    dynamic "glMap2f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLfloat v1;arg "arg6" gLfloat v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLfloat];
+    dynamic "glMap2d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLdouble v1;arg "arg6" gLdouble v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLdouble];
+    dynamic "glMap1f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "stride" gLint;arg "order" gLint;arg "points" gLfloat];
+    dynamic "glMap1d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "stride" gLint;arg "order" gLint;arg "points" gLdouble];
+    dynamic "glPushAttrib" [arg "mask" gLbitfield];
+    dynamic "glPopAttrib" [];
+    dynamic "glAccum" [arg "op" gLenum;arg "value" gLfloat];
+    dynamic "glIndexMask" [arg "mask" gLuint];
+    dynamic "glClearIndex" [arg "c" gLfloat];
+    dynamic "glClearAccum" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glPushName" [arg "name" gLuint];
+    dynamic "glPopName" [];
+    dynamic "glPassThrough" [arg "token" gLfloat];
+    dynamic "glLoadName" [arg "name" gLuint];
+    dynamic "glInitNames" [];
+    dynamic "glRenderMode" [arg "mode" gLenum] ~ret:gLint;
+    dynamic "glSelectBuffer" [arg "size" gLsizei;arg "buffer" gLuint];
+    dynamic "glFeedbackBuffer" [arg "size" gLsizei;arg "type" gLenum;arg "buffer" gLfloat];
+    dynamic "glTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexGeni" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glTexGenf" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glTexGend" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLdouble];
+    dynamic "glTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexEnvi" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glTexEnvf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glShadeModel" [arg "mode" gLenum];
+    dynamic "glPolygonStipple" [arg "mask" gLubyte];
+    dynamic "glMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glMateriali" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glMaterialf" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glLineStipple" [arg "factor" gLint;arg "pattern" gLushort];
+    dynamic "glLightModeliv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glLightModeli" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glLightModelfv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glLightModelf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glLighti" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glLightf" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glFogiv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glFogi" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glFogfv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glFogf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glColorMaterial" [arg "face" gLenum;arg "mode" gLenum];
+    dynamic "glClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
+    dynamic "glVertex4sv" [arg "v" gLshort];
+    dynamic "glVertex4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glVertex4iv" [arg "v" gLint];
+    dynamic "glVertex4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glVertex4fv" [arg "v" gLfloat];
+    dynamic "glVertex4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glVertex4dv" [arg "v" gLdouble];
+    dynamic "glVertex4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glVertex3sv" [arg "v" gLshort];
+    dynamic "glVertex3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glVertex3iv" [arg "v" gLint];
+    dynamic "glVertex3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glVertex3fv" [arg "v" gLfloat];
+    dynamic "glVertex3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glVertex3dv" [arg "v" gLdouble];
+    dynamic "glVertex3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glVertex2sv" [arg "v" gLshort];
+    dynamic "glVertex2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glVertex2iv" [arg "v" gLint];
+    dynamic "glVertex2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glVertex2fv" [arg "v" gLfloat];
+    dynamic "glVertex2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glVertex2dv" [arg "v" gLdouble];
+    dynamic "glVertex2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glTexCoord4sv" [arg "v" gLshort];
+    dynamic "glTexCoord4s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
+    dynamic "glTexCoord4iv" [arg "v" gLint];
+    dynamic "glTexCoord4i" [arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
+    dynamic "glTexCoord4fv" [arg "v" gLfloat];
+    dynamic "glTexCoord4f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
+    dynamic "glTexCoord4dv" [arg "v" gLdouble];
+    dynamic "glTexCoord4d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
+    dynamic "glTexCoord3sv" [arg "v" gLshort];
+    dynamic "glTexCoord3s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
+    dynamic "glTexCoord3iv" [arg "v" gLint];
+    dynamic "glTexCoord3i" [arg "s" gLint;arg "t" gLint;arg "r" gLint];
+    dynamic "glTexCoord3fv" [arg "v" gLfloat];
+    dynamic "glTexCoord3f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
+    dynamic "glTexCoord3dv" [arg "v" gLdouble];
+    dynamic "glTexCoord3d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
+    dynamic "glTexCoord2sv" [arg "v" gLshort];
+    dynamic "glTexCoord2s" [arg "s" gLshort;arg "t" gLshort];
+    dynamic "glTexCoord2iv" [arg "v" gLint];
+    dynamic "glTexCoord2i" [arg "s" gLint;arg "t" gLint];
+    dynamic "glTexCoord2fv" [arg "v" gLfloat];
+    dynamic "glTexCoord2f" [arg "s" gLfloat;arg "t" gLfloat];
+    dynamic "glTexCoord2dv" [arg "v" gLdouble];
+    dynamic "glTexCoord2d" [arg "s" gLdouble;arg "t" gLdouble];
+    dynamic "glTexCoord1sv" [arg "v" gLshort];
+    dynamic "glTexCoord1s" [arg "s" gLshort];
+    dynamic "glTexCoord1iv" [arg "v" gLint];
+    dynamic "glTexCoord1i" [arg "s" gLint];
+    dynamic "glTexCoord1fv" [arg "v" gLfloat];
+    dynamic "glTexCoord1f" [arg "s" gLfloat];
+    dynamic "glTexCoord1dv" [arg "v" gLdouble];
+    dynamic "glTexCoord1d" [arg "s" gLdouble];
+    dynamic "glRectsv" [arg "arg0" gLshort *v1;arg "arg1" gLshort *v2];
+    dynamic "glRects" [arg "arg0" gLshort x1;arg "arg1" gLshort y1;arg "arg2" gLshort x2;arg "arg3" gLshort y2];
+    dynamic "glRectiv" [arg "arg0" gLint *v1;arg "arg1" gLint *v2];
+    dynamic "glRecti" [arg "arg0" gLint x1;arg "arg1" gLint y1;arg "arg2" gLint x2;arg "arg3" gLint y2];
+    dynamic "glRectfv" [arg "arg0" gLfloat *v1;arg "arg1" gLfloat *v2];
+    dynamic "glRectf" [arg "arg0" gLfloat x1;arg "arg1" gLfloat y1;arg "arg2" gLfloat x2;arg "arg3" gLfloat y2];
+    dynamic "glRectdv" [arg "arg0" gLdouble *v1;arg "arg1" gLdouble *v2];
+    dynamic "glRectd" [arg "arg0" gLdouble x1;arg "arg1" gLdouble y1;arg "arg2" gLdouble x2;arg "arg3" gLdouble y2];
+    dynamic "glRasterPos4sv" [arg "v" gLshort];
+    dynamic "glRasterPos4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glRasterPos4iv" [arg "v" gLint];
+    dynamic "glRasterPos4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glRasterPos4fv" [arg "v" gLfloat];
+    dynamic "glRasterPos4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glRasterPos4dv" [arg "v" gLdouble];
+    dynamic "glRasterPos4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glRasterPos3sv" [arg "v" gLshort];
+    dynamic "glRasterPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glRasterPos3iv" [arg "v" gLint];
+    dynamic "glRasterPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glRasterPos3fv" [arg "v" gLfloat];
+    dynamic "glRasterPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glRasterPos3dv" [arg "v" gLdouble];
+    dynamic "glRasterPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glRasterPos2sv" [arg "v" gLshort];
+    dynamic "glRasterPos2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glRasterPos2iv" [arg "v" gLint];
+    dynamic "glRasterPos2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glRasterPos2fv" [arg "v" gLfloat];
+    dynamic "glRasterPos2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glRasterPos2dv" [arg "v" gLdouble];
+    dynamic "glRasterPos2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glNormal3sv" [arg "v" gLshort];
+    dynamic "glNormal3s" [arg "nx" gLshort;arg "ny" gLshort;arg "nz" gLshort];
+    dynamic "glNormal3iv" [arg "v" gLint];
+    dynamic "glNormal3i" [arg "nx" gLint;arg "ny" gLint;arg "nz" gLint];
+    dynamic "glNormal3fv" [arg "v" gLfloat];
+    dynamic "glNormal3f" [arg "nx" gLfloat;arg "ny" gLfloat;arg "nz" gLfloat];
+    dynamic "glNormal3dv" [arg "v" gLdouble];
+    dynamic "glNormal3d" [arg "nx" gLdouble;arg "ny" gLdouble;arg "nz" gLdouble];
+    dynamic "glNormal3bv" [arg "v" gLbyte];
+    dynamic "glNormal3b" [arg "nx" gLbyte;arg "ny" gLbyte;arg "nz" gLbyte];
+    dynamic "glIndexsv" [arg "c" gLshort];
+    dynamic "glIndexs" [arg "c" gLshort];
+    dynamic "glIndexiv" [arg "c" gLint];
+    dynamic "glIndexi" [arg "c" gLint];
+    dynamic "glIndexfv" [arg "c" gLfloat];
+    dynamic "glIndexf" [arg "c" gLfloat];
+    dynamic "glIndexdv" [arg "c" gLdouble];
+    dynamic "glIndexd" [arg "c" gLdouble];
+    dynamic "glEnd" [];
+    dynamic "glEdgeFlagv" [arg "flag" gLboolean];
+    dynamic "glEdgeFlag" [arg "flag" gLboolean];
+    dynamic "glColor4usv" [arg "v" gLushort];
+    dynamic "glColor4us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort;arg "alpha" gLushort];
+    dynamic "glColor4uiv" [arg "v" gLuint];
+    dynamic "glColor4ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint;arg "alpha" gLuint];
+    dynamic "glColor4ubv" [arg "v" gLubyte];
+    dynamic "glColor4ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte;arg "alpha" gLubyte];
+    dynamic "glColor4sv" [arg "v" gLshort];
+    dynamic "glColor4s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort;arg "alpha" gLshort];
+    dynamic "glColor4iv" [arg "v" gLint];
+    dynamic "glColor4i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint;arg "alpha" gLint];
+    dynamic "glColor4fv" [arg "v" gLfloat];
+    dynamic "glColor4f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glColor4dv" [arg "v" gLdouble];
+    dynamic "glColor4d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble;arg "alpha" gLdouble];
+    dynamic "glColor4bv" [arg "v" gLbyte];
+    dynamic "glColor4b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte;arg "alpha" gLbyte];
+    dynamic "glColor3usv" [arg "v" gLushort];
+    dynamic "glColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
+    dynamic "glColor3uiv" [arg "v" gLuint];
+    dynamic "glColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
+    dynamic "glColor3ubv" [arg "v" gLubyte];
+    dynamic "glColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
+    dynamic "glColor3sv" [arg "v" gLshort];
+    dynamic "glColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
+    dynamic "glColor3iv" [arg "v" gLint];
+    dynamic "glColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
+    dynamic "glColor3fv" [arg "v" gLfloat];
+    dynamic "glColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
+    dynamic "glColor3dv" [arg "v" gLdouble];
+    dynamic "glColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
+    dynamic "glColor3bv" [arg "v" gLbyte];
+    dynamic "glColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
+    dynamic "glBitmap" [arg "width" gLsizei;arg "height" gLsizei;arg "xorig" gLfloat;arg "yorig" gLfloat;arg "xmove" gLfloat;arg "ymove" gLfloat;arg "bitmap" gLubyte];
+    dynamic "glBegin" [arg "mode" gLenum];
+    dynamic "glListBase" [arg "base" gLuint];
+    dynamic "glGenLists" [arg "range" gLsizei] ~ret:gLuint;
+    dynamic "glDeleteLists" [arg "list" gLuint;arg "range" gLsizei];
+    dynamic "glCallLists" [arg "n" gLsizei;arg "type" gLenum;arg "lists" gLvoid];
+    dynamic "glCallList" [arg "list" gLuint];
+    dynamic "glEndList" [];
+    dynamic "glNewList" [arg "list" gLuint;arg "mode" gLenum];
+    dynamic "glPushClientAttrib" [arg "mask" gLbitfield];
+    dynamic "glPopClientAttrib" [];
+    dynamic "glPrioritizeTextures" [arg "n" gLsizei;arg "textures" gLuint;arg "priorities" gLfloat];
+    dynamic "glAreTexturesResident" [arg "n" gLsizei;arg "textures" gLuint;arg "residences" gLboolean] ~ret:gLboolean;
+    dynamic "glVertexPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glTexCoordPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glNormalPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glInterleavedArrays" [arg "format" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glIndexPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glEnableClientState" [arg "array" gLenum];
+    dynamic "glEdgeFlagPointer" [arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glDisableClientState" [arg "array" gLenum];
+    dynamic "glColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glArrayElement" [arg "i" gLint];
+    dynamic "glResetMinmax" [arg "target" gLenum];
+    dynamic "glResetHistogram" [arg "target" gLenum];
+    dynamic "glMinmax" [arg "target" gLenum;arg "internalformat" gLenum;arg "sink" gLboolean];
+    dynamic "glHistogram" [arg "target" gLenum;arg "width" gLsizei;arg "internalformat" gLenum;arg "sink" gLboolean];
+    dynamic "glGetMinmaxParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetMinmaxParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetMinmax" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
+    dynamic "glGetHistogramParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetHistogramParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetHistogram" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
+    dynamic "glSeparableFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid];
+    dynamic "glGetSeparableFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid;arg "span" gLvoid];
+    dynamic "glGetConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetConvolutionFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glCopyConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glCopyConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glConvolutionParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glConvolutionParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glCopyColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "count" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "data" gLvoid];
+    dynamic "glGetColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetColorTable" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
+    dynamic "glCopyColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
+    dynamic "glMultTransposeMatrixd" [arg "m" gLdouble];
+    dynamic "glMultTransposeMatrixf" [arg "m" gLfloat];
+    dynamic "glLoadTransposeMatrixd" [arg "m" gLdouble];
+    dynamic "glLoadTransposeMatrixf" [arg "m" gLfloat];
+    dynamic "glMultiTexCoord4sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord4s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
+    dynamic "glMultiTexCoord4iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord4i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
+    dynamic "glMultiTexCoord4fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord4f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
+    dynamic "glMultiTexCoord4dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord4d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
+    dynamic "glMultiTexCoord3sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord3s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
+    dynamic "glMultiTexCoord3iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord3i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint];
+    dynamic "glMultiTexCoord3fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord3f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
+    dynamic "glMultiTexCoord3dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord3d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
+    dynamic "glMultiTexCoord2sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord2s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort];
+    dynamic "glMultiTexCoord2iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord2i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint];
+    dynamic "glMultiTexCoord2fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord2f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat];
+    dynamic "glMultiTexCoord2dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord2d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble];
+    dynamic "glMultiTexCoord1sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord1s" [arg "target" gLenum;arg "s" gLshort];
+    dynamic "glMultiTexCoord1iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord1i" [arg "target" gLenum;arg "s" gLint];
+    dynamic "glMultiTexCoord1fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord1f" [arg "target" gLenum;arg "s" gLfloat];
+    dynamic "glMultiTexCoord1dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord1d" [arg "target" gLenum;arg "s" gLdouble];
+    dynamic "glClientActiveTexture" [arg "texture" gLenum];
+    dynamic "glWindowPos3sv" [arg "v" gLshort];
+    dynamic "glWindowPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glWindowPos3iv" [arg "v" gLint];
+    dynamic "glWindowPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glWindowPos3fv" [arg "v" gLfloat];
+    dynamic "glWindowPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glWindowPos3dv" [arg "v" gLdouble];
+    dynamic "glWindowPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glWindowPos2sv" [arg "v" gLshort];
+    dynamic "glWindowPos2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glWindowPos2iv" [arg "v" gLint];
+    dynamic "glWindowPos2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glWindowPos2fv" [arg "v" gLfloat];
+    dynamic "glWindowPos2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glWindowPos2dv" [arg "v" gLdouble];
+    dynamic "glWindowPos2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glSecondaryColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glSecondaryColor3usv" [arg "v" gLushort];
+    dynamic "glSecondaryColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
+    dynamic "glSecondaryColor3uiv" [arg "v" gLuint];
+    dynamic "glSecondaryColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
+    dynamic "glSecondaryColor3ubv" [arg "v" gLubyte];
+    dynamic "glSecondaryColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
+    dynamic "glSecondaryColor3sv" [arg "v" gLshort];
+    dynamic "glSecondaryColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
+    dynamic "glSecondaryColor3iv" [arg "v" gLint];
+    dynamic "glSecondaryColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
+    dynamic "glSecondaryColor3fv" [arg "v" gLfloat];
+    dynamic "glSecondaryColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
+    dynamic "glSecondaryColor3dv" [arg "v" gLdouble];
+    dynamic "glSecondaryColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
+    dynamic "glSecondaryColor3bv" [arg "v" gLbyte];
+    dynamic "glSecondaryColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
+    dynamic "glFogCoordPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glFogCoorddv" [arg "coord" gLdouble];
+    dynamic "glFogCoordd" [arg "coord" gLdouble];
+    dynamic "glFogCoordfv" [arg "coord" gLfloat];
+    dynamic "glFogCoordf" [arg "coord" gLfloat];
+    dynamic "glVertexAttrib4usv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttrib4uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttrib4ubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttrib4sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib4s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glVertexAttrib4iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttrib4fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib4f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glVertexAttrib4dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib4d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glVertexAttrib4bv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttrib4Nusv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttrib4Nuiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttrib4Nubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttrib4Nub" [arg "index" gLuint;arg "x" gLubyte;arg "y" gLubyte;arg "z" gLubyte;arg "w" gLubyte];
+    dynamic "glVertexAttrib4Nsv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib4Niv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttrib4Nbv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttrib3sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib3s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glVertexAttrib3fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib3f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glVertexAttrib3dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib3d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glVertexAttrib2sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib2s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort];
+    dynamic "glVertexAttrib2fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib2f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glVertexAttrib2dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib2d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glVertexAttrib1sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib1s" [arg "index" gLuint;arg "x" gLshort];
+    dynamic "glVertexAttrib1fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib1f" [arg "index" gLuint;arg "x" gLfloat];
+    dynamic "glVertexAttrib1dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib1d" [arg "index" gLuint;arg "x" gLdouble];
+    dynamic "glVertexAttribI4usv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttribI4ubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttribI4sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttribI4bv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttribI4uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI3uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI2uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI1uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI4iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI3iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI2iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI1iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI4ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint;arg "w" gLuint];
+    dynamic "glVertexAttribI3ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint];
+    dynamic "glVertexAttribI2ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint];
+    dynamic "glVertexAttribI1ui" [arg "index" gLuint;arg "x" gLuint];
+    dynamic "glVertexAttribI4i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glVertexAttribI3i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
+    dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_4_2_Compatibility [
+  let () = with_class qOpenGLFunctions_4_1_Core [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -13444,455 +13042,8 @@ let () = with_class qOpenGLFunctions_4_2_Compatibility [
     dynamic "glGetShaderPrecisionFormat" [arg "shadertype" gLenum;arg "precisiontype" gLenum;arg "range" gLint;arg "precision" gLint];
     dynamic "glShaderBinary" [arg "count" gLsizei;arg "shaders" gLuint;arg "binaryformat" gLenum;arg "binary" gLvoid;arg "length" gLsizei];
     dynamic "glReleaseShaderCompiler" [];
-    dynamic "glTexStorage3D" [arg "target" gLenum;arg "levels" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei];
-    dynamic "glTexStorage2D" [arg "target" gLenum;arg "levels" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glTexStorage1D" [arg "target" gLenum;arg "levels" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei];
-    dynamic "glMemoryBarrier" [arg "barriers" gLbitfield];
-    dynamic "glBindImageTexture" [arg "unit" gLuint;arg "texture" gLuint;arg "level" gLint;arg "layered" gLboolean;arg "layer" gLint;arg "access" gLenum;arg "format" gLenum];
-    dynamic "glGetActiveAtomicCounterBufferiv" [arg "program" gLuint;arg "bufferIndex" gLuint;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetInternalformativ" [arg "target" gLenum;arg "internalformat" gLenum;arg "pname" gLenum;arg "bufSize" gLsizei;arg "params" gLint];
-    dynamic "glDrawTransformFeedbackStreamInstanced" [arg "mode" gLenum;arg "id" gLuint;arg "stream" gLuint;arg "instancecount" gLsizei];
-    dynamic "glDrawTransformFeedbackInstanced" [arg "mode" gLenum;arg "id" gLuint;arg "instancecount" gLsizei];
-    dynamic "glDrawElementsInstancedBaseVertexBaseInstance" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" void;arg "instancecount" gLsizei;arg "basevertex" gLint;arg "baseinstance" gLuint];
-    dynamic "glDrawElementsInstancedBaseInstance" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" void;arg "instancecount" gLsizei;arg "baseinstance" gLuint];
-    dynamic "glDrawArraysInstancedBaseInstance" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei;arg "baseinstance" gLuint];
-    dynamic "glTranslatef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glTranslated" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glScalef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glScaled" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glRotatef" [arg "angle" gLfloat;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glRotated" [arg "angle" gLdouble;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glPushMatrix" [];
-    dynamic "glPopMatrix" [];
-    dynamic "glOrtho" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
-    dynamic "glMultMatrixd" [arg "m" gLdouble];
-    dynamic "glMultMatrixf" [arg "m" gLfloat];
-    dynamic "glMatrixMode" [arg "mode" gLenum];
-    dynamic "glLoadMatrixd" [arg "m" gLdouble];
-    dynamic "glLoadMatrixf" [arg "m" gLfloat];
-    dynamic "glLoadIdentity" [];
-    dynamic "glFrustum" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
-    dynamic "glIsList" [arg "list" gLuint] ~ret:gLboolean;
-    dynamic "glGetTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glGetTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetPolygonStipple" [arg "mask" gLubyte];
-    dynamic "glGetPixelMapusv" [arg "map" gLenum;arg "values" gLushort];
-    dynamic "glGetPixelMapuiv" [arg "map" gLenum;arg "values" gLuint];
-    dynamic "glGetPixelMapfv" [arg "map" gLenum;arg "values" gLfloat];
-    dynamic "glGetMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetMapiv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLint];
-    dynamic "glGetMapfv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLfloat];
-    dynamic "glGetMapdv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLdouble];
-    dynamic "glGetLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
-    dynamic "glDrawPixels" [arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glCopyPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "type" gLenum];
-    dynamic "glPixelMapusv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLushort];
-    dynamic "glPixelMapuiv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLuint];
-    dynamic "glPixelMapfv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLfloat];
-    dynamic "glPixelTransferi" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glPixelTransferf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glPixelZoom" [arg "xfactor" gLfloat;arg "yfactor" gLfloat];
-    dynamic "glAlphaFunc" [arg "func" gLenum;arg "ref" gLfloat];
-    dynamic "glEvalPoint2" [arg "i" gLint;arg "j" gLint];
-    dynamic "glEvalMesh2" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2;arg "arg3" gLint j1;arg "arg4" gLint j2];
-    dynamic "glEvalPoint1" [arg "i" gLint];
-    dynamic "glEvalMesh1" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2];
-    dynamic "glEvalCoord2fv" [arg "u" gLfloat];
-    dynamic "glEvalCoord2f" [arg "u" gLfloat;arg "v" gLfloat];
-    dynamic "glEvalCoord2dv" [arg "u" gLdouble];
-    dynamic "glEvalCoord2d" [arg "u" gLdouble;arg "v" gLdouble];
-    dynamic "glEvalCoord1fv" [arg "u" gLfloat];
-    dynamic "glEvalCoord1f" [arg "u" gLfloat];
-    dynamic "glEvalCoord1dv" [arg "u" gLdouble];
-    dynamic "glEvalCoord1d" [arg "u" gLdouble];
-    dynamic "glMapGrid2f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "vn" gLint;arg "arg4" gLfloat v1;arg "arg5" gLfloat v2];
-    dynamic "glMapGrid2d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "vn" gLint;arg "arg4" gLdouble v1;arg "arg5" gLdouble v2];
-    dynamic "glMapGrid1f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2];
-    dynamic "glMapGrid1d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2];
-    dynamic "glMap2f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLfloat v1;arg "arg6" gLfloat v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLfloat];
-    dynamic "glMap2d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLdouble v1;arg "arg6" gLdouble v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLdouble];
-    dynamic "glMap1f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "stride" gLint;arg "order" gLint;arg "points" gLfloat];
-    dynamic "glMap1d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "stride" gLint;arg "order" gLint;arg "points" gLdouble];
-    dynamic "glPushAttrib" [arg "mask" gLbitfield];
-    dynamic "glPopAttrib" [];
-    dynamic "glAccum" [arg "op" gLenum;arg "value" gLfloat];
-    dynamic "glIndexMask" [arg "mask" gLuint];
-    dynamic "glClearIndex" [arg "c" gLfloat];
-    dynamic "glClearAccum" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glPushName" [arg "name" gLuint];
-    dynamic "glPopName" [];
-    dynamic "glPassThrough" [arg "token" gLfloat];
-    dynamic "glLoadName" [arg "name" gLuint];
-    dynamic "glInitNames" [];
-    dynamic "glRenderMode" [arg "mode" gLenum] ~ret:gLint;
-    dynamic "glSelectBuffer" [arg "size" gLsizei;arg "buffer" gLuint];
-    dynamic "glFeedbackBuffer" [arg "size" gLsizei;arg "type" gLenum;arg "buffer" gLfloat];
-    dynamic "glTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexGeni" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glTexGenf" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glTexGend" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLdouble];
-    dynamic "glTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexEnvi" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glTexEnvf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glShadeModel" [arg "mode" gLenum];
-    dynamic "glPolygonStipple" [arg "mask" gLubyte];
-    dynamic "glMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glMateriali" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glMaterialf" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glLineStipple" [arg "factor" gLint;arg "pattern" gLushort];
-    dynamic "glLightModeliv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glLightModeli" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glLightModelfv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glLightModelf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glLighti" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glLightf" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glFogiv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glFogi" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glFogfv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glFogf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glColorMaterial" [arg "face" gLenum;arg "mode" gLenum];
-    dynamic "glClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
-    dynamic "glVertex4sv" [arg "v" gLshort];
-    dynamic "glVertex4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glVertex4iv" [arg "v" gLint];
-    dynamic "glVertex4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glVertex4fv" [arg "v" gLfloat];
-    dynamic "glVertex4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glVertex4dv" [arg "v" gLdouble];
-    dynamic "glVertex4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glVertex3sv" [arg "v" gLshort];
-    dynamic "glVertex3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glVertex3iv" [arg "v" gLint];
-    dynamic "glVertex3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glVertex3fv" [arg "v" gLfloat];
-    dynamic "glVertex3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glVertex3dv" [arg "v" gLdouble];
-    dynamic "glVertex3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glVertex2sv" [arg "v" gLshort];
-    dynamic "glVertex2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glVertex2iv" [arg "v" gLint];
-    dynamic "glVertex2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glVertex2fv" [arg "v" gLfloat];
-    dynamic "glVertex2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glVertex2dv" [arg "v" gLdouble];
-    dynamic "glVertex2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glTexCoord4sv" [arg "v" gLshort];
-    dynamic "glTexCoord4s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
-    dynamic "glTexCoord4iv" [arg "v" gLint];
-    dynamic "glTexCoord4i" [arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
-    dynamic "glTexCoord4fv" [arg "v" gLfloat];
-    dynamic "glTexCoord4f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
-    dynamic "glTexCoord4dv" [arg "v" gLdouble];
-    dynamic "glTexCoord4d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
-    dynamic "glTexCoord3sv" [arg "v" gLshort];
-    dynamic "glTexCoord3s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
-    dynamic "glTexCoord3iv" [arg "v" gLint];
-    dynamic "glTexCoord3i" [arg "s" gLint;arg "t" gLint;arg "r" gLint];
-    dynamic "glTexCoord3fv" [arg "v" gLfloat];
-    dynamic "glTexCoord3f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
-    dynamic "glTexCoord3dv" [arg "v" gLdouble];
-    dynamic "glTexCoord3d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
-    dynamic "glTexCoord2sv" [arg "v" gLshort];
-    dynamic "glTexCoord2s" [arg "s" gLshort;arg "t" gLshort];
-    dynamic "glTexCoord2iv" [arg "v" gLint];
-    dynamic "glTexCoord2i" [arg "s" gLint;arg "t" gLint];
-    dynamic "glTexCoord2fv" [arg "v" gLfloat];
-    dynamic "glTexCoord2f" [arg "s" gLfloat;arg "t" gLfloat];
-    dynamic "glTexCoord2dv" [arg "v" gLdouble];
-    dynamic "glTexCoord2d" [arg "s" gLdouble;arg "t" gLdouble];
-    dynamic "glTexCoord1sv" [arg "v" gLshort];
-    dynamic "glTexCoord1s" [arg "s" gLshort];
-    dynamic "glTexCoord1iv" [arg "v" gLint];
-    dynamic "glTexCoord1i" [arg "s" gLint];
-    dynamic "glTexCoord1fv" [arg "v" gLfloat];
-    dynamic "glTexCoord1f" [arg "s" gLfloat];
-    dynamic "glTexCoord1dv" [arg "v" gLdouble];
-    dynamic "glTexCoord1d" [arg "s" gLdouble];
-    dynamic "glRectsv" [arg "arg0" gLshort *v1;arg "arg1" gLshort *v2];
-    dynamic "glRects" [arg "arg0" gLshort x1;arg "arg1" gLshort y1;arg "arg2" gLshort x2;arg "arg3" gLshort y2];
-    dynamic "glRectiv" [arg "arg0" gLint *v1;arg "arg1" gLint *v2];
-    dynamic "glRecti" [arg "arg0" gLint x1;arg "arg1" gLint y1;arg "arg2" gLint x2;arg "arg3" gLint y2];
-    dynamic "glRectfv" [arg "arg0" gLfloat *v1;arg "arg1" gLfloat *v2];
-    dynamic "glRectf" [arg "arg0" gLfloat x1;arg "arg1" gLfloat y1;arg "arg2" gLfloat x2;arg "arg3" gLfloat y2];
-    dynamic "glRectdv" [arg "arg0" gLdouble *v1;arg "arg1" gLdouble *v2];
-    dynamic "glRectd" [arg "arg0" gLdouble x1;arg "arg1" gLdouble y1;arg "arg2" gLdouble x2;arg "arg3" gLdouble y2];
-    dynamic "glRasterPos4sv" [arg "v" gLshort];
-    dynamic "glRasterPos4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glRasterPos4iv" [arg "v" gLint];
-    dynamic "glRasterPos4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glRasterPos4fv" [arg "v" gLfloat];
-    dynamic "glRasterPos4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glRasterPos4dv" [arg "v" gLdouble];
-    dynamic "glRasterPos4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glRasterPos3sv" [arg "v" gLshort];
-    dynamic "glRasterPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glRasterPos3iv" [arg "v" gLint];
-    dynamic "glRasterPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glRasterPos3fv" [arg "v" gLfloat];
-    dynamic "glRasterPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glRasterPos3dv" [arg "v" gLdouble];
-    dynamic "glRasterPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glRasterPos2sv" [arg "v" gLshort];
-    dynamic "glRasterPos2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glRasterPos2iv" [arg "v" gLint];
-    dynamic "glRasterPos2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glRasterPos2fv" [arg "v" gLfloat];
-    dynamic "glRasterPos2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glRasterPos2dv" [arg "v" gLdouble];
-    dynamic "glRasterPos2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glNormal3sv" [arg "v" gLshort];
-    dynamic "glNormal3s" [arg "nx" gLshort;arg "ny" gLshort;arg "nz" gLshort];
-    dynamic "glNormal3iv" [arg "v" gLint];
-    dynamic "glNormal3i" [arg "nx" gLint;arg "ny" gLint;arg "nz" gLint];
-    dynamic "glNormal3fv" [arg "v" gLfloat];
-    dynamic "glNormal3f" [arg "nx" gLfloat;arg "ny" gLfloat;arg "nz" gLfloat];
-    dynamic "glNormal3dv" [arg "v" gLdouble];
-    dynamic "glNormal3d" [arg "nx" gLdouble;arg "ny" gLdouble;arg "nz" gLdouble];
-    dynamic "glNormal3bv" [arg "v" gLbyte];
-    dynamic "glNormal3b" [arg "nx" gLbyte;arg "ny" gLbyte;arg "nz" gLbyte];
-    dynamic "glIndexsv" [arg "c" gLshort];
-    dynamic "glIndexs" [arg "c" gLshort];
-    dynamic "glIndexiv" [arg "c" gLint];
-    dynamic "glIndexi" [arg "c" gLint];
-    dynamic "glIndexfv" [arg "c" gLfloat];
-    dynamic "glIndexf" [arg "c" gLfloat];
-    dynamic "glIndexdv" [arg "c" gLdouble];
-    dynamic "glIndexd" [arg "c" gLdouble];
-    dynamic "glEnd" [];
-    dynamic "glEdgeFlagv" [arg "flag" gLboolean];
-    dynamic "glEdgeFlag" [arg "flag" gLboolean];
-    dynamic "glColor4usv" [arg "v" gLushort];
-    dynamic "glColor4us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort;arg "alpha" gLushort];
-    dynamic "glColor4uiv" [arg "v" gLuint];
-    dynamic "glColor4ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint;arg "alpha" gLuint];
-    dynamic "glColor4ubv" [arg "v" gLubyte];
-    dynamic "glColor4ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte;arg "alpha" gLubyte];
-    dynamic "glColor4sv" [arg "v" gLshort];
-    dynamic "glColor4s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort;arg "alpha" gLshort];
-    dynamic "glColor4iv" [arg "v" gLint];
-    dynamic "glColor4i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint;arg "alpha" gLint];
-    dynamic "glColor4fv" [arg "v" gLfloat];
-    dynamic "glColor4f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glColor4dv" [arg "v" gLdouble];
-    dynamic "glColor4d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble;arg "alpha" gLdouble];
-    dynamic "glColor4bv" [arg "v" gLbyte];
-    dynamic "glColor4b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte;arg "alpha" gLbyte];
-    dynamic "glColor3usv" [arg "v" gLushort];
-    dynamic "glColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
-    dynamic "glColor3uiv" [arg "v" gLuint];
-    dynamic "glColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
-    dynamic "glColor3ubv" [arg "v" gLubyte];
-    dynamic "glColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
-    dynamic "glColor3sv" [arg "v" gLshort];
-    dynamic "glColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
-    dynamic "glColor3iv" [arg "v" gLint];
-    dynamic "glColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
-    dynamic "glColor3fv" [arg "v" gLfloat];
-    dynamic "glColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
-    dynamic "glColor3dv" [arg "v" gLdouble];
-    dynamic "glColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
-    dynamic "glColor3bv" [arg "v" gLbyte];
-    dynamic "glColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
-    dynamic "glBitmap" [arg "width" gLsizei;arg "height" gLsizei;arg "xorig" gLfloat;arg "yorig" gLfloat;arg "xmove" gLfloat;arg "ymove" gLfloat;arg "bitmap" gLubyte];
-    dynamic "glBegin" [arg "mode" gLenum];
-    dynamic "glListBase" [arg "base" gLuint];
-    dynamic "glGenLists" [arg "range" gLsizei] ~ret:gLuint;
-    dynamic "glDeleteLists" [arg "list" gLuint;arg "range" gLsizei];
-    dynamic "glCallLists" [arg "n" gLsizei;arg "type" gLenum;arg "lists" gLvoid];
-    dynamic "glCallList" [arg "list" gLuint];
-    dynamic "glEndList" [];
-    dynamic "glNewList" [arg "list" gLuint;arg "mode" gLenum];
-    dynamic "glPushClientAttrib" [arg "mask" gLbitfield];
-    dynamic "glPopClientAttrib" [];
-    dynamic "glPrioritizeTextures" [arg "n" gLsizei;arg "textures" gLuint;arg "priorities" gLfloat];
-    dynamic "glAreTexturesResident" [arg "n" gLsizei;arg "textures" gLuint;arg "residences" gLboolean] ~ret:gLboolean;
-    dynamic "glVertexPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glTexCoordPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glNormalPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glInterleavedArrays" [arg "format" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glIndexPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glEnableClientState" [arg "array" gLenum];
-    dynamic "glEdgeFlagPointer" [arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glDisableClientState" [arg "array" gLenum];
-    dynamic "glColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glArrayElement" [arg "i" gLint];
-    dynamic "glResetMinmax" [arg "target" gLenum];
-    dynamic "glResetHistogram" [arg "target" gLenum];
-    dynamic "glMinmax" [arg "target" gLenum;arg "internalformat" gLenum;arg "sink" gLboolean];
-    dynamic "glHistogram" [arg "target" gLenum;arg "width" gLsizei;arg "internalformat" gLenum;arg "sink" gLboolean];
-    dynamic "glGetMinmaxParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetMinmaxParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetMinmax" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
-    dynamic "glGetHistogramParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetHistogramParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetHistogram" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
-    dynamic "glSeparableFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid];
-    dynamic "glGetSeparableFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid;arg "span" gLvoid];
-    dynamic "glGetConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetConvolutionFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glCopyConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glCopyConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glConvolutionParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glConvolutionParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glCopyColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "count" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "data" gLvoid];
-    dynamic "glGetColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetColorTable" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
-    dynamic "glCopyColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
-    dynamic "glMultTransposeMatrixd" [arg "m" gLdouble];
-    dynamic "glMultTransposeMatrixf" [arg "m" gLfloat];
-    dynamic "glLoadTransposeMatrixd" [arg "m" gLdouble];
-    dynamic "glLoadTransposeMatrixf" [arg "m" gLfloat];
-    dynamic "glMultiTexCoord4sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord4s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
-    dynamic "glMultiTexCoord4iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord4i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
-    dynamic "glMultiTexCoord4fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord4f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
-    dynamic "glMultiTexCoord4dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord4d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
-    dynamic "glMultiTexCoord3sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord3s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
-    dynamic "glMultiTexCoord3iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord3i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint];
-    dynamic "glMultiTexCoord3fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord3f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
-    dynamic "glMultiTexCoord3dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord3d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
-    dynamic "glMultiTexCoord2sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord2s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort];
-    dynamic "glMultiTexCoord2iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord2i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint];
-    dynamic "glMultiTexCoord2fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord2f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat];
-    dynamic "glMultiTexCoord2dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord2d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble];
-    dynamic "glMultiTexCoord1sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord1s" [arg "target" gLenum;arg "s" gLshort];
-    dynamic "glMultiTexCoord1iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord1i" [arg "target" gLenum;arg "s" gLint];
-    dynamic "glMultiTexCoord1fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord1f" [arg "target" gLenum;arg "s" gLfloat];
-    dynamic "glMultiTexCoord1dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord1d" [arg "target" gLenum;arg "s" gLdouble];
-    dynamic "glClientActiveTexture" [arg "texture" gLenum];
-    dynamic "glWindowPos3sv" [arg "v" gLshort];
-    dynamic "glWindowPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glWindowPos3iv" [arg "v" gLint];
-    dynamic "glWindowPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glWindowPos3fv" [arg "v" gLfloat];
-    dynamic "glWindowPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glWindowPos3dv" [arg "v" gLdouble];
-    dynamic "glWindowPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glWindowPos2sv" [arg "v" gLshort];
-    dynamic "glWindowPos2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glWindowPos2iv" [arg "v" gLint];
-    dynamic "glWindowPos2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glWindowPos2fv" [arg "v" gLfloat];
-    dynamic "glWindowPos2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glWindowPos2dv" [arg "v" gLdouble];
-    dynamic "glWindowPos2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glSecondaryColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glSecondaryColor3usv" [arg "v" gLushort];
-    dynamic "glSecondaryColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
-    dynamic "glSecondaryColor3uiv" [arg "v" gLuint];
-    dynamic "glSecondaryColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
-    dynamic "glSecondaryColor3ubv" [arg "v" gLubyte];
-    dynamic "glSecondaryColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
-    dynamic "glSecondaryColor3sv" [arg "v" gLshort];
-    dynamic "glSecondaryColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
-    dynamic "glSecondaryColor3iv" [arg "v" gLint];
-    dynamic "glSecondaryColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
-    dynamic "glSecondaryColor3fv" [arg "v" gLfloat];
-    dynamic "glSecondaryColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
-    dynamic "glSecondaryColor3dv" [arg "v" gLdouble];
-    dynamic "glSecondaryColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
-    dynamic "glSecondaryColor3bv" [arg "v" gLbyte];
-    dynamic "glSecondaryColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
-    dynamic "glFogCoordPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glFogCoorddv" [arg "coord" gLdouble];
-    dynamic "glFogCoordd" [arg "coord" gLdouble];
-    dynamic "glFogCoordfv" [arg "coord" gLfloat];
-    dynamic "glFogCoordf" [arg "coord" gLfloat];
-    dynamic "glVertexAttrib4usv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttrib4uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttrib4ubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttrib4sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib4s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glVertexAttrib4iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttrib4fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib4f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glVertexAttrib4dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib4d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glVertexAttrib4bv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttrib4Nusv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttrib4Nuiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttrib4Nubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttrib4Nub" [arg "index" gLuint;arg "x" gLubyte;arg "y" gLubyte;arg "z" gLubyte;arg "w" gLubyte];
-    dynamic "glVertexAttrib4Nsv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib4Niv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttrib4Nbv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttrib3sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib3s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glVertexAttrib3fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib3f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glVertexAttrib3dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib3d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glVertexAttrib2sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib2s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort];
-    dynamic "glVertexAttrib2fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib2f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glVertexAttrib2dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib2d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glVertexAttrib1sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib1s" [arg "index" gLuint;arg "x" gLshort];
-    dynamic "glVertexAttrib1fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib1f" [arg "index" gLuint;arg "x" gLfloat];
-    dynamic "glVertexAttrib1dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib1d" [arg "index" gLuint;arg "x" gLdouble];
-    dynamic "glVertexAttribI4usv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttribI4ubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttribI4sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttribI4bv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttribI4uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI3uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI2uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI1uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI4iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI3iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI2iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI1iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI4ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint;arg "w" gLuint];
-    dynamic "glVertexAttribI3ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint];
-    dynamic "glVertexAttribI2ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint];
-    dynamic "glVertexAttribI1ui" [arg "index" gLuint;arg "x" gLuint];
-    dynamic "glVertexAttribI4i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glVertexAttribI3i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
-    dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_4_2_Core [
+  let () = with_class qOpenGLFunctions_4_2_Compatibility [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -14362,8 +13513,443 @@ let () = with_class qOpenGLFunctions_4_2_Core [
     dynamic "glDrawElementsInstancedBaseVertexBaseInstance" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" void;arg "instancecount" gLsizei;arg "basevertex" gLint;arg "baseinstance" gLuint];
     dynamic "glDrawElementsInstancedBaseInstance" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" void;arg "instancecount" gLsizei;arg "baseinstance" gLuint];
     dynamic "glDrawArraysInstancedBaseInstance" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei;arg "baseinstance" gLuint];
+    dynamic "glTranslatef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glTranslated" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glScalef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glScaled" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glRotatef" [arg "angle" gLfloat;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glRotated" [arg "angle" gLdouble;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glPushMatrix" [];
+    dynamic "glPopMatrix" [];
+    dynamic "glOrtho" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
+    dynamic "glMultMatrixd" [arg "m" gLdouble];
+    dynamic "glMultMatrixf" [arg "m" gLfloat];
+    dynamic "glMatrixMode" [arg "mode" gLenum];
+    dynamic "glLoadMatrixd" [arg "m" gLdouble];
+    dynamic "glLoadMatrixf" [arg "m" gLfloat];
+    dynamic "glLoadIdentity" [];
+    dynamic "glFrustum" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
+    dynamic "glIsList" [arg "list" gLuint] ~ret:gLboolean;
+    dynamic "glGetTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glGetTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetPolygonStipple" [arg "mask" gLubyte];
+    dynamic "glGetPixelMapusv" [arg "map" gLenum;arg "values" gLushort];
+    dynamic "glGetPixelMapuiv" [arg "map" gLenum;arg "values" gLuint];
+    dynamic "glGetPixelMapfv" [arg "map" gLenum;arg "values" gLfloat];
+    dynamic "glGetMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetMapiv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLint];
+    dynamic "glGetMapfv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLfloat];
+    dynamic "glGetMapdv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLdouble];
+    dynamic "glGetLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
+    dynamic "glDrawPixels" [arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glCopyPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "type" gLenum];
+    dynamic "glPixelMapusv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLushort];
+    dynamic "glPixelMapuiv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLuint];
+    dynamic "glPixelMapfv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLfloat];
+    dynamic "glPixelTransferi" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glPixelTransferf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glPixelZoom" [arg "xfactor" gLfloat;arg "yfactor" gLfloat];
+    dynamic "glAlphaFunc" [arg "func" gLenum;arg "ref" gLfloat];
+    dynamic "glEvalPoint2" [arg "i" gLint;arg "j" gLint];
+    dynamic "glEvalMesh2" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2;arg "arg3" gLint j1;arg "arg4" gLint j2];
+    dynamic "glEvalPoint1" [arg "i" gLint];
+    dynamic "glEvalMesh1" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2];
+    dynamic "glEvalCoord2fv" [arg "u" gLfloat];
+    dynamic "glEvalCoord2f" [arg "u" gLfloat;arg "v" gLfloat];
+    dynamic "glEvalCoord2dv" [arg "u" gLdouble];
+    dynamic "glEvalCoord2d" [arg "u" gLdouble;arg "v" gLdouble];
+    dynamic "glEvalCoord1fv" [arg "u" gLfloat];
+    dynamic "glEvalCoord1f" [arg "u" gLfloat];
+    dynamic "glEvalCoord1dv" [arg "u" gLdouble];
+    dynamic "glEvalCoord1d" [arg "u" gLdouble];
+    dynamic "glMapGrid2f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "vn" gLint;arg "arg4" gLfloat v1;arg "arg5" gLfloat v2];
+    dynamic "glMapGrid2d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "vn" gLint;arg "arg4" gLdouble v1;arg "arg5" gLdouble v2];
+    dynamic "glMapGrid1f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2];
+    dynamic "glMapGrid1d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2];
+    dynamic "glMap2f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLfloat v1;arg "arg6" gLfloat v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLfloat];
+    dynamic "glMap2d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLdouble v1;arg "arg6" gLdouble v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLdouble];
+    dynamic "glMap1f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "stride" gLint;arg "order" gLint;arg "points" gLfloat];
+    dynamic "glMap1d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "stride" gLint;arg "order" gLint;arg "points" gLdouble];
+    dynamic "glPushAttrib" [arg "mask" gLbitfield];
+    dynamic "glPopAttrib" [];
+    dynamic "glAccum" [arg "op" gLenum;arg "value" gLfloat];
+    dynamic "glIndexMask" [arg "mask" gLuint];
+    dynamic "glClearIndex" [arg "c" gLfloat];
+    dynamic "glClearAccum" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glPushName" [arg "name" gLuint];
+    dynamic "glPopName" [];
+    dynamic "glPassThrough" [arg "token" gLfloat];
+    dynamic "glLoadName" [arg "name" gLuint];
+    dynamic "glInitNames" [];
+    dynamic "glRenderMode" [arg "mode" gLenum] ~ret:gLint;
+    dynamic "glSelectBuffer" [arg "size" gLsizei;arg "buffer" gLuint];
+    dynamic "glFeedbackBuffer" [arg "size" gLsizei;arg "type" gLenum;arg "buffer" gLfloat];
+    dynamic "glTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexGeni" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glTexGenf" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glTexGend" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLdouble];
+    dynamic "glTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexEnvi" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glTexEnvf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glShadeModel" [arg "mode" gLenum];
+    dynamic "glPolygonStipple" [arg "mask" gLubyte];
+    dynamic "glMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glMateriali" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glMaterialf" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glLineStipple" [arg "factor" gLint;arg "pattern" gLushort];
+    dynamic "glLightModeliv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glLightModeli" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glLightModelfv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glLightModelf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glLighti" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glLightf" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glFogiv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glFogi" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glFogfv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glFogf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glColorMaterial" [arg "face" gLenum;arg "mode" gLenum];
+    dynamic "glClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
+    dynamic "glVertex4sv" [arg "v" gLshort];
+    dynamic "glVertex4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glVertex4iv" [arg "v" gLint];
+    dynamic "glVertex4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glVertex4fv" [arg "v" gLfloat];
+    dynamic "glVertex4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glVertex4dv" [arg "v" gLdouble];
+    dynamic "glVertex4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glVertex3sv" [arg "v" gLshort];
+    dynamic "glVertex3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glVertex3iv" [arg "v" gLint];
+    dynamic "glVertex3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glVertex3fv" [arg "v" gLfloat];
+    dynamic "glVertex3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glVertex3dv" [arg "v" gLdouble];
+    dynamic "glVertex3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glVertex2sv" [arg "v" gLshort];
+    dynamic "glVertex2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glVertex2iv" [arg "v" gLint];
+    dynamic "glVertex2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glVertex2fv" [arg "v" gLfloat];
+    dynamic "glVertex2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glVertex2dv" [arg "v" gLdouble];
+    dynamic "glVertex2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glTexCoord4sv" [arg "v" gLshort];
+    dynamic "glTexCoord4s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
+    dynamic "glTexCoord4iv" [arg "v" gLint];
+    dynamic "glTexCoord4i" [arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
+    dynamic "glTexCoord4fv" [arg "v" gLfloat];
+    dynamic "glTexCoord4f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
+    dynamic "glTexCoord4dv" [arg "v" gLdouble];
+    dynamic "glTexCoord4d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
+    dynamic "glTexCoord3sv" [arg "v" gLshort];
+    dynamic "glTexCoord3s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
+    dynamic "glTexCoord3iv" [arg "v" gLint];
+    dynamic "glTexCoord3i" [arg "s" gLint;arg "t" gLint;arg "r" gLint];
+    dynamic "glTexCoord3fv" [arg "v" gLfloat];
+    dynamic "glTexCoord3f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
+    dynamic "glTexCoord3dv" [arg "v" gLdouble];
+    dynamic "glTexCoord3d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
+    dynamic "glTexCoord2sv" [arg "v" gLshort];
+    dynamic "glTexCoord2s" [arg "s" gLshort;arg "t" gLshort];
+    dynamic "glTexCoord2iv" [arg "v" gLint];
+    dynamic "glTexCoord2i" [arg "s" gLint;arg "t" gLint];
+    dynamic "glTexCoord2fv" [arg "v" gLfloat];
+    dynamic "glTexCoord2f" [arg "s" gLfloat;arg "t" gLfloat];
+    dynamic "glTexCoord2dv" [arg "v" gLdouble];
+    dynamic "glTexCoord2d" [arg "s" gLdouble;arg "t" gLdouble];
+    dynamic "glTexCoord1sv" [arg "v" gLshort];
+    dynamic "glTexCoord1s" [arg "s" gLshort];
+    dynamic "glTexCoord1iv" [arg "v" gLint];
+    dynamic "glTexCoord1i" [arg "s" gLint];
+    dynamic "glTexCoord1fv" [arg "v" gLfloat];
+    dynamic "glTexCoord1f" [arg "s" gLfloat];
+    dynamic "glTexCoord1dv" [arg "v" gLdouble];
+    dynamic "glTexCoord1d" [arg "s" gLdouble];
+    dynamic "glRectsv" [arg "arg0" gLshort *v1;arg "arg1" gLshort *v2];
+    dynamic "glRects" [arg "arg0" gLshort x1;arg "arg1" gLshort y1;arg "arg2" gLshort x2;arg "arg3" gLshort y2];
+    dynamic "glRectiv" [arg "arg0" gLint *v1;arg "arg1" gLint *v2];
+    dynamic "glRecti" [arg "arg0" gLint x1;arg "arg1" gLint y1;arg "arg2" gLint x2;arg "arg3" gLint y2];
+    dynamic "glRectfv" [arg "arg0" gLfloat *v1;arg "arg1" gLfloat *v2];
+    dynamic "glRectf" [arg "arg0" gLfloat x1;arg "arg1" gLfloat y1;arg "arg2" gLfloat x2;arg "arg3" gLfloat y2];
+    dynamic "glRectdv" [arg "arg0" gLdouble *v1;arg "arg1" gLdouble *v2];
+    dynamic "glRectd" [arg "arg0" gLdouble x1;arg "arg1" gLdouble y1;arg "arg2" gLdouble x2;arg "arg3" gLdouble y2];
+    dynamic "glRasterPos4sv" [arg "v" gLshort];
+    dynamic "glRasterPos4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glRasterPos4iv" [arg "v" gLint];
+    dynamic "glRasterPos4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glRasterPos4fv" [arg "v" gLfloat];
+    dynamic "glRasterPos4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glRasterPos4dv" [arg "v" gLdouble];
+    dynamic "glRasterPos4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glRasterPos3sv" [arg "v" gLshort];
+    dynamic "glRasterPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glRasterPos3iv" [arg "v" gLint];
+    dynamic "glRasterPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glRasterPos3fv" [arg "v" gLfloat];
+    dynamic "glRasterPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glRasterPos3dv" [arg "v" gLdouble];
+    dynamic "glRasterPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glRasterPos2sv" [arg "v" gLshort];
+    dynamic "glRasterPos2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glRasterPos2iv" [arg "v" gLint];
+    dynamic "glRasterPos2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glRasterPos2fv" [arg "v" gLfloat];
+    dynamic "glRasterPos2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glRasterPos2dv" [arg "v" gLdouble];
+    dynamic "glRasterPos2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glNormal3sv" [arg "v" gLshort];
+    dynamic "glNormal3s" [arg "nx" gLshort;arg "ny" gLshort;arg "nz" gLshort];
+    dynamic "glNormal3iv" [arg "v" gLint];
+    dynamic "glNormal3i" [arg "nx" gLint;arg "ny" gLint;arg "nz" gLint];
+    dynamic "glNormal3fv" [arg "v" gLfloat];
+    dynamic "glNormal3f" [arg "nx" gLfloat;arg "ny" gLfloat;arg "nz" gLfloat];
+    dynamic "glNormal3dv" [arg "v" gLdouble];
+    dynamic "glNormal3d" [arg "nx" gLdouble;arg "ny" gLdouble;arg "nz" gLdouble];
+    dynamic "glNormal3bv" [arg "v" gLbyte];
+    dynamic "glNormal3b" [arg "nx" gLbyte;arg "ny" gLbyte;arg "nz" gLbyte];
+    dynamic "glIndexsv" [arg "c" gLshort];
+    dynamic "glIndexs" [arg "c" gLshort];
+    dynamic "glIndexiv" [arg "c" gLint];
+    dynamic "glIndexi" [arg "c" gLint];
+    dynamic "glIndexfv" [arg "c" gLfloat];
+    dynamic "glIndexf" [arg "c" gLfloat];
+    dynamic "glIndexdv" [arg "c" gLdouble];
+    dynamic "glIndexd" [arg "c" gLdouble];
+    dynamic "glEnd" [];
+    dynamic "glEdgeFlagv" [arg "flag" gLboolean];
+    dynamic "glEdgeFlag" [arg "flag" gLboolean];
+    dynamic "glColor4usv" [arg "v" gLushort];
+    dynamic "glColor4us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort;arg "alpha" gLushort];
+    dynamic "glColor4uiv" [arg "v" gLuint];
+    dynamic "glColor4ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint;arg "alpha" gLuint];
+    dynamic "glColor4ubv" [arg "v" gLubyte];
+    dynamic "glColor4ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte;arg "alpha" gLubyte];
+    dynamic "glColor4sv" [arg "v" gLshort];
+    dynamic "glColor4s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort;arg "alpha" gLshort];
+    dynamic "glColor4iv" [arg "v" gLint];
+    dynamic "glColor4i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint;arg "alpha" gLint];
+    dynamic "glColor4fv" [arg "v" gLfloat];
+    dynamic "glColor4f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glColor4dv" [arg "v" gLdouble];
+    dynamic "glColor4d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble;arg "alpha" gLdouble];
+    dynamic "glColor4bv" [arg "v" gLbyte];
+    dynamic "glColor4b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte;arg "alpha" gLbyte];
+    dynamic "glColor3usv" [arg "v" gLushort];
+    dynamic "glColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
+    dynamic "glColor3uiv" [arg "v" gLuint];
+    dynamic "glColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
+    dynamic "glColor3ubv" [arg "v" gLubyte];
+    dynamic "glColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
+    dynamic "glColor3sv" [arg "v" gLshort];
+    dynamic "glColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
+    dynamic "glColor3iv" [arg "v" gLint];
+    dynamic "glColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
+    dynamic "glColor3fv" [arg "v" gLfloat];
+    dynamic "glColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
+    dynamic "glColor3dv" [arg "v" gLdouble];
+    dynamic "glColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
+    dynamic "glColor3bv" [arg "v" gLbyte];
+    dynamic "glColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
+    dynamic "glBitmap" [arg "width" gLsizei;arg "height" gLsizei;arg "xorig" gLfloat;arg "yorig" gLfloat;arg "xmove" gLfloat;arg "ymove" gLfloat;arg "bitmap" gLubyte];
+    dynamic "glBegin" [arg "mode" gLenum];
+    dynamic "glListBase" [arg "base" gLuint];
+    dynamic "glGenLists" [arg "range" gLsizei] ~ret:gLuint;
+    dynamic "glDeleteLists" [arg "list" gLuint;arg "range" gLsizei];
+    dynamic "glCallLists" [arg "n" gLsizei;arg "type" gLenum;arg "lists" gLvoid];
+    dynamic "glCallList" [arg "list" gLuint];
+    dynamic "glEndList" [];
+    dynamic "glNewList" [arg "list" gLuint;arg "mode" gLenum];
+    dynamic "glPushClientAttrib" [arg "mask" gLbitfield];
+    dynamic "glPopClientAttrib" [];
+    dynamic "glPrioritizeTextures" [arg "n" gLsizei;arg "textures" gLuint;arg "priorities" gLfloat];
+    dynamic "glAreTexturesResident" [arg "n" gLsizei;arg "textures" gLuint;arg "residences" gLboolean] ~ret:gLboolean;
+    dynamic "glVertexPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glTexCoordPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glNormalPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glInterleavedArrays" [arg "format" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glIndexPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glEnableClientState" [arg "array" gLenum];
+    dynamic "glEdgeFlagPointer" [arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glDisableClientState" [arg "array" gLenum];
+    dynamic "glColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glArrayElement" [arg "i" gLint];
+    dynamic "glResetMinmax" [arg "target" gLenum];
+    dynamic "glResetHistogram" [arg "target" gLenum];
+    dynamic "glMinmax" [arg "target" gLenum;arg "internalformat" gLenum;arg "sink" gLboolean];
+    dynamic "glHistogram" [arg "target" gLenum;arg "width" gLsizei;arg "internalformat" gLenum;arg "sink" gLboolean];
+    dynamic "glGetMinmaxParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetMinmaxParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetMinmax" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
+    dynamic "glGetHistogramParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetHistogramParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetHistogram" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
+    dynamic "glSeparableFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid];
+    dynamic "glGetSeparableFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid;arg "span" gLvoid];
+    dynamic "glGetConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetConvolutionFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glCopyConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glCopyConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glConvolutionParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glConvolutionParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glCopyColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "count" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "data" gLvoid];
+    dynamic "glGetColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetColorTable" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
+    dynamic "glCopyColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
+    dynamic "glMultTransposeMatrixd" [arg "m" gLdouble];
+    dynamic "glMultTransposeMatrixf" [arg "m" gLfloat];
+    dynamic "glLoadTransposeMatrixd" [arg "m" gLdouble];
+    dynamic "glLoadTransposeMatrixf" [arg "m" gLfloat];
+    dynamic "glMultiTexCoord4sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord4s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
+    dynamic "glMultiTexCoord4iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord4i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
+    dynamic "glMultiTexCoord4fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord4f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
+    dynamic "glMultiTexCoord4dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord4d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
+    dynamic "glMultiTexCoord3sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord3s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
+    dynamic "glMultiTexCoord3iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord3i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint];
+    dynamic "glMultiTexCoord3fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord3f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
+    dynamic "glMultiTexCoord3dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord3d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
+    dynamic "glMultiTexCoord2sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord2s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort];
+    dynamic "glMultiTexCoord2iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord2i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint];
+    dynamic "glMultiTexCoord2fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord2f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat];
+    dynamic "glMultiTexCoord2dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord2d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble];
+    dynamic "glMultiTexCoord1sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord1s" [arg "target" gLenum;arg "s" gLshort];
+    dynamic "glMultiTexCoord1iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord1i" [arg "target" gLenum;arg "s" gLint];
+    dynamic "glMultiTexCoord1fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord1f" [arg "target" gLenum;arg "s" gLfloat];
+    dynamic "glMultiTexCoord1dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord1d" [arg "target" gLenum;arg "s" gLdouble];
+    dynamic "glClientActiveTexture" [arg "texture" gLenum];
+    dynamic "glWindowPos3sv" [arg "v" gLshort];
+    dynamic "glWindowPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glWindowPos3iv" [arg "v" gLint];
+    dynamic "glWindowPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glWindowPos3fv" [arg "v" gLfloat];
+    dynamic "glWindowPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glWindowPos3dv" [arg "v" gLdouble];
+    dynamic "glWindowPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glWindowPos2sv" [arg "v" gLshort];
+    dynamic "glWindowPos2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glWindowPos2iv" [arg "v" gLint];
+    dynamic "glWindowPos2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glWindowPos2fv" [arg "v" gLfloat];
+    dynamic "glWindowPos2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glWindowPos2dv" [arg "v" gLdouble];
+    dynamic "glWindowPos2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glSecondaryColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glSecondaryColor3usv" [arg "v" gLushort];
+    dynamic "glSecondaryColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
+    dynamic "glSecondaryColor3uiv" [arg "v" gLuint];
+    dynamic "glSecondaryColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
+    dynamic "glSecondaryColor3ubv" [arg "v" gLubyte];
+    dynamic "glSecondaryColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
+    dynamic "glSecondaryColor3sv" [arg "v" gLshort];
+    dynamic "glSecondaryColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
+    dynamic "glSecondaryColor3iv" [arg "v" gLint];
+    dynamic "glSecondaryColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
+    dynamic "glSecondaryColor3fv" [arg "v" gLfloat];
+    dynamic "glSecondaryColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
+    dynamic "glSecondaryColor3dv" [arg "v" gLdouble];
+    dynamic "glSecondaryColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
+    dynamic "glSecondaryColor3bv" [arg "v" gLbyte];
+    dynamic "glSecondaryColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
+    dynamic "glFogCoordPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glFogCoorddv" [arg "coord" gLdouble];
+    dynamic "glFogCoordd" [arg "coord" gLdouble];
+    dynamic "glFogCoordfv" [arg "coord" gLfloat];
+    dynamic "glFogCoordf" [arg "coord" gLfloat];
+    dynamic "glVertexAttrib4usv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttrib4uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttrib4ubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttrib4sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib4s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glVertexAttrib4iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttrib4fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib4f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glVertexAttrib4dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib4d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glVertexAttrib4bv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttrib4Nusv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttrib4Nuiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttrib4Nubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttrib4Nub" [arg "index" gLuint;arg "x" gLubyte;arg "y" gLubyte;arg "z" gLubyte;arg "w" gLubyte];
+    dynamic "glVertexAttrib4Nsv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib4Niv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttrib4Nbv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttrib3sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib3s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glVertexAttrib3fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib3f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glVertexAttrib3dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib3d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glVertexAttrib2sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib2s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort];
+    dynamic "glVertexAttrib2fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib2f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glVertexAttrib2dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib2d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glVertexAttrib1sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib1s" [arg "index" gLuint;arg "x" gLshort];
+    dynamic "glVertexAttrib1fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib1f" [arg "index" gLuint;arg "x" gLfloat];
+    dynamic "glVertexAttrib1dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib1d" [arg "index" gLuint;arg "x" gLdouble];
+    dynamic "glVertexAttribI4usv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttribI4ubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttribI4sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttribI4bv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttribI4uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI3uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI2uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI1uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI4iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI3iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI2iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI1iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI4ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint;arg "w" gLuint];
+    dynamic "glVertexAttribI3ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint];
+    dynamic "glVertexAttribI2ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint];
+    dynamic "glVertexAttribI1ui" [arg "index" gLuint;arg "x" gLuint];
+    dynamic "glVertexAttribI4i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glVertexAttribI3i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
+    dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_4_3_Compatibility [
+  let () = with_class qOpenGLFunctions_4_2_Core [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -14833,476 +14419,8 @@ let () = with_class qOpenGLFunctions_4_3_Compatibility [
     dynamic "glDrawElementsInstancedBaseVertexBaseInstance" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" void;arg "instancecount" gLsizei;arg "basevertex" gLint;arg "baseinstance" gLuint];
     dynamic "glDrawElementsInstancedBaseInstance" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" void;arg "instancecount" gLsizei;arg "baseinstance" gLuint];
     dynamic "glDrawArraysInstancedBaseInstance" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei;arg "baseinstance" gLuint];
-    dynamic "glTexStorage3DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "fixedsamplelocations" gLboolean];
-    dynamic "glTexStorage2DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "fixedsamplelocations" gLboolean];
-    dynamic "glTexBufferRange" [arg "target" gLenum;arg "internalformat" gLenum;arg "buffer" gLuint;arg "offset" gLintptr;arg "size" gLsizeiptr];
-    dynamic "glShaderStorageBlockBinding" [arg "program" gLuint;arg "storageBlockIndex" gLuint;arg "storageBlockBinding" gLuint];
-    dynamic "glGetProgramResourceLocationIndex" [arg "program" gLuint;arg "programInterface" gLenum;arg "name" gLchar] ~ret:gLint;
-    dynamic "glGetProgramResourceLocation" [arg "program" gLuint;arg "programInterface" gLenum;arg "name" gLchar] ~ret:gLint;
-    dynamic "glGetProgramResourceiv" [arg "program" gLuint;arg "programInterface" gLenum;arg "index" gLuint;arg "propCount" gLsizei;arg "props" gLenum;arg "bufSize" gLsizei;arg "length" gLsizei;arg "params" gLint];
-    dynamic "glGetProgramResourceName" [arg "program" gLuint;arg "programInterface" gLenum;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
-    dynamic "glGetProgramResourceIndex" [arg "program" gLuint;arg "programInterface" gLenum;arg "name" gLchar] ~ret:gLuint;
-    dynamic "glGetProgramInterfaceiv" [arg "program" gLuint;arg "programInterface" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glMultiDrawElementsIndirect" [arg "mode" gLenum;arg "type" gLenum;arg "indirect" void;arg "drawcount" gLsizei;arg "stride" gLsizei];
-    dynamic "glMultiDrawArraysIndirect" [arg "mode" gLenum;arg "indirect" void;arg "drawcount" gLsizei;arg "stride" gLsizei];
-    dynamic "glInvalidateSubFramebuffer" [arg "target" gLenum;arg "numAttachments" gLsizei;arg "attachments" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glInvalidateFramebuffer" [arg "target" gLenum;arg "numAttachments" gLsizei;arg "attachments" gLenum];
-    dynamic "glInvalidateBufferData" [arg "buffer" gLuint];
-    dynamic "glInvalidateBufferSubData" [arg "buffer" gLuint;arg "offset" gLintptr;arg "length" gLsizeiptr];
-    dynamic "glInvalidateTexImage" [arg "texture" gLuint;arg "level" gLint];
-    dynamic "glInvalidateTexSubImage" [arg "texture" gLuint;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei];
-    dynamic "glGetInternalformati64v" [arg "target" gLenum;arg "internalformat" gLenum;arg "pname" gLenum;arg "bufSize" gLsizei;arg "params" gLint64];
-    dynamic "glGetFramebufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glFramebufferParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glVertexBindingDivisor" [arg "bindingindex" gLuint;arg "divisor" gLuint];
-    dynamic "glVertexAttribBinding" [arg "attribindex" gLuint;arg "bindingindex" gLuint];
-    dynamic "glVertexAttribLFormat" [arg "attribindex" gLuint;arg "size" gLint;arg "type" gLenum;arg "relativeoffset" gLuint];
-    dynamic "glVertexAttribIFormat" [arg "attribindex" gLuint;arg "size" gLint;arg "type" gLenum;arg "relativeoffset" gLuint];
-    dynamic "glVertexAttribFormat" [arg "attribindex" gLuint;arg "size" gLint;arg "type" gLenum;arg "normalized" gLboolean;arg "relativeoffset" gLuint];
-    dynamic "glBindVertexBuffer" [arg "bindingindex" gLuint;arg "buffer" gLuint;arg "offset" gLintptr;arg "stride" gLsizei];
-    dynamic "glTextureView" [arg "texture" gLuint;arg "target" gLenum;arg "origtexture" gLuint;arg "internalformat" gLenum;arg "minlevel" gLuint;arg "numlevels" gLuint;arg "minlayer" gLuint;arg "numlayers" gLuint];
-    dynamic "glCopyImageSubData" [arg "srcName" gLuint;arg "srcTarget" gLenum;arg "srcLevel" gLint;arg "srcX" gLint;arg "srcY" gLint;arg "srcZ" gLint;arg "dstName" gLuint;arg "dstTarget" gLenum;arg "dstLevel" gLint;arg "dstX" gLint;arg "dstY" gLint;arg "dstZ" gLint;arg "srcWidth" gLsizei;arg "srcHeight" gLsizei;arg "srcDepth" gLsizei];
-    dynamic "glDispatchComputeIndirect" [arg "indirect" gLintptr];
-    dynamic "glDispatchCompute" [arg "num_groups_x" gLuint;arg "num_groups_y" gLuint;arg "num_groups_z" gLuint];
-    dynamic "glClearBufferSubData" [arg "target" gLenum;arg "internalformat" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "format" gLenum;arg "type" gLenum;arg "data" void];
-    dynamic "glClearBufferData" [arg "target" gLenum;arg "internalformat" gLenum;arg "format" gLenum;arg "type" gLenum;arg "data" void];
-    dynamic "glTranslatef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glTranslated" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glScalef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glScaled" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glRotatef" [arg "angle" gLfloat;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glRotated" [arg "angle" gLdouble;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glPushMatrix" [];
-    dynamic "glPopMatrix" [];
-    dynamic "glOrtho" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
-    dynamic "glMultMatrixd" [arg "m" gLdouble];
-    dynamic "glMultMatrixf" [arg "m" gLfloat];
-    dynamic "glMatrixMode" [arg "mode" gLenum];
-    dynamic "glLoadMatrixd" [arg "m" gLdouble];
-    dynamic "glLoadMatrixf" [arg "m" gLfloat];
-    dynamic "glLoadIdentity" [];
-    dynamic "glFrustum" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
-    dynamic "glIsList" [arg "list" gLuint] ~ret:gLboolean;
-    dynamic "glGetTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glGetTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetPolygonStipple" [arg "mask" gLubyte];
-    dynamic "glGetPixelMapusv" [arg "map" gLenum;arg "values" gLushort];
-    dynamic "glGetPixelMapuiv" [arg "map" gLenum;arg "values" gLuint];
-    dynamic "glGetPixelMapfv" [arg "map" gLenum;arg "values" gLfloat];
-    dynamic "glGetMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetMapiv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLint];
-    dynamic "glGetMapfv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLfloat];
-    dynamic "glGetMapdv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLdouble];
-    dynamic "glGetLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
-    dynamic "glDrawPixels" [arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
-    dynamic "glCopyPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "type" gLenum];
-    dynamic "glPixelMapusv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLushort];
-    dynamic "glPixelMapuiv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLuint];
-    dynamic "glPixelMapfv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLfloat];
-    dynamic "glPixelTransferi" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glPixelTransferf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glPixelZoom" [arg "xfactor" gLfloat;arg "yfactor" gLfloat];
-    dynamic "glAlphaFunc" [arg "func" gLenum;arg "ref" gLfloat];
-    dynamic "glEvalPoint2" [arg "i" gLint;arg "j" gLint];
-    dynamic "glEvalMesh2" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2;arg "arg3" gLint j1;arg "arg4" gLint j2];
-    dynamic "glEvalPoint1" [arg "i" gLint];
-    dynamic "glEvalMesh1" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2];
-    dynamic "glEvalCoord2fv" [arg "u" gLfloat];
-    dynamic "glEvalCoord2f" [arg "u" gLfloat;arg "v" gLfloat];
-    dynamic "glEvalCoord2dv" [arg "u" gLdouble];
-    dynamic "glEvalCoord2d" [arg "u" gLdouble;arg "v" gLdouble];
-    dynamic "glEvalCoord1fv" [arg "u" gLfloat];
-    dynamic "glEvalCoord1f" [arg "u" gLfloat];
-    dynamic "glEvalCoord1dv" [arg "u" gLdouble];
-    dynamic "glEvalCoord1d" [arg "u" gLdouble];
-    dynamic "glMapGrid2f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "vn" gLint;arg "arg4" gLfloat v1;arg "arg5" gLfloat v2];
-    dynamic "glMapGrid2d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "vn" gLint;arg "arg4" gLdouble v1;arg "arg5" gLdouble v2];
-    dynamic "glMapGrid1f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2];
-    dynamic "glMapGrid1d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2];
-    dynamic "glMap2f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLfloat v1;arg "arg6" gLfloat v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLfloat];
-    dynamic "glMap2d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLdouble v1;arg "arg6" gLdouble v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLdouble];
-    dynamic "glMap1f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "stride" gLint;arg "order" gLint;arg "points" gLfloat];
-    dynamic "glMap1d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "stride" gLint;arg "order" gLint;arg "points" gLdouble];
-    dynamic "glPushAttrib" [arg "mask" gLbitfield];
-    dynamic "glPopAttrib" [];
-    dynamic "glAccum" [arg "op" gLenum;arg "value" gLfloat];
-    dynamic "glIndexMask" [arg "mask" gLuint];
-    dynamic "glClearIndex" [arg "c" gLfloat];
-    dynamic "glClearAccum" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glPushName" [arg "name" gLuint];
-    dynamic "glPopName" [];
-    dynamic "glPassThrough" [arg "token" gLfloat];
-    dynamic "glLoadName" [arg "name" gLuint];
-    dynamic "glInitNames" [];
-    dynamic "glRenderMode" [arg "mode" gLenum] ~ret:gLint;
-    dynamic "glSelectBuffer" [arg "size" gLsizei;arg "buffer" gLuint];
-    dynamic "glFeedbackBuffer" [arg "size" gLsizei;arg "type" gLenum;arg "buffer" gLfloat];
-    dynamic "glTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexGeni" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glTexGenf" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
-    dynamic "glTexGend" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLdouble];
-    dynamic "glTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glTexEnvi" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glTexEnvf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glShadeModel" [arg "mode" gLenum];
-    dynamic "glPolygonStipple" [arg "mask" gLubyte];
-    dynamic "glMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glMateriali" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glMaterialf" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glLineStipple" [arg "factor" gLint;arg "pattern" gLushort];
-    dynamic "glLightModeliv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glLightModeli" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glLightModelfv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glLightModelf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glLighti" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLint];
-    dynamic "glLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glLightf" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glFogiv" [arg "pname" gLenum;arg "params" gLint];
-    dynamic "glFogi" [arg "pname" gLenum;arg "param" gLint];
-    dynamic "glFogfv" [arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glFogf" [arg "pname" gLenum;arg "param" gLfloat];
-    dynamic "glColorMaterial" [arg "face" gLenum;arg "mode" gLenum];
-    dynamic "glClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
-    dynamic "glVertex4sv" [arg "v" gLshort];
-    dynamic "glVertex4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glVertex4iv" [arg "v" gLint];
-    dynamic "glVertex4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glVertex4fv" [arg "v" gLfloat];
-    dynamic "glVertex4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glVertex4dv" [arg "v" gLdouble];
-    dynamic "glVertex4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glVertex3sv" [arg "v" gLshort];
-    dynamic "glVertex3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glVertex3iv" [arg "v" gLint];
-    dynamic "glVertex3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glVertex3fv" [arg "v" gLfloat];
-    dynamic "glVertex3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glVertex3dv" [arg "v" gLdouble];
-    dynamic "glVertex3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glVertex2sv" [arg "v" gLshort];
-    dynamic "glVertex2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glVertex2iv" [arg "v" gLint];
-    dynamic "glVertex2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glVertex2fv" [arg "v" gLfloat];
-    dynamic "glVertex2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glVertex2dv" [arg "v" gLdouble];
-    dynamic "glVertex2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glTexCoord4sv" [arg "v" gLshort];
-    dynamic "glTexCoord4s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
-    dynamic "glTexCoord4iv" [arg "v" gLint];
-    dynamic "glTexCoord4i" [arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
-    dynamic "glTexCoord4fv" [arg "v" gLfloat];
-    dynamic "glTexCoord4f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
-    dynamic "glTexCoord4dv" [arg "v" gLdouble];
-    dynamic "glTexCoord4d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
-    dynamic "glTexCoord3sv" [arg "v" gLshort];
-    dynamic "glTexCoord3s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
-    dynamic "glTexCoord3iv" [arg "v" gLint];
-    dynamic "glTexCoord3i" [arg "s" gLint;arg "t" gLint;arg "r" gLint];
-    dynamic "glTexCoord3fv" [arg "v" gLfloat];
-    dynamic "glTexCoord3f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
-    dynamic "glTexCoord3dv" [arg "v" gLdouble];
-    dynamic "glTexCoord3d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
-    dynamic "glTexCoord2sv" [arg "v" gLshort];
-    dynamic "glTexCoord2s" [arg "s" gLshort;arg "t" gLshort];
-    dynamic "glTexCoord2iv" [arg "v" gLint];
-    dynamic "glTexCoord2i" [arg "s" gLint;arg "t" gLint];
-    dynamic "glTexCoord2fv" [arg "v" gLfloat];
-    dynamic "glTexCoord2f" [arg "s" gLfloat;arg "t" gLfloat];
-    dynamic "glTexCoord2dv" [arg "v" gLdouble];
-    dynamic "glTexCoord2d" [arg "s" gLdouble;arg "t" gLdouble];
-    dynamic "glTexCoord1sv" [arg "v" gLshort];
-    dynamic "glTexCoord1s" [arg "s" gLshort];
-    dynamic "glTexCoord1iv" [arg "v" gLint];
-    dynamic "glTexCoord1i" [arg "s" gLint];
-    dynamic "glTexCoord1fv" [arg "v" gLfloat];
-    dynamic "glTexCoord1f" [arg "s" gLfloat];
-    dynamic "glTexCoord1dv" [arg "v" gLdouble];
-    dynamic "glTexCoord1d" [arg "s" gLdouble];
-    dynamic "glRectsv" [arg "arg0" gLshort *v1;arg "arg1" gLshort *v2];
-    dynamic "glRects" [arg "arg0" gLshort x1;arg "arg1" gLshort y1;arg "arg2" gLshort x2;arg "arg3" gLshort y2];
-    dynamic "glRectiv" [arg "arg0" gLint *v1;arg "arg1" gLint *v2];
-    dynamic "glRecti" [arg "arg0" gLint x1;arg "arg1" gLint y1;arg "arg2" gLint x2;arg "arg3" gLint y2];
-    dynamic "glRectfv" [arg "arg0" gLfloat *v1;arg "arg1" gLfloat *v2];
-    dynamic "glRectf" [arg "arg0" gLfloat x1;arg "arg1" gLfloat y1;arg "arg2" gLfloat x2;arg "arg3" gLfloat y2];
-    dynamic "glRectdv" [arg "arg0" gLdouble *v1;arg "arg1" gLdouble *v2];
-    dynamic "glRectd" [arg "arg0" gLdouble x1;arg "arg1" gLdouble y1;arg "arg2" gLdouble x2;arg "arg3" gLdouble y2];
-    dynamic "glRasterPos4sv" [arg "v" gLshort];
-    dynamic "glRasterPos4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glRasterPos4iv" [arg "v" gLint];
-    dynamic "glRasterPos4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glRasterPos4fv" [arg "v" gLfloat];
-    dynamic "glRasterPos4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glRasterPos4dv" [arg "v" gLdouble];
-    dynamic "glRasterPos4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glRasterPos3sv" [arg "v" gLshort];
-    dynamic "glRasterPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glRasterPos3iv" [arg "v" gLint];
-    dynamic "glRasterPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glRasterPos3fv" [arg "v" gLfloat];
-    dynamic "glRasterPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glRasterPos3dv" [arg "v" gLdouble];
-    dynamic "glRasterPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glRasterPos2sv" [arg "v" gLshort];
-    dynamic "glRasterPos2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glRasterPos2iv" [arg "v" gLint];
-    dynamic "glRasterPos2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glRasterPos2fv" [arg "v" gLfloat];
-    dynamic "glRasterPos2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glRasterPos2dv" [arg "v" gLdouble];
-    dynamic "glRasterPos2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glNormal3sv" [arg "v" gLshort];
-    dynamic "glNormal3s" [arg "nx" gLshort;arg "ny" gLshort;arg "nz" gLshort];
-    dynamic "glNormal3iv" [arg "v" gLint];
-    dynamic "glNormal3i" [arg "nx" gLint;arg "ny" gLint;arg "nz" gLint];
-    dynamic "glNormal3fv" [arg "v" gLfloat];
-    dynamic "glNormal3f" [arg "nx" gLfloat;arg "ny" gLfloat;arg "nz" gLfloat];
-    dynamic "glNormal3dv" [arg "v" gLdouble];
-    dynamic "glNormal3d" [arg "nx" gLdouble;arg "ny" gLdouble;arg "nz" gLdouble];
-    dynamic "glNormal3bv" [arg "v" gLbyte];
-    dynamic "glNormal3b" [arg "nx" gLbyte;arg "ny" gLbyte;arg "nz" gLbyte];
-    dynamic "glIndexsv" [arg "c" gLshort];
-    dynamic "glIndexs" [arg "c" gLshort];
-    dynamic "glIndexiv" [arg "c" gLint];
-    dynamic "glIndexi" [arg "c" gLint];
-    dynamic "glIndexfv" [arg "c" gLfloat];
-    dynamic "glIndexf" [arg "c" gLfloat];
-    dynamic "glIndexdv" [arg "c" gLdouble];
-    dynamic "glIndexd" [arg "c" gLdouble];
-    dynamic "glEnd" [];
-    dynamic "glEdgeFlagv" [arg "flag" gLboolean];
-    dynamic "glEdgeFlag" [arg "flag" gLboolean];
-    dynamic "glColor4usv" [arg "v" gLushort];
-    dynamic "glColor4us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort;arg "alpha" gLushort];
-    dynamic "glColor4uiv" [arg "v" gLuint];
-    dynamic "glColor4ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint;arg "alpha" gLuint];
-    dynamic "glColor4ubv" [arg "v" gLubyte];
-    dynamic "glColor4ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte;arg "alpha" gLubyte];
-    dynamic "glColor4sv" [arg "v" gLshort];
-    dynamic "glColor4s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort;arg "alpha" gLshort];
-    dynamic "glColor4iv" [arg "v" gLint];
-    dynamic "glColor4i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint;arg "alpha" gLint];
-    dynamic "glColor4fv" [arg "v" gLfloat];
-    dynamic "glColor4f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
-    dynamic "glColor4dv" [arg "v" gLdouble];
-    dynamic "glColor4d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble;arg "alpha" gLdouble];
-    dynamic "glColor4bv" [arg "v" gLbyte];
-    dynamic "glColor4b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte;arg "alpha" gLbyte];
-    dynamic "glColor3usv" [arg "v" gLushort];
-    dynamic "glColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
-    dynamic "glColor3uiv" [arg "v" gLuint];
-    dynamic "glColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
-    dynamic "glColor3ubv" [arg "v" gLubyte];
-    dynamic "glColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
-    dynamic "glColor3sv" [arg "v" gLshort];
-    dynamic "glColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
-    dynamic "glColor3iv" [arg "v" gLint];
-    dynamic "glColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
-    dynamic "glColor3fv" [arg "v" gLfloat];
-    dynamic "glColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
-    dynamic "glColor3dv" [arg "v" gLdouble];
-    dynamic "glColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
-    dynamic "glColor3bv" [arg "v" gLbyte];
-    dynamic "glColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
-    dynamic "glBitmap" [arg "width" gLsizei;arg "height" gLsizei;arg "xorig" gLfloat;arg "yorig" gLfloat;arg "xmove" gLfloat;arg "ymove" gLfloat;arg "bitmap" gLubyte];
-    dynamic "glBegin" [arg "mode" gLenum];
-    dynamic "glListBase" [arg "base" gLuint];
-    dynamic "glGenLists" [arg "range" gLsizei] ~ret:gLuint;
-    dynamic "glDeleteLists" [arg "list" gLuint;arg "range" gLsizei];
-    dynamic "glCallLists" [arg "n" gLsizei;arg "type" gLenum;arg "lists" gLvoid];
-    dynamic "glCallList" [arg "list" gLuint];
-    dynamic "glEndList" [];
-    dynamic "glNewList" [arg "list" gLuint;arg "mode" gLenum];
-    dynamic "glPushClientAttrib" [arg "mask" gLbitfield];
-    dynamic "glPopClientAttrib" [];
-    dynamic "glPrioritizeTextures" [arg "n" gLsizei;arg "textures" gLuint;arg "priorities" gLfloat];
-    dynamic "glAreTexturesResident" [arg "n" gLsizei;arg "textures" gLuint;arg "residences" gLboolean] ~ret:gLboolean;
-    dynamic "glVertexPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glTexCoordPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glNormalPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glInterleavedArrays" [arg "format" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glIndexPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glEnableClientState" [arg "array" gLenum];
-    dynamic "glEdgeFlagPointer" [arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glDisableClientState" [arg "array" gLenum];
-    dynamic "glColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glArrayElement" [arg "i" gLint];
-    dynamic "glResetMinmax" [arg "target" gLenum];
-    dynamic "glResetHistogram" [arg "target" gLenum];
-    dynamic "glMinmax" [arg "target" gLenum;arg "internalformat" gLenum;arg "sink" gLboolean];
-    dynamic "glHistogram" [arg "target" gLenum;arg "width" gLsizei;arg "internalformat" gLenum;arg "sink" gLboolean];
-    dynamic "glGetMinmaxParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetMinmaxParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetMinmax" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
-    dynamic "glGetHistogramParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetHistogramParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetHistogram" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
-    dynamic "glSeparableFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid];
-    dynamic "glGetSeparableFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid;arg "span" gLvoid];
-    dynamic "glGetConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetConvolutionFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glCopyConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
-    dynamic "glCopyConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glConvolutionParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glConvolutionParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
-    dynamic "glCopyColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "count" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "data" gLvoid];
-    dynamic "glGetColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glGetColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glGetColorTable" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
-    dynamic "glCopyColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
-    dynamic "glColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
-    dynamic "glColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
-    dynamic "glColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
-    dynamic "glMultTransposeMatrixd" [arg "m" gLdouble];
-    dynamic "glMultTransposeMatrixf" [arg "m" gLfloat];
-    dynamic "glLoadTransposeMatrixd" [arg "m" gLdouble];
-    dynamic "glLoadTransposeMatrixf" [arg "m" gLfloat];
-    dynamic "glMultiTexCoord4sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord4s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
-    dynamic "glMultiTexCoord4iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord4i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
-    dynamic "glMultiTexCoord4fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord4f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
-    dynamic "glMultiTexCoord4dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord4d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
-    dynamic "glMultiTexCoord3sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord3s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
-    dynamic "glMultiTexCoord3iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord3i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint];
-    dynamic "glMultiTexCoord3fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord3f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
-    dynamic "glMultiTexCoord3dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord3d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
-    dynamic "glMultiTexCoord2sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord2s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort];
-    dynamic "glMultiTexCoord2iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord2i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint];
-    dynamic "glMultiTexCoord2fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord2f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat];
-    dynamic "glMultiTexCoord2dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord2d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble];
-    dynamic "glMultiTexCoord1sv" [arg "target" gLenum;arg "v" gLshort];
-    dynamic "glMultiTexCoord1s" [arg "target" gLenum;arg "s" gLshort];
-    dynamic "glMultiTexCoord1iv" [arg "target" gLenum;arg "v" gLint];
-    dynamic "glMultiTexCoord1i" [arg "target" gLenum;arg "s" gLint];
-    dynamic "glMultiTexCoord1fv" [arg "target" gLenum;arg "v" gLfloat];
-    dynamic "glMultiTexCoord1f" [arg "target" gLenum;arg "s" gLfloat];
-    dynamic "glMultiTexCoord1dv" [arg "target" gLenum;arg "v" gLdouble];
-    dynamic "glMultiTexCoord1d" [arg "target" gLenum;arg "s" gLdouble];
-    dynamic "glClientActiveTexture" [arg "texture" gLenum];
-    dynamic "glWindowPos3sv" [arg "v" gLshort];
-    dynamic "glWindowPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glWindowPos3iv" [arg "v" gLint];
-    dynamic "glWindowPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glWindowPos3fv" [arg "v" gLfloat];
-    dynamic "glWindowPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glWindowPos3dv" [arg "v" gLdouble];
-    dynamic "glWindowPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glWindowPos2sv" [arg "v" gLshort];
-    dynamic "glWindowPos2s" [arg "x" gLshort;arg "y" gLshort];
-    dynamic "glWindowPos2iv" [arg "v" gLint];
-    dynamic "glWindowPos2i" [arg "x" gLint;arg "y" gLint];
-    dynamic "glWindowPos2fv" [arg "v" gLfloat];
-    dynamic "glWindowPos2f" [arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glWindowPos2dv" [arg "v" gLdouble];
-    dynamic "glWindowPos2d" [arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glSecondaryColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glSecondaryColor3usv" [arg "v" gLushort];
-    dynamic "glSecondaryColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
-    dynamic "glSecondaryColor3uiv" [arg "v" gLuint];
-    dynamic "glSecondaryColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
-    dynamic "glSecondaryColor3ubv" [arg "v" gLubyte];
-    dynamic "glSecondaryColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
-    dynamic "glSecondaryColor3sv" [arg "v" gLshort];
-    dynamic "glSecondaryColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
-    dynamic "glSecondaryColor3iv" [arg "v" gLint];
-    dynamic "glSecondaryColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
-    dynamic "glSecondaryColor3fv" [arg "v" gLfloat];
-    dynamic "glSecondaryColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
-    dynamic "glSecondaryColor3dv" [arg "v" gLdouble];
-    dynamic "glSecondaryColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
-    dynamic "glSecondaryColor3bv" [arg "v" gLbyte];
-    dynamic "glSecondaryColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
-    dynamic "glFogCoordPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
-    dynamic "glFogCoorddv" [arg "coord" gLdouble];
-    dynamic "glFogCoordd" [arg "coord" gLdouble];
-    dynamic "glFogCoordfv" [arg "coord" gLfloat];
-    dynamic "glFogCoordf" [arg "coord" gLfloat];
-    dynamic "glVertexAttrib4usv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttrib4uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttrib4ubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttrib4sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib4s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
-    dynamic "glVertexAttrib4iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttrib4fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib4f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
-    dynamic "glVertexAttrib4dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib4d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
-    dynamic "glVertexAttrib4bv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttrib4Nusv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttrib4Nuiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttrib4Nubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttrib4Nub" [arg "index" gLuint;arg "x" gLubyte;arg "y" gLubyte;arg "z" gLubyte;arg "w" gLubyte];
-    dynamic "glVertexAttrib4Nsv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib4Niv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttrib4Nbv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttrib3sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib3s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
-    dynamic "glVertexAttrib3fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib3f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
-    dynamic "glVertexAttrib3dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib3d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
-    dynamic "glVertexAttrib2sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib2s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort];
-    dynamic "glVertexAttrib2fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib2f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat];
-    dynamic "glVertexAttrib2dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib2d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble];
-    dynamic "glVertexAttrib1sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttrib1s" [arg "index" gLuint;arg "x" gLshort];
-    dynamic "glVertexAttrib1fv" [arg "index" gLuint;arg "v" gLfloat];
-    dynamic "glVertexAttrib1f" [arg "index" gLuint;arg "x" gLfloat];
-    dynamic "glVertexAttrib1dv" [arg "index" gLuint;arg "v" gLdouble];
-    dynamic "glVertexAttrib1d" [arg "index" gLuint;arg "x" gLdouble];
-    dynamic "glVertexAttribI4usv" [arg "index" gLuint;arg "v" gLushort];
-    dynamic "glVertexAttribI4ubv" [arg "index" gLuint;arg "v" gLubyte];
-    dynamic "glVertexAttribI4sv" [arg "index" gLuint;arg "v" gLshort];
-    dynamic "glVertexAttribI4bv" [arg "index" gLuint;arg "v" gLbyte];
-    dynamic "glVertexAttribI4uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI3uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI2uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI1uiv" [arg "index" gLuint;arg "v" gLuint];
-    dynamic "glVertexAttribI4iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI3iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI2iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI1iv" [arg "index" gLuint;arg "v" gLint];
-    dynamic "glVertexAttribI4ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint;arg "w" gLuint];
-    dynamic "glVertexAttribI3ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint];
-    dynamic "glVertexAttribI2ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint];
-    dynamic "glVertexAttribI1ui" [arg "index" gLuint;arg "x" gLuint];
-    dynamic "glVertexAttribI4i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
-    dynamic "glVertexAttribI3i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint];
-    dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
-    dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_4_3_Core [
+  let () = with_class qOpenGLFunctions_4_3_Compatibility [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -15805,8 +14923,947 @@ let () = with_class qOpenGLFunctions_4_3_Core [
     dynamic "glDispatchCompute" [arg "num_groups_x" gLuint;arg "num_groups_y" gLuint;arg "num_groups_z" gLuint];
     dynamic "glClearBufferSubData" [arg "target" gLenum;arg "internalformat" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "format" gLenum;arg "type" gLenum;arg "data" void];
     dynamic "glClearBufferData" [arg "target" gLenum;arg "internalformat" gLenum;arg "format" gLenum;arg "type" gLenum;arg "data" void];
+    dynamic "glTranslatef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glTranslated" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glScalef" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glScaled" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glRotatef" [arg "angle" gLfloat;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glRotated" [arg "angle" gLdouble;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glPushMatrix" [];
+    dynamic "glPopMatrix" [];
+    dynamic "glOrtho" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
+    dynamic "glMultMatrixd" [arg "m" gLdouble];
+    dynamic "glMultMatrixf" [arg "m" gLfloat];
+    dynamic "glMatrixMode" [arg "mode" gLenum];
+    dynamic "glLoadMatrixd" [arg "m" gLdouble];
+    dynamic "glLoadMatrixf" [arg "m" gLfloat];
+    dynamic "glLoadIdentity" [];
+    dynamic "glFrustum" [arg "left" gLdouble;arg "right" gLdouble;arg "bottom" gLdouble;arg "top" gLdouble;arg "zNear" gLdouble;arg "zFar" gLdouble];
+    dynamic "glIsList" [arg "list" gLuint] ~ret:gLboolean;
+    dynamic "glGetTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glGetTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetPolygonStipple" [arg "mask" gLubyte];
+    dynamic "glGetPixelMapusv" [arg "map" gLenum;arg "values" gLushort];
+    dynamic "glGetPixelMapuiv" [arg "map" gLenum;arg "values" gLuint];
+    dynamic "glGetPixelMapfv" [arg "map" gLenum;arg "values" gLfloat];
+    dynamic "glGetMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetMapiv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLint];
+    dynamic "glGetMapfv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLfloat];
+    dynamic "glGetMapdv" [arg "target" gLenum;arg "query" gLenum;arg "v" gLdouble];
+    dynamic "glGetLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
+    dynamic "glDrawPixels" [arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glCopyPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "type" gLenum];
+    dynamic "glPixelMapusv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLushort];
+    dynamic "glPixelMapuiv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLuint];
+    dynamic "glPixelMapfv" [arg "map" gLenum;arg "mapsize" gLint;arg "values" gLfloat];
+    dynamic "glPixelTransferi" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glPixelTransferf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glPixelZoom" [arg "xfactor" gLfloat;arg "yfactor" gLfloat];
+    dynamic "glAlphaFunc" [arg "func" gLenum;arg "ref" gLfloat];
+    dynamic "glEvalPoint2" [arg "i" gLint;arg "j" gLint];
+    dynamic "glEvalMesh2" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2;arg "arg3" gLint j1;arg "arg4" gLint j2];
+    dynamic "glEvalPoint1" [arg "i" gLint];
+    dynamic "glEvalMesh1" [arg "mode" gLenum;arg "arg1" gLint i1;arg "arg2" gLint i2];
+    dynamic "glEvalCoord2fv" [arg "u" gLfloat];
+    dynamic "glEvalCoord2f" [arg "u" gLfloat;arg "v" gLfloat];
+    dynamic "glEvalCoord2dv" [arg "u" gLdouble];
+    dynamic "glEvalCoord2d" [arg "u" gLdouble;arg "v" gLdouble];
+    dynamic "glEvalCoord1fv" [arg "u" gLfloat];
+    dynamic "glEvalCoord1f" [arg "u" gLfloat];
+    dynamic "glEvalCoord1dv" [arg "u" gLdouble];
+    dynamic "glEvalCoord1d" [arg "u" gLdouble];
+    dynamic "glMapGrid2f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "vn" gLint;arg "arg4" gLfloat v1;arg "arg5" gLfloat v2];
+    dynamic "glMapGrid2d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "vn" gLint;arg "arg4" gLdouble v1;arg "arg5" gLdouble v2];
+    dynamic "glMapGrid1f" [arg "un" gLint;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2];
+    dynamic "glMapGrid1d" [arg "un" gLint;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2];
+    dynamic "glMap2f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLfloat v1;arg "arg6" gLfloat v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLfloat];
+    dynamic "glMap2d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "ustride" gLint;arg "uorder" gLint;arg "arg5" gLdouble v1;arg "arg6" gLdouble v2;arg "vstride" gLint;arg "vorder" gLint;arg "points" gLdouble];
+    dynamic "glMap1f" [arg "target" gLenum;arg "arg1" gLfloat u1;arg "arg2" gLfloat u2;arg "stride" gLint;arg "order" gLint;arg "points" gLfloat];
+    dynamic "glMap1d" [arg "target" gLenum;arg "arg1" gLdouble u1;arg "arg2" gLdouble u2;arg "stride" gLint;arg "order" gLint;arg "points" gLdouble];
+    dynamic "glPushAttrib" [arg "mask" gLbitfield];
+    dynamic "glPopAttrib" [];
+    dynamic "glAccum" [arg "op" gLenum;arg "value" gLfloat];
+    dynamic "glIndexMask" [arg "mask" gLuint];
+    dynamic "glClearIndex" [arg "c" gLfloat];
+    dynamic "glClearAccum" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glPushName" [arg "name" gLuint];
+    dynamic "glPopName" [];
+    dynamic "glPassThrough" [arg "token" gLfloat];
+    dynamic "glLoadName" [arg "name" gLuint];
+    dynamic "glInitNames" [];
+    dynamic "glRenderMode" [arg "mode" gLenum] ~ret:gLint;
+    dynamic "glSelectBuffer" [arg "size" gLsizei;arg "buffer" gLuint];
+    dynamic "glFeedbackBuffer" [arg "size" gLsizei;arg "type" gLenum;arg "buffer" gLfloat];
+    dynamic "glTexGeniv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexGeni" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glTexGenfv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glTexGenf" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glTexGendv" [arg "coord" gLenum;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glTexGend" [arg "coord" gLenum;arg "pname" gLenum;arg "param" gLdouble];
+    dynamic "glTexEnviv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexEnvi" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glTexEnvfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glTexEnvf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glShadeModel" [arg "mode" gLenum];
+    dynamic "glPolygonStipple" [arg "mask" gLubyte];
+    dynamic "glMaterialiv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glMateriali" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glMaterialfv" [arg "face" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glMaterialf" [arg "face" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glLineStipple" [arg "factor" gLint;arg "pattern" gLushort];
+    dynamic "glLightModeliv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glLightModeli" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glLightModelfv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glLightModelf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glLightiv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glLighti" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glLightfv" [arg "light" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glLightf" [arg "light" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glFogiv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glFogi" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glFogfv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glFogf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glColorMaterial" [arg "face" gLenum;arg "mode" gLenum];
+    dynamic "glClipPlane" [arg "plane" gLenum;arg "equation" gLdouble];
+    dynamic "glVertex4sv" [arg "v" gLshort];
+    dynamic "glVertex4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glVertex4iv" [arg "v" gLint];
+    dynamic "glVertex4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glVertex4fv" [arg "v" gLfloat];
+    dynamic "glVertex4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glVertex4dv" [arg "v" gLdouble];
+    dynamic "glVertex4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glVertex3sv" [arg "v" gLshort];
+    dynamic "glVertex3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glVertex3iv" [arg "v" gLint];
+    dynamic "glVertex3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glVertex3fv" [arg "v" gLfloat];
+    dynamic "glVertex3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glVertex3dv" [arg "v" gLdouble];
+    dynamic "glVertex3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glVertex2sv" [arg "v" gLshort];
+    dynamic "glVertex2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glVertex2iv" [arg "v" gLint];
+    dynamic "glVertex2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glVertex2fv" [arg "v" gLfloat];
+    dynamic "glVertex2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glVertex2dv" [arg "v" gLdouble];
+    dynamic "glVertex2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glTexCoord4sv" [arg "v" gLshort];
+    dynamic "glTexCoord4s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
+    dynamic "glTexCoord4iv" [arg "v" gLint];
+    dynamic "glTexCoord4i" [arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
+    dynamic "glTexCoord4fv" [arg "v" gLfloat];
+    dynamic "glTexCoord4f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
+    dynamic "glTexCoord4dv" [arg "v" gLdouble];
+    dynamic "glTexCoord4d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
+    dynamic "glTexCoord3sv" [arg "v" gLshort];
+    dynamic "glTexCoord3s" [arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
+    dynamic "glTexCoord3iv" [arg "v" gLint];
+    dynamic "glTexCoord3i" [arg "s" gLint;arg "t" gLint;arg "r" gLint];
+    dynamic "glTexCoord3fv" [arg "v" gLfloat];
+    dynamic "glTexCoord3f" [arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
+    dynamic "glTexCoord3dv" [arg "v" gLdouble];
+    dynamic "glTexCoord3d" [arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
+    dynamic "glTexCoord2sv" [arg "v" gLshort];
+    dynamic "glTexCoord2s" [arg "s" gLshort;arg "t" gLshort];
+    dynamic "glTexCoord2iv" [arg "v" gLint];
+    dynamic "glTexCoord2i" [arg "s" gLint;arg "t" gLint];
+    dynamic "glTexCoord2fv" [arg "v" gLfloat];
+    dynamic "glTexCoord2f" [arg "s" gLfloat;arg "t" gLfloat];
+    dynamic "glTexCoord2dv" [arg "v" gLdouble];
+    dynamic "glTexCoord2d" [arg "s" gLdouble;arg "t" gLdouble];
+    dynamic "glTexCoord1sv" [arg "v" gLshort];
+    dynamic "glTexCoord1s" [arg "s" gLshort];
+    dynamic "glTexCoord1iv" [arg "v" gLint];
+    dynamic "glTexCoord1i" [arg "s" gLint];
+    dynamic "glTexCoord1fv" [arg "v" gLfloat];
+    dynamic "glTexCoord1f" [arg "s" gLfloat];
+    dynamic "glTexCoord1dv" [arg "v" gLdouble];
+    dynamic "glTexCoord1d" [arg "s" gLdouble];
+    dynamic "glRectsv" [arg "arg0" gLshort *v1;arg "arg1" gLshort *v2];
+    dynamic "glRects" [arg "arg0" gLshort x1;arg "arg1" gLshort y1;arg "arg2" gLshort x2;arg "arg3" gLshort y2];
+    dynamic "glRectiv" [arg "arg0" gLint *v1;arg "arg1" gLint *v2];
+    dynamic "glRecti" [arg "arg0" gLint x1;arg "arg1" gLint y1;arg "arg2" gLint x2;arg "arg3" gLint y2];
+    dynamic "glRectfv" [arg "arg0" gLfloat *v1;arg "arg1" gLfloat *v2];
+    dynamic "glRectf" [arg "arg0" gLfloat x1;arg "arg1" gLfloat y1;arg "arg2" gLfloat x2;arg "arg3" gLfloat y2];
+    dynamic "glRectdv" [arg "arg0" gLdouble *v1;arg "arg1" gLdouble *v2];
+    dynamic "glRectd" [arg "arg0" gLdouble x1;arg "arg1" gLdouble y1;arg "arg2" gLdouble x2;arg "arg3" gLdouble y2];
+    dynamic "glRasterPos4sv" [arg "v" gLshort];
+    dynamic "glRasterPos4s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glRasterPos4iv" [arg "v" gLint];
+    dynamic "glRasterPos4i" [arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glRasterPos4fv" [arg "v" gLfloat];
+    dynamic "glRasterPos4f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glRasterPos4dv" [arg "v" gLdouble];
+    dynamic "glRasterPos4d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glRasterPos3sv" [arg "v" gLshort];
+    dynamic "glRasterPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glRasterPos3iv" [arg "v" gLint];
+    dynamic "glRasterPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glRasterPos3fv" [arg "v" gLfloat];
+    dynamic "glRasterPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glRasterPos3dv" [arg "v" gLdouble];
+    dynamic "glRasterPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glRasterPos2sv" [arg "v" gLshort];
+    dynamic "glRasterPos2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glRasterPos2iv" [arg "v" gLint];
+    dynamic "glRasterPos2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glRasterPos2fv" [arg "v" gLfloat];
+    dynamic "glRasterPos2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glRasterPos2dv" [arg "v" gLdouble];
+    dynamic "glRasterPos2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glNormal3sv" [arg "v" gLshort];
+    dynamic "glNormal3s" [arg "nx" gLshort;arg "ny" gLshort;arg "nz" gLshort];
+    dynamic "glNormal3iv" [arg "v" gLint];
+    dynamic "glNormal3i" [arg "nx" gLint;arg "ny" gLint;arg "nz" gLint];
+    dynamic "glNormal3fv" [arg "v" gLfloat];
+    dynamic "glNormal3f" [arg "nx" gLfloat;arg "ny" gLfloat;arg "nz" gLfloat];
+    dynamic "glNormal3dv" [arg "v" gLdouble];
+    dynamic "glNormal3d" [arg "nx" gLdouble;arg "ny" gLdouble;arg "nz" gLdouble];
+    dynamic "glNormal3bv" [arg "v" gLbyte];
+    dynamic "glNormal3b" [arg "nx" gLbyte;arg "ny" gLbyte;arg "nz" gLbyte];
+    dynamic "glIndexsv" [arg "c" gLshort];
+    dynamic "glIndexs" [arg "c" gLshort];
+    dynamic "glIndexiv" [arg "c" gLint];
+    dynamic "glIndexi" [arg "c" gLint];
+    dynamic "glIndexfv" [arg "c" gLfloat];
+    dynamic "glIndexf" [arg "c" gLfloat];
+    dynamic "glIndexdv" [arg "c" gLdouble];
+    dynamic "glIndexd" [arg "c" gLdouble];
+    dynamic "glEnd" [];
+    dynamic "glEdgeFlagv" [arg "flag" gLboolean];
+    dynamic "glEdgeFlag" [arg "flag" gLboolean];
+    dynamic "glColor4usv" [arg "v" gLushort];
+    dynamic "glColor4us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort;arg "alpha" gLushort];
+    dynamic "glColor4uiv" [arg "v" gLuint];
+    dynamic "glColor4ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint;arg "alpha" gLuint];
+    dynamic "glColor4ubv" [arg "v" gLubyte];
+    dynamic "glColor4ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte;arg "alpha" gLubyte];
+    dynamic "glColor4sv" [arg "v" gLshort];
+    dynamic "glColor4s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort;arg "alpha" gLshort];
+    dynamic "glColor4iv" [arg "v" gLint];
+    dynamic "glColor4i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint;arg "alpha" gLint];
+    dynamic "glColor4fv" [arg "v" gLfloat];
+    dynamic "glColor4f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glColor4dv" [arg "v" gLdouble];
+    dynamic "glColor4d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble;arg "alpha" gLdouble];
+    dynamic "glColor4bv" [arg "v" gLbyte];
+    dynamic "glColor4b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte;arg "alpha" gLbyte];
+    dynamic "glColor3usv" [arg "v" gLushort];
+    dynamic "glColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
+    dynamic "glColor3uiv" [arg "v" gLuint];
+    dynamic "glColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
+    dynamic "glColor3ubv" [arg "v" gLubyte];
+    dynamic "glColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
+    dynamic "glColor3sv" [arg "v" gLshort];
+    dynamic "glColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
+    dynamic "glColor3iv" [arg "v" gLint];
+    dynamic "glColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
+    dynamic "glColor3fv" [arg "v" gLfloat];
+    dynamic "glColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
+    dynamic "glColor3dv" [arg "v" gLdouble];
+    dynamic "glColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
+    dynamic "glColor3bv" [arg "v" gLbyte];
+    dynamic "glColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
+    dynamic "glBitmap" [arg "width" gLsizei;arg "height" gLsizei;arg "xorig" gLfloat;arg "yorig" gLfloat;arg "xmove" gLfloat;arg "ymove" gLfloat;arg "bitmap" gLubyte];
+    dynamic "glBegin" [arg "mode" gLenum];
+    dynamic "glListBase" [arg "base" gLuint];
+    dynamic "glGenLists" [arg "range" gLsizei] ~ret:gLuint;
+    dynamic "glDeleteLists" [arg "list" gLuint;arg "range" gLsizei];
+    dynamic "glCallLists" [arg "n" gLsizei;arg "type" gLenum;arg "lists" gLvoid];
+    dynamic "glCallList" [arg "list" gLuint];
+    dynamic "glEndList" [];
+    dynamic "glNewList" [arg "list" gLuint;arg "mode" gLenum];
+    dynamic "glPushClientAttrib" [arg "mask" gLbitfield];
+    dynamic "glPopClientAttrib" [];
+    dynamic "glPrioritizeTextures" [arg "n" gLsizei;arg "textures" gLuint;arg "priorities" gLfloat];
+    dynamic "glAreTexturesResident" [arg "n" gLsizei;arg "textures" gLuint;arg "residences" gLboolean] ~ret:gLboolean;
+    dynamic "glVertexPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glTexCoordPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glNormalPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glInterleavedArrays" [arg "format" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glIndexPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glEnableClientState" [arg "array" gLenum];
+    dynamic "glEdgeFlagPointer" [arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glDisableClientState" [arg "array" gLenum];
+    dynamic "glColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glArrayElement" [arg "i" gLint];
+    dynamic "glResetMinmax" [arg "target" gLenum];
+    dynamic "glResetHistogram" [arg "target" gLenum];
+    dynamic "glMinmax" [arg "target" gLenum;arg "internalformat" gLenum;arg "sink" gLboolean];
+    dynamic "glHistogram" [arg "target" gLenum;arg "width" gLsizei;arg "internalformat" gLenum;arg "sink" gLboolean];
+    dynamic "glGetMinmaxParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetMinmaxParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetMinmax" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
+    dynamic "glGetHistogramParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetHistogramParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetHistogram" [arg "target" gLenum;arg "reset" gLboolean;arg "format" gLenum;arg "type" gLenum;arg "values" gLvoid];
+    dynamic "glSeparableFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid];
+    dynamic "glGetSeparableFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "row" gLvoid;arg "column" gLvoid;arg "span" gLvoid];
+    dynamic "glGetConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetConvolutionFilter" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glCopyConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glCopyConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glConvolutionParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glConvolutionParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glConvolutionParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glConvolutionParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glConvolutionFilter2D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glConvolutionFilter1D" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "image" gLvoid];
+    dynamic "glCopyColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glColorSubTable" [arg "target" gLenum;arg "start" gLsizei;arg "count" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "data" gLvoid];
+    dynamic "glGetColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetColorTable" [arg "target" gLenum;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
+    dynamic "glCopyColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glColorTableParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glColorTableParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glColorTable" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "table" gLvoid];
+    dynamic "glMultTransposeMatrixd" [arg "m" gLdouble];
+    dynamic "glMultTransposeMatrixf" [arg "m" gLfloat];
+    dynamic "glLoadTransposeMatrixd" [arg "m" gLdouble];
+    dynamic "glLoadTransposeMatrixf" [arg "m" gLfloat];
+    dynamic "glMultiTexCoord4sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord4s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort;arg "q" gLshort];
+    dynamic "glMultiTexCoord4iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord4i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint;arg "q" gLint];
+    dynamic "glMultiTexCoord4fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord4f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat;arg "q" gLfloat];
+    dynamic "glMultiTexCoord4dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord4d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble;arg "q" gLdouble];
+    dynamic "glMultiTexCoord3sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord3s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort;arg "r" gLshort];
+    dynamic "glMultiTexCoord3iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord3i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint;arg "r" gLint];
+    dynamic "glMultiTexCoord3fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord3f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat;arg "r" gLfloat];
+    dynamic "glMultiTexCoord3dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord3d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble;arg "r" gLdouble];
+    dynamic "glMultiTexCoord2sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord2s" [arg "target" gLenum;arg "s" gLshort;arg "t" gLshort];
+    dynamic "glMultiTexCoord2iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord2i" [arg "target" gLenum;arg "s" gLint;arg "t" gLint];
+    dynamic "glMultiTexCoord2fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord2f" [arg "target" gLenum;arg "s" gLfloat;arg "t" gLfloat];
+    dynamic "glMultiTexCoord2dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord2d" [arg "target" gLenum;arg "s" gLdouble;arg "t" gLdouble];
+    dynamic "glMultiTexCoord1sv" [arg "target" gLenum;arg "v" gLshort];
+    dynamic "glMultiTexCoord1s" [arg "target" gLenum;arg "s" gLshort];
+    dynamic "glMultiTexCoord1iv" [arg "target" gLenum;arg "v" gLint];
+    dynamic "glMultiTexCoord1i" [arg "target" gLenum;arg "s" gLint];
+    dynamic "glMultiTexCoord1fv" [arg "target" gLenum;arg "v" gLfloat];
+    dynamic "glMultiTexCoord1f" [arg "target" gLenum;arg "s" gLfloat];
+    dynamic "glMultiTexCoord1dv" [arg "target" gLenum;arg "v" gLdouble];
+    dynamic "glMultiTexCoord1d" [arg "target" gLenum;arg "s" gLdouble];
+    dynamic "glClientActiveTexture" [arg "texture" gLenum];
+    dynamic "glWindowPos3sv" [arg "v" gLshort];
+    dynamic "glWindowPos3s" [arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glWindowPos3iv" [arg "v" gLint];
+    dynamic "glWindowPos3i" [arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glWindowPos3fv" [arg "v" gLfloat];
+    dynamic "glWindowPos3f" [arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glWindowPos3dv" [arg "v" gLdouble];
+    dynamic "glWindowPos3d" [arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glWindowPos2sv" [arg "v" gLshort];
+    dynamic "glWindowPos2s" [arg "x" gLshort;arg "y" gLshort];
+    dynamic "glWindowPos2iv" [arg "v" gLint];
+    dynamic "glWindowPos2i" [arg "x" gLint;arg "y" gLint];
+    dynamic "glWindowPos2fv" [arg "v" gLfloat];
+    dynamic "glWindowPos2f" [arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glWindowPos2dv" [arg "v" gLdouble];
+    dynamic "glWindowPos2d" [arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glSecondaryColorPointer" [arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glSecondaryColor3usv" [arg "v" gLushort];
+    dynamic "glSecondaryColor3us" [arg "red" gLushort;arg "green" gLushort;arg "blue" gLushort];
+    dynamic "glSecondaryColor3uiv" [arg "v" gLuint];
+    dynamic "glSecondaryColor3ui" [arg "red" gLuint;arg "green" gLuint;arg "blue" gLuint];
+    dynamic "glSecondaryColor3ubv" [arg "v" gLubyte];
+    dynamic "glSecondaryColor3ub" [arg "red" gLubyte;arg "green" gLubyte;arg "blue" gLubyte];
+    dynamic "glSecondaryColor3sv" [arg "v" gLshort];
+    dynamic "glSecondaryColor3s" [arg "red" gLshort;arg "green" gLshort;arg "blue" gLshort];
+    dynamic "glSecondaryColor3iv" [arg "v" gLint];
+    dynamic "glSecondaryColor3i" [arg "red" gLint;arg "green" gLint;arg "blue" gLint];
+    dynamic "glSecondaryColor3fv" [arg "v" gLfloat];
+    dynamic "glSecondaryColor3f" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat];
+    dynamic "glSecondaryColor3dv" [arg "v" gLdouble];
+    dynamic "glSecondaryColor3d" [arg "red" gLdouble;arg "green" gLdouble;arg "blue" gLdouble];
+    dynamic "glSecondaryColor3bv" [arg "v" gLbyte];
+    dynamic "glSecondaryColor3b" [arg "red" gLbyte;arg "green" gLbyte;arg "blue" gLbyte];
+    dynamic "glFogCoordPointer" [arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glFogCoorddv" [arg "coord" gLdouble];
+    dynamic "glFogCoordd" [arg "coord" gLdouble];
+    dynamic "glFogCoordfv" [arg "coord" gLfloat];
+    dynamic "glFogCoordf" [arg "coord" gLfloat];
+    dynamic "glVertexAttrib4usv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttrib4uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttrib4ubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttrib4sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib4s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort;arg "w" gLshort];
+    dynamic "glVertexAttrib4iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttrib4fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib4f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat;arg "w" gLfloat];
+    dynamic "glVertexAttrib4dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib4d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glVertexAttrib4bv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttrib4Nusv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttrib4Nuiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttrib4Nubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttrib4Nub" [arg "index" gLuint;arg "x" gLubyte;arg "y" gLubyte;arg "z" gLubyte;arg "w" gLubyte];
+    dynamic "glVertexAttrib4Nsv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib4Niv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttrib4Nbv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttrib3sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib3s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort;arg "z" gLshort];
+    dynamic "glVertexAttrib3fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib3f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "z" gLfloat];
+    dynamic "glVertexAttrib3dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib3d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glVertexAttrib2sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib2s" [arg "index" gLuint;arg "x" gLshort;arg "y" gLshort];
+    dynamic "glVertexAttrib2fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib2f" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat];
+    dynamic "glVertexAttrib2dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib2d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glVertexAttrib1sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttrib1s" [arg "index" gLuint;arg "x" gLshort];
+    dynamic "glVertexAttrib1fv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glVertexAttrib1f" [arg "index" gLuint;arg "x" gLfloat];
+    dynamic "glVertexAttrib1dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttrib1d" [arg "index" gLuint;arg "x" gLdouble];
+    dynamic "glVertexAttribI4usv" [arg "index" gLuint;arg "v" gLushort];
+    dynamic "glVertexAttribI4ubv" [arg "index" gLuint;arg "v" gLubyte];
+    dynamic "glVertexAttribI4sv" [arg "index" gLuint;arg "v" gLshort];
+    dynamic "glVertexAttribI4bv" [arg "index" gLuint;arg "v" gLbyte];
+    dynamic "glVertexAttribI4uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI3uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI2uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI1uiv" [arg "index" gLuint;arg "v" gLuint];
+    dynamic "glVertexAttribI4iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI3iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI2iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI1iv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glVertexAttribI4ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint;arg "w" gLuint];
+    dynamic "glVertexAttribI3ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint;arg "z" gLuint];
+    dynamic "glVertexAttribI2ui" [arg "index" gLuint;arg "x" gLuint;arg "y" gLuint];
+    dynamic "glVertexAttribI1ui" [arg "index" gLuint;arg "x" gLuint];
+    dynamic "glVertexAttribI4i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint;arg "w" gLint];
+    dynamic "glVertexAttribI3i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint;arg "z" gLint];
+    dynamic "glVertexAttribI2i" [arg "index" gLuint;arg "x" gLint;arg "y" gLint];
+    dynamic "glVertexAttribI1i" [arg "index" gLuint;arg "x" gLint];
   ]
-let () = with_class qOpenGLFunctions_4_4_Compatibility [
+  let () = with_class qOpenGLFunctions_4_3_Core [
+    constructor "" [];
+    dynamic "initializeOpenGLFunctions" [] ~ret:bool;
+    dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glDepthRange" [arg "nearVal" gLdouble;arg "farVal" gLdouble];
+    dynamic "glIsEnabled" [arg "cap" gLenum] ~ret:gLboolean;
+    dynamic "glGetTexLevelParameteriv" [arg "target" gLenum;arg "level" gLint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexLevelParameterfv" [arg "target" gLenum;arg "level" gLint;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetTexParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetTexParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetTexImage" [arg "target" gLenum;arg "level" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glGetString" [arg "name" gLenum] ~ret:gLubyte;
+    dynamic "glGetIntegerv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetFloatv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetError" [] ~ret:gLenum;
+    dynamic "glGetDoublev" [arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glGetBooleanv" [arg "pname" gLenum;arg "params" gLboolean];
+    dynamic "glReadPixels" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glReadBuffer" [arg "mode" gLenum];
+    dynamic "glPixelStorei" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glPixelStoref" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glDepthFunc" [arg "func" gLenum];
+    dynamic "glStencilOp" [arg "fail" gLenum;arg "zfail" gLenum;arg "zpass" gLenum];
+    dynamic "glStencilFunc" [arg "func" gLenum;arg "ref" gLint;arg "mask" gLuint];
+    dynamic "glLogicOp" [arg "opcode" gLenum];
+    dynamic "glBlendFunc" [arg "sfactor" gLenum;arg "dfactor" gLenum];
+    dynamic "glFlush" [];
+    dynamic "glFinish" [];
+    dynamic "glEnable" [arg "cap" gLenum];
+    dynamic "glDisable" [arg "cap" gLenum];
+    dynamic "glDepthMask" [arg "flag" gLboolean];
+    dynamic "glColorMask" [arg "red" gLboolean;arg "green" gLboolean;arg "blue" gLboolean;arg "alpha" gLboolean];
+    dynamic "glStencilMask" [arg "mask" gLuint];
+    dynamic "glClearDepth" [arg "depth" gLdouble];
+    dynamic "glClearStencil" [arg "s" gLint];
+    dynamic "glClearColor" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glClear" [arg "mask" gLbitfield];
+    dynamic "glDrawBuffer" [arg "mode" gLenum];
+    dynamic "glTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glTexParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glTexParameterfv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glTexParameterf" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glScissor" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glPolygonMode" [arg "face" gLenum;arg "mode" gLenum];
+    dynamic "glPointSize" [arg "size" gLfloat];
+    dynamic "glLineWidth" [arg "width" gLfloat];
+    dynamic "glHint" [arg "target" gLenum;arg "mode" gLenum];
+    dynamic "glFrontFace" [arg "mode" gLenum];
+    dynamic "glCullFace" [arg "mode" gLenum];
+    dynamic "glIndexubv" [arg "c" gLubyte];
+    dynamic "glIndexub" [arg "c" gLubyte];
+    dynamic "glIsTexture" [arg "texture" gLuint] ~ret:gLboolean;
+    dynamic "glGenTextures" [arg "n" gLsizei;arg "textures" gLuint];
+    dynamic "glDeleteTextures" [arg "n" gLsizei;arg "textures" gLuint];
+    dynamic "glBindTexture" [arg "target" gLenum;arg "texture" gLuint];
+    dynamic "glTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "width" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glCopyTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glCopyTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei];
+    dynamic "glCopyTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint];
+    dynamic "glCopyTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "border" gLint];
+    dynamic "glPolygonOffset" [arg "factor" gLfloat;arg "units" gLfloat];
+    dynamic "glGetPointerv" [arg "pname" gLenum;arg "params" gLvoid];
+    dynamic "glDrawElements" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid];
+    dynamic "glDrawArrays" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei];
+    dynamic "glCopyTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glTexImage3D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "border" gLint;arg "format" gLenum;arg "type" gLenum;arg "pixels" gLvoid];
+    dynamic "glDrawRangeElements" [arg "mode" gLenum;arg "start" gLuint;arg "end" gLuint;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid];
+    dynamic "glBlendEquation" [arg "mode" gLenum];
+    dynamic "glBlendColor" [arg "red" gLfloat;arg "green" gLfloat;arg "blue" gLfloat;arg "alpha" gLfloat];
+    dynamic "glGetCompressedTexImage" [arg "target" gLenum;arg "level" gLint;arg "img" gLvoid];
+    dynamic "glCompressedTexSubImage1D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "width" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexSubImage2D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexSubImage3D" [arg "target" gLenum;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "format" gLenum;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexImage1D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexImage2D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glCompressedTexImage3D" [arg "target" gLenum;arg "level" gLint;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "border" gLint;arg "imageSize" gLsizei;arg "data" gLvoid];
+    dynamic "glSampleCoverage" [arg "value" gLfloat;arg "invert" gLboolean];
+    dynamic "glActiveTexture" [arg "texture" gLenum];
+    dynamic "glPointParameteriv" [arg "pname" gLenum;arg "params" gLint];
+    dynamic "glPointParameteri" [arg "pname" gLenum;arg "param" gLint];
+    dynamic "glPointParameterfv" [arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glPointParameterf" [arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glMultiDrawElements" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid * const;arg "drawcount" gLsizei];
+    dynamic "glMultiDrawArrays" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "drawcount" gLsizei];
+    dynamic "glBlendFuncSeparate" [arg "sfactorRGB" gLenum;arg "dfactorRGB" gLenum;arg "sfactorAlpha" gLenum;arg "dfactorAlpha" gLenum];
+    dynamic "glGetBufferPointerv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLvoid];
+    dynamic "glGetBufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glUnmapBuffer" [arg "target" gLenum] ~ret:gLboolean;
+    dynamic "glMapBuffer" [arg "target" gLenum;arg "access" gLenum] ~ret:gLvoid;
+    dynamic "glGetBufferSubData" [arg "target" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "data" gLvoid];
+    dynamic "glBufferSubData" [arg "target" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "data" gLvoid];
+    dynamic "glBufferData" [arg "target" gLenum;arg "size" gLsizeiptr;arg "data" gLvoid;arg "usage" gLenum];
+    dynamic "glIsBuffer" [arg "buffer" gLuint] ~ret:gLboolean;
+    dynamic "glGenBuffers" [arg "n" gLsizei;arg "buffers" gLuint];
+    dynamic "glDeleteBuffers" [arg "n" gLsizei;arg "buffers" gLuint];
+    dynamic "glBindBuffer" [arg "target" gLenum;arg "buffer" gLuint];
+    dynamic "glGetQueryObjectuiv" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glGetQueryObjectiv" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetQueryiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glEndQuery" [arg "target" gLenum];
+    dynamic "glBeginQuery" [arg "target" gLenum;arg "id" gLuint];
+    dynamic "glIsQuery" [arg "id" gLuint] ~ret:gLboolean;
+    dynamic "glDeleteQueries" [arg "n" gLsizei;arg "ids" gLuint];
+    dynamic "glGenQueries" [arg "n" gLsizei;arg "ids" gLuint];
+    dynamic "glVertexAttribPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "normalized" gLboolean;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glValidateProgram" [arg "program" gLuint];
+    dynamic "glUniformMatrix4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniform4iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glUniform3iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glUniform2iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glUniform1iv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glUniform4fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glUniform3fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glUniform2fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glUniform1fv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glUniform4i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1;arg "arg3" gLint v2;arg "arg4" gLint v3];
+    dynamic "glUniform3i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1;arg "arg3" gLint v2];
+    dynamic "glUniform2i" [arg "location" gLint;arg "arg1" gLint v0;arg "arg2" gLint v1];
+    dynamic "glUniform1i" [arg "location" gLint;arg "arg1" gLint v0];
+    dynamic "glUniform4f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1;arg "arg3" gLfloat v2;arg "arg4" gLfloat v3];
+    dynamic "glUniform3f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1;arg "arg3" gLfloat v2];
+    dynamic "glUniform2f" [arg "location" gLint;arg "arg1" gLfloat v0;arg "arg2" gLfloat v1];
+    dynamic "glUniform1f" [arg "location" gLint;arg "arg1" gLfloat v0];
+    dynamic "glUseProgram" [arg "program" gLuint];
+    dynamic "glShaderSource" [arg "shader" gLuint;arg "count" gLsizei;arg "string" gLchar * const;arg "length" gLint];
+    dynamic "glLinkProgram" [arg "program" gLuint];
+    dynamic "glIsShader" [arg "shader" gLuint] ~ret:gLboolean;
+    dynamic "glIsProgram" [arg "program" gLuint] ~ret:gLboolean;
+    dynamic "glGetVertexAttribPointerv" [arg "index" gLuint;arg "pname" gLenum;arg "pointer" gLvoid];
+    dynamic "glGetVertexAttribiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetVertexAttribfv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetVertexAttribdv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glGetUniformiv" [arg "program" gLuint;arg "location" gLint;arg "params" gLint];
+    dynamic "glGetUniformfv" [arg "program" gLuint;arg "location" gLint;arg "params" gLfloat];
+    dynamic "glGetUniformLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
+    dynamic "glGetShaderSource" [arg "shader" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "source" gLchar];
+    dynamic "glGetShaderInfoLog" [arg "shader" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
+    dynamic "glGetShaderiv" [arg "shader" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetProgramInfoLog" [arg "program" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
+    dynamic "glGetProgramiv" [arg "program" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetAttribLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
+    dynamic "glGetAttachedShaders" [arg "program" gLuint;arg "maxCount" gLsizei;arg "count" gLsizei;arg "obj" gLuint];
+    dynamic "glGetActiveUniform" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLint;arg "type" gLenum;arg "name" gLchar];
+    dynamic "glGetActiveAttrib" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLint;arg "type" gLenum;arg "name" gLchar];
+    dynamic "glEnableVertexAttribArray" [arg "index" gLuint];
+    dynamic "glDisableVertexAttribArray" [arg "index" gLuint];
+    dynamic "glDetachShader" [arg "program" gLuint;arg "shader" gLuint];
+    dynamic "glDeleteShader" [arg "shader" gLuint];
+    dynamic "glDeleteProgram" [arg "program" gLuint];
+    dynamic "glCreateShader" [arg "type" gLenum] ~ret:gLuint;
+    dynamic "glCreateProgram" [] ~ret:gLuint;
+    dynamic "glCompileShader" [arg "shader" gLuint];
+    dynamic "glBindAttribLocation" [arg "program" gLuint;arg "index" gLuint;arg "name" gLchar];
+    dynamic "glAttachShader" [arg "program" gLuint;arg "shader" gLuint];
+    dynamic "glStencilMaskSeparate" [arg "face" gLenum;arg "mask" gLuint];
+    dynamic "glStencilFuncSeparate" [arg "face" gLenum;arg "func" gLenum;arg "ref" gLint;arg "mask" gLuint];
+    dynamic "glStencilOpSeparate" [arg "face" gLenum;arg "sfail" gLenum;arg "dpfail" gLenum;arg "dppass" gLenum];
+    dynamic "glDrawBuffers" [arg "n" gLsizei;arg "bufs" gLenum];
+    dynamic "glBlendEquationSeparate" [arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
+    dynamic "glUniformMatrix4x3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix3x4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix4x2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix2x4fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix3x2fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glUniformMatrix2x3fv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glIsVertexArray" [arg "array" gLuint] ~ret:gLboolean;
+    dynamic "glGenVertexArrays" [arg "n" gLsizei;arg "arrays" gLuint];
+    dynamic "glDeleteVertexArrays" [arg "n" gLsizei;arg "arrays" gLuint];
+    dynamic "glBindVertexArray" [arg "array" gLuint];
+    dynamic "glFlushMappedBufferRange" [arg "target" gLenum;arg "offset" gLintptr;arg "length" gLsizeiptr];
+    dynamic "glMapBufferRange" [arg "target" gLenum;arg "offset" gLintptr;arg "length" gLsizeiptr;arg "access" gLbitfield] ~ret:gLvoid;
+    dynamic "glFramebufferTextureLayer" [arg "target" gLenum;arg "attachment" gLenum;arg "texture" gLuint;arg "level" gLint;arg "layer" gLint];
+    dynamic "glRenderbufferStorageMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glBlitFramebuffer" [arg "arg0" gLint srcX0;arg "arg1" gLint srcY0;arg "arg2" gLint srcX1;arg "arg3" gLint srcY1;arg "arg4" gLint dstX0;arg "arg5" gLint dstY0;arg "arg6" gLint dstX1;arg "arg7" gLint dstY1;arg "mask" gLbitfield;arg "filter" gLenum];
+    dynamic "glGenerateMipmap" [arg "target" gLenum];
+    dynamic "glGetFramebufferAttachmentParameteriv" [arg "target" gLenum;arg "attachment" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glFramebufferRenderbuffer" [arg "target" gLenum;arg "attachment" gLenum;arg "renderbuffertarget" gLenum;arg "renderbuffer" gLuint];
+    dynamic "glFramebufferTexture3D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint;arg "zoffset" gLint];
+    dynamic "glFramebufferTexture2D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint];
+    dynamic "glFramebufferTexture1D" [arg "target" gLenum;arg "attachment" gLenum;arg "textarget" gLenum;arg "texture" gLuint;arg "level" gLint];
+    dynamic "glCheckFramebufferStatus" [arg "target" gLenum] ~ret:gLenum;
+    dynamic "glGenFramebuffers" [arg "n" gLsizei;arg "framebuffers" gLuint];
+    dynamic "glDeleteFramebuffers" [arg "n" gLsizei;arg "framebuffers" gLuint];
+    dynamic "glBindFramebuffer" [arg "target" gLenum;arg "framebuffer" gLuint];
+    dynamic "glIsFramebuffer" [arg "framebuffer" gLuint] ~ret:gLboolean;
+    dynamic "glGetRenderbufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glRenderbufferStorage" [arg "target" gLenum;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glGenRenderbuffers" [arg "n" gLsizei;arg "renderbuffers" gLuint];
+    dynamic "glDeleteRenderbuffers" [arg "n" gLsizei;arg "renderbuffers" gLuint];
+    dynamic "glBindRenderbuffer" [arg "target" gLenum;arg "renderbuffer" gLuint];
+    dynamic "glIsRenderbuffer" [arg "renderbuffer" gLuint] ~ret:gLboolean;
+    dynamic "glGetStringi" [arg "name" gLenum;arg "index" gLuint] ~ret:gLubyte;
+    dynamic "glClearBufferfi" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "depth" gLfloat;arg "stencil" gLint];
+    dynamic "glClearBufferfv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLfloat];
+    dynamic "glClearBufferuiv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLuint];
+    dynamic "glClearBufferiv" [arg "buffer" gLenum;arg "drawbuffer" gLint;arg "value" gLint];
+    dynamic "glGetTexParameterIuiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glGetTexParameterIiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glTexParameterIuiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glTexParameterIiv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glUniform4uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glUniform3uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glUniform2uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glUniform1uiv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glUniform4ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1;arg "arg3" gLuint v2;arg "arg4" gLuint v3];
+    dynamic "glUniform3ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1;arg "arg3" gLuint v2];
+    dynamic "glUniform2ui" [arg "location" gLint;arg "arg1" gLuint v0;arg "arg2" gLuint v1];
+    dynamic "glUniform1ui" [arg "location" gLint;arg "arg1" gLuint v0];
+    dynamic "glGetFragDataLocation" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
+    dynamic "glBindFragDataLocation" [arg "program" gLuint;arg "color" gLuint;arg "name" gLchar];
+    dynamic "glGetUniformuiv" [arg "program" gLuint;arg "location" gLint;arg "params" gLuint];
+    dynamic "glGetVertexAttribIuiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glGetVertexAttribIiv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glVertexAttribIPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glEndConditionalRender" [];
+    dynamic "glBeginConditionalRender" [arg "id" gLuint;arg "mode" gLenum];
+    dynamic "glClampColor" [arg "target" gLenum;arg "clamp" gLenum];
+    dynamic "glGetTransformFeedbackVarying" [arg "program" gLuint;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "size" gLsizei;arg "type" gLenum;arg "name" gLchar];
+    dynamic "glTransformFeedbackVaryings" [arg "program" gLuint;arg "count" gLsizei;arg "varyings" gLchar * const;arg "bufferMode" gLenum];
+    dynamic "glBindBufferBase" [arg "target" gLenum;arg "index" gLuint;arg "buffer" gLuint];
+    dynamic "glBindBufferRange" [arg "target" gLenum;arg "index" gLuint;arg "buffer" gLuint;arg "offset" gLintptr;arg "size" gLsizeiptr];
+    dynamic "glEndTransformFeedback" [];
+    dynamic "glBeginTransformFeedback" [arg "primitiveMode" gLenum];
+    dynamic "glIsEnabledi" [arg "target" gLenum;arg "index" gLuint] ~ret:gLboolean;
+    dynamic "glDisablei" [arg "target" gLenum;arg "index" gLuint];
+    dynamic "glEnablei" [arg "target" gLenum;arg "index" gLuint];
+    dynamic "glGetIntegeri_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint];
+    dynamic "glGetBooleani_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLboolean];
+    dynamic "glColorMaski" [arg "index" gLuint;arg "r" gLboolean;arg "g" gLboolean;arg "b" gLboolean;arg "a" gLboolean];
+    dynamic "glCopyBufferSubData" [arg "readTarget" gLenum;arg "writeTarget" gLenum;arg "readOffset" gLintptr;arg "writeOffset" gLintptr;arg "size" gLsizeiptr];
+    dynamic "glUniformBlockBinding" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "uniformBlockBinding" gLuint];
+    dynamic "glGetActiveUniformBlockName" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "uniformBlockName" gLchar];
+    dynamic "glGetActiveUniformBlockiv" [arg "program" gLuint;arg "uniformBlockIndex" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetUniformBlockIndex" [arg "program" gLuint;arg "uniformBlockName" gLchar] ~ret:gLuint;
+    dynamic "glGetActiveUniformName" [arg "program" gLuint;arg "uniformIndex" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "uniformName" gLchar];
+    dynamic "glGetActiveUniformsiv" [arg "program" gLuint;arg "uniformCount" gLsizei;arg "uniformIndices" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetUniformIndices" [arg "program" gLuint;arg "uniformCount" gLsizei;arg "uniformNames" gLchar * const;arg "uniformIndices" gLuint];
+    dynamic "glPrimitiveRestartIndex" [arg "index" gLuint];
+    dynamic "glTexBuffer" [arg "target" gLenum;arg "internalformat" gLenum;arg "buffer" gLuint];
+    dynamic "glDrawElementsInstanced" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei];
+    dynamic "glDrawArraysInstanced" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei];
+    dynamic "glSampleMaski" [arg "index" gLuint;arg "mask" gLbitfield];
+    dynamic "glGetMultisamplefv" [arg "pname" gLenum;arg "index" gLuint;arg "val" gLfloat];
+    dynamic "glTexImage3DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "fixedsamplelocations" gLboolean];
+    dynamic "glTexImage2DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "fixedsamplelocations" gLboolean];
+    dynamic "glGetSynciv" [arg "sync" gLsync;arg "pname" gLenum;arg "bufSize" gLsizei;arg "length" gLsizei;arg "values" gLint];
+    dynamic "glGetInteger64v" [arg "pname" gLenum;arg "params" gLint64];
+    dynamic "glWaitSync" [arg "sync" gLsync;arg "flags" gLbitfield;arg "timeout" gLuint64];
+    dynamic "glClientWaitSync" [arg "sync" gLsync;arg "flags" gLbitfield;arg "timeout" gLuint64] ~ret:gLenum;
+    dynamic "glDeleteSync" [arg "sync" gLsync];
+    dynamic "glIsSync" [arg "sync" gLsync] ~ret:gLboolean;
+    dynamic "glFenceSync" [arg "condition" gLenum;arg "flags" gLbitfield] ~ret:gLsync;
+    dynamic "glProvokingVertex" [arg "mode" gLenum];
+    dynamic "glMultiDrawElementsBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid * const;arg "drawcount" gLsizei;arg "basevertex" gLint];
+    dynamic "glDrawElementsInstancedBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "instancecount" gLsizei;arg "basevertex" gLint];
+    dynamic "glDrawRangeElementsBaseVertex" [arg "mode" gLenum;arg "start" gLuint;arg "end" gLuint;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "basevertex" gLint];
+    dynamic "glDrawElementsBaseVertex" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" gLvoid;arg "basevertex" gLint];
+    dynamic "glFramebufferTexture" [arg "target" gLenum;arg "attachment" gLenum;arg "texture" gLuint;arg "level" gLint];
+    dynamic "glGetBufferParameteri64v" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint64];
+    dynamic "glGetInteger64i_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLint64];
+    dynamic "glVertexAttribP4uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP4ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP3uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP3ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP2uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP2ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP1uiv" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glVertexAttribP1ui" [arg "index" gLuint;arg "type" gLenum;arg "normalized" gLboolean;arg "value" gLuint];
+    dynamic "glSecondaryColorP3uiv" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glSecondaryColorP3ui" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glColorP4uiv" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glColorP4ui" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glColorP3uiv" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glColorP3ui" [arg "type" gLenum;arg "color" gLuint];
+    dynamic "glNormalP3uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glNormalP3ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP4uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP4ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP3uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP3ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP2uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP2ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP1uiv" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glMultiTexCoordP1ui" [arg "texture" gLenum;arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP4uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP4ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP3uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP3ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP2uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP2ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP1uiv" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glTexCoordP1ui" [arg "type" gLenum;arg "coords" gLuint];
+    dynamic "glVertexP4uiv" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP4ui" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP3uiv" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP3ui" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP2uiv" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glVertexP2ui" [arg "type" gLenum;arg "value" gLuint];
+    dynamic "glGetQueryObjectui64v" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLuint64];
+    dynamic "glGetQueryObjecti64v" [arg "id" gLuint;arg "pname" gLenum;arg "params" gLint64];
+    dynamic "glQueryCounter" [arg "id" gLuint;arg "target" gLenum];
+    dynamic "glGetSamplerParameterIuiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLuint];
+    dynamic "glGetSamplerParameterfv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLfloat];
+    dynamic "glGetSamplerParameterIiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetSamplerParameteriv" [arg "sampler" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glSamplerParameterIuiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLuint];
+    dynamic "glSamplerParameterIiv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glSamplerParameterfv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glSamplerParameterf" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLfloat];
+    dynamic "glSamplerParameteriv" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glSamplerParameteri" [arg "sampler" gLuint;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glBindSampler" [arg "unit" gLuint;arg "sampler" gLuint];
+    dynamic "glIsSampler" [arg "sampler" gLuint] ~ret:gLboolean;
+    dynamic "glDeleteSamplers" [arg "count" gLsizei;arg "samplers" gLuint];
+    dynamic "glGenSamplers" [arg "count" gLsizei;arg "samplers" gLuint];
+    dynamic "glGetFragDataIndex" [arg "program" gLuint;arg "name" gLchar] ~ret:gLint;
+    dynamic "glBindFragDataLocationIndexed" [arg "program" gLuint;arg "colorNumber" gLuint;arg "index" gLuint;arg "name" gLchar];
+    dynamic "glVertexAttribDivisor" [arg "index" gLuint;arg "divisor" gLuint];
+    dynamic "glGetQueryIndexediv" [arg "target" gLenum;arg "index" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glEndQueryIndexed" [arg "target" gLenum;arg "index" gLuint];
+    dynamic "glBeginQueryIndexed" [arg "target" gLenum;arg "index" gLuint;arg "id" gLuint];
+    dynamic "glDrawTransformFeedbackStream" [arg "mode" gLenum;arg "id" gLuint;arg "stream" gLuint];
+    dynamic "glDrawTransformFeedback" [arg "mode" gLenum;arg "id" gLuint];
+    dynamic "glResumeTransformFeedback" [];
+    dynamic "glPauseTransformFeedback" [];
+    dynamic "glIsTransformFeedback" [arg "id" gLuint] ~ret:gLboolean;
+    dynamic "glGenTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
+    dynamic "glDeleteTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
+    dynamic "glBindTransformFeedback" [arg "target" gLenum;arg "id" gLuint];
+    dynamic "glPatchParameterfv" [arg "pname" gLenum;arg "values" gLfloat];
+    dynamic "glPatchParameteri" [arg "pname" gLenum;arg "value" gLint];
+    dynamic "glGetProgramStageiv" [arg "program" gLuint;arg "shadertype" gLenum;arg "pname" gLenum;arg "values" gLint];
+    dynamic "glGetUniformSubroutineuiv" [arg "shadertype" gLenum;arg "location" gLint;arg "params" gLuint];
+    dynamic "glUniformSubroutinesuiv" [arg "shadertype" gLenum;arg "count" gLsizei;arg "indices" gLuint];
+    dynamic "glGetActiveSubroutineName" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "bufsize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
+    dynamic "glGetActiveSubroutineUniformName" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "bufsize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
+    dynamic "glGetActiveSubroutineUniformiv" [arg "program" gLuint;arg "shadertype" gLenum;arg "index" gLuint;arg "pname" gLenum;arg "values" gLint];
+    dynamic "glGetSubroutineIndex" [arg "program" gLuint;arg "shadertype" gLenum;arg "name" gLchar] ~ret:gLuint;
+    dynamic "glGetSubroutineUniformLocation" [arg "program" gLuint;arg "shadertype" gLenum;arg "name" gLchar] ~ret:gLint;
+    dynamic "glGetUniformdv" [arg "program" gLuint;arg "location" gLint;arg "params" gLdouble];
+    dynamic "glUniformMatrix4x3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix4x2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix3x4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix3x2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix2x4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix2x3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix4dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix3dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniformMatrix2dv" [arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glUniform4dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glUniform3dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glUniform2dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glUniform1dv" [arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glUniform4d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glUniform3d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glUniform2d" [arg "location" gLint;arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glUniform1d" [arg "location" gLint;arg "x" gLdouble];
+    dynamic "glDrawElementsIndirect" [arg "mode" gLenum;arg "type" gLenum;arg "indirect" gLvoid];
+    dynamic "glDrawArraysIndirect" [arg "mode" gLenum;arg "indirect" gLvoid];
+    dynamic "glBlendFuncSeparatei" [arg "buf" gLuint;arg "srcRGB" gLenum;arg "dstRGB" gLenum;arg "srcAlpha" gLenum;arg "dstAlpha" gLenum];
+    dynamic "glBlendFunci" [arg "buf" gLuint;arg "src" gLenum;arg "dst" gLenum];
+    dynamic "glBlendEquationSeparatei" [arg "buf" gLuint;arg "modeRGB" gLenum;arg "modeAlpha" gLenum];
+    dynamic "glBlendEquationi" [arg "buf" gLuint;arg "mode" gLenum];
+    dynamic "glMinSampleShading" [arg "value" gLfloat];
+    dynamic "glGetDoublei_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLdouble];
+    dynamic "glGetFloati_v" [arg "target" gLenum;arg "index" gLuint;arg "data" gLfloat];
+    dynamic "glDepthRangeIndexed" [arg "index" gLuint;arg "n" gLdouble;arg "f" gLdouble];
+    dynamic "glDepthRangeArrayv" [arg "first" gLuint;arg "count" gLsizei;arg "v" gLdouble];
+    dynamic "glScissorIndexedv" [arg "index" gLuint;arg "v" gLint];
+    dynamic "glScissorIndexed" [arg "index" gLuint;arg "left" gLint;arg "bottom" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glScissorArrayv" [arg "first" gLuint;arg "count" gLsizei;arg "v" gLint];
+    dynamic "glViewportIndexedfv" [arg "index" gLuint;arg "v" gLfloat];
+    dynamic "glViewportIndexedf" [arg "index" gLuint;arg "x" gLfloat;arg "y" gLfloat;arg "w" gLfloat;arg "h" gLfloat];
+    dynamic "glViewportArrayv" [arg "first" gLuint;arg "count" gLsizei;arg "v" gLfloat];
+    dynamic "glGetVertexAttribLdv" [arg "index" gLuint;arg "pname" gLenum;arg "params" gLdouble];
+    dynamic "glVertexAttribLPointer" [arg "index" gLuint;arg "size" gLint;arg "type" gLenum;arg "stride" gLsizei;arg "pointer" gLvoid];
+    dynamic "glVertexAttribL4dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttribL3dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttribL2dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttribL1dv" [arg "index" gLuint;arg "v" gLdouble];
+    dynamic "glVertexAttribL4d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble;arg "w" gLdouble];
+    dynamic "glVertexAttribL3d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble;arg "z" gLdouble];
+    dynamic "glVertexAttribL2d" [arg "index" gLuint;arg "x" gLdouble;arg "y" gLdouble];
+    dynamic "glVertexAttribL1d" [arg "index" gLuint;arg "x" gLdouble];
+    dynamic "glGetProgramPipelineInfoLog" [arg "pipeline" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "infoLog" gLchar];
+    dynamic "glValidateProgramPipeline" [arg "pipeline" gLuint];
+    dynamic "glProgramUniformMatrix4x3dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix3x4dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix4x2dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix2x4dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix3x2dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix2x3dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix4x3fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniformMatrix3x4fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniformMatrix4x2fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniformMatrix2x4fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniformMatrix3x2fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniformMatrix2x3fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniformMatrix4dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix3dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix2dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLdouble];
+    dynamic "glProgramUniformMatrix4fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniformMatrix3fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniformMatrix2fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "transpose" gLboolean;arg "value" gLfloat];
+    dynamic "glProgramUniform4uiv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glProgramUniform4ui" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLuint v0;arg "arg3" gLuint v1;arg "arg4" gLuint v2;arg "arg5" gLuint v3];
+    dynamic "glProgramUniform4dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glProgramUniform4d" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLdouble v0;arg "arg3" gLdouble v1;arg "arg4" gLdouble v2;arg "arg5" gLdouble v3];
+    dynamic "glProgramUniform4fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glProgramUniform4f" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLfloat v0;arg "arg3" gLfloat v1;arg "arg4" gLfloat v2;arg "arg5" gLfloat v3];
+    dynamic "glProgramUniform4iv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glProgramUniform4i" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLint v0;arg "arg3" gLint v1;arg "arg4" gLint v2;arg "arg5" gLint v3];
+    dynamic "glProgramUniform3uiv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glProgramUniform3ui" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLuint v0;arg "arg3" gLuint v1;arg "arg4" gLuint v2];
+    dynamic "glProgramUniform3dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glProgramUniform3d" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLdouble v0;arg "arg3" gLdouble v1;arg "arg4" gLdouble v2];
+    dynamic "glProgramUniform3fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glProgramUniform3f" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLfloat v0;arg "arg3" gLfloat v1;arg "arg4" gLfloat v2];
+    dynamic "glProgramUniform3iv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glProgramUniform3i" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLint v0;arg "arg3" gLint v1;arg "arg4" gLint v2];
+    dynamic "glProgramUniform2uiv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glProgramUniform2ui" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLuint v0;arg "arg3" gLuint v1];
+    dynamic "glProgramUniform2dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glProgramUniform2d" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLdouble v0;arg "arg3" gLdouble v1];
+    dynamic "glProgramUniform2fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glProgramUniform2f" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLfloat v0;arg "arg3" gLfloat v1];
+    dynamic "glProgramUniform2iv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glProgramUniform2i" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLint v0;arg "arg3" gLint v1];
+    dynamic "glProgramUniform1uiv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLuint];
+    dynamic "glProgramUniform1ui" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLuint v0];
+    dynamic "glProgramUniform1dv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLdouble];
+    dynamic "glProgramUniform1d" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLdouble v0];
+    dynamic "glProgramUniform1fv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLfloat];
+    dynamic "glProgramUniform1f" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLfloat v0];
+    dynamic "glProgramUniform1iv" [arg "program" gLuint;arg "location" gLint;arg "count" gLsizei;arg "value" gLint];
+    dynamic "glProgramUniform1i" [arg "program" gLuint;arg "location" gLint;arg "arg2" gLint v0];
+    dynamic "glGetProgramPipelineiv" [arg "pipeline" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glIsProgramPipeline" [arg "pipeline" gLuint] ~ret:gLboolean;
+    dynamic "glGenProgramPipelines" [arg "n" gLsizei;arg "pipelines" gLuint];
+    dynamic "glDeleteProgramPipelines" [arg "n" gLsizei;arg "pipelines" gLuint];
+    dynamic "glBindProgramPipeline" [arg "pipeline" gLuint];
+    dynamic "glCreateShaderProgramv" [arg "type" gLenum;arg "count" gLsizei;arg "strings" gLchar * const] ~ret:gLuint;
+    dynamic "glActiveShaderProgram" [arg "pipeline" gLuint;arg "program" gLuint];
+    dynamic "glUseProgramStages" [arg "pipeline" gLuint;arg "stages" gLbitfield;arg "program" gLuint];
+    dynamic "glProgramParameteri" [arg "program" gLuint;arg "pname" gLenum;arg "value" gLint];
+    dynamic "glProgramBinary" [arg "program" gLuint;arg "binaryFormat" gLenum;arg "binary" gLvoid;arg "length" gLsizei];
+    dynamic "glGetProgramBinary" [arg "program" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "binaryFormat" gLenum;arg "binary" gLvoid];
+    dynamic "glClearDepthf" [arg "dd" gLfloat];
+    dynamic "glDepthRangef" [arg "n" gLfloat;arg "f" gLfloat];
+    dynamic "glGetShaderPrecisionFormat" [arg "shadertype" gLenum;arg "precisiontype" gLenum;arg "range" gLint;arg "precision" gLint];
+    dynamic "glShaderBinary" [arg "count" gLsizei;arg "shaders" gLuint;arg "binaryformat" gLenum;arg "binary" gLvoid;arg "length" gLsizei];
+    dynamic "glReleaseShaderCompiler" [];
+    dynamic "glTexStorage3D" [arg "target" gLenum;arg "levels" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei];
+    dynamic "glTexStorage2D" [arg "target" gLenum;arg "levels" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glTexStorage1D" [arg "target" gLenum;arg "levels" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei];
+    dynamic "glMemoryBarrier" [arg "barriers" gLbitfield];
+    dynamic "glBindImageTexture" [arg "unit" gLuint;arg "texture" gLuint;arg "level" gLint;arg "layered" gLboolean;arg "layer" gLint;arg "access" gLenum;arg "format" gLenum];
+    dynamic "glGetActiveAtomicCounterBufferiv" [arg "program" gLuint;arg "bufferIndex" gLuint;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glGetInternalformativ" [arg "target" gLenum;arg "internalformat" gLenum;arg "pname" gLenum;arg "bufSize" gLsizei;arg "params" gLint];
+    dynamic "glDrawTransformFeedbackStreamInstanced" [arg "mode" gLenum;arg "id" gLuint;arg "stream" gLuint;arg "instancecount" gLsizei];
+    dynamic "glDrawTransformFeedbackInstanced" [arg "mode" gLenum;arg "id" gLuint;arg "instancecount" gLsizei];
+    dynamic "glDrawElementsInstancedBaseVertexBaseInstance" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" void;arg "instancecount" gLsizei;arg "basevertex" gLint;arg "baseinstance" gLuint];
+    dynamic "glDrawElementsInstancedBaseInstance" [arg "mode" gLenum;arg "count" gLsizei;arg "type" gLenum;arg "indices" void;arg "instancecount" gLsizei;arg "baseinstance" gLuint];
+    dynamic "glDrawArraysInstancedBaseInstance" [arg "mode" gLenum;arg "first" gLint;arg "count" gLsizei;arg "instancecount" gLsizei;arg "baseinstance" gLuint];
+    dynamic "glTexStorage3DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei;arg "fixedsamplelocations" gLboolean];
+    dynamic "glTexStorage2DMultisample" [arg "target" gLenum;arg "samples" gLsizei;arg "internalformat" gLenum;arg "width" gLsizei;arg "height" gLsizei;arg "fixedsamplelocations" gLboolean];
+    dynamic "glTexBufferRange" [arg "target" gLenum;arg "internalformat" gLenum;arg "buffer" gLuint;arg "offset" gLintptr;arg "size" gLsizeiptr];
+    dynamic "glShaderStorageBlockBinding" [arg "program" gLuint;arg "storageBlockIndex" gLuint;arg "storageBlockBinding" gLuint];
+    dynamic "glGetProgramResourceLocationIndex" [arg "program" gLuint;arg "programInterface" gLenum;arg "name" gLchar] ~ret:gLint;
+    dynamic "glGetProgramResourceLocation" [arg "program" gLuint;arg "programInterface" gLenum;arg "name" gLchar] ~ret:gLint;
+    dynamic "glGetProgramResourceiv" [arg "program" gLuint;arg "programInterface" gLenum;arg "index" gLuint;arg "propCount" gLsizei;arg "props" gLenum;arg "bufSize" gLsizei;arg "length" gLsizei;arg "params" gLint];
+    dynamic "glGetProgramResourceName" [arg "program" gLuint;arg "programInterface" gLenum;arg "index" gLuint;arg "bufSize" gLsizei;arg "length" gLsizei;arg "name" gLchar];
+    dynamic "glGetProgramResourceIndex" [arg "program" gLuint;arg "programInterface" gLenum;arg "name" gLchar] ~ret:gLuint;
+    dynamic "glGetProgramInterfaceiv" [arg "program" gLuint;arg "programInterface" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glMultiDrawElementsIndirect" [arg "mode" gLenum;arg "type" gLenum;arg "indirect" void;arg "drawcount" gLsizei;arg "stride" gLsizei];
+    dynamic "glMultiDrawArraysIndirect" [arg "mode" gLenum;arg "indirect" void;arg "drawcount" gLsizei;arg "stride" gLsizei];
+    dynamic "glInvalidateSubFramebuffer" [arg "target" gLenum;arg "numAttachments" gLsizei;arg "attachments" gLenum;arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
+    dynamic "glInvalidateFramebuffer" [arg "target" gLenum;arg "numAttachments" gLsizei;arg "attachments" gLenum];
+    dynamic "glInvalidateBufferData" [arg "buffer" gLuint];
+    dynamic "glInvalidateBufferSubData" [arg "buffer" gLuint;arg "offset" gLintptr;arg "length" gLsizeiptr];
+    dynamic "glInvalidateTexImage" [arg "texture" gLuint;arg "level" gLint];
+    dynamic "glInvalidateTexSubImage" [arg "texture" gLuint;arg "level" gLint;arg "xoffset" gLint;arg "yoffset" gLint;arg "zoffset" gLint;arg "width" gLsizei;arg "height" gLsizei;arg "depth" gLsizei];
+    dynamic "glGetInternalformati64v" [arg "target" gLenum;arg "internalformat" gLenum;arg "pname" gLenum;arg "bufSize" gLsizei;arg "params" gLint64];
+    dynamic "glGetFramebufferParameteriv" [arg "target" gLenum;arg "pname" gLenum;arg "params" gLint];
+    dynamic "glFramebufferParameteri" [arg "target" gLenum;arg "pname" gLenum;arg "param" gLint];
+    dynamic "glVertexBindingDivisor" [arg "bindingindex" gLuint;arg "divisor" gLuint];
+    dynamic "glVertexAttribBinding" [arg "attribindex" gLuint;arg "bindingindex" gLuint];
+    dynamic "glVertexAttribLFormat" [arg "attribindex" gLuint;arg "size" gLint;arg "type" gLenum;arg "relativeoffset" gLuint];
+    dynamic "glVertexAttribIFormat" [arg "attribindex" gLuint;arg "size" gLint;arg "type" gLenum;arg "relativeoffset" gLuint];
+    dynamic "glVertexAttribFormat" [arg "attribindex" gLuint;arg "size" gLint;arg "type" gLenum;arg "normalized" gLboolean;arg "relativeoffset" gLuint];
+    dynamic "glBindVertexBuffer" [arg "bindingindex" gLuint;arg "buffer" gLuint;arg "offset" gLintptr;arg "stride" gLsizei];
+    dynamic "glTextureView" [arg "texture" gLuint;arg "target" gLenum;arg "origtexture" gLuint;arg "internalformat" gLenum;arg "minlevel" gLuint;arg "numlevels" gLuint;arg "minlayer" gLuint;arg "numlayers" gLuint];
+    dynamic "glCopyImageSubData" [arg "srcName" gLuint;arg "srcTarget" gLenum;arg "srcLevel" gLint;arg "srcX" gLint;arg "srcY" gLint;arg "srcZ" gLint;arg "dstName" gLuint;arg "dstTarget" gLenum;arg "dstLevel" gLint;arg "dstX" gLint;arg "dstY" gLint;arg "dstZ" gLint;arg "srcWidth" gLsizei;arg "srcHeight" gLsizei;arg "srcDepth" gLsizei];
+    dynamic "glDispatchComputeIndirect" [arg "indirect" gLintptr];
+    dynamic "glDispatchCompute" [arg "num_groups_x" gLuint;arg "num_groups_y" gLuint;arg "num_groups_z" gLuint];
+    dynamic "glClearBufferSubData" [arg "target" gLenum;arg "internalformat" gLenum;arg "offset" gLintptr;arg "size" gLsizeiptr;arg "format" gLenum;arg "type" gLenum;arg "data" void];
+    dynamic "glClearBufferData" [arg "target" gLenum;arg "internalformat" gLenum;arg "format" gLenum;arg "type" gLenum;arg "data" void];
+  ]
+  let () = with_class qOpenGLFunctions_4_4_Compatibility [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -16764,7 +16821,7 @@ let () = with_class qOpenGLFunctions_4_4_Compatibility [
     dynamic "glVertexP2uiv" [arg "type" gLenum;arg "value" gLuint];
     dynamic "glVertexP2ui" [arg "type" gLenum;arg "value" gLuint];
   ]
-let () = with_class qOpenGLFunctions_4_4_Core [
+  let () = with_class qOpenGLFunctions_4_4_Core [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -17310,7 +17367,7 @@ let () = with_class qOpenGLFunctions_4_4_Core [
     dynamic "glClearTexImage" [arg "texture" gLuint;arg "level" gLint;arg "format" gLenum;arg "type" gLenum;arg "data" void];
     dynamic "glBufferStorage" [arg "target" gLenum;arg "size" gLsizeiptr;arg "data" void;arg "flags" gLbitfield];
   ]
-let () = with_class qOpenGLFunctions_4_5_Compatibility [
+  let () = with_class qOpenGLFunctions_4_5_Compatibility [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -18386,7 +18443,7 @@ let () = with_class qOpenGLFunctions_4_5_Compatibility [
     dynamic "glGetnMapfv" [arg "target" gLenum;arg "query" gLenum;arg "bufSize" gLsizei;arg "v" gLfloat];
     dynamic "glGetnMapdv" [arg "target" gLenum;arg "query" gLenum;arg "bufSize" gLsizei;arg "v" gLdouble];
   ]
-let () = with_class qOpenGLFunctions_4_5_Core [
+  let () = with_class qOpenGLFunctions_4_5_Core [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
@@ -19038,7 +19095,7 @@ let () = with_class qOpenGLFunctions_4_5_Core [
     dynamic "glCreateTransformFeedbacks" [arg "n" gLsizei;arg "ids" gLuint];
     dynamic "glClipControl" [arg "origin" gLenum;arg "depth" gLenum];
   ]
-let () = with_class qOpenGLFunctions_ES2 [
+  let () = with_class qOpenGLFunctions_ES2 [
     constructor "" [];
     dynamic "initializeOpenGLFunctions" [] ~ret:bool;
     dynamic "glActiveTexture" [arg "texture" gLenum];
@@ -19184,24 +19241,24 @@ let () = with_class qOpenGLFunctions_ES2 [
     dynamic "glVertexAttribPointer" [arg "indx" gLuint;arg "size" gLint;arg "type" gLenum;arg "normalized" gLboolean;arg "stride" gLsizei;arg "ptr" gLvoid];
     dynamic "glViewport" [arg "x" gLint;arg "y" gLint;arg "width" gLsizei;arg "height" gLsizei];
   ]
-let () = with_class qAccessibleStateChangeEvent [
+  let () = with_class qAccessibleStateChangeEvent [
     constructor "" [arg "object" qObject;arg "state" qAccessible'State];
     constructor "" [arg "iface" qAccessibleInterface;arg "state" qAccessible'State];
     dynamic "changedStates" [] ~ret:qAccessible'State;
   ]
-let () = with_class qAccessibleTextCursorEvent [
+  let () = with_class qAccessibleTextCursorEvent [
     constructor "" [arg "object" qObject;arg "cursorPos" int];
     constructor "" [arg "iface" qAccessibleInterface;arg "cursorPos" int];
     dynamic "setCursorPosition" [arg "position" int];
     dynamic "cursorPosition" [] ~ret:int;
   ]
-let () = with_class qAccessibleValueChangeEvent [
+  let () = with_class qAccessibleValueChangeEvent [
     constructor "" [arg "object" qObject;arg "value" qVariant];
     constructor "" [arg "iface" qAccessibleInterface;arg "val" qVariant];
     dynamic "setValue" [arg "value" qVariant];
     dynamic "value" [] ~ret:qVariant;
   ]
-let () = with_class qAccessibleTableModelChangeEvent [
+  let () = with_class qAccessibleTableModelChangeEvent [
     constructor "" [arg "object" qObject;arg "changeType" modelChangeType];
     constructor "" [arg "iface" qAccessibleInterface;arg "changeType" modelChangeType];
     dynamic "setModelChangeType" [arg "changeType" modelChangeType];
@@ -19215,7 +19272,7 @@ let () = with_class qAccessibleTableModelChangeEvent [
     dynamic "lastRow" [] ~ret:int;
     dynamic "lastColumn" [] ~ret:int;
   ]
-let () = with_class qLinearGradient [
+  let () = with_class qLinearGradient [
     constructor "" [];
     constructor "" [arg "start" qPointF;arg "finalStop" qPointF];
     constructor "" [arg "arg0" qreal x1;arg "arg1" qreal y1;arg "arg2" qreal x2;arg "arg3" qreal y2];
@@ -19226,7 +19283,7 @@ let () = with_class qLinearGradient [
     dynamic "setFinalStop" [arg "stop" qPointF];
     dynamic "setFinalStop" [arg "x" qreal;arg "y" qreal];
   ]
-let () = with_class qRadialGradient [
+  let () = with_class qRadialGradient [
     constructor "" [];
     constructor "" [arg "center" qPointF;arg "radius" qreal;arg "focalPoint" qPointF];
     constructor "" [arg "cx" qreal;arg "cy" qreal;arg "radius" qreal;arg "fx" qreal;arg "fy" qreal];
@@ -19247,7 +19304,7 @@ let () = with_class qRadialGradient [
     dynamic "focalRadius" [] ~ret:qreal;
     dynamic "setFocalRadius" [arg "radius" qreal];
   ]
-let () = with_class qConicalGradient [
+  let () = with_class qConicalGradient [
     constructor "" [];
     constructor "" [arg "center" qPointF;arg "angle" qreal];
     constructor "" [arg "cx" qreal;arg "cy" qreal;arg "angle" qreal];
@@ -19257,11 +19314,11 @@ let () = with_class qConicalGradient [
     dynamic "angle" [] ~ret:qreal;
     dynamic "setAngle" [arg "angle" qreal];
   ]
-let () = with_class qInputEvent [
+  let () = with_class qInputEvent [
     dynamic "modifiers" [] ~ret:qt'KeyboardModifiers;
     dynamic "timestamp" [] ~ret:ulong;
   ]
-let () = with_class qEnterEvent [
+  let () = with_class qEnterEvent [
     constructor "" [arg "localPos" qPointF;arg "windowPos" qPointF;arg "screenPos" qPointF];
     dynamic "pos" [] ~ret:qPoint;
     dynamic "globalPos" [] ~ret:qPoint;
@@ -19273,49 +19330,49 @@ let () = with_class qEnterEvent [
     dynamic "windowPos" [] ~ret:qPointF;
     dynamic "screenPos" [] ~ret:qPointF;
   ]
-let () = with_class qFocusEvent [
+  let () = with_class qFocusEvent [
     constructor "" [arg "type" type;arg "reason" qt'FocusReason];
     dynamic "gotFocus" [] ~ret:bool;
     dynamic "lostFocus" [] ~ret:bool;
     dynamic "reason" [] ~ret:qt'FocusReason;
   ]
-let () = with_class qPaintEvent [
+  let () = with_class qPaintEvent [
     constructor "" [arg "paintRegion" qRegion];
     constructor "" [arg "paintRect" qRect];
     dynamic "rect" [] ~ret:qRect;
     dynamic "region" [] ~ret:qRegion;
   ]
-let () = with_class qMoveEvent [
+  let () = with_class qMoveEvent [
     constructor "" [arg "pos" qPoint;arg "oldPos" qPoint];
     dynamic "pos" [] ~ret:qPoint;
     dynamic "oldPos" [] ~ret:qPoint;
   ]
-let () = with_class qExposeEvent [
+  let () = with_class qExposeEvent [
     constructor "" [arg "exposeRegion" qRegion];
     dynamic "region" [] ~ret:qRegion;
   ]
-let () = with_class qPlatformSurfaceEvent [
+  let () = with_class qPlatformSurfaceEvent [
     constructor "" [arg "surfaceEventType" surfaceEventType];
     dynamic "surfaceEventType" [] ~ret:surfaceEventType;
   ]
-let () = with_class qResizeEvent [
+  let () = with_class qResizeEvent [
     constructor "" [arg "size" qSize;arg "oldSize" qSize];
     dynamic "size" [] ~ret:qSize;
     dynamic "oldSize" [] ~ret:qSize;
   ]
-let () = with_class qCloseEvent [
+  let () = with_class qCloseEvent [
     constructor "" [];
   ]
-let () = with_class qIconDragEvent [
+  let () = with_class qIconDragEvent [
     constructor "" [];
   ]
-let () = with_class qShowEvent [
+  let () = with_class qShowEvent [
     constructor "" [];
   ]
-let () = with_class qHideEvent [
+  let () = with_class qHideEvent [
     constructor "" [];
   ]
-let () = with_class qInputMethodEvent [
+  let () = with_class qInputMethodEvent [
     constructor "" [];
     constructor "" [arg "preeditText" qString;arg "attributes" qList<Attribute>];
     dynamic "setCommitString" [arg "commitString" qString;arg "replaceFrom" int;arg "replaceLength" int];
@@ -19326,13 +19383,13 @@ let () = with_class qInputMethodEvent [
     dynamic "replacementLength" [] ~ret:int;
     constructor "" [arg "other" qInputMethodEvent];
   ]
-let () = with_class qInputMethodQueryEvent [
+  let () = with_class qInputMethodQueryEvent [
     constructor "" [arg "queries" qt'InputMethodQueries];
     dynamic "queries" [] ~ret:qt'InputMethodQueries;
     dynamic "setValue" [arg "query" qt'InputMethodQuery;arg "value" qVariant];
     dynamic "value" [arg "query" qt'InputMethodQuery] ~ret:qVariant;
   ]
-let () = with_class qDropEvent [
+  let () = with_class qDropEvent [
     constructor "" [arg "pos" qPointF;arg "actions" qt'DropActions;arg "data" qMimeData;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers;arg "type" type];
     dynamic "pos" [] ~ret:qPoint;
     dynamic "posF" [] ~ret:qPointF;
@@ -19346,10 +19403,10 @@ let () = with_class qDropEvent [
     dynamic "source" [] ~ret:qObject;
     dynamic "mimeData" [] ~ret:qMimeData;
   ]
-let () = with_class qDragLeaveEvent [
+  let () = with_class qDragLeaveEvent [
     constructor "" [];
   ]
-let () = with_class qHelpEvent [
+  let () = with_class qHelpEvent [
     constructor "" [arg "type" type;arg "pos" qPoint;arg "globalPos" qPoint];
     dynamic "x" [] ~ret:int;
     dynamic "y" [] ~ret:int;
@@ -19358,34 +19415,34 @@ let () = with_class qHelpEvent [
     dynamic "pos" [] ~ret:qPoint;
     dynamic "globalPos" [] ~ret:qPoint;
   ]
-let () = with_class qStatusTipEvent [
+  let () = with_class qStatusTipEvent [
     constructor "" [arg "tip" qString];
     dynamic "tip" [] ~ret:qString;
   ]
-let () = with_class qWhatsThisClickedEvent [
+  let () = with_class qWhatsThisClickedEvent [
     constructor "" [arg "href" qString];
     dynamic "href" [] ~ret:qString;
   ]
-let () = with_class qActionEvent [
+  let () = with_class qActionEvent [
     constructor "" [arg "type" int;arg "action" qAction;arg "before" qAction];
     dynamic "action" [] ~ret:qAction;
     dynamic "before" [] ~ret:qAction;
   ]
-let () = with_class qFileOpenEvent [
+  let () = with_class qFileOpenEvent [
     dynamic "file" [] ~ret:qString;
     dynamic "url" [] ~ret:qUrl;
     dynamic "openFile" [arg "file" qFile;arg "flags" qIODevice'OpenMode] ~ret:bool;
   ]
-let () = with_class qShortcutEvent [
+  let () = with_class qShortcutEvent [
     constructor "" [arg "key" qKeySequence;arg "id" int;arg "ambiguous" bool];
     dynamic "key" [] ~ret:qKeySequence;
     dynamic "shortcutId" [] ~ret:int;
     dynamic "isAmbiguous" [] ~ret:bool;
   ]
-let () = with_class qWindowStateChangeEvent [
+  let () = with_class qWindowStateChangeEvent [
     dynamic "oldState" [] ~ret:qt'WindowStates;
   ]
-let () = with_class qScrollPrepareEvent [
+  let () = with_class qScrollPrepareEvent [
     constructor "" [arg "startPos" qPointF];
     dynamic "startPos" [] ~ret:qPointF;
     dynamic "viewportSize" [] ~ret:qSizeF;
@@ -19395,13 +19452,13 @@ let () = with_class qScrollPrepareEvent [
     dynamic "setContentPosRange" [arg "rect" qRectF];
     dynamic "setContentPos" [arg "pos" qPointF];
   ]
-let () = with_class qScrollEvent [
+  let () = with_class qScrollEvent [
     constructor "" [arg "contentPos" qPointF;arg "overshootDistance" qPointF;arg "scrollState" scrollState];
     dynamic "contentPos" [] ~ret:qPointF;
     dynamic "overshootDistance" [] ~ret:qPointF;
     dynamic "scrollState" [] ~ret:scrollState;
   ]
-let () = with_class qAccessibleObject [
+  let () = with_class qAccessibleObject [
     constructor "" [arg "object" qObject];
     dynamic "isValid" [] ~ret:bool;
     dynamic "object" [] ~ret:qObject;
@@ -19409,20 +19466,20 @@ let () = with_class qAccessibleObject [
     dynamic "setText" [arg "t" qAccessible'Text;arg "text" qString];
     dynamic "childAt" [arg "x" int;arg "y" int] ~ret:qAccessibleInterface;
   ]
-let () = with_class qAccessiblePlugin [
+  let () = with_class qAccessiblePlugin [
     constructor "" [arg "parent" qObject];
     dynamic "create" [arg "key" qString;arg "object" qObject] ~ret:qAccessibleInterface;
   ]
-let () = with_class qIconEnginePlugin [
+  let () = with_class qIconEnginePlugin [
     constructor "" [arg "parent" qObject];
     dynamic "create" [arg "filename" qString] ~ret:qIconEngine;
   ]
-let () = with_class qImageIOPlugin [
+  let () = with_class qImageIOPlugin [
     constructor "" [arg "parent" qObject];
     dynamic "capabilities" [arg "device" qIODevice;arg "format" qByteArray] ~ret:capabilities;
     dynamic "create" [arg "device" qIODevice;arg "format" qByteArray] ~ret:qImageIOHandler;
   ]
-let () = with_class qMovie [
+  let () = with_class qMovie [
     constructor "" [arg "parent" qObject];
     constructor "" [arg "device" qIODevice;arg "format" qByteArray;arg "parent" qObject];
     constructor "" [arg "fileName" qString;arg "format" qByteArray;arg "parent" qObject];
@@ -19463,13 +19520,13 @@ let () = with_class qMovie [
     dynamic "stop" [];
     dynamic "setSpeed" [arg "percentSpeed" int];
   ]
-let () = with_class qPictureFormatPlugin [
+  let () = with_class qPictureFormatPlugin [
     constructor "" [arg "parent" qObject];
     dynamic "loadPicture" [arg "format" qString;arg "fileName" qString;arg "picture" qPicture] ~ret:bool;
     dynamic "savePicture" [arg "format" qString;arg "fileName" qString;arg "picture" qPicture] ~ret:bool;
     dynamic "installIOHandler" [arg "format" qString] ~ret:bool;
   ]
-let () = with_class qClipboard [
+  let () = with_class qClipboard [
     dynamic "clear" [arg "mode" mode];
     dynamic "supportsSelection" [] ~ret:bool;
     dynamic "supportsFindBuffer" [] ~ret:bool;
@@ -19490,7 +19547,7 @@ let () = with_class qClipboard [
     dynamic "findBufferChanged" [];
     dynamic "dataChanged" [];
   ]
-let () = with_class qDrag [
+  let () = with_class qDrag [
     constructor "" [arg "dragSource" qObject];
     dynamic "setMimeData" [arg "data" qMimeData];
     dynamic "mimeData" [] ~ret:qMimeData;
@@ -19511,11 +19568,11 @@ let () = with_class qDrag [
     dynamic "actionChanged" [arg "action" qt'DropAction];
     dynamic "targetChanged" [arg "newTarget" qObject];
   ]
-let () = with_class qGenericPlugin [
+  let () = with_class qGenericPlugin [
     constructor "" [arg "parent" qObject];
     dynamic "create" [arg "key" qString;arg "specification" qString] ~ret:qObject;
   ]
-let () = with_class qInputMethod [
+  let () = with_class qInputMethod [
     dynamic "inputItemTransform" [] ~ret:qTransform;
     dynamic "setInputItemTransform" [arg "transform" qTransform];
     dynamic "inputItemRectangle" [] ~ret:qRectF;
@@ -19545,11 +19602,11 @@ let () = with_class qInputMethod [
     dynamic "localeChanged" [];
     dynamic "inputDirectionChanged" [arg "newDirection" qt'LayoutDirection];
   ]
-let () = with_class qOpenGLContextGroup [
+  let () = with_class qOpenGLContextGroup [
     dynamic "shares" [] ~ret:qList<QOpenGLContext *>;
     static  "currentContextGroup" [] ~ret:qOpenGLContextGroup;
   ]
-let () = with_class qOpenGLContext [
+  let () = with_class qOpenGLContext [
     constructor "" [arg "parent" qObject];
     dynamic "setFormat" [arg "format" qSurfaceFormat];
     dynamic "setShareContext" [arg "shareContext" qOpenGLContext];
@@ -19584,7 +19641,7 @@ let () = with_class qOpenGLContext [
     static  "globalShareContext" [] ~ret:qOpenGLContext;
     dynamic "aboutToBeDestroyed" [];
   ]
-let () = with_class qScreen [
+  let () = with_class qScreen [
     dynamic "handle" [] ~ret:qPlatformScreen;
     dynamic "name" [] ~ret:qString;
     dynamic "manufacturer" [] ~ret:qString;
@@ -19630,7 +19687,7 @@ let () = with_class qScreen [
     dynamic "orientationChanged" [arg "orientation" qt'ScreenOrientation];
     dynamic "refreshRateChanged" [arg "refreshRate" qreal];
   ]
-let () = with_class qSessionManager [
+  let () = with_class qSessionManager [
     dynamic "sessionId" [] ~ret:qString;
     dynamic "sessionKey" [] ~ret:qString;
     dynamic "allowsInteraction" [] ~ret:bool;
@@ -19648,7 +19705,7 @@ let () = with_class qSessionManager [
     dynamic "isPhase2" [] ~ret:bool;
     dynamic "requestPhase2" [];
   ]
-let () = with_class qStyleHints [
+  let () = with_class qStyleHints [
     dynamic "mouseDoubleClickInterval" [] ~ret:int;
     dynamic "mousePressAndHoldInterval" [] ~ret:int;
     dynamic "startDragDistance" [] ~ret:int;
@@ -19679,7 +19736,7 @@ let () = with_class qStyleHints [
     dynamic "useHoverEffectsChanged" [arg "useHoverEffects" bool];
     dynamic "wheelScrollLinesChanged" [arg "scrollLines" int];
   ]
-let () = with_class qOpenGLDebugLogger [
+  let () = with_class qOpenGLDebugLogger [
     constructor "" [arg "parent" qObject];
     dynamic "initialize" [] ~ret:bool;
     dynamic "isLogging" [] ~ret:bool;
@@ -19697,7 +19754,7 @@ let () = with_class qOpenGLDebugLogger [
     dynamic "stopLogging" [];
     dynamic "messageLogged" [arg "debugMessage" qOpenGLDebugMessage];
   ]
-let () = with_class qOpenGLShader [
+  let () = with_class qOpenGLShader [
     constructor "" [arg "type" qOpenGLShader'ShaderType;arg "parent" qObject];
     dynamic "shaderType" [] ~ret:qOpenGLShader'ShaderType;
     dynamic "compileSourceCode" [arg "source" char] ~ret:bool;
@@ -19710,7 +19767,7 @@ let () = with_class qOpenGLShader [
     dynamic "shaderId" [] ~ret:gLuint;
     static  "hasOpenGLShaders" [arg "type" shaderType;arg "context" qOpenGLContext] ~ret:bool;
   ]
-let () = with_class qOpenGLShaderProgram [
+  let () = with_class qOpenGLShaderProgram [
     constructor "" [arg "parent" qObject];
     dynamic "addShader" [arg "shader" qOpenGLShader] ~ret:bool;
     dynamic "removeShader" [arg "shader" qOpenGLShader];
@@ -19867,7 +19924,7 @@ let () = with_class qOpenGLShaderProgram [
     dynamic "setUniformValueArray" [arg "name" char;arg "values" qMatrix4x4;arg "count" int];
     static  "hasOpenGLShaderPrograms" [arg "context" qOpenGLContext] ~ret:bool;
   ]
-let () = with_class qOpenGLTimerQuery [
+  let () = with_class qOpenGLTimerQuery [
     constructor "" [arg "parent" qObject];
     dynamic "create" [] ~ret:bool;
     dynamic "destroy" [];
@@ -19880,7 +19937,7 @@ let () = with_class qOpenGLTimerQuery [
     dynamic "isResultAvailable" [] ~ret:bool;
     dynamic "waitForResult" [] ~ret:gLuint64;
   ]
-let () = with_class qOpenGLTimeMonitor [
+  let () = with_class qOpenGLTimeMonitor [
     constructor "" [arg "parent" qObject];
     dynamic "setSampleCount" [arg "sampleCount" int];
     dynamic "sampleCount" [] ~ret:int;
@@ -19894,7 +19951,7 @@ let () = with_class qOpenGLTimeMonitor [
     dynamic "waitForIntervals" [] ~ret:qVector<GLuint64>;
     dynamic "reset" [];
   ]
-let () = with_class qOpenGLVertexArrayObject [
+  let () = with_class qOpenGLVertexArrayObject [
     constructor "" [arg "parent" qObject];
     dynamic "create" [] ~ret:bool;
     dynamic "destroy" [];
@@ -19903,7 +19960,7 @@ let () = with_class qOpenGLVertexArrayObject [
     dynamic "bind" [];
     dynamic "release" [];
   ]
-let () = with_class qAbstractTextDocumentLayout [
+  let () = with_class qAbstractTextDocumentLayout [
     constructor "" [arg "document" qTextDocument];
     dynamic "draw" [arg "painter" qPainter;arg "context" paintContext];
     dynamic "hitTest" [arg "point" qPointF;arg "accuracy" qt'HitTestAccuracy] ~ret:int;
@@ -19925,13 +19982,13 @@ let () = with_class qAbstractTextDocumentLayout [
     dynamic "documentSizeChanged" [arg "newSize" qSizeF];
     dynamic "pageCountChanged" [arg "newPages" int];
   ]
-let () = with_class qTextObject [
+  let () = with_class qTextObject [
     dynamic "format" [] ~ret:qTextFormat;
     dynamic "formatIndex" [] ~ret:int;
     dynamic "document" [] ~ret:qTextDocument;
     dynamic "objectIndex" [] ~ret:int;
   ]
-let () = with_class qValidator [
+  let () = with_class qValidator [
     constructor "" [arg "parent" qObject];
     dynamic "setLocale" [arg "locale" qLocale];
     dynamic "locale" [] ~ret:qLocale;
@@ -19939,7 +19996,7 @@ let () = with_class qValidator [
     dynamic "fixup" [arg "input" qString];
     dynamic "changed" [];
   ]
-let () = with_class qIntValidator [
+  let () = with_class qIntValidator [
     constructor "" [arg "parent" qObject];
     constructor "" [arg "minimum" int;arg "maximum" int;arg "parent" qObject];
     dynamic "validate" [arg "input" qString;arg "pos" int] ~ret:qValidator'State;
@@ -19950,7 +20007,7 @@ let () = with_class qIntValidator [
     dynamic "bottom" [] ~ret:int;
     dynamic "top" [] ~ret:int;
   ]
-let () = with_class qDoubleValidator [
+  let () = with_class qDoubleValidator [
     constructor "" [arg "parent" qObject];
     constructor "" [arg "bottom" double;arg "top" double;arg "decimals" int;arg "parent" qObject];
     dynamic "validate" [arg "input" qString;arg "pos" int] ~ret:qValidator'State;
@@ -19964,14 +20021,14 @@ let () = with_class qDoubleValidator [
     dynamic "decimals" [] ~ret:int;
     dynamic "notation" [] ~ret:notation;
   ]
-let () = with_class qRegExpValidator [
+  let () = with_class qRegExpValidator [
     constructor "" [arg "parent" qObject];
     constructor "" [arg "rx" qRegExp;arg "parent" qObject];
     dynamic "validate" [arg "input" qString;arg "pos" int] ~ret:qValidator'State;
     dynamic "setRegExp" [arg "rx" qRegExp];
     dynamic "regExp" [] ~ret:qRegExp;
   ]
-let () = with_class qRegularExpressionValidator [
+  let () = with_class qRegularExpressionValidator [
     constructor "" [arg "parent" qObject];
     constructor "" [arg "re" qRegularExpression;arg "parent" qObject];
     dynamic "validate" [arg "input" qString;arg "pos" int] ~ret:qValidator'State;
@@ -19979,9 +20036,9 @@ let () = with_class qRegularExpressionValidator [
     dynamic "setRegularExpression" [arg "re" qRegularExpression];
     dynamic "regularExpressionChanged" [arg "re" qRegularExpression];
   ]
-let () = with_class qTextBlockGroup [
+  let () = with_class qTextBlockGroup [
   ]
-let () = with_class qTextFrame [
+  let () = with_class qTextFrame [
     constructor "" [arg "document" qTextDocument];
     dynamic "setFrameFormat" [arg "format" qTextFrameFormat];
     dynamic "frameFormat" [] ~ret:qTextFrameFormat;
@@ -19994,7 +20051,7 @@ let () = with_class qTextFrame [
     dynamic "begin" [] ~ret:iterator;
     dynamic "end" [] ~ret:iterator;
   ]
-let () = with_class qDragMoveEvent [
+  let () = with_class qDragMoveEvent [
     constructor "" [arg "pos" qPoint;arg "actions" qt'DropActions;arg "data" qMimeData;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers;arg "type" type];
     dynamic "answerRect" [] ~ret:qRect;
     dynamic "accept" [];
@@ -20002,7 +20059,7 @@ let () = with_class qDragMoveEvent [
     dynamic "accept" [arg "rectangle" qRect];
     dynamic "ignore" [arg "rectangle" qRect];
   ]
-let () = with_class qMouseEvent [
+  let () = with_class qMouseEvent [
     constructor "" [arg "type" type;arg "localPos" qPointF;arg "button" qt'MouseButton;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers];
     constructor "" [arg "type" type;arg "localPos" qPointF;arg "screenPos" qPointF;arg "button" qt'MouseButton;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers];
     constructor "" [arg "type" type;arg "localPos" qPointF;arg "windowPos" qPointF;arg "screenPos" qPointF;arg "button" qt'MouseButton;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers];
@@ -20022,14 +20079,14 @@ let () = with_class qMouseEvent [
     dynamic "source" [] ~ret:qt'MouseEventSource;
     dynamic "flags" [] ~ret:qt'MouseEventFlags;
   ]
-let () = with_class qHoverEvent [
+  let () = with_class qHoverEvent [
     constructor "" [arg "type" type;arg "pos" qPointF;arg "oldPos" qPointF;arg "modifiers" qt'KeyboardModifiers];
     dynamic "pos" [] ~ret:qPoint;
     dynamic "oldPos" [] ~ret:qPoint;
     dynamic "posF" [] ~ret:qPointF;
     dynamic "oldPosF" [] ~ret:qPointF;
   ]
-let () = with_class qWheelEvent [
+  let () = with_class qWheelEvent [
     constructor "" [arg "pos" qPointF;arg "delta" int;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers;arg "orient" qt'Orientation];
     constructor "" [arg "pos" qPointF;arg "globalPos" qPointF;arg "delta" int;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers;arg "orient" qt'Orientation];
     constructor "" [arg "pos" qPointF;arg "globalPos" qPointF;arg "pixelDelta" qPoint;arg "angleDelta" qPoint;arg "arg4" int qt4Delta;arg "arg5" qt'Orientation qt4Orientation;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers];
@@ -20053,7 +20110,7 @@ let () = with_class qWheelEvent [
     dynamic "inverted" [] ~ret:bool;
     dynamic "source" [] ~ret:qt'MouseEventSource;
   ]
-let () = with_class qTabletEvent [
+  let () = with_class qTabletEvent [
     constructor "" [arg "type" type;arg "pos" qPointF;arg "globalPos" qPointF;arg "device" int;arg "pointerType" int;arg "pressure" qreal;arg "xTilt" int;arg "yTilt" int;arg "tangentialPressure" qreal;arg "rotation" qreal;arg "z" int;arg "keyState" qt'KeyboardModifiers;arg "uniqueID" qint64];
     constructor "" [arg "type" type;arg "pos" qPointF;arg "globalPos" qPointF;arg "device" int;arg "pointerType" int;arg "pressure" qreal;arg "xTilt" int;arg "yTilt" int;arg "tangentialPressure" qreal;arg "rotation" qreal;arg "z" int;arg "keyState" qt'KeyboardModifiers;arg "uniqueID" qint64;arg "button" qt'MouseButton;arg "buttons" qt'MouseButtons];
     dynamic "pos" [] ~ret:qPoint;
@@ -20079,7 +20136,7 @@ let () = with_class qTabletEvent [
     dynamic "button" [] ~ret:qt'MouseButton;
     dynamic "buttons" [] ~ret:qt'MouseButtons;
   ]
-let () = with_class qNativeGestureEvent [
+  let () = with_class qNativeGestureEvent [
     constructor "" [arg "type" qt'NativeGestureType;arg "localPos" qPointF;arg "windowPos" qPointF;arg "screenPos" qPointF;arg "realValue" qreal;arg "sequenceId" ulong;arg "intValue" quint64];
     dynamic "gestureType" [] ~ret:qt'NativeGestureType;
     dynamic "value" [] ~ret:qreal;
@@ -20089,7 +20146,7 @@ let () = with_class qNativeGestureEvent [
     dynamic "windowPos" [] ~ret:qPointF;
     dynamic "screenPos" [] ~ret:qPointF;
   ]
-let () = with_class qKeyEvent [
+  let () = with_class qKeyEvent [
     constructor "" [arg "type" type;arg "key" int;arg "modifiers" qt'KeyboardModifiers;arg "text" qString;arg "autorep" bool;arg "count" ushort];
     constructor "" [arg "type" type;arg "key" int;arg "modifiers" qt'KeyboardModifiers;arg "nativeScanCode" quint32;arg "nativeVirtualKey" quint32;arg "nativeModifiers" quint32;arg "text" qString;arg "autorep" bool;arg "count" ushort];
     dynamic "key" [] ~ret:int;
@@ -20102,7 +20159,7 @@ let () = with_class qKeyEvent [
     dynamic "nativeVirtualKey" [] ~ret:quint32;
     dynamic "nativeModifiers" [] ~ret:quint32;
   ]
-let () = with_class qContextMenuEvent [
+  let () = with_class qContextMenuEvent [
     constructor "" [arg "reason" reason;arg "pos" qPoint;arg "globalPos" qPoint;arg "modifiers" qt'KeyboardModifiers];
     constructor "" [arg "reason" reason;arg "pos" qPoint;arg "globalPos" qPoint];
     constructor "" [arg "reason" reason;arg "pos" qPoint];
@@ -20114,7 +20171,7 @@ let () = with_class qContextMenuEvent [
     dynamic "globalPos" [] ~ret:qPoint;
     dynamic "reason" [] ~ret:reason;
   ]
-let () = with_class qTouchEvent [
+  let () = with_class qTouchEvent [
     constructor "" [arg "eventType" qEvent'Type;arg "device" qTouchDevice;arg "modifiers" qt'KeyboardModifiers;arg "touchPointStates" qt'TouchPointStates;arg "touchPoints" qList<QTouchEvent'TouchPoint>];
     dynamic "window" [] ~ret:qWindow;
     dynamic "target" [] ~ret:qObject;
@@ -20123,33 +20180,33 @@ let () = with_class qTouchEvent [
     dynamic "touchPoints" [] ~ret:qList<QTouchEvent'TouchPoint>;
     dynamic "device" [] ~ret:qTouchDevice;
   ]
-let () = with_class qAccessibleTextSelectionEvent [
+  let () = with_class qAccessibleTextSelectionEvent [
     constructor "" [arg "object" qObject;arg "start" int;arg "end" int];
     constructor "" [arg "iface" qAccessibleInterface;arg "start" int;arg "end" int];
     dynamic "setSelection" [arg "start" int;arg "end" int];
     dynamic "selectionStart" [] ~ret:int;
     dynamic "selectionEnd" [] ~ret:int;
   ]
-let () = with_class qAccessibleTextInsertEvent [
+  let () = with_class qAccessibleTextInsertEvent [
     constructor "" [arg "object" qObject;arg "position" int;arg "text" qString];
     constructor "" [arg "iface" qAccessibleInterface;arg "position" int;arg "text" qString];
     dynamic "textInserted" [] ~ret:qString;
     dynamic "changePosition" [] ~ret:int;
   ]
-let () = with_class qAccessibleTextRemoveEvent [
+  let () = with_class qAccessibleTextRemoveEvent [
     constructor "" [arg "object" qObject;arg "position" int;arg "text" qString];
     constructor "" [arg "iface" qAccessibleInterface;arg "position" int;arg "text" qString];
     dynamic "textRemoved" [] ~ret:qString;
     dynamic "changePosition" [] ~ret:int;
   ]
-let () = with_class qAccessibleTextUpdateEvent [
+  let () = with_class qAccessibleTextUpdateEvent [
     constructor "" [arg "object" qObject;arg "position" int;arg "oldText" qString;arg "text" qString];
     constructor "" [arg "iface" qAccessibleInterface;arg "position" int;arg "oldText" qString;arg "text" qString];
     dynamic "textRemoved" [] ~ret:qString;
     dynamic "textInserted" [] ~ret:qString;
     dynamic "changePosition" [] ~ret:int;
   ]
-let () = with_class qPdfWriter [
+  let () = with_class qPdfWriter [
     constructor "" [arg "filename" qString];
     constructor "" [arg "device" qIODevice];
     dynamic "title" [] ~ret:qString;
@@ -20169,7 +20226,7 @@ let () = with_class qPdfWriter [
     dynamic "setPageSizeMM" [arg "size" qSizeF];
     dynamic "setMargins" [arg "m" margins];
   ]
-let () = with_class qBitmap [
+  let () = with_class qBitmap [
     constructor "" [];
     constructor "" [arg "pixmap" qPixmap];
     constructor "" [arg "width" int;arg "height" int];
@@ -20187,7 +20244,7 @@ let () = with_class qBitmap [
     dynamic "transformed" [arg "matrix" qMatrix] ~ret:qBitmap;
     dynamic "transformed" [arg "matrix" qTransform] ~ret:qBitmap;
   ]
-let () = with_class qTextTableFormat [
+  let () = with_class qTextTableFormat [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
     dynamic "columns" [] ~ret:int;
@@ -20203,7 +20260,7 @@ let () = with_class qTextTableFormat [
     dynamic "setHeaderRowCount" [arg "count" int];
     dynamic "headerRowCount" [] ~ret:int;
   ]
-let () = with_class qTextImageFormat [
+  let () = with_class qTextImageFormat [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
     dynamic "setName" [arg "name" qString];
@@ -20213,7 +20270,7 @@ let () = with_class qTextImageFormat [
     dynamic "setHeight" [arg "height" qreal];
     dynamic "height" [] ~ret:qreal;
   ]
-let () = with_class qTextTableCellFormat [
+  let () = with_class qTextTableCellFormat [
     constructor "" [];
     dynamic "isValid" [] ~ret:bool;
     dynamic "setTopPadding" [arg "padding" qreal];
@@ -20226,12 +20283,12 @@ let () = with_class qTextTableCellFormat [
     dynamic "rightPadding" [] ~ret:qreal;
     dynamic "setPadding" [arg "padding" qreal];
   ]
-let () = with_class qPaintDeviceWindow [
+  let () = with_class qPaintDeviceWindow [
     dynamic "update" [arg "rect" qRect];
     dynamic "update" [arg "region" qRegion];
     dynamic "update" [];
   ]
-let () = with_class qOpenGLWindow [
+  let () = with_class qOpenGLWindow [
     constructor "" [arg "updateBehavior" updateBehavior;arg "parent" qWindow];
     constructor "" [arg "shareContext" qOpenGLContext;arg "updateBehavior" updateBehavior;arg "parent" qWindow];
     dynamic "updateBehavior" [] ~ret:updateBehavior;
@@ -20244,13 +20301,13 @@ let () = with_class qOpenGLWindow [
     dynamic "grabFramebuffer" [] ~ret:qImage;
     dynamic "frameSwapped" [];
   ]
-let () = with_class qRasterWindow [
+  let () = with_class qRasterWindow [
     constructor "" [arg "parent" qWindow];
   ]
-let () = with_class qDragEnterEvent [
+  let () = with_class qDragEnterEvent [
     constructor "" [arg "point" qPoint;arg "actions" qt'DropActions;arg "data" qMimeData;arg "buttons" qt'MouseButtons;arg "modifiers" qt'KeyboardModifiers];
   ]
-let () = with_class qTextTable [
+  let () = with_class qTextTable [
     dynamic "resize" [arg "rows" int;arg "columns" int];
     dynamic "insertRows" [arg "index" int;arg "rows" int];
     dynamic "insertColumns" [arg "index" int;arg "columns" int];
@@ -20271,7 +20328,7 @@ let () = with_class qTextTable [
     dynamic "setFormat" [arg "format" qTextTableFormat];
     dynamic "format" [] ~ret:qTextTableFormat;
   ]
-let () = with_class qTextList [
+  let () = with_class qTextList [
     dynamic "count" [] ~ret:int;
     dynamic "isEmpty" [] ~ret:bool;
     dynamic "item" [arg "i" int] ~ret:qTextBlock;
