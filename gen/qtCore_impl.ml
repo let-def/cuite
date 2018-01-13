@@ -231,7 +231,6 @@ let () = with_class qItemSelectionModel [
     dynamic "selectedColumns" [arg "row" int] ~ret:qModelIndexList;
     dynamic "selection" [] ~ret:qItemSelection;
     dynamic "model" [] ~ret:qAbstractItemModel;
-    dynamic "model" [] ~ret:qAbstractItemModel;
     dynamic "setModel" [arg "model" qAbstractItemModel];
     dynamic "setCurrentIndex" [arg "index" qModelIndex;arg "command" qItemSelectionModel'SelectionFlags];
     dynamic "select" [arg "index" qModelIndex;arg "command" qItemSelectionModel'SelectionFlags];

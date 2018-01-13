@@ -94,6 +94,28 @@ and qenum = { ens : string; ename : string; emembers: string list; econverter: s
 
 and qflags = { fns : string; fname : string; fenum: qenum; fconverter: string }
 
+let eq_typ (typ : qtype) (typ' : qtype) =
+  typ == typ' ||
+  match typ, typ' with
+  | QClass u , QClass v -> u == v
+  | QEnum u  , QEnum v  -> u == v
+  | QFlags u , QFlags v -> u == v
+  | Custom u , Custom v ->
+    u.ml_posname             == v.ml_posname &&
+    u.ml_negname             == v.ml_negname &&
+    u.c_name                 == v.c_name &&
+    u.c_negname              == v.c_negname &&
+    u.c_from_ocaml           == v.c_from_ocaml &&
+    u.c_to_ocaml             == v.c_to_ocaml &&
+    u.c_check_use_after_free == v.c_check_use_after_free
+  | _ -> false
+
+let name_typ = function
+  | QClass u -> u.cl.cl_name
+  | QEnum u  -> u.ename
+  | QFlags u -> u.fname
+  | Custom u -> u.c_name
+
 let all_class = ref []
 
 let custom_type ?(deletable=false) ?converter ?ml_pos ?ml_neg ?c_neg c_name =
@@ -184,22 +206,37 @@ let constructor ?(custom=false) name args ~cl =
 
 let dynamic ?(custom=false) ?ret name args ~cl =
   let cl = qclass_of_typ cl in
+  if List.exists (function
+      | Dynamic_method (_, name', args', _) ->
+        name = name' &&
+        List.length args = List.length args' &&
+        List.for_all2 (fun (_, typ) (_,typ') -> eq_typ typ typ') args args'
+      | _ -> false
+    ) cl.cl_fields
+  then prerr_endline ("Duplicate method: " ^ cl.cl_name ^ "::" ^ name);
   cl.cl_fields <- Dynamic_method (ret, name, args, custom) :: cl.cl_fields
 
 let static ?(custom=false) ?ret name args ~cl =
   let cl = qclass_of_typ cl in
   cl.cl_fields <- Static_method (ret, name, args, custom) :: cl.cl_fields
 
-let slot ?(protected=false) name args ~cl =
+let slot ?ret ?(protected=false) name args ~cl =
   let cl = qclass_of_typ cl in
   let arg i arg = ("arg" ^ string_of_int i, arg) in
   let fields = Slot (name, args) :: cl.cl_fields in
   let fields =
     if protected ||
        (String.length name >= 3 &&
-        name.[0] = '_' && name.[1] = 'q' && name.[2] = '_')
+        name.[0] = '_' && name.[1] = 'q' && name.[2] = '_') ||
+       List.exists (function
+           | Dynamic_method (_, name', args', _) ->
+             name = name' &&
+             List.length args = List.length args' &&
+             List.for_all2 (fun typ (_,typ') -> eq_typ typ typ') args args'
+           | _ -> false
+         ) fields
     then fields
-    else Dynamic_method (None, name, List.mapi arg args, false) :: fields
+    else Dynamic_method (ret, name, List.mapi arg args, false) :: fields
   in
   cl.cl_fields <- fields
 
