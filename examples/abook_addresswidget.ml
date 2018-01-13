@@ -2,13 +2,13 @@ open Cuite
 
 let add_dialog ?edit parent =
   let dialog = new'QDialog parent QFlags.empty in
-  let name_label = new'QLabel'1 "Name" None QFlags.empty in
-  let address_label = new'QLabel'1 "Address" None QFlags.empty in
-  let ok_button = new'QPushButton'1 "OK" None in
-  let cancel_button = new'QPushButton'1 "Cancel" None in
+  let name_label = new'QLabel'from'QString'QWidget'WindowFlags "Name" None QFlags.empty in
+  let address_label = new'QLabel'from'QString'QWidget'WindowFlags "Address" None QFlags.empty in
+  let ok_button = new'QPushButton'from'QString'QWidget "OK" None in
+  let cancel_button = new'QPushButton'from'QString'QWidget "Cancel" None in
   let name_text = new'QLineEdit None in
   let address_text = new'QTextEdit None in
-  let grid_layout = new'QGridLayout None in
+  let grid_layout = new'QGridLayout'from'QWidget None in
   QGridLayout.setColumnStretch grid_layout 1 2;
   QGridLayout.addWidget grid_layout name_label 0 0 QFlags.empty;
   QGridLayout.addWidget grid_layout name_text 0 1 QFlags.empty;
@@ -49,11 +49,11 @@ let add_dialog ?edit parent =
 
 let new_address_tab ~send_details parent =
   let tab = new'QWidget parent in
-  let description_label = new'QLabel'1
+  let description_label = new'QLabel'from'QString'QWidget'WindowFlags
       "There are currently no contacts in your address book.\n\
        Click Add to add new contacts." None QFlags.empty
   in
-  let add_button = new'QPushButton'1 "Add" None in
+  let add_button = new'QPushButton'from'QString'QWidget "Add" None in
   Qt.connect add_button QPushButton.signal'clicked (fun _ ->
       match add_dialog None with
       | Some (name, address) -> send_details name address
@@ -69,7 +69,9 @@ let setup_tab self table group ~selection_changed =
   let proxy = new'QSortFilterProxyModel (Some self) in
   QSortFilterProxyModel.(
     setSourceModel proxy table;
-    setFilterRegExp proxy (new'QRegExp'1 ("^[" ^ group ^ "].*") `CaseInsensitive `RegExp);
+    setFilterRegExp proxy
+      (new'QRegExp'from'QString'CaseSensitivity'PatternSyntax
+         ("^[" ^ group ^ "].*") `CaseInsensitive `RegExp);
     setFilterKeyColumn proxy 0;
   );
   let tableview = new'QTableView None in
@@ -108,7 +110,7 @@ let address_widget_edit_entry table addr_widget _ =
   let proxy = cast (QTableView.model tableview) (QSortFilterProxyModel.class'()) in
   let selection = QTableView.selectionModel tableview in
   let indexes = QItemSelectionModel.selectedRows selection 0 in
-  if QModelIndexList.count1 indexes > 0 then (
+  if QModelIndexList.count indexes > 0 then (
     let index = QModelIndexList.at indexes 0 in
     let row = QModelIndex.row (QSortFilterProxyModel.mapToSource proxy index) in
     let index col =
@@ -141,7 +143,7 @@ let address_widget_remove_entry new_addr_tab table addr_widget _ =
   let selection = QTableView.selectionModel tableview in
   let indexes = QItemSelectionModel.selectedRows selection 0 in
   let dummy = new'QModelIndex() in
-  for i = 0 to QModelIndexList.count1 indexes - 1 do
+  for i = 0 to QModelIndexList.count indexes - 1 do
     let index = QModelIndexList.at indexes i in
     let row = QModelIndex.row (QSortFilterProxyModel.mapToSource proxy index) in
     ignore (QAbstractTableModel.removeRow table row dummy : bool);
@@ -259,7 +261,7 @@ let main_window () =
   QMainWindow.setCentralWidget self address_widget;
   begin
     let menu_bar = QMainWindow.menuBar self in
-    let file_menu = QMenuBar.addMenu1 menu_bar "&File" in
+    let file_menu = QMenuBar.addMenu'from'QString menu_bar "&File" in
     let open_act = QMenu.addAction file_menu "&Open" in
     ignore open_act;
     Qt.connect open_act QAction.signal'triggered open_file;
@@ -272,7 +274,7 @@ let main_window () =
     Qt.connect_slot
       exit_act QAction.signal'triggered
       self QWidget.slot'close;
-    let tool_menu = QMenuBar.addMenu1 menu_bar "&Tools" in
+    let tool_menu = QMenuBar.addMenu'from'QString menu_bar "&Tools" in
     let add_act = QMenu.addAction tool_menu "&Add Entry..." in
     Qt.connect add_act QAction.signal'triggered
       (address_widget_show_add_entry_dialog address_widget);

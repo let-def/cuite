@@ -1,6 +1,6 @@
 #include "cuite_stubs.h"
 
-external value cuite_QApplication_new_(value args)
+external value cuite_QApplication_new_0(value args)
 {
   CUITE_Region region;
 

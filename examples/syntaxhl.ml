@@ -58,7 +58,7 @@ let mainwindow_openfile state path =
   if path <> "" then load_file state.editor path
 
 let mainwindow_setup_menu state =
-  let menu = QMenuBar.addMenu1 (QMainWindow.menuBar state.self) "&File" in
+  let menu = QMenuBar.addMenu'from'QString (QMainWindow.menuBar state.self) "&File" in
   Qt.connect
     (QMenu.addAction menu "&New") QAction.signal'triggered
     (fun _ -> mainwindow_newfile state);
@@ -67,7 +67,7 @@ let mainwindow_setup_menu state =
     (fun _ -> mainwindow_openfile state "");
   Qt.connect_slot (QMenu.addAction menu "E&xit") QAction.signal'triggered
     state.app QApplication.slot'quit;
-  let help = QMenuBar.addMenu1 (QMainWindow.menuBar state.self) "&Help" in
+  let help = QMenuBar.addMenu'from'QString (QMainWindow.menuBar state.self) "&Help" in
   Qt.connect
     (QMenu.addAction help "&About") QAction.signal'triggered
     (fun _ -> mainwindow_about state);

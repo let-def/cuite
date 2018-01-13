@@ -27,34 +27,46 @@ let carg_list xs = List.mapi (fun i _ -> "c" ^ string_of_int i) xs
 
 let unique_name =
   let table = Hashtbl.create 7 in
-  fun {cl} (kind : [`func | `slot | `signal]) name ->
+  fun {cl} (kind : [`func | `slot | `signal]) name typs ->
     let name = match name with
       | "match" | "begin" | "end" | "type" | "open" | "done" | "object" as kw -> kw^"_"
       | name -> name
+    in
+    let long_name = match typs with
+      | [] -> name
+      | typs ->
+        let fields = "from" :: List.map name_typ typs in
+        String.concat "'" (if name <> "" then name :: fields else fields)
     in
     let key = ((cl_c_name cl) ^ "_" ^ name, kind) in
     match Hashtbl.find table key with
     | exception Not_found ->
       Hashtbl.add table key (ref 0);
-      name
+      (name ^ "0", (if name <> long_name then [name; long_name] else [long_name]))
     | counter ->
-      Printf.eprintf "duplicate name: %s::%s\n" (cl_c_name cl) name;
+      Printf.eprintf
+        "duplicate name: %s::%s\n"
+        (cl_c_name cl) (if name = "" then cl_c_name cl else name);
       incr counter;
-      name ^ string_of_int !counter
+      (name ^ string_of_int !counter, [long_name])
+
+let typs_of lst = List.map snd lst
 
 let constructor ~h ~c ~ml cl = function
   | Constructor (name, args, custom) ->
-    let uname = unique_name cl `func name in
+    let uname, unames = unique_name cl `func name (typs_of args) in
     let mlargs = match args with
       | [] -> ["unit"]
       | xs -> List.map (fun (_,typ) -> qtype_ml_negname typ) xs
     in
     let external_symbol = c_external h c ~impl:(not custom) cl ("new_" ^ uname) args in
-    print ml "external new'%s%s : %s = %s"
-      (ml_mangle (cl_c_name cl.cl))
-      (if uname = "" then "" else "'" ^ uname)
-      (String.concat " -> " (mlargs @ [qtype_ml_posname (QClass cl)]) )
-      external_symbol;
+    List.iter (fun uname ->
+        print ml "external new'%s%s : %s = %s"
+          (ml_mangle (cl_c_name cl.cl))
+          (if uname = "" then "" else "'" ^ uname)
+          (String.concat " -> " (mlargs @ [qtype_ml_posname (QClass cl)]) )
+          external_symbol
+      ) unames;
     if not custom then (
       print c "{";
       List.iteri (fun i (_, typ) ->
@@ -78,13 +90,14 @@ let constructor ~h ~c ~ml cl = function
 let cfield ~h ~c ~ml cl = function
   | Constructor _ -> () (* Already processed *)
   | Dynamic_method (ret, name, args, custom) ->
-    let uname = unique_name cl `func name in
+    let uname, unames = unique_name cl `func name (typs_of args) in
     let mlargs = List.map qtype_ml_negname (QClass cl :: List.map snd args) in
     let external_symbol = c_external h c ~impl:(not custom) cl uname ~self:true args in
-    print ml "  external %s : %s = %s"
-      uname
-      (String.concat " -> " (mlargs @ [match ret with None -> "unit" | Some typ -> qtype_ml_posname typ]))
-      external_symbol;
+    let mlret = match ret with None -> "unit" | Some typ -> qtype_ml_posname typ in
+    List.iter (fun uname ->
+        print ml "  external %s : %s = %s"
+          uname (String.concat " -> " (mlargs @ [mlret])) external_symbol
+      ) unames;
     if not custom then (
       print c "{";
       qtype_c_check_use_after_free c (QClass cl) "argself";
@@ -113,16 +126,17 @@ let cfield ~h ~c ~ml cl = function
     )
 
   | Static_method (ret, name, args, custom) ->
-    let uname = unique_name cl `func name in
+    let uname, unames = unique_name cl `func name (typs_of args) in
     let mlargs = match args with
       | [] -> ["unit"]
       | xs -> List.map (fun (_,typ) -> qtype_ml_negname typ) xs
     in
+    let mlret = match ret with None -> "unit" | Some typ -> qtype_ml_posname typ in
     let external_symbol = c_external h c ~impl:(not custom) cl uname args in
-    print ml "  external %s : %s = %s"
-      uname
-      (String.concat " -> " (mlargs @ [match ret with None -> "unit" | Some typ -> qtype_ml_posname typ]))
-      external_symbol;
+    List.iter (fun uname ->
+        print ml "  external %s : %s = %s"
+          uname (String.concat " -> " (mlargs @ [mlret])) external_symbol;
+      ) unames;
     if not custom then (
       print c "{";
       List.iteri (fun i (_, typ) ->
@@ -148,24 +162,26 @@ let cfield ~h ~c ~ml cl = function
     )
 
   | Slot (name, args) ->
-    let uname = unique_name cl `slot name in
+    let uname, unames = unique_name cl `slot name args in
     print c "CUITE_SLOT(%s, %s, %s(%s))"
       (cl_c_name cl.cl) uname
       name (String.concat "," (List.map qtype_c_negname args));
     let mlargs = List.map qtype_ml_negname args in
-    print ml "  external slot'%s : unit -> ([> %s], %s, %s) Qt.slot = \"cuite_slot_%s_%s\" [@@noalloc]"
-      uname (cl_ml_name cl.cl)
-      (if mlargs = [] then "unit" else String.concat " * " mlargs)
-      (let rec print = function
-          | [] -> "_"
-          | [x] -> x ^ " * _"
-          | x :: xs -> x ^ " * (" ^ print xs ^ ")"
-       in
-       print mlargs)
-      (cl_c_name cl.cl) uname
+    List.iter (fun mluname ->
+        print ml "  external slot'%s : unit -> ([> %s], %s, %s) Qt.slot = \"cuite_slot_%s_%s\" [@@noalloc]"
+          mluname (cl_ml_name cl.cl)
+          (if mlargs = [] then "unit" else String.concat " * " mlargs)
+          (let rec print = function
+              | [] -> "_"
+              | [x] -> x ^ " * _"
+              | x :: xs -> x ^ " * (" ^ print xs ^ ")"
+           in
+           print mlargs)
+          (cl_c_name cl.cl) uname
+      ) unames
 
   | Signal (name, args) ->
-    let uname = unique_name cl `signal name in
+    let uname, unames = unique_name cl `signal name args in
     let cparams = List.mapi (fun i typ -> (qtype_c_negname typ, "arg" ^ string_of_int i)) args in
     print c "static void invoke_signal_%s_%s(%s)"
       (cl_c_name cl.cl) uname (String.concat "," ("intnat *cbid" :: List.map (fun (k,v) -> k^" "^ v) cparams));
@@ -190,15 +206,17 @@ let cfield ~h ~c ~ml cl = function
       (cl_c_name cl.cl) uname (String.concat "," ("cbid" :: List.mapi (fun i _ -> "std::placeholders::_"^string_of_int (i+1)) cparams))
     ;
     let mlargs = List.map qtype_ml_posname args in
-    print ml "  external signal'%s : unit -> ([> %s], %s, %s) Qt.signal = \"cuite_signal_%s_%s\" [@@noalloc]"
-      uname (cl_ml_name cl.cl)
-      (if mlargs = [] then "unit" else String.concat " * " mlargs)
-      (let rec print = function
-          | [] -> "unit"
-          | [x] -> x ^ " * unit"
-          | x :: xs -> x ^ " * (" ^ print xs ^ ")"
-       in print mlargs)
-      (cl_c_name cl.cl) uname
+    List.iter (fun mluname ->
+        print ml "  external signal'%s : unit -> ([> %s], %s, %s) Qt.signal = \"cuite_signal_%s_%s\" [@@noalloc]"
+          mluname (cl_ml_name cl.cl)
+          (if mlargs = [] then "unit" else String.concat " * " mlargs)
+          (let rec print = function
+              | [] -> "unit"
+              | [x] -> x ^ " * unit"
+              | x :: xs -> x ^ " * (" ^ print xs ^ ")"
+           in print mlargs)
+          (cl_c_name cl.cl) uname
+      ) unames
 
 let gen ?c ~ml () =
   List.iter (fun cl ->

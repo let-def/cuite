@@ -13,8 +13,8 @@ let create_menu () =
   bar
 
 let create_horizontal_group_box () =
-  let box = new'QGroupBox'1 "Horizontal layout" None in
-  let layout = new'QHBoxLayout'1 None in
+  let box = new'QGroupBox'from'QString'QWidget "Horizontal layout" None in
+  let layout = new'QHBoxLayout'from'QWidget None in
   let btn' = ref [] in
   for i = 1 to num_buttons do
     let btn = new'QPushButton None in
@@ -26,29 +26,39 @@ let create_horizontal_group_box () =
   box, !btn'
 
 let create_grid_group_box () =
-  let box = new'QGroupBox'1 "Grid Layout" None in
-  let layout = new'QGridLayout None in
+  let box = new'QGroupBox'from'QString'QWidget "Grid Layout" None in
+  let layout = new'QGridLayout'from'QWidget None in
   for i = 1 to num_grid_rows do
-    let label = new'QLabel'1 (sprintf "Line %d:" i) None QFlags.empty in
+    let label =
+      new'QLabel'from'QString'QWidget'WindowFlags
+        (sprintf "Line %d:" i) None QFlags.empty
+    in
     let lineEdit = new'QLineEdit None in
     QGridLayout.addWidget layout label i 0 QFlags.empty;
     QGridLayout.addWidget layout lineEdit i 1 QFlags.empty;
   done;
   let small_editor = new'QTextEdit None in
   QTextEdit.setPlainText small_editor "This widget takes up about two thirds of the grid layout.";
-  QGridLayout.addWidget1 layout small_editor 0 2 4 1 QFlags.empty;
+  QGridLayout.addWidget'from'QWidget'int'int'int'int'Alignment
+    layout small_editor 0 2 4 1 QFlags.empty;
   QGridLayout.setColumnStretch layout 1 10;
   QGridLayout.setColumnStretch layout 2 20;
   QWidget.setLayout box (Some layout);
   box
 
 let create_form_group_box () =
-  let group = new'QGroupBox'1 "Form layout" None in
+  let group = new'QGroupBox'from'QString'QWidget "Form layout" None in
   let form = new'QFormLayout None in
   QWidget.setLayout group (Some form);
-  QFormLayout.addRow form (new'QLabel'1 "Line 1:" None QFlags.empty) (new'QLineEdit None);
-  QFormLayout.addRow form (new'QLabel'1 "Line 2, long text:" None QFlags.empty) (new'QComboBox None);
-  QFormLayout.addRow form (new'QLabel'1 "Line 3:" None QFlags.empty) (new'QSpinBox None);
+  QFormLayout.addRow form
+    (new'QLabel'from'QString'QWidget'WindowFlags "Line 1:" None QFlags.empty)
+    (new'QLineEdit None);
+  QFormLayout.addRow form
+    (new'QLabel'from'QString'QWidget'WindowFlags "Line 2, long text:" None QFlags.empty)
+    (new'QComboBox None);
+  QFormLayout.addRow form
+    (new'QLabel'from'QString'QWidget'WindowFlags "Line 3:" None QFlags.empty)
+    (new'QSpinBox None);
   group
 
 let create_dialog () =
