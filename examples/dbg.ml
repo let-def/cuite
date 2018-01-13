@@ -1,5 +1,39 @@
 open Cuite
 
+let version = "0.0"
+
+let about this =
+  QMessageBox.about this "About OQamlDebug"
+    (Printf.sprintf
+       "<center><b>OQamlDebug</b> graphical frontend for OCamlDebug</center><BR>\
+       <TABLE border=\"0\"><TR>\
+        <TH>Homepage:</TH>\
+        <TD><a href=\"https://forge.ocamlcore.org/projects/oqamldebug/\">https://forge.ocamlcore.org/projects/oqamldebug/</a></TD>\
+       </TR><TR>\
+       <TH>Version:</TH>\
+       <TD>%f</TD>\
+       </TR><TR>\
+       <TH>License:</TH>\
+       <TD><a href=\"http://www.gnu.org/licenses/gpl-3.0.en.html\">GPLv3</a> &copy;&nbsp;<a href=\"mailto:sebastien.fricker@gmail.com\">S&eacute;bastien Fricker</a></TD>\
+       </TR></TABLE>"
+       version
+    )
+
+let help =
+  let help_p = lazy (
+    let file = new'QFile'1 ":/readme.html" in
+    QTextBrowser.setHtml
+        if ( h.open(QFile::ReadOnly) )
+        {
+            help_p = new QTextBrowser();
+            help_p->setReadOnly(true);
+            help_p->setWindowTitle("Help");
+            help_p->setHtml( h.readAll() );
+        }
+
+  ) in
+  fun () -> QTextBrowser.show (Lazy.force help_p)
+
 let update_menu _ = ()
 
 let option_iter o f =
@@ -7,11 +41,41 @@ let option_iter o f =
   | None -> ()
   | Some v -> f v
 
+let qignore : _ qt -> unit = ignore
+
+let make_menu menubar items =
+  List.iter (function
+      | `Separator ->
+        qignore (QMenuBar.addSeparator menubar)
+      | `Sub (title, items) ->
+        let top = QMenuBar.addMenu1 menubar title in
+        List.iter (function
+            | `Action action ->
+              qignore (QWidget.addAction top action)
+            | `Separator ->
+              qignore (QMenu.addSeparator top)
+          ) items
+      | `Dynamic (title, fn) ->
+        let top = QMenuBar.addMenu1 menubar title in
+        fn top;
+        Qt.connect top (QMenu.signal'aboutToShow)
+          (fun () -> fn top)
+    ) items
+
+let make_toolbar this title items =
+  let toolbar = QMainWindow.addToolBar2 this title in
+  List.iter (function
+      | `Action act -> qignore (QWidget.addAction toolbar act)
+    ) items;
+  toolbar
+
+
 let create_actions_and_menus app this mdiArea
     ~setWorkingDirectory
     ~setOCamlDebugArgs
     ~setOCamlDebugInitScript
     ~createWatchWindow
+    ~updateWindowMenu
     ~copy
     ~about
     ~help
@@ -31,6 +95,7 @@ let create_actions_and_menus app this mdiArea
       ?icon ?tip ?slot ?fn
       ?shortcut ?key
       ?checkable
+      ?menu
       title =
     let action =
       match icon with
@@ -46,15 +111,15 @@ let create_actions_and_menus app this mdiArea
                         (new'QKeySequence'1 key `PortableText));
     option_iter checkable (QAction.setCheckable action)
   in
-  let setWorkingDirectoryAct =
-    action "&Working directory..."
-      ~tip:"Set current working directory"
-      ~fn:setWorkingDirectory
-  in
   let setOCamlDebugArgsAct =
     action "&Command Line Arguments..."
       ~tip:"Set OCamlDebug command line arguments"
       ~fn:setOCamlDebugArgs
+  in
+  let setWorkingDirectoryAct =
+    action "&Working directory..."
+      ~tip:"Set current working directory"
+      ~fn:setWorkingDirectory
   in
   let setOCamlDebugInitScriptAct =
     action "&OCamlDebug Initialization Script..."
@@ -194,7 +259,68 @@ let create_actions_and_menus app this mdiArea
       ~tip:"Call stack up (Mouse Wheel with Shift+Ctrl)"
     ~fn:debugUp
   in
-  ()
+  make_menu (QMainWindow.menuBar this) [
+    `Sub ("&Main", [
+        `Action setOCamlDebugArgsAct;
+        `Action setOCamlDebugInitScriptAct;
+        `Action setWorkingDirectoryAct;
+        `Separator;
+        `Action exitAct;
+      ]);
+    `Sub ("&Debug", [
+        `Action debuggerStartAct;
+        `Action debugReverseAct;
+        `Action debugPreviousAct;
+        `Action debugBackStepAct;
+        `Action debugStepAct;
+        `Action debugNextAct;
+        `Action debugFinishAct;
+        `Action debugRunAct;
+        `Action debugInterruptAct;
+        `Separator;
+        `Action debugDownAct;
+        `Action debugUpAct;
+        `Separator;
+        `Action createWatchWindowAct;
+      ]);
+    `Sub ("&Edit", [
+        `Action copyAct;
+      ]);
+    `Dynamic ("&Window", updateWindowMenu);
+    `Separator;
+    `Sub ("&Hello", [
+        `Action helpAct;
+        `Action aboutAct;
+        `Action aboutQtAct;
+      ])
+  ];
+  let mainToolBar = make_toolbar this "Main" [] in
+  let editToolBar = make_toolbar this "Edit" [
+      `Action copyAct
+    ]
+  in
+  let debugToolBar = make_toolbar this "Debug" [
+      `Action debuggerStartAct;
+      `Action debugReverseAct;
+      `Action debugPreviousAct;
+      `Action debugBackStepAct;
+      `Action debugStepAct;
+      `Action debugNextAct;
+      `Action debugFinishAct;
+      `Action debugRunAct;
+      `Action debugInterruptAct;
+      `Action debugDownAct;
+      `Action debugUpAct;
+    ]
+  in
+  let debugWindowToolBar = make_toolbar this "Debug Windows" [
+      `Action createWatchWindowAct;
+    ]
+  in
+  QStatusBar.showMessage1 (QMainWindow.statusBar this) "Ready"
+
+let read_settings () = () (* TODO *)
+let write_settings () = () (* TODO *)
 
 let mainwindow () =
   let window = new'QMainWindow None QFlags.empty in
@@ -533,21 +659,6 @@ void MainWindow::help()
     help_p->show();
 }
 
-void MainWindow::about()
-{
-    QMessageBox::about( this, "About OQamlDebug",
-                        tr( "<center><b>OQamlDebug</b> graphical frontend for OCamlDebug</center><BR>"
-                            "<TABLE border=\"0\"><TR>"
-                            "<TH>Homepage:</TH>"  "<TD><a href=\"https://forge.ocamlcore.org/projects/oqamldebug/\">https://forge.ocamlcore.org/projects/oqamldebug/</a></TD>"
-                            "</TR><TR>"
-                            "<TH>Version:</TH>"  "<TD>%1</TD>"
-                            "</TR><TR>"
-                            "<TH>License:</TH>"   "<TD><a href=\"http://www.gnu.org/licenses/gpl-3.0.en.html\">GPLv3</a> &copy;&nbsp;<a href=\"mailto:sebastien.fricker@gmail.com\">S&eacute;bastien Fricker</a></TD>"
-                            "</TR></TABLE>"
-                            ).arg( VERSION ) );
-
-}
-
 void MainWindow::updateMenus()
 {
     bool hasMdiChild = ( activeMdiChild() != 0 );
@@ -644,90 +755,6 @@ OCamlSource *MainWindow::createMdiChild()
              this, SLOT( displayVariable( const QString & ) ) );
 
     return child;
-}
-
-void MainWindow::createMenus()
-{
-    mainMenu = menuBar()->addMenu( "&Main" );
-    mainMenu->addAction( setOCamlDebugArgsAct );
-    mainMenu->addAction( setOCamlDebugInitScriptAct );
-    mainMenu->addAction( setWorkingDirectoryAct );
-    mainMenu->addSeparator();
-    mainMenu->addAction( exitAct );
-
-    debugMenu = menuBar()->addMenu( "&Debug" );
-    debugMenu->addAction( debuggerStartAct );
-    debugMenu->addAction( debugReverseAct );
-    debugMenu->addAction( debugPreviousAct );
-    debugMenu->addAction( debugBackStepAct );
-    debugMenu->addAction( debugStepAct );
-    debugMenu->addAction( debugNextAct );
-    debugMenu->addAction( debugFinishAct );
-    debugMenu->addAction( debugRunAct );
-    debugMenu->addAction( debugInterruptAct );
-    debugMenu->addSeparator();
-    debugMenu->addAction( debugDownAct );
-    debugMenu->addAction( debugUpAct );
-    debugMenu->addSeparator();
-    debugMenu->addAction( createWatchWindowAct );
-
-    editMenu = menuBar()->addMenu( "&Edit" );
-    editMenu->addAction( copyAct );
-
-    windowMenu = menuBar()->addMenu( "&Window" );
-    updateWindowMenu();
-    connect( windowMenu, SIGNAL( aboutToShow() ), this, SLOT( updateWindowMenu() ) );
-
-    menuBar()->addSeparator();
-
-    helpMenu = menuBar()->addMenu( "&Help" );
-    helpMenu->addAction( helpAct );
-    helpMenu->addAction( aboutAct );
-    helpMenu->addAction( aboutQtAct );
-}
-
-void MainWindow::createToolBars()
-{
-    mainToolBar = addToolBar( "Main" );
-    mainToolBar->setObjectName("MainToolBar");
-
-    editToolBar = addToolBar( "Edit" );
-    editToolBar->setObjectName("EditToolBar");
-    editToolBar->addAction( copyAct );
-
-    debugToolBar = addToolBar( "Debug" );
-    debugToolBar->setObjectName("DebugToolBar");
-    debugToolBar->addAction( debuggerStartAct );
-    debugToolBar->addAction( debugReverseAct );
-    debugToolBar->addAction( debugPreviousAct );
-    debugToolBar->addAction( debugBackStepAct );
-    debugToolBar->addAction( debugStepAct );
-    debugToolBar->addAction( debugNextAct );
-    debugToolBar->addAction( debugFinishAct );
-    debugToolBar->addAction( debugRunAct );
-    debugToolBar->addAction( debugInterruptAct );
-    debugToolBar->addAction( debugDownAct );
-    debugToolBar->addAction( debugUpAct );
-
-    debugWindowToolBar = addToolBar( "Debug Windows" );
-    debugWindowToolBar->addAction( createWatchWindowAct );
-}
-
-void MainWindow::createStatusBar()
-{
-    statusBar()->showMessage( "Ready" );
-}
-
-void MainWindow::readSettings()
-{
-    Options::restore_window_position("mainwindow",this);
-    Options::restore_window_position(this);
-}
-
-void MainWindow::writeSettings()
-{
-    Options::save_window_position("mainwindow",this);
-    Options::save_window_position(mdiArea);
 }
 
 OCamlSource *MainWindow::activeMdiChild()

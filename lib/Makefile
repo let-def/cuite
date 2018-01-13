@@ -7,6 +7,9 @@ LIB_PREFIX ?= $(PWD)
 
 all: libcuite.so cuite.cma cuite.cmxa
 
+objclean:
+	rm -f *.o *.cm*
+
 clean:
 	rm -f *.o *.cm* *.gen.* cuite.ml cuite___*.ml Makefile.gen
 

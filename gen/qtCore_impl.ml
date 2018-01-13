@@ -440,6 +440,42 @@ let () = with_class qObject [
     (*  slot "_q_reregisterTimers" [void*];*)
   ]
 
+let () = with_class qFile [
+    constructor "" [];
+    constructor "" [arg "name" qString];
+    constructor "" [arg "parent" (optional qObject)];
+    constructor "" [arg "name" qString;arg "parent" (optional qObject)];
+    dynamic "fileName" [] ~ret:qString;
+    dynamic "setFileName" [arg "name" qString];
+    static  "encodeName" [arg "fileName" qString] ~ret:qByteArray;
+    static  "decodeName" [arg "localFileName" qByteArray] ~ret:qString;
+    static  "decodeName" [arg "localFileName" pchar] ~ret:qString;
+    (*static  "setEncodingFunction" [arg "function" encoderFn];*)
+    (*static  "setDecodingFunction" [arg "function" decoderFn];*)
+    dynamic "exists" [] ~ret:bool;
+    static  "exists" [arg "fileName" qString] ~ret:bool;
+    dynamic "readLink" [] ~ret:qString;
+    static  "readLink" [arg "fileName" qString] ~ret:qString;
+    dynamic "symLinkTarget" [] ~ret:qString;
+    static  "symLinkTarget" [arg "fileName" qString] ~ret:qString;
+    dynamic "remove" [] ~ret:bool;
+    static  "remove" [arg "fileName" qString] ~ret:bool;
+    dynamic "rename" [arg "newName" qString] ~ret:bool;
+    static  "rename" [arg "oldName" qString;arg "newName" qString] ~ret:bool;
+    dynamic "link" [arg "linkName" qString] ~ret:bool;
+    static  "link" [arg "fileName" qString;arg "linkName" qString] ~ret:bool;
+    dynamic "copy" [arg "newName" qString] ~ret:bool;
+    static  "copy" [arg "fileName" qString;arg "newName" qString] ~ret:bool;
+    dynamic "open" [arg "mode" qIODevice'OpenMode] ~ret:bool;
+    dynamic "open" [arg "fd" int;arg "mode" qIODevice'OpenMode;arg "handleFlags" qFileDevice'FileHandleFlags] ~ret:bool;
+    dynamic "size" [] ~ret:qint64;
+    dynamic "resize" [arg "sz" qint64] ~ret:bool;
+    static  "resize" [arg "fileName" qString;arg "sz" qint64] ~ret:bool;
+    dynamic "permissions" [] ~ret:qFileDevice'Permissions;
+    static  "permissions" [arg "fileName" qString] ~ret:qFileDevice'Permissions;
+    dynamic "setPermissions" [arg "permissions" qFileDevice'Permissions] ~ret:bool;
+    static  "setPermissions" [arg "fileName" qString;arg "permissions" qFileDevice'Permissions] ~ret:bool;
+  ]
 (*let () = with_class qObject [
     constructor "" [arg "parent" (optional qObject)];
     dynamic "event" [arg "e" qEvent] ~ret:bool;
@@ -5852,43 +5888,6 @@ let () = with_class qSequentialAnimationGroup [
     dynamic "currentAnimation" [] ~ret:qAbstractAnimation;
     dynamic "duration" [] ~ret:int;
     dynamic "currentAnimationChanged" [arg "current" qAbstractAnimation];
-  ]
-let () = with_class qFile [
-    constructor "" [];
-    constructor "" [arg "name" qString];
-    constructor "" [arg "parent" (optional qObject)];
-    constructor "" [arg "name" qString;arg "parent" (optional qObject)];
-    dynamic "fileName" [] ~ret:qString;
-    dynamic "setFileName" [arg "name" qString];
-    static  "encodeName" [arg "fileName" qString] ~ret:qByteArray;
-    static  "decodeName" [arg "localFileName" qByteArray] ~ret:qString;
-    static  "decodeName" [arg "localFileName" pchar] ~ret:qString;
-    static  "setEncodingFunction" [arg "function" encoderFn];
-    static  "setDecodingFunction" [arg "function" decoderFn];
-    dynamic "exists" [] ~ret:bool;
-    static  "exists" [arg "fileName" qString] ~ret:bool;
-    dynamic "readLink" [] ~ret:qString;
-    static  "readLink" [arg "fileName" qString] ~ret:qString;
-    dynamic "symLinkTarget" [] ~ret:qString;
-    static  "symLinkTarget" [arg "fileName" qString] ~ret:qString;
-    dynamic "remove" [] ~ret:bool;
-    static  "remove" [arg "fileName" qString] ~ret:bool;
-    dynamic "rename" [arg "newName" qString] ~ret:bool;
-    static  "rename" [arg "oldName" qString;arg "newName" qString] ~ret:bool;
-    dynamic "link" [arg "linkName" qString] ~ret:bool;
-    static  "link" [arg "fileName" qString;arg "linkName" qString] ~ret:bool;
-    dynamic "copy" [arg "newName" qString] ~ret:bool;
-    static  "copy" [arg "fileName" qString;arg "newName" qString] ~ret:bool;
-    dynamic "open" [arg "mode" openMode] ~ret:bool;
-    dynamic "open" [arg "fh" fILE;arg "mode" openMode;arg "handleFlags" fileHandleFlags] ~ret:bool;
-    dynamic "open" [arg "fd" int;arg "mode" openMode;arg "handleFlags" fileHandleFlags] ~ret:bool;
-    dynamic "size" [] ~ret:qint64;
-    dynamic "resize" [arg "sz" qint64] ~ret:bool;
-    static  "resize" [arg "fileName" qString;arg "sz" qint64] ~ret:bool;
-    dynamic "permissions" [] ~ret:permissions;
-    static  "permissions" [arg "fileName" qString] ~ret:permissions;
-    dynamic "setPermissions" [arg "permissions" permissions] ~ret:bool;
-    static  "setPermissions" [arg "fileName" qString;arg "permissions" permissions] ~ret:bool;
   ]
 let () = with_class qSaveFile [
     constructor "" [arg "name" qString];

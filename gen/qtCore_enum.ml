@@ -2042,6 +2042,7 @@ let qIODevice'OpenModeFlag = qenum "QIODevice" "OpenModeFlag" [
   "Text";
   "Unbuffered";
 ]
+let qIODevice'OpenMode = qflags "QIODevice" "OpenMode" qIODevice'OpenModeFlag
 let qSettings'Status = qenum "QSettings" "Status" [
   "NoError";
   "AccessError";
@@ -2210,10 +2211,12 @@ let qFileDevice'Permission = qenum "QFileDevice" "Permission" [
   "WriteOther";
   "ExeOther";
 ]
+let qFileDevice'Permissions = qflags "QFileDevice" "Permissions" qFileDevice'Permission
 let qFileDevice'FileHandleFlag = qenum "QFileDevice" "FileHandleFlag" [
   "AutoCloseHandle";
   "DontCloseHandle";
 ]
+let qFileDevice'FileHandleFlags = qflags "QFileDevice" "FileHandleFlags" qFileDevice'FileHandleFlag
 let qFileDevice'MemoryMapFlags = qenum "QFileDevice" "MemoryMapFlags" [
   "NoOptions";
   "MapPrivateOption";

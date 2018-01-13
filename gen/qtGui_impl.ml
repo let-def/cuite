@@ -13,8 +13,8 @@ let () = with_class qGuiApplication [
     (*static  "allWindows" [] ~ret:qWindowList;
       static  "topLevelWindows" [] ~ret:qWindowList;*)
     static  "topLevelAt" [arg "pos" qPoint] ~ret:qWindow;
-    (*static  "setWindowIcon" [arg "icon" qIcon];
-      static  "windowIcon" [] ~ret:qIcon;*)
+    static  "setWindowIcon" [arg "icon" qIcon];
+    static  "windowIcon" [] ~ret:qIcon;
     static  "platformName" [] ~ret:qString;
     static  "modalWindow" [] ~ret:qWindow;
     static  "focusWindow" [] ~ret:qWindow;
@@ -22,9 +22,9 @@ let () = with_class qGuiApplication [
     (*static  "primaryScreen" [] ~ret:qScreen;*)
     (*static  "screens" [] ~ret:qList<QScreen *>;*)
     dynamic "devicePixelRatio" [] ~ret:qreal;
-    (*static  "overrideCursor" [] ~ret:qCursor;*)
-    (*static  "setOverrideCursor" [arg "cursor" qCursor];*)
-    (*static  "changeOverrideCursor" [arg "cursor" qCursor];*)
+    static  "overrideCursor" [] ~ret:(pointer qCursor);
+    static  "setOverrideCursor" [arg "cursor" qCursor];
+    static  "changeOverrideCursor" [arg "cursor" qCursor];
     static  "restoreOverrideCursor" [];
     (*static  "font" [] ~ret:qFont;*)
     (*static  "setFont" [arg "font" qFont];*)
@@ -537,6 +537,69 @@ let () = with_class qWindow [
     slot "showMaximized" [];
     slot "showMinimized" [];
     slot "showNormal" [];
+  ]
+
+let () = with_class qIcon [
+    constructor "" [];
+    constructor "" [arg "pixmap" qPixmap];
+    constructor "" [arg "other" qIcon];
+    constructor "" [arg "other" qIcon];
+    constructor "" [arg "fileName" qString];
+    (*constructor "" [arg "engine" qIconEngine];*)
+    (*dynamic "operator=" [arg "other" qIcon] ~ret:qIcon;*)
+    (*dynamic "swap" [arg "other" qIcon];*)
+    constructor "" [];
+    dynamic "pixmap" [arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qPixmap;
+    dynamic "pixmap" [arg "w" int;arg "h" int;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qPixmap;
+    dynamic "pixmap" [arg "extent" int;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qPixmap;
+    dynamic "pixmap" [arg "window" qWindow;arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qPixmap;
+    dynamic "actualSize" [arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qSize;
+    dynamic "actualSize" [arg "window" qWindow;arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qSize;
+    dynamic "name" [] ~ret:qString;
+    dynamic "paint" [arg "painter" qPainter;arg "rect" qRect;arg "alignment" qt'Alignment;arg "mode" qIcon'Mode;arg "state" qIcon'State];
+    dynamic "paint" [arg "painter" qPainter;arg "x" int;arg "y" int;arg "w" int;arg "h" int;arg "alignment" qt'Alignment;arg "mode" qIcon'Mode;arg "state" qIcon'State];
+    dynamic "isNull" [] ~ret:bool;
+    (*dynamic "serialNumber" [] ~ret:int;*)
+    dynamic "cacheKey" [] ~ret:qint64;
+    dynamic "addPixmap" [arg "pixmap" qPixmap;arg "mode" qIcon'Mode;arg "state" qIcon'State];
+    dynamic "addFile" [arg "fileName" qString;arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State];
+    (*dynamic "availableSizes" [arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qList<QSize>;*)
+    dynamic "setIsMask" [arg "isMask" bool];
+    dynamic "isMask" [] ~ret:bool;
+    static  "fromTheme" [arg "name" qString] ~ret:qIcon;
+    static  "fromTheme" [arg "name" qString;arg "fallback" qIcon] ~ret:qIcon;
+    static  "hasThemeIcon" [arg "name" qString] ~ret:bool;
+    static  "themeSearchPaths" [] ~ret:qStringList;
+    static  "setThemeSearchPaths" [arg "paths" qStringList];
+    static  "themeName" [] ~ret:qString;
+    static  "setThemeName" [arg "name" qString];
+  ]
+
+let () = with_class qKeySequence [
+    constructor "" [];
+    constructor "" [arg "key" qString;arg "format" qKeySequence'SequenceFormat];
+    constructor "" [arg "k1" int;arg "k2" int;arg "k3" int;arg "k4" int];
+    constructor "" [arg "keysequence" qKeySequence];
+    constructor "" [arg "key" qKeySequence'StandardKey];
+    dynamic "count" [] ~ret:int;
+    dynamic "isEmpty" [] ~ret:bool;
+    dynamic "toString" [arg "format" qKeySequence'SequenceFormat] ~ret:qString;
+    static  "fromString" [arg "str" qString;arg "format" qKeySequence'SequenceFormat] ~ret:qKeySequence;
+    (*static  "listFromString" [arg "str" qString;arg "format" qKeySequence'SequenceFormat] ~ret:qList<QKeySequence>;*)
+    (*static  "listToString" [arg "list" qList<QKeySequence>;arg "format" qKeySequence'SequenceFormat] ~ret:qString;*)
+    dynamic "matches" [arg "seq" qKeySequence] ~ret:qKeySequence'SequenceMatch;
+    static  "mnemonic" [arg "text" qString] ~ret:qKeySequence;
+    (*static  "keyBindings" [arg "key" standardKey] ~ret:qList<QKeySequence>;*)
+    (*dynamic "operator[]" [arg "index" int] ~ret:int;
+    dynamic "operator=" [arg "other" qKeySequence] ~ret:qKeySequence;
+    dynamic "operator=" [arg "other" qKeySequence] ~ret:qKeySequence;
+    dynamic "swap" [arg "other" qKeySequence];
+    dynamic "operator==" [arg "other" qKeySequence] ~ret:bool;
+    dynamic "operator!=" [arg "other" qKeySequence] ~ret:bool;
+    dynamic "operator<" [arg "other" qKeySequence] ~ret:bool;
+    dynamic "operator>" [arg "other" qKeySequence] ~ret:bool;
+    dynamic "operator<=" [arg "other" qKeySequence] ~ret:bool;
+    dynamic "operator>=" [arg "other" qKeySequence] ~ret:bool;*)
   ]
 
 (*let () = with_class qAccessibleEditableTextInterface [
@@ -1654,42 +1717,6 @@ let () = with_class qWindow [
     static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "targetRect" qRect;arg "source" qOpenGLFramebufferObject;arg "sourceRect" qRect;arg "buffers" gLbitfield;arg "filter" gLenum;arg "readColorAttachmentIndex" int;arg "drawColorAttachmentIndex" int];
     static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "targetRect" qRect;arg "source" qOpenGLFramebufferObject;arg "sourceRect" qRect;arg "buffers" gLbitfield;arg "filter" gLenum];
     static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "source" qOpenGLFramebufferObject;arg "buffers" gLbitfield;arg "filter" gLenum];
-  ]
-  let () = with_class qIcon [
-    constructor "" [];
-    constructor "" [arg "pixmap" qPixmap];
-    constructor "" [arg "other" qIcon];
-    constructor "" [arg "other" qIcon];
-    constructor "" [arg "fileName" qString];
-    constructor "" [arg "engine" qIconEngine];
-    dynamic "operator=" [arg "other" qIcon] ~ret:qIcon;
-    dynamic "operator=" [arg "other" qIcon] ~ret:qIcon;
-    dynamic "swap" [arg "other" qIcon];
-    constructor "" [];
-    dynamic "pixmap" [arg "size" qSize;arg "mode" mode;arg "state" state] ~ret:qPixmap;
-    dynamic "pixmap" [arg "w" int;arg "h" int;arg "mode" mode;arg "state" state] ~ret:qPixmap;
-    dynamic "pixmap" [arg "extent" int;arg "mode" mode;arg "state" state] ~ret:qPixmap;
-    dynamic "pixmap" [arg "window" qWindow;arg "size" qSize;arg "mode" mode;arg "state" state] ~ret:qPixmap;
-    dynamic "actualSize" [arg "size" qSize;arg "mode" mode;arg "state" state] ~ret:qSize;
-    dynamic "actualSize" [arg "window" qWindow;arg "size" qSize;arg "mode" mode;arg "state" state] ~ret:qSize;
-    dynamic "name" [] ~ret:qString;
-    dynamic "paint" [arg "painter" qPainter;arg "rect" qRect;arg "alignment" qt'Alignment;arg "mode" mode;arg "state" state];
-    dynamic "paint" [arg "painter" qPainter;arg "x" int;arg "y" int;arg "w" int;arg "h" int;arg "alignment" qt'Alignment;arg "mode" mode;arg "state" state];
-    dynamic "isNull" [] ~ret:bool;
-    dynamic "serialNumber" [] ~ret:int;
-    dynamic "cacheKey" [] ~ret:qint64;
-    dynamic "addPixmap" [arg "pixmap" qPixmap;arg "mode" mode;arg "state" state];
-    dynamic "addFile" [arg "fileName" qString;arg "size" qSize;arg "mode" mode;arg "state" state];
-    dynamic "availableSizes" [arg "mode" mode;arg "state" state] ~ret:qList<QSize>;
-    dynamic "setIsMask" [arg "isMask" bool];
-    dynamic "isMask" [] ~ret:bool;
-    static  "fromTheme" [arg "name" qString] ~ret:qIcon;
-    static  "fromTheme" [arg "name" qString;arg "fallback" qIcon] ~ret:qIcon;
-    static  "hasThemeIcon" [arg "name" qString] ~ret:bool;
-    static  "themeSearchPaths" [] ~ret:qStringList;
-    static  "setThemeSearchPaths" [arg "paths" qStringList];
-    static  "themeName" [] ~ret:qString;
-    static  "setThemeName" [arg "name" qString];
   ]
   let () = with_class qTextOption'Tab [
     constructor "" [];
@@ -3215,35 +3242,6 @@ let () = with_class qWindow [
     dynamic "toPoint" [] ~ret:qPoint;
     dynamic "toPointF" [] ~ret:qPointF;
     constructor "" [];
-  ]
-  let () = with_class qKeySequence [
-    constructor "" [];
-    constructor "" [arg "key" qString;arg "format" sequenceFormat];
-    constructor "" [arg "arg0" int k1;arg "arg1" int k2;arg "arg2" int k3;arg "arg3" int k4];
-    constructor "" [arg "keysequence" qKeySequence];
-    constructor "" [arg "key" standardKey];
-    dynamic "count" [] ~ret:int;
-    dynamic "isEmpty" [] ~ret:bool;
-    dynamic "toString" [arg "format" sequenceFormat] ~ret:qString;
-    static  "fromString" [arg "str" qString;arg "format" sequenceFormat] ~ret:qKeySequence;
-    static  "listFromString" [arg "str" qString;arg "format" sequenceFormat] ~ret:qList<QKeySequence>;
-    static  "listToString" [arg "list" qList<QKeySequence>;arg "format" sequenceFormat] ~ret:qString;
-    dynamic "matches" [arg "seq" qKeySequence] ~ret:sequenceMatch;
-    static  "mnemonic" [arg "text" qString] ~ret:qKeySequence;
-    static  "keyBindings" [arg "key" standardKey] ~ret:qList<QKeySequence>;
-    constructor "" [];
-    constructor "" [];
-    constructor "" [];
-    dynamic "operator[]" [arg "index" uint] ~ret:int;
-    dynamic "operator=" [arg "other" qKeySequence] ~ret:qKeySequence;
-    dynamic "operator=" [arg "other" qKeySequence] ~ret:qKeySequence;
-    dynamic "swap" [arg "other" qKeySequence];
-    dynamic "operator==" [arg "other" qKeySequence] ~ret:bool;
-    dynamic "operator!=" [arg "other" qKeySequence] ~ret:bool;
-    dynamic "operator<" [arg "other" qKeySequence] ~ret:bool;
-    dynamic "operator>" [arg "other" qKeySequence] ~ret:bool;
-    dynamic "operator<=" [arg "other" qKeySequence] ~ret:bool;
-    dynamic "operator>=" [arg "other" qKeySequence] ~ret:bool;
   ]
   let () = with_class qTextLayout'FormatRange [
   ]

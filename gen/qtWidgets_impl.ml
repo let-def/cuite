@@ -86,6 +86,7 @@ let () = with_class qWidget [
     (*dynamic "effectiveWinId" [] ~ret:wId;*)
     (*dynamic "style" [] ~ret:qStyle;*)
     (*dynamic "setStyle" [arg "style" qStyle];*)
+    dynamic "addAction" [arg "action" qAction];
     dynamic "isTopLevel" [] ~ret:bool;
     dynamic "isWindow" [] ~ret:bool;
     dynamic "isModal" [] ~ret:bool;
@@ -651,221 +652,162 @@ let () = with_class qFormLayout [
 let () = with_class qTextEdit [
     constructor "" [arg "parent" (optional qWidget)];
     constructor "" [arg "text" qString;arg "parent" (optional qWidget)];
-    dynamic "setDocument" [arg "document" qTextDocument];
-    dynamic "document" [] ~ret:qTextDocument;
-    dynamic "setPlaceholderText" [arg "placeholderText" qString];
-    dynamic "placeholderText" [] ~ret:qString;
-    (*dynamic "setTextCursor" [arg "cursor" qTextCursor];*)
-    (*dynamic "textCursor" [] ~ret:qTextCursor;*)
-    dynamic "isReadOnly" [] ~ret:bool;
-    dynamic "setReadOnly" [arg "ro" bool];
-    dynamic "setTextInteractionFlags" [arg "flags" qt'TextInteractionFlags];
-    dynamic "textInteractionFlags" [] ~ret:qt'TextInteractionFlags;
-    dynamic "fontPointSize" [] ~ret:qreal;
-    dynamic "fontFamily" [] ~ret:qString;
-    dynamic "fontWeight" [] ~ret:int;
-    dynamic "fontUnderline" [] ~ret:bool;
-    dynamic "fontItalic" [] ~ret:bool;
-    dynamic "textColor" [] ~ret:qColor;
-    dynamic "textBackgroundColor" [] ~ret:qColor;
-    dynamic "currentFont" [] ~ret:qFont;
-    dynamic "alignment" [] ~ret:qt'Alignment;
-    (*dynamic "mergeCurrentCharFormat" [arg "modifier" qTextCharFormat];*)
-    (*dynamic "setCurrentCharFormat" [arg "format" qTextCharFormat];*)
-    (*dynamic "currentCharFormat" [] ~ret:qTextCharFormat;*)
-    dynamic "autoFormatting" [] ~ret:qTextEdit'AutoFormatting;
-    dynamic "setAutoFormatting" [arg "features" qTextEdit'AutoFormatting];
-    dynamic "tabChangesFocus" [] ~ret:bool;
-    dynamic "setTabChangesFocus" [arg "b" bool];
-    dynamic "setDocumentTitle" [arg "title" qString];
-    dynamic "documentTitle" [] ~ret:qString;
-    dynamic "isUndoRedoEnabled" [] ~ret:bool;
-    dynamic "setUndoRedoEnabled" [arg "enable" bool];
-    dynamic "lineWrapMode" [] ~ret:qTextEdit'LineWrapMode;
-    dynamic "setLineWrapMode" [arg "mode" qTextEdit'LineWrapMode];
-    dynamic "lineWrapColumnOrWidth" [] ~ret:int;
-    dynamic "setLineWrapColumnOrWidth" [arg "w" int];
-    dynamic "wordWrapMode" [] ~ret:qTextOption'WrapMode;
-    dynamic "setWordWrapMode" [arg "policy" qTextOption'WrapMode];
-    dynamic "find" [arg "exp" qString;arg "options" qTextDocument'FindFlags] ~ret:bool;
-    (*dynamic "find" [arg "exp" qRegExp;arg "options" qTextDocument'FindFlags] ~ret:bool;*)
-    dynamic "toPlainText" [] ~ret:qString;
-    dynamic "toHtml" [] ~ret:qString;
-    dynamic "ensureCursorVisible" [];
-    dynamic "loadResource" [arg "type" int;arg "name" qUrl] ~ret:qVariant;
-    dynamic "createStandardContextMenu" [] ~ret:qMenu;
-    dynamic "createStandardContextMenu" [arg "position" qPoint] ~ret:qMenu;
-    (*dynamic "cursorForPosition" [arg "pos" qPoint] ~ret:qTextCursor;*)
-    (*dynamic "cursorRect" [arg "cursor" qTextCursor] ~ret:qRect;*)
-    dynamic "cursorRect" [] ~ret:qRect;
-    dynamic "anchorAt" [arg "pos" qPoint] ~ret:qString;
-    dynamic "overwriteMode" [] ~ret:bool;
-    dynamic "setOverwriteMode" [arg "overwrite" bool];
-    dynamic "tabStopWidth" [] ~ret:int;
-    dynamic "setTabStopWidth" [arg "width" int];
-    dynamic "cursorWidth" [] ~ret:int;
-    dynamic "setCursorWidth" [arg "width" int];
     dynamic "acceptRichText" [] ~ret:bool;
-    dynamic "setAcceptRichText" [arg "accept" bool];
-    (*dynamic "setExtraSelections" [arg "selections" qList<ExtraSelection>];*)
-    (*dynamic "extraSelections" [] ~ret:qList<ExtraSelection>;*)
-    dynamic "moveCursor" [arg "operation" qTextCursor'MoveOperation;arg "mode" qTextCursor'MoveMode];
-    dynamic "canPaste" [] ~ret:bool;
-    (*dynamic "print" [arg "printer" qPagedPaintDevice];*)
-    (*dynamic "inputMethodQuery" [arg "property" qt'InputMethodQuery] ~ret:qVariant;*)
-    dynamic "setFontPointSize" [arg "s" qreal];
-    dynamic "setFontFamily" [arg "fontFamily" qString];
-    dynamic "setFontWeight" [arg "weight" int];
-    dynamic "setFontUnderline" [arg "underline" bool];
-    dynamic "setFontItalic" [arg "italic" bool];
-    dynamic "setTextColor" [arg "c" qColor];
-    dynamic "setTextBackgroundColor" [arg "c" qColor];
-    dynamic "setCurrentFont" [arg "f" qFont];
-    dynamic "setAlignment" [arg "a" qt'Alignment];
-    dynamic "setPlainText" [arg "text" qString];
-    dynamic "setHtml" [arg "text" qString];
-    dynamic "setText" [arg "text" qString];
-    dynamic "cut" [];
-    dynamic "copy" [];
-    dynamic "paste" [];
-    dynamic "undo" [];
-    dynamic "redo" [];
-    dynamic "clear" [];
-    dynamic "selectAll" [];
-    dynamic "insertPlainText" [arg "text" qString];
-    dynamic "insertHtml" [arg "text" qString];
-    dynamic "append" [arg "text" qString];
-    dynamic "scrollToAnchor" [arg "name" qString];
-    dynamic "zoomIn" [arg "range" int];
-    dynamic "zoomOut" [arg "range" int];
-    dynamic "textChanged" [];
-    dynamic "undoAvailable" [arg "available" bool];
-    dynamic "redoAvailable" [arg "available" bool];
-    (*dynamic "currentCharFormatChanged" [arg "f" qTextCharFormat];*)
-    dynamic "copyAvailable" [arg "yes" bool];
-    dynamic "selectionChanged" [];
-    dynamic "cursorPositionChanged" [];
+    dynamic "alignment" [] ~ret:qt'Alignment;
+    dynamic "anchorAt" [arg "pos" qPoint] ~ret:qString;
     slot "append" [qString];
+    dynamic "autoFormatting" [] ~ret:qTextEdit'AutoFormatting;
+    dynamic "canPaste" [] ~ret:bool;
     slot "clear" [];
     slot "copy" [];
+    dynamic "copyAvailable" [arg "yes" bool];
+    signal "copyAvailable" [bool];
+    dynamic "createStandardContextMenu" [arg "position" qPoint] ~ret:qMenu;
+    dynamic "createStandardContextMenu" [] ~ret:qMenu;
+    (*dynamic "currentCharFormatChanged" [arg "f" qTextCharFormat];*)
+    (*signal "currentCharFormatChanged" [qTextCharFormat];*)
+    (*dynamic "currentCharFormat" [] ~ret:qTextCharFormat;*)
+    dynamic "currentFont" [] ~ret:qFont;
+    (*dynamic "cursorForPosition" [arg "pos" qPoint] ~ret:qTextCursor;*)
+    dynamic "cursorPositionChanged" [];
+    signal "cursorPositionChanged" [];
+    (*dynamic "cursorRect" [arg "cursor" qTextCursor] ~ret:qRect;*)
+    dynamic "cursorRect" [] ~ret:qRect;
+    dynamic "cursorWidth" [] ~ret:int;
     slot "cut" [];
+    dynamic "document" [] ~ret:qTextDocument;
+    dynamic "documentTitle" [] ~ret:qString;
+    dynamic "ensureCursorVisible" [];
+    (*dynamic "extraSelections" [] ~ret:qList<ExtraSelection>;*)
+    (*dynamic "find" [arg "exp" qRegExp;arg "options" qTextDocument'FindFlags] ~ret:bool;*)
+    dynamic "find" [arg "exp" qString;arg "options" qTextDocument'FindFlags] ~ret:bool;
+    dynamic "fontFamily" [] ~ret:qString;
+    dynamic "fontItalic" [] ~ret:bool;
+    dynamic "fontPointSize" [] ~ret:qreal;
+    dynamic "fontUnderline" [] ~ret:bool;
+    dynamic "fontWeight" [] ~ret:int;
+    (*dynamic "inputMethodQuery" [arg "property" qt'InputMethodQuery] ~ret:qVariant;*)
     slot "insertHtml" [qString];
     slot "insertPlainText" [qString];
+    dynamic "isReadOnly" [] ~ret:bool;
+    dynamic "isUndoRedoEnabled" [] ~ret:bool;
+    dynamic "lineWrapColumnOrWidth" [] ~ret:int;
+    dynamic "lineWrapMode" [] ~ret:qTextEdit'LineWrapMode;
+    dynamic "loadResource" [arg "type" int;arg "name" qUrl] ~ret:qVariant;
+    (*dynamic "mergeCurrentCharFormat" [arg "modifier" qTextCharFormat];*)
+    dynamic "moveCursor" [arg "operation" qTextCursor'MoveOperation;arg "mode" qTextCursor'MoveMode];
+    dynamic "overwriteMode" [] ~ret:bool;
     slot "paste" [];
+    dynamic "placeholderText" [] ~ret:qString;
+    (*dynamic "print" [arg "printer" qPagedPaintDevice];*)
     slot "_q_adjustScrollbars" [];
     (*slot "_q_currentCharFormatChanged" [qTextCharFormat];*)
     slot "_q_cursorPositionChanged" [];
     slot "_q_ensureVisible" [qRectF];
     slot "_q_repaintContents" [qRectF];
     slot "redo" [];
+    signal "redoAvailable" [bool];
     slot "scrollToAnchor" [qString];
     slot "selectAll" [];
+    dynamic "selectionChanged" [];
+    signal "selectionChanged" [];
+    dynamic "setAcceptRichText" [arg "accept" bool];
     slot "setAlignment" [qt'Alignment];
+    dynamic "setAutoFormatting" [arg "features" qTextEdit'AutoFormatting];
+    (*dynamic "setCurrentCharFormat" [arg "format" qTextCharFormat];*)
     slot "setCurrentFont" [qFont];
+    dynamic "setCursorWidth" [arg "width" int];
+    dynamic "setDocument" [arg "document" qTextDocument];
+    dynamic "setDocumentTitle" [arg "title" qString];
+    (*dynamic "setExtraSelections" [arg "selections" qList<ExtraSelection>];*)
     slot "setFontFamily" [qString];
     slot "setFontItalic" [bool];
     slot "setFontPointSize" [double];
     slot "setFontUnderline" [bool];
     slot "setFontWeight" [int];
     slot "setHtml" [qString];
+    dynamic "setLineWrapColumnOrWidth" [arg "w" int];
+    dynamic "setLineWrapMode" [arg "mode" qTextEdit'LineWrapMode];
+    dynamic "setOverwriteMode" [arg "overwrite" bool];
+    dynamic "setPlaceholderText" [arg "placeholderText" qString];
     slot "setPlainText" [qString];
+    dynamic "setReadOnly" [arg "ro" bool];
+    dynamic "setTabChangesFocus" [arg "b" bool];
+    dynamic "setTabStopWidth" [arg "width" int];
     slot "setTextBackgroundColor" [qColor];
     slot "setTextColor" [qColor];
+    (*dynamic "setTextCursor" [arg "cursor" qTextCursor];*)
+    dynamic "setTextInteractionFlags" [arg "flags" qt'TextInteractionFlags];
     slot "setText" [qString];
+    dynamic "setUndoRedoEnabled" [arg "enable" bool];
+    dynamic "setWordWrapMode" [arg "policy" qTextOption'WrapMode];
+    dynamic "tabChangesFocus" [] ~ret:bool;
+    dynamic "tabStopWidth" [] ~ret:int;
+    dynamic "textBackgroundColor" [] ~ret:qColor;
+    dynamic "textChanged" [];
+    signal "textChanged" [];
+    dynamic "textColor" [] ~ret:qColor;
+    (*dynamic "textCursor" [] ~ret:qTextCursor;*)
+    dynamic "textInteractionFlags" [] ~ret:qt'TextInteractionFlags;
+    dynamic "toHtml" [] ~ret:qString;
+    dynamic "toPlainText" [] ~ret:qString;
     slot "undo" [];
+    dynamic "undoAvailable" [arg "available" bool];
+    signal "undoAvailable" [bool];
+    dynamic "wordWrapMode" [] ~ret:qTextOption'WrapMode;
     slot "zoomIn" [];
     slot "zoomIn" [int];
     slot "zoomOut" [];
     slot "zoomOut" [int];
-    signal "copyAvailable" [bool];
-    (*signal "currentCharFormatChanged" [qTextCharFormat];*)
-    signal "cursorPositionChanged" [];
-    signal "redoAvailable" [bool];
-    signal "selectionChanged" [];
-    signal "textChanged" [];
-    signal "undoAvailable" [bool];
   ]
 
 let () = with_class qLineEdit [
     constructor "" [arg "parent" (optional qWidget)];
     constructor "" [arg "contents" qString;arg "parent" (optional qWidget)];
-    dynamic "text" [] ~ret:qString;
-    dynamic "displayText" [] ~ret:qString;
-    dynamic "placeholderText" [] ~ret:qString;
-    dynamic "setPlaceholderText" [arg "arg0" qString];
-    dynamic "maxLength" [] ~ret:int;
-    dynamic "setMaxLength" [arg "arg0" int];
-    dynamic "setFrame" [arg "arg0" bool];
-    dynamic "hasFrame" [] ~ret:bool;
-    dynamic "setClearButtonEnabled" [arg "enable" bool];
-    dynamic "isClearButtonEnabled" [] ~ret:bool;
-    dynamic "echoMode" [] ~ret:qLineEdit'EchoMode;
-    dynamic "setEchoMode" [arg "arg0" qLineEdit'EchoMode];
-    dynamic "isReadOnly" [] ~ret:bool;
-    dynamic "setReadOnly" [arg "arg0" bool];
-    dynamic "setValidator" [arg "v" qValidator];
-    dynamic "validator" [] ~ret:qValidator;
-    dynamic "setCompleter" [arg "c" qCompleter];
-    dynamic "completer" [] ~ret:qCompleter;
-    dynamic "sizeHint" [] ~ret:qSize;
-    dynamic "minimumSizeHint" [] ~ret:qSize;
-    dynamic "cursorPosition" [] ~ret:int;
-    dynamic "setCursorPosition" [arg "arg0" int];
-    dynamic "cursorPositionAt" [arg "pos" qPoint] ~ret:int;
-    dynamic "setAlignment" [arg "flag" qt'Alignment];
-    dynamic "alignment" [] ~ret:qt'Alignment;
-    dynamic "cursorForward" [arg "mark" bool;arg "steps" int];
-    dynamic "cursorBackward" [arg "mark" bool;arg "steps" int];
-    dynamic "cursorWordForward" [arg "mark" bool];
-    dynamic "cursorWordBackward" [arg "mark" bool];
-    dynamic "backspace" [];
-    dynamic "del" [];
-    dynamic "home" [arg "mark" bool];
-    dynamic "end" [arg "mark" bool];
-    dynamic "isModified" [] ~ret:bool;
-    dynamic "setModified" [arg "arg0" bool];
-    dynamic "setSelection" [arg "start" int;arg "length" int];
-    dynamic "hasSelectedText" [] ~ret:bool;
-    dynamic "selectedText" [] ~ret:qString;
-    dynamic "selectionStart" [] ~ret:int;
-    dynamic "isUndoAvailable" [] ~ret:bool;
-    dynamic "isRedoAvailable" [] ~ret:bool;
-    dynamic "setDragEnabled" [arg "b" bool];
-    dynamic "dragEnabled" [] ~ret:bool;
-    dynamic "setCursorMoveStyle" [arg "style" qt'CursorMoveStyle];
-    dynamic "cursorMoveStyle" [] ~ret:qt'CursorMoveStyle;
-    dynamic "inputMask" [] ~ret:qString;
-    dynamic "setInputMask" [arg "inputMask" qString];
-    dynamic "hasAcceptableInput" [] ~ret:bool;
-    dynamic "setTextMargins" [arg "left" int;arg "top" int;arg "right" int;arg "bottom" int];
-    (*dynamic "setTextMargins" [arg "margins" qMargins];*)
-    (*dynamic "getTextMargins" [arg "left" int;arg "top" int;arg "right" int;arg "bottom" int];*)
-    (*dynamic "textMargins" [] ~ret:qMargins;*)
     dynamic "addAction" [arg "action" qAction;arg "position" qLineEdit'ActionPosition];
     dynamic "addAction" [arg "icon" qIcon;arg "position" qLineEdit'ActionPosition] ~ret:qAction;
-    dynamic "setText" [arg "arg0" qString];
-    dynamic "clear" [];
-    dynamic "selectAll" [];
-    dynamic "undo" [];
-    dynamic "redo" [];
-    dynamic "cut" [];
-    dynamic "copy" [];
-    dynamic "paste" [];
-    dynamic "deselect" [];
-    dynamic "insert" [arg "newText" qString];
-    dynamic "createStandardContextMenu" [] ~ret:qMenu;
-    dynamic "textChanged" [arg "text" qString];
-    dynamic "textEdited" [arg "text" qString];
-    dynamic "cursorPositionChanged" [arg "old" int;arg "new" int];
-    dynamic "returnPressed" [];
-    dynamic "editingFinished" [];
-    dynamic "selectionChanged" [];
-    (*dynamic "inputMethodQuery" [arg "property" qt'InputMethodQuery] ~ret:qVariant;*)
-    dynamic "event" [arg "e" qEvent] ~ret:bool;
+    dynamic "alignment" [] ~ret:qt'Alignment;
+    dynamic "backspace" [];
     slot "clear" [];
+    dynamic "completer" [] ~ret:qCompleter;
     slot "copy" [];
+    dynamic "createStandardContextMenu" [] ~ret:qMenu;
+    dynamic "cursorBackward" [arg "mark" bool;arg "steps" int];
+    dynamic "cursorForward" [arg "mark" bool;arg "steps" int];
+    dynamic "cursorMoveStyle" [] ~ret:qt'CursorMoveStyle;
+    dynamic "cursorPositionAt" [arg "pos" qPoint] ~ret:int;
+    dynamic "cursorPositionChanged" [arg "old" int;arg "new" int];
+    signal "cursorPositionChanged" [int;int];
+    dynamic "cursorPosition" [] ~ret:int;
+    dynamic "cursorWordBackward" [arg "mark" bool];
+    dynamic "cursorWordForward" [arg "mark" bool];
     slot "cut" [];
+    dynamic "del" [];
+    dynamic "deselect" [];
+    dynamic "displayText" [] ~ret:qString;
+    dynamic "dragEnabled" [] ~ret:bool;
+    dynamic "echoMode" [] ~ret:qLineEdit'EchoMode;
+    dynamic "editingFinished" [];
+    signal "editingFinished" [];
+    dynamic "end" [arg "mark" bool];
+    dynamic "event" [arg "e" qEvent] ~ret:bool;
+    (*dynamic "getTextMargins" [arg "left" int;arg "top" int;arg "right" int;arg "bottom" int];*)
+    dynamic "hasAcceptableInput" [] ~ret:bool;
+    dynamic "hasFrame" [] ~ret:bool;
+    dynamic "hasSelectedText" [] ~ret:bool;
+    dynamic "home" [arg "mark" bool];
+    dynamic "inputMask" [] ~ret:qString;
+    (*dynamic "inputMethodQuery" [arg "property" qt'InputMethodQuery] ~ret:qVariant;*)
+    dynamic "insert" [arg "newText" qString];
+    dynamic "isClearButtonEnabled" [] ~ret:bool;
+    dynamic "isModified" [] ~ret:bool;
+    dynamic "isReadOnly" [] ~ret:bool;
+    dynamic "isRedoAvailable" [] ~ret:bool;
+    dynamic "isUndoAvailable" [] ~ret:bool;
+    dynamic "maxLength" [] ~ret:int;
+    dynamic "minimumSizeHint" [] ~ret:qSize;
     slot "paste" [];
+    dynamic "placeholderText" [] ~ret:qString;
     slot "_q_clearButtonClicked" [];
     slot "_q_completionHighlighted" [qString];
     slot "_q_cursorPositionChanged" [int;int];
@@ -875,15 +817,40 @@ let () = with_class qLineEdit [
     slot "_q_textEdited" [qString];
     slot "_q_updateNeeded" [qRect];
     slot "redo" [];
-    slot "selectAll" [];
-    slot "setText" [qString];
-    slot "undo" [];
-    signal "cursorPositionChanged" [int;int];
-    signal "editingFinished" [];
+    dynamic "returnPressed" [];
     signal "returnPressed" [];
+    slot "selectAll" [];
+    dynamic "selectedText" [] ~ret:qString;
+    dynamic "selectionChanged" [];
     signal "selectionChanged" [];
+    dynamic "selectionStart" [] ~ret:int;
+    dynamic "setAlignment" [arg "flag" qt'Alignment];
+    dynamic "setClearButtonEnabled" [arg "enable" bool];
+    dynamic "setCompleter" [arg "c" qCompleter];
+    dynamic "setCursorMoveStyle" [arg "style" qt'CursorMoveStyle];
+    dynamic "setCursorPosition" [arg "arg0" int];
+    dynamic "setDragEnabled" [arg "b" bool];
+    dynamic "setEchoMode" [arg "arg0" qLineEdit'EchoMode];
+    dynamic "setFrame" [arg "arg0" bool];
+    dynamic "setInputMask" [arg "inputMask" qString];
+    dynamic "setMaxLength" [arg "arg0" int];
+    dynamic "setModified" [arg "arg0" bool];
+    dynamic "setPlaceholderText" [arg "arg0" qString];
+    dynamic "setReadOnly" [arg "arg0" bool];
+    dynamic "setSelection" [arg "start" int;arg "length" int];
+    dynamic "setTextMargins" [arg "left" int;arg "top" int;arg "right" int;arg "bottom" int];
+    (*dynamic "setTextMargins" [arg "margins" qMargins];*)
+    slot "setText" [qString];
+    dynamic "setValidator" [arg "v" qValidator];
+    dynamic "sizeHint" [] ~ret:qSize;
+    dynamic "textChanged" [arg "text" qString];
     signal "textChanged" [qString];
+    dynamic "textEdited" [arg "text" qString];
     signal "textEdited" [qString];
+    (*dynamic "textMargins" [] ~ret:qMargins;*)
+    dynamic "text" [] ~ret:qString;
+    slot "undo" [];
+    dynamic "validator" [] ~ret:qValidator;
   ]
 
 let () = with_class qLabel [
@@ -3026,20 +2993,13 @@ let () = with_class qPlainTextEdit [
     (*dynamic "print" [arg "printer" qPagedPaintDevice];*)
     dynamic "blockCount" [] ~ret:int;
     dynamic "inputMethodQuery" [arg "property" qt'InputMethodQuery] ~ret:qVariant;
-    dynamic "setPlainText" [arg "text" qString];
     dynamic "cut" [];
     dynamic "copy" [];
     dynamic "paste" [];
-    dynamic "undo" [];
-    dynamic "redo" [];
-    dynamic "clear" [];
-    dynamic "selectAll" [];
     dynamic "insertPlainText" [arg "text" qString];
     dynamic "appendPlainText" [arg "text" qString];
     dynamic "appendHtml" [arg "html" qString];
     dynamic "centerCursor" [];
-    dynamic "zoomIn" [arg "range" int];
-    dynamic "zoomOut" [arg "range" int];
     dynamic "textChanged" [];
     dynamic "undoAvailable" [arg "available" bool];
     dynamic "redoAvailable" [arg "available" bool];
@@ -5186,7 +5146,6 @@ let () = with_class qTableWidgetSelectionRange [
     constructor "" [arg "parent" qGraphicsItem];
     constructor "" [arg "text" qString;arg "parent" qGraphicsItem];
     dynamic "toHtml" [] ~ret:qString;
-    dynamic "setHtml" [arg "text" qString];
     dynamic "toPlainText" [] ~ret:qString;
     dynamic "setPlainText" [arg "text" qString];
     dynamic "font" [] ~ret:qFont;
