@@ -71,12 +71,12 @@ let () = with_class qApplication [
     dynamic "autoSipEnabled" [] ~ret:bool;
     static  "closeAllWindows" [];
     static  "aboutQt" [];
-    signal  "focusChanged" [optional qWidget; optional qWidget];
+    signal  "focusChanged" [arg "" (optional qWidget); arg "" (optional qWidget)];
     slot    "aboutQt" [];
     slot    "autoSipEnabled" [];
     slot    "closeAllWindows" [];
-    slot    "setAutoSipEnabled" [bool];
-    slot    "setStyleSheet" [qString];
+    slot    "setAutoSipEnabled" [arg "" bool];
+    slot    "setStyleSheet" [arg "" qString];
   ]
 
 let () = with_class qWidget [
@@ -331,24 +331,24 @@ let () = with_class qWidget [
     (*dynamic "inputMethodHints" [] ~ret:qt'InputMethodHints;*)
     (*dynamic "setInputMethodHints" [arg "hints" qt'InputMethodHints];*)
 
-    signal "customContextMenuRequested" [const qPoint];
-    signal "windowIconChanged" [qIcon];
-    signal "windowIconTextChanged" [qString];
-    signal "windowTitleChanged" [qString];
+    signal "customContextMenuRequested" [arg "" (const qPoint)];
+    signal "windowIconChanged" [arg "" qIcon];
+    signal "windowIconTextChanged" [arg "" qString];
+    signal "windowTitleChanged" [arg "" qString];
     slot "close" [];
     slot "hide" [];
     slot "lower" [];
     slot "_q_showIfNotHidden" [];
     slot "raise" [];
     slot "repaint" [];
-    slot "setDisabled" [bool];
-    slot "setEnabled" [bool];
+    slot "setDisabled" [arg "" bool];
+    slot "setEnabled" [arg "" bool];
     slot "setFocus" [];
-    slot "setHidden" [bool];
-    slot "setStyleSheet" [qString];
-    slot "setVisible" [bool];
-    slot "setWindowModified" [bool];
-    slot "setWindowTitle" [qString];
+    slot "setHidden" [arg "" bool];
+    slot "setStyleSheet" [arg "" qString];
+    slot "setVisible" [arg "" bool];
+    slot "setWindowModified" [arg "" bool];
+    slot "setWindowTitle" [arg "" qString];
     slot "show" [];
     slot "showFullScreen" [];
     slot "showMaximized" [];
@@ -390,16 +390,16 @@ let () = with_class qAbstractButton [
     dynamic "clicked" [arg "checked" bool];
     dynamic "toggled" [arg "checked" bool];
     slot "animateClick" [];
-    slot "animateClick" [int];
+    slot "animateClick" [arg "" int];
     slot "click" [];
-    slot "setChecked" [bool];
-    slot "setIconSize" [qSize];
+    slot "setChecked" [arg "" bool];
+    slot "setIconSize" [arg "" qSize];
     slot "toggle" [];
     (*signal "clicked" [];*)
-    signal "clicked" [bool];
+    signal "clicked" [arg "" bool];
     signal "pressed" [];
     signal "released" [];
-    signal "toggled" [bool];
+    signal "toggled" [arg "" bool];
   ]
 
 let () = with_class qPushButton [
@@ -437,11 +437,11 @@ let () = with_class qGroupBox [
     dynamic "setChecked" [arg "checked" bool];
     dynamic "clicked" [arg "checked" bool];
     dynamic "toggled" [arg "on" bool];
-    slot "_q_setChildrenEnabled" [bool];
-    slot "setChecked" [bool];
+    slot "_q_setChildrenEnabled" [arg "" bool];
+    slot "setChecked" [arg "" bool];
     (*signal "clicked" [];*)
-    signal "clicked" [bool];
-    signal "toggled" [bool];
+    signal "clicked" [arg "" bool];
+    signal "toggled" [arg "" bool];
   ]
 
 let () = with_class qMenu [
@@ -508,8 +508,8 @@ let () = with_class qMenu [
     slot "_q_platformMenuAboutToShow" [];
     signal "aboutToHide" [];
     signal "aboutToShow" [];
-    signal "hovered" [qAction];
-    signal "triggered" [qAction];
+    signal "hovered" [arg "" qAction];
+    signal "triggered" [arg "" qAction];
   ]
 
 let () = with_class qMenuBar [
@@ -542,11 +542,11 @@ let () = with_class qMenuBar [
     dynamic "hovered" [arg "action" qAction];
     slot "_q_actionHovered" [];
     slot "_q_actionTriggered" [];
-    slot "_q_internalShortcutActivated" [int];
+    slot "_q_internalShortcutActivated" [arg "" int];
     slot "_q_updateLayout" [];
-    slot "setVisible" [bool];
-    signal "hovered" [qAction];
-    signal "triggered" [qAction];
+    slot "setVisible" [arg "" bool];
+    signal "hovered" [arg "" qAction];
+    signal "triggered" [arg "" qAction];
   ]
 
 let () = with_class qGridLayout [
@@ -655,17 +655,17 @@ let () = with_class qTextEdit [
     dynamic "acceptRichText" [] ~ret:bool;
     dynamic "alignment" [] ~ret:qt'Alignment;
     dynamic "anchorAt" [arg "pos" qPoint] ~ret:qString;
-    slot "append" [qString];
+    slot "append" [arg "" qString];
     dynamic "autoFormatting" [] ~ret:qTextEdit'AutoFormatting;
     dynamic "canPaste" [] ~ret:bool;
     slot "clear" [];
     slot "copy" [];
     dynamic "copyAvailable" [arg "yes" bool];
-    signal "copyAvailable" [bool];
+    signal "copyAvailable" [arg "" bool];
     dynamic "createStandardContextMenu" [arg "position" qPoint] ~ret:qMenu;
     dynamic "createStandardContextMenu" [] ~ret:qMenu;
     (*dynamic "currentCharFormatChanged" [arg "f" qTextCharFormat];*)
-    (*signal "currentCharFormatChanged" [qTextCharFormat];*)
+    (*signal "currentCharFormatChanged" [arg "" qTextCharFormat];*)
     (*dynamic "currentCharFormat" [] ~ret:qTextCharFormat;*)
     dynamic "currentFont" [] ~ret:qFont;
     (*dynamic "cursorForPosition" [arg "pos" qPoint] ~ret:qTextCursor;*)
@@ -687,8 +687,8 @@ let () = with_class qTextEdit [
     dynamic "fontUnderline" [] ~ret:bool;
     dynamic "fontWeight" [] ~ret:int;
     (*dynamic "inputMethodQuery" [arg "property" qt'InputMethodQuery] ~ret:qVariant;*)
-    slot "insertHtml" [qString];
-    slot "insertPlainText" [qString];
+    slot "insertHtml" [arg "" qString];
+    slot "insertPlainText" [arg "" qString];
     dynamic "isReadOnly" [] ~ret:bool;
     dynamic "isUndoRedoEnabled" [] ~ret:bool;
     dynamic "lineWrapColumnOrWidth" [] ~ret:int;
@@ -701,44 +701,44 @@ let () = with_class qTextEdit [
     dynamic "placeholderText" [] ~ret:qString;
     (*dynamic "print" [arg "printer" qPagedPaintDevice];*)
     slot "_q_adjustScrollbars" [];
-    (*slot "_q_currentCharFormatChanged" [qTextCharFormat];*)
+    (*slot "_q_currentCharFormatChanged" [arg "" qTextCharFormat];*)
     slot "_q_cursorPositionChanged" [];
-    slot "_q_ensureVisible" [qRectF];
-    slot "_q_repaintContents" [qRectF];
+    slot "_q_ensureVisible" [arg "" qRectF];
+    slot "_q_repaintContents" [arg "" qRectF];
     slot "redo" [];
-    signal "redoAvailable" [bool];
-    slot "scrollToAnchor" [qString];
+    signal "redoAvailable" [arg "" bool];
+    slot "scrollToAnchor" [arg "" qString];
     slot "selectAll" [];
     dynamic "selectionChanged" [];
     signal "selectionChanged" [];
     dynamic "setAcceptRichText" [arg "accept" bool];
-    slot "setAlignment" [qt'Alignment];
+    slot "setAlignment" [arg "" qt'Alignment];
     dynamic "setAutoFormatting" [arg "features" qTextEdit'AutoFormatting];
     (*dynamic "setCurrentCharFormat" [arg "format" qTextCharFormat];*)
-    slot "setCurrentFont" [qFont];
+    slot "setCurrentFont" [arg "" qFont];
     dynamic "setCursorWidth" [arg "width" int];
     dynamic "setDocument" [arg "document" qTextDocument];
     dynamic "setDocumentTitle" [arg "title" qString];
     (*dynamic "setExtraSelections" [arg "selections" qList<ExtraSelection>];*)
-    slot "setFontFamily" [qString];
-    slot "setFontItalic" [bool];
-    slot "setFontPointSize" [double];
-    slot "setFontUnderline" [bool];
-    slot "setFontWeight" [int];
-    slot "setHtml" [qString];
+    slot "setFontFamily" [arg "" qString];
+    slot "setFontItalic" [arg "" bool];
+    slot "setFontPointSize" [arg "" double];
+    slot "setFontUnderline" [arg "" bool];
+    slot "setFontWeight" [arg "" int];
+    slot "setHtml" [arg "" qString];
     dynamic "setLineWrapColumnOrWidth" [arg "w" int];
     dynamic "setLineWrapMode" [arg "mode" qTextEdit'LineWrapMode];
     dynamic "setOverwriteMode" [arg "overwrite" bool];
     dynamic "setPlaceholderText" [arg "placeholderText" qString];
-    slot "setPlainText" [qString];
+    slot "setPlainText" [arg "" qString];
     dynamic "setReadOnly" [arg "ro" bool];
     dynamic "setTabChangesFocus" [arg "b" bool];
     dynamic "setTabStopWidth" [arg "width" int];
-    slot "setTextBackgroundColor" [qColor];
-    slot "setTextColor" [qColor];
+    slot "setTextBackgroundColor" [arg "" qColor];
+    slot "setTextColor" [arg "" qColor];
     (*dynamic "setTextCursor" [arg "cursor" qTextCursor];*)
     dynamic "setTextInteractionFlags" [arg "flags" qt'TextInteractionFlags];
-    slot "setText" [qString];
+    slot "setText" [arg "" qString];
     dynamic "setUndoRedoEnabled" [arg "enable" bool];
     dynamic "setWordWrapMode" [arg "policy" qTextOption'WrapMode];
     dynamic "tabChangesFocus" [] ~ret:bool;
@@ -753,12 +753,12 @@ let () = with_class qTextEdit [
     dynamic "toPlainText" [] ~ret:qString;
     slot "undo" [];
     dynamic "undoAvailable" [arg "available" bool];
-    signal "undoAvailable" [bool];
+    signal "undoAvailable" [arg "" bool];
     dynamic "wordWrapMode" [] ~ret:qTextOption'WrapMode;
     slot "zoomIn" [];
-    slot "zoomIn" [int];
+    slot "zoomIn" [arg "" int];
     slot "zoomOut" [];
-    slot "zoomOut" [int];
+    slot "zoomOut" [arg "" int];
   ]
 
 let () = with_class qLineEdit [
@@ -777,7 +777,7 @@ let () = with_class qLineEdit [
     dynamic "cursorMoveStyle" [] ~ret:qt'CursorMoveStyle;
     dynamic "cursorPositionAt" [arg "pos" qPoint] ~ret:int;
     dynamic "cursorPositionChanged" [arg "old" int;arg "new" int];
-    signal "cursorPositionChanged" [int;int];
+    signal "cursorPositionChanged" [arg "" int;arg "" int];
     dynamic "cursorPosition" [] ~ret:int;
     dynamic "cursorWordBackward" [arg "mark" bool];
     dynamic "cursorWordForward" [arg "mark" bool];
@@ -809,13 +809,13 @@ let () = with_class qLineEdit [
     slot "paste" [];
     dynamic "placeholderText" [] ~ret:qString;
     slot "_q_clearButtonClicked" [];
-    slot "_q_completionHighlighted" [qString];
-    slot "_q_cursorPositionChanged" [int;int];
+    slot "_q_completionHighlighted" [arg "" qString];
+    slot "_q_cursorPositionChanged" [arg "" int;arg "" int];
     slot "_q_handleWindowActivate" [];
     slot "_q_selectionChanged" [];
-    slot "_q_textChanged" [qString];
-    slot "_q_textEdited" [qString];
-    slot "_q_updateNeeded" [qRect];
+    slot "_q_textChanged" [arg "" qString];
+    slot "_q_textEdited" [arg "" qString];
+    slot "_q_updateNeeded" [arg "" qRect];
     slot "redo" [];
     dynamic "returnPressed" [];
     signal "returnPressed" [];
@@ -840,13 +840,13 @@ let () = with_class qLineEdit [
     dynamic "setSelection" [arg "start" int;arg "length" int];
     dynamic "setTextMargins" [arg "left" int;arg "top" int;arg "right" int;arg "bottom" int];
     (*dynamic "setTextMargins" [arg "margins" qMargins];*)
-    slot "setText" [qString];
+    slot "setText" [arg "" qString];
     dynamic "setValidator" [arg "v" qValidator];
     dynamic "sizeHint" [] ~ret:qSize;
     dynamic "textChanged" [arg "text" qString];
-    signal "textChanged" [qString];
+    signal "textChanged" [arg "" qString];
     dynamic "textEdited" [arg "text" qString];
-    signal "textEdited" [qString];
+    signal "textEdited" [arg "" qString];
     (*dynamic "textMargins" [] ~ret:qMargins;*)
     dynamic "text" [] ~ret:qString;
     slot "undo" [];
@@ -895,17 +895,17 @@ let () = with_class qLabel [
     dynamic "linkActivated" [arg "link" qString];
     dynamic "linkHovered" [arg "link" qString];
     slot "clear" [];
-    slot "_q_linkHovered" [qString];
-    slot "_q_movieResized" [qSize];
-    slot "_q_movieUpdated" [qRect];
-    (*  slot "setMovie" [qMovie];*)
-    slot "setNum" [double];
-    slot "setNum" [int];
-    (*slot "setPicture" [qPicture];*)
-    slot "setPixmap" [qPixmap];
-    slot "setText" [qString];
-    signal "linkActivated" [qString];
-    signal "linkHovered" [qString];
+    slot "_q_linkHovered" [arg "" qString];
+    slot "_q_movieResized" [arg "" qSize];
+    slot "_q_movieUpdated" [arg "" qRect];
+    (*  slot "setMovie" [arg "" qMovie];*)
+    slot "setNum" [arg "" double];
+    slot "setNum" [arg "" int];
+    (*slot "setPicture" [arg "" qPicture];*)
+    slot "setPixmap" [arg "" qPixmap];
+    slot "setText" [arg "" qString];
+    signal "linkActivated" [arg "" qString];
+    signal "linkHovered" [arg "" qString];
   ]
 
 let () = with_class qBoxLayout [
@@ -1091,16 +1091,16 @@ let () = with_class qAction [
     dynamic "hovered" [];
     dynamic "toggled" [arg "checked" bool];
     slot "hover" [];
-    slot "setChecked" [bool];
-    slot "setDisabled" [bool];
-    slot "setEnabled" [bool];
-    slot "setVisible" [bool];
+    slot "setChecked" [arg "" bool];
+    slot "setDisabled" [arg "" bool];
+    slot "setEnabled" [arg "" bool];
+    slot "setVisible" [arg "" bool];
     slot "toggle" [];
     slot "trigger" [];
     signal "changed" [];
     signal "hovered" [];
-    signal "toggled" [bool];
-    signal "triggered" [bool];
+    signal "toggled" [arg "" bool];
+    signal "triggered" [arg "" bool];
   ]
 let () = with_class qActionGroup [
     constructor "" [arg "parent" qObject];
@@ -1232,14 +1232,14 @@ let () = with_class qButtonGroup [
     dynamic "buttonReleased" [arg "id" int];
     dynamic "buttonToggled" [arg "button" qAbstractButton;arg "checked" bool];
     dynamic "buttonToggled" [arg "id" int;arg "checked" bool];
-    signal "buttonClicked" [int];
-    signal "buttonClicked" [qAbstractButton];
-    signal "buttonPressed" [int];
-    signal "buttonPressed" [qAbstractButton];
-    signal "buttonReleased" [int];
-    signal "buttonReleased" [qAbstractButton];
-    signal "buttonToggled" [int;bool];
-    signal "buttonToggled" [qAbstractButton;bool];
+    signal "buttonClicked" [arg "" int];
+    signal "buttonClicked" [arg "" qAbstractButton];
+    signal "buttonPressed" [arg "" int];
+    signal "buttonPressed" [arg "" qAbstractButton];
+    signal "buttonReleased" [arg "" int];
+    signal "buttonReleased" [arg "" qAbstractButton];
+    signal "buttonToggled" [arg "" int;arg "" bool];
+    signal "buttonToggled" [arg "" qAbstractButton;arg "" bool];
   ]
 let () = with_class qWidgetAction [
     constructor "" [arg "parent" qObject];
@@ -1350,13 +1350,13 @@ let () = with_class qDialog [
     dynamic "reject" [];
     dynamic "showExtension" [arg "showIt" bool];
     slot "accept" [];
-    slot "done" [int];
+    slot "done" [arg "" int];
     slot "exec" [];
     slot "open" [];
     slot "reject" [];
-    slot "showExtension" [bool];
+    slot "showExtension" [arg "" bool];
     signal "accepted" [];
-    signal "finished" [int];
+    signal "finished" [arg "" int];
     signal "rejected" [];
   ]
 let () = with_class qWizardPage [
@@ -1429,15 +1429,15 @@ let () = with_class qAbstractSlider [
     dynamic "sliderReleased" [];
     dynamic "rangeChanged" [arg "min" int;arg "max" int];
     dynamic "actionTriggered" [arg "action" int];
-    slot "setOrientation" [qt'Orientation];
-    slot "setRange" [int;int];
-    slot "setValue" [int];
-    signal "actionTriggered" [int];
-    signal "rangeChanged" [int;int];
-    signal "sliderMoved" [int];
+    slot "setOrientation" [arg "" qt'Orientation];
+    slot "setRange" [arg "" int;arg "" int];
+    slot "setValue" [arg "" int];
+    signal "actionTriggered" [arg "" int];
+    signal "rangeChanged" [arg "" int;arg "" int];
+    signal "sliderMoved" [arg "" int];
     signal "sliderPressed" [];
     signal "sliderReleased" [];
-    signal "valueChanged" [int];
+    signal "valueChanged" [arg "" int];
   ]
 let () = with_class qAbstractSpinBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1477,8 +1477,8 @@ let () = with_class qAbstractSpinBox [
     dynamic "clear" [];
     dynamic "editingFinished" [];
     slot "clear" [];
-    slot "_q_editorCursorPositionChanged" [int;int];
-    slot "_q_editorTextChanged" [qString];
+    slot "_q_editorCursorPositionChanged" [arg "" int;arg "" int];
+    slot "_q_editorTextChanged" [arg "" qString];
     slot "selectAll" [];
     slot "stepDown" [];
     slot "stepUp" [];
@@ -1532,28 +1532,28 @@ let () = with_class qCalendarWidget [
     dynamic "activated" [arg "date" qDate];
     dynamic "currentPageChanged" [arg "year" int;arg "month" int];
     slot "_q_editingFinished" [];
-    slot "_q_monthChanged" [qAction];
+    slot "_q_monthChanged" [arg "" qAction];
     slot "_q_nextMonthClicked" [];
     slot "_q_prevMonthClicked" [];
-    slot "_q_slotChangeDate" [qDate];
-    slot "_q_slotChangeDate" [qDate;bool];
-    slot "_q_slotShowDate" [qDate];
+    slot "_q_slotChangeDate" [arg "" qDate];
+    slot "_q_slotChangeDate" [arg "" qDate;arg "" bool];
+    slot "_q_slotShowDate" [arg "" qDate];
     slot "_q_yearClicked" [];
     slot "_q_yearEditingFinished" [];
-    slot "setCurrentPage" [int;int];
-    slot "setDateRange" [qDate;qDate];
-    slot "setGridVisible" [bool];
-    slot "setNavigationBarVisible" [bool];
-    slot "setSelectedDate" [qDate];
+    slot "setCurrentPage" [arg "" int;arg "" int];
+    slot "setDateRange" [arg "" qDate;arg "" qDate];
+    slot "setGridVisible" [arg "" bool];
+    slot "setNavigationBarVisible" [arg "" bool];
+    slot "setSelectedDate" [arg "" qDate];
     slot "showNextMonth" [];
     slot "showNextYear" [];
     slot "showPreviousMonth" [];
     slot "showPreviousYear" [];
     slot "showSelectedDate" [];
     slot "showToday" [];
-    signal "activated" [qDate];
-    signal "clicked" [qDate];
-    signal "currentPageChanged" [int;int];
+    signal "activated" [arg "" qDate];
+    signal "clicked" [arg "" qDate];
+    signal "currentPageChanged" [arg "" int;arg "" int];
     signal "selectionChanged" [];
   ]
 let () = with_class qComboBox [
@@ -1637,30 +1637,30 @@ let () = with_class qComboBox [
     dynamic "currentTextChanged" [arg "text" qString];
     slot "clear" [];
     slot "clearEditText" [];
-    slot "_q_completerActivated" [qModelIndex];
-    slot "_q_dataChanged" [qModelIndex;qModelIndex];
+    slot "_q_completerActivated" [arg "" qModelIndex];
+    slot "_q_dataChanged" [arg "" qModelIndex;arg "" qModelIndex];
     slot "_q_editingFinished" [];
-    slot "_q_emitCurrentIndexChanged" [qModelIndex];
-    slot "_q_emitHighlighted" [qModelIndex];
-    slot "_q_itemSelected" [qModelIndex];
+    slot "_q_emitCurrentIndexChanged" [arg "" qModelIndex];
+    slot "_q_emitHighlighted" [arg "" qModelIndex];
+    slot "_q_itemSelected" [arg "" qModelIndex];
     slot "_q_modelDestroyed" [];
     slot "_q_modelReset" [];
     slot "_q_resetButton" [];
     slot "_q_returnPressed" [];
-    slot "_q_rowsInserted" [qModelIndex;int;int];
-    slot "_q_rowsRemoved" [qModelIndex;int;int];
+    slot "_q_rowsInserted" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "_q_rowsRemoved" [arg "" qModelIndex;arg "" int;arg "" int];
     slot "_q_updateIndexBeforeChange" [];
-    slot "setCurrentIndex" [int];
-    slot "setCurrentText" [qString];
-    slot "setEditText" [qString];
-    signal "activated" [int];
-    signal "activated" [qString];
-    signal "currentIndexChanged" [int];
-    signal "currentIndexChanged" [qString];
-    signal "currentTextChanged" [qString];
-    signal "editTextChanged" [qString];
-    signal "highlighted" [int];
-    signal "highlighted" [qString];
+    slot "setCurrentIndex" [arg "" int];
+    slot "setCurrentText" [arg "" qString];
+    slot "setEditText" [arg "" qString];
+    signal "activated" [arg "" int];
+    signal "activated" [arg "" qString];
+    signal "currentIndexChanged" [arg "" int];
+    signal "currentIndexChanged" [arg "" qString];
+    signal "currentTextChanged" [arg "" qString];
+    signal "editTextChanged" [arg "" qString];
+    signal "highlighted" [arg "" int];
+    signal "highlighted" [arg "" qString];
   ]
 let () = with_class qDialogButtonBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1708,12 +1708,12 @@ let () = with_class qDockWidget [
     dynamic "visibilityChanged" [arg "visible" bool];
     dynamic "dockLocationChanged" [arg "area" qt'DockWidgetArea];
     slot "_q_toggleTopLevel" [];
-    slot "_q_toggleView" [bool];
-    signal "allowedAreasChanged" [qt'DockWidgetAreas];
-    signal "dockLocationChanged" [qt'DockWidgetArea];
-    signal "featuresChanged" [qDockWidget'DockWidgetFeatures];
-    signal "topLevelChanged" [bool];
-    signal "visibilityChanged" [bool];
+    slot "_q_toggleView" [arg "" bool];
+    signal "allowedAreasChanged" [arg "" qt'DockWidgetAreas];
+    signal "dockLocationChanged" [arg "" qt'DockWidgetArea];
+    signal "featuresChanged" [arg "" qDockWidget'DockWidgetFeatures];
+    signal "topLevelChanged" [arg "" bool];
+    signal "visibilityChanged" [arg "" bool];
   ]
 let () = with_class qFocusFrame [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1802,12 +1802,12 @@ let () = with_class qMainWindow [
     dynamic "iconSizeChanged" [arg "iconSize" qSize];
     dynamic "toolButtonStyleChanged" [arg "toolButtonStyle" qt'ToolButtonStyle];
     dynamic "tabifiedDockWidgetActivated" [arg "dockWidget" qDockWidget];
-    slot "setAnimated" [bool];
-    slot "setDockNestingEnabled" [bool];
-    slot "setUnifiedTitleAndToolBarOnMac" [bool];
-    signal "iconSizeChanged" [qSize];
-    signal "tabifiedDockWidgetActivated" [qDockWidget];
-    signal "toolButtonStyleChanged" [qt'ToolButtonStyle];
+    slot "setAnimated" [arg "" bool];
+    slot "setDockNestingEnabled" [arg "" bool];
+    slot "setUnifiedTitleAndToolBarOnMac" [arg "" bool];
+    signal "iconSizeChanged" [arg "" qSize];
+    signal "tabifiedDockWidgetActivated" [arg "" qDockWidget];
+    signal "toolButtonStyleChanged" [arg "" qt'ToolButtonStyle];
   ]
 let () = with_class qMdiSubWindow [
     constructor "" [arg "parent" (optional qWidget);arg "flags" qt'WindowFlags];
@@ -1830,12 +1830,12 @@ let () = with_class qMdiSubWindow [
     dynamic "showSystemMenu" [];
     dynamic "showShaded" [];
     slot "_q_enterInteractiveMode" [];
-    slot "_q_processFocusChanged" [qWidget;qWidget];
+    slot "_q_processFocusChanged" [arg "" qWidget;arg "" qWidget];
     slot "_q_updateStaysOnTopHint" [];
     slot "showShaded" [];
     slot "showSystemMenu" [];
     signal "aboutToActivate" [];
-    signal "windowStateChanged" [qt'WindowStates;qt'WindowStates];
+    signal "windowStateChanged" [arg "" qt'WindowStates;arg "" qt'WindowStates];
   ]
 let () = with_class qProgressBar [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1865,12 +1865,12 @@ let () = with_class qProgressBar [
     dynamic "setOrientation" [arg "arg0" qt'Orientation];
     dynamic "valueChanged" [arg "value" int];
     slot "reset" [];
-    slot "setMaximum" [int];
-    slot "setMinimum" [int];
-    slot "setOrientation" [qt'Orientation];
-    slot "setRange" [int;int];
-    slot "setValue" [int];
-    signal "valueChanged" [int];
+    slot "setMaximum" [arg "" int];
+    slot "setMinimum" [arg "" int];
+    slot "setOrientation" [arg "" qt'Orientation];
+    slot "setRange" [arg "" int;arg "" int];
+    slot "setValue" [arg "" int];
+    signal "valueChanged" [arg "" int];
   ]
 let () = with_class qRubberBand [
     constructor "" [arg "s" qRubberBand'Shape;arg "p" (optional qWidget)];
@@ -1914,9 +1914,9 @@ let () = with_class qStatusBar [
     dynamic "clearMessage" [];
     dynamic "messageChanged" [arg "message" qString];
     slot "clearMessage" [];
-    slot "showMessage" [qString];
-    slot "showMessage" [qString;int];
-    signal "messageChanged" [qString];
+    slot "showMessage" [arg "" qString];
+    slot "showMessage" [arg "" qString;arg "" int];
+    signal "messageChanged" [arg "" qString];
   ]
 let () = with_class qTabBar [
     constructor "" [arg "parent" (optional qWidget)];
@@ -1982,12 +1982,12 @@ let () = with_class qTabBar [
     dynamic "tabBarDoubleClicked" [arg "index" int];
     slot "_q_closeTab" [];
     slot "_q_scrollTabs" [];
-    slot "setCurrentIndex" [int];
-    signal "currentChanged" [int];
-    signal "tabBarClicked" [int];
-    signal "tabBarDoubleClicked" [int];
-    signal "tabCloseRequested" [int];
-    signal "tabMoved" [int;int];
+    slot "setCurrentIndex" [arg "" int];
+    signal "currentChanged" [arg "" int];
+    signal "tabBarClicked" [arg "" int];
+    signal "tabBarDoubleClicked" [arg "" int];
+    signal "tabCloseRequested" [arg "" int];
+    signal "tabMoved" [arg "" int;arg "" int];
   ]
 let () = with_class qTabWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2043,15 +2043,15 @@ let () = with_class qTabWidget [
     dynamic "tabCloseRequested" [arg "index" int];
     dynamic "tabBarClicked" [arg "index" int];
     dynamic "tabBarDoubleClicked" [arg "index" int];
-    slot "_q_removeTab" [int];
-    slot "_q_showTab" [int];
-    slot "_q_tabMoved" [int;int];
-    slot "setCurrentIndex" [int];
+    slot "_q_removeTab" [arg "" int];
+    slot "_q_showTab" [arg "" int];
+    slot "_q_tabMoved" [arg "" int;arg "" int];
+    slot "setCurrentIndex" [arg "" int];
     (*  slot "setCurrentWidget" [qWidget*];*)
-    signal "currentChanged" [int];
-    signal "tabBarClicked" [int];
-    signal "tabBarDoubleClicked" [int];
-    signal "tabCloseRequested" [int];
+    signal "currentChanged" [arg "" int];
+    signal "tabBarClicked" [arg "" int];
+    signal "tabBarDoubleClicked" [arg "" int];
+    signal "tabCloseRequested" [arg "" int];
   ]
 let () = with_class qToolBar [
     constructor "" [arg "title" qString;arg "parent" (optional qWidget)];
@@ -2097,19 +2097,19 @@ let () = with_class qToolBar [
     dynamic "toolButtonStyleChanged" [arg "toolButtonStyle" qt'ToolButtonStyle];
     dynamic "topLevelChanged" [arg "topLevel" bool];
     dynamic "visibilityChanged" [arg "visible" bool];
-    slot "_q_toggleView" [bool];
-    slot "_q_updateIconSize" [qSize];
-    slot "_q_updateToolButtonStyle" [qt'ToolButtonStyle];
-    slot "setIconSize" [qSize];
-    slot "setToolButtonStyle" [qt'ToolButtonStyle];
-    signal "actionTriggered" [qAction];
-    signal "allowedAreasChanged" [qt'ToolBarAreas];
-    signal "iconSizeChanged" [qSize];
-    signal "movableChanged" [bool];
-    signal "orientationChanged" [qt'Orientation];
-    signal "toolButtonStyleChanged" [qt'ToolButtonStyle];
-    signal "topLevelChanged" [bool];
-    signal "visibilityChanged" [bool];
+    slot "_q_toggleView" [arg "" bool];
+    slot "_q_updateIconSize" [arg "" qSize];
+    slot "_q_updateToolButtonStyle" [arg "" qt'ToolButtonStyle];
+    slot "setIconSize" [arg "" qSize];
+    slot "setToolButtonStyle" [arg "" qt'ToolButtonStyle];
+    signal "actionTriggered" [arg "" qAction];
+    signal "allowedAreasChanged" [arg "" qt'ToolBarAreas];
+    signal "iconSizeChanged" [arg "" qSize];
+    signal "movableChanged" [arg "" bool];
+    signal "orientationChanged" [arg "" qt'Orientation];
+    signal "toolButtonStyleChanged" [arg "" qt'ToolButtonStyle];
+    signal "topLevelChanged" [arg "" bool];
+    signal "visibilityChanged" [arg "" bool];
   ]
 let () = with_class qStackedLayout [
     constructor "" [];
@@ -2158,9 +2158,9 @@ let () = with_class qAbstractScrollArea [
     dynamic "setupViewport" [arg "viewport" qWidget];
     dynamic "sizeAdjustPolicy" [] ~ret:qAbstractScrollArea'SizeAdjustPolicy;
     dynamic "setSizeAdjustPolicy" [arg "policy" qAbstractScrollArea'SizeAdjustPolicy];
-    slot "_q_hslide" [int];
+    slot "_q_hslide" [arg "" int];
     slot "_q_showOrHideScrollBars" [];
-    slot "_q_vslide" [int];
+    slot "_q_vslide" [arg "" int];
   ]
 let () = with_class qLCDNumber [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2186,14 +2186,14 @@ let () = with_class qLCDNumber [
     dynamic "setBinMode" [];
     dynamic "setSmallDecimalPoint" [arg "arg0" bool];
     dynamic "overflow" [];
-    slot "display" [double];
-    slot "display" [int];
-    slot "display" [qString];
+    slot "display" [arg "" double];
+    slot "display" [arg "" int];
+    slot "display" [arg "" qString];
     slot "setBinMode" [];
     slot "setDecMode" [];
     slot "setHexMode" [];
     slot "setOctMode" [];
-    slot "setSmallDecimalPoint" [bool];
+    slot "setSmallDecimalPoint" [arg "" bool];
     signal "overflow" [];
   ]
 let () = with_class qSplitter [
@@ -2226,7 +2226,7 @@ let () = with_class qSplitter [
     dynamic "handle" [arg "index" int] ~ret:qSplitterHandle;
     dynamic "setStretchFactor" [arg "index" int;arg "stretch" int];
     dynamic "splitterMoved" [arg "pos" int;arg "index" int];
-    signal "splitterMoved" [int;int];
+    signal "splitterMoved" [arg "" int;arg "" int];
   ]
 let () = with_class qStackedWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2242,10 +2242,10 @@ let () = with_class qStackedWidget [
     dynamic "setCurrentWidget" [arg "widget" qWidget];
     dynamic "currentChanged" [arg "index" int];
     dynamic "widgetRemoved" [arg "index" int];
-    slot "setCurrentIndex" [int];
-    slot "setCurrentWidget" [qWidget];
-    signal "currentChanged" [int];
-    signal "widgetRemoved" [int];
+    slot "setCurrentIndex" [arg "" int];
+    slot "setCurrentWidget" [arg "" qWidget];
+    signal "currentChanged" [arg "" int];
+    signal "widgetRemoved" [arg "" int];
   ]
 let () = with_class qToolBox [
     constructor "" [arg "parent" (optional qWidget);arg "f" qt'WindowFlags];
@@ -2271,10 +2271,10 @@ let () = with_class qToolBox [
     dynamic "setCurrentWidget" [arg "widget" qWidget];
     dynamic "currentChanged" [arg "index" int];
     slot "_q_buttonClicked" [];
-    slot "_q_widgetDestroyed" [qObject];
-    slot "setCurrentIndex" [int];
-    slot "setCurrentWidget" [qWidget];
-    signal "currentChanged" [int];
+    slot "_q_widgetDestroyed" [arg "" qObject];
+    slot "setCurrentIndex" [arg "" int];
+    slot "setCurrentWidget" [arg "" qWidget];
+    signal "currentChanged" [arg "" int];
   ]
 let () = with_class qFontComboBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2286,10 +2286,10 @@ let () = with_class qFontComboBox [
     dynamic "sizeHint" [] ~ret:qSize;
     dynamic "setCurrentFont" [arg "f" qFont];
     dynamic "currentFontChanged" [arg "font" qFont];
-    slot "_q_currentChanged" [qString];
+    slot "_q_currentChanged" [arg "" qString];
     slot "_q_updateModel" [];
-    slot "setCurrentFont" [qFont];
-    signal "currentFontChanged" [qFont];
+    slot "setCurrentFont" [arg "" qFont];
+    signal "currentFontChanged" [arg "" qFont];
   ]
 let () = with_class qDateTimeEdit [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2368,9 +2368,9 @@ let () = with_class qSpinBox [
     dynamic "setValue" [arg "val" int];
     dynamic "valueChanged" [arg "i" int];
     dynamic "valueChanged" [arg "text" qString];
-    slot "setValue" [int];
-    signal "valueChanged" [int];
-    signal "valueChanged" [qString];
+    slot "setValue" [arg "" int];
+    signal "valueChanged" [arg "" int];
+    signal "valueChanged" [arg "" qString];
   ]
 let () = with_class qDoubleSpinBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2396,9 +2396,9 @@ let () = with_class qDoubleSpinBox [
     dynamic "setValue" [arg "val" double];
     dynamic "valueChanged" [arg "d" double];
     dynamic "valueChanged" [arg "text" qString];
-    slot "setValue" [double];
-    signal "valueChanged" [double];
-    signal "valueChanged" [qString];
+    slot "setValue" [arg "" double];
+    signal "valueChanged" [arg "" double];
+    signal "valueChanged" [arg "" qString];
   ]
 let () = with_class qDial [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2439,7 +2439,7 @@ let () = with_class qCheckBox [
     dynamic "checkState" [] ~ret:qt'CheckState;
     dynamic "setCheckState" [arg "state" qt'CheckState];
     dynamic "stateChanged" [arg "state" int];
-    signal "stateChanged" [int];
+    signal "stateChanged" [arg "" int];
   ]
 let () = with_class qRadioButton [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2468,12 +2468,12 @@ let () = with_class qToolButton [
     slot "_q_actionTriggered" [];
     slot "_q_buttonPressed" [];
     slot "_q_buttonReleased" [];
-    slot "_q_menuTriggered" [qAction];
+    slot "_q_menuTriggered" [arg "" qAction];
     slot "_q_updateButtonDown" [];
-    slot "setDefaultAction" [qAction];
-    slot "setToolButtonStyle" [qt'ToolButtonStyle];
+    slot "setDefaultAction" [arg "" qAction];
+    slot "setToolButtonStyle" [arg "" qt'ToolButtonStyle];
     slot "showMenu" [];
-    signal "triggered" [qAction];
+    signal "triggered" [arg "" qAction];
   ]
 let () = with_class qColorDialog [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2497,15 +2497,15 @@ let () = with_class qColorDialog [
     dynamic "currentColorChanged" [arg "color" qColor];
     dynamic "colorSelected" [arg "color" qColor];
     slot "_q_addCustom" [];
-    (*slot "_q_newColorTypedIn" [qRgb];*)
-    slot "_q_newCustom" [int;int];
-    slot "_q_newHsv" [int;int;int];
-    slot "_q_newStandard" [int;int];
-    slot "_q_nextCustom" [int;int];
+    (*slot "_q_newColorTypedIn" [arg "" qRgb];*)
+    slot "_q_newCustom" [arg "" int;arg "" int];
+    slot "_q_newHsv" [arg "" int;arg "" int;arg "" int];
+    slot "_q_newStandard" [arg "" int;arg "" int];
+    slot "_q_nextCustom" [arg "" int;arg "" int];
     slot "_q_pickScreenColor" [];
     slot "_q_updateColorPicking" [];
-    signal "colorSelected" [qColor];
-    signal "currentColorChanged" [qColor];
+    signal "colorSelected" [arg "" qColor];
+    signal "currentColorChanged" [arg "" qColor];
   ]
 let () = with_class qErrorMessage [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2591,41 +2591,41 @@ let () = with_class qFileDialog [
     (*static  "getExistingDirectoryUrl" [arg "parent" qWidget;arg "caption" qString;arg "dir" qUrl;arg "options" qFileDialog'Options;arg "supportedSchemes" qStringList] ~ret:qUrl;*)
     (*static  "getOpenFileNames" [arg "parent" qWidget;arg "caption" qString;arg "dir" qString;arg "filter" qString;arg "selectedFilter" qString;arg "options" qFileDialog'Options] ~ret:qStringList;*)
     (*static  "getOpenFileUrls" [arg "parent" qWidget;arg "caption" qString;arg "dir" qUrl;arg "filter" qString;arg "selectedFilter" qString;arg "options" options;arg "supportedSchemes" qStringList] ~ret:qList<QUrl>;*)
-    slot "_q_autoCompleteFileName" [qString];
+    slot "_q_autoCompleteFileName" [arg "" qString];
     slot "_q_createDirectory" [];
-    slot "_q_currentChanged" [qModelIndex];
+    slot "_q_currentChanged" [arg "" qModelIndex];
     slot "_q_deleteCurrent" [];
-    slot "_q_emitUrlSelected" [qUrl];
+    slot "_q_emitUrlSelected" [arg "" qUrl];
     (*slot "_q_emitUrlsSelected" [qList<QUrl>];*)
-    slot "_q_enterDirectory" [qModelIndex];
-    slot "_q_fileRenamed" [qString;qString;qString];
+    slot "_q_enterDirectory" [arg "" qModelIndex];
+    slot "_q_fileRenamed" [arg "" qString;arg "" qString;arg "" qString];
     slot "_q_goHome" [];
-    slot "_q_goToDirectory" [qString];
-    slot "_q_goToUrl" [qUrl];
-    slot "_q_nativeCurrentChanged" [qUrl];
-    slot "_q_nativeEnterDirectory" [qUrl];
+    slot "_q_goToDirectory" [arg "" qString];
+    slot "_q_goToUrl" [arg "" qUrl];
+    slot "_q_nativeCurrentChanged" [arg "" qUrl];
+    slot "_q_nativeEnterDirectory" [arg "" qUrl];
     slot "_q_navigateBackward" [];
     slot "_q_navigateForward" [];
     slot "_q_navigateToParent" [];
-    slot "_q_pathChanged" [qString];
+    slot "_q_pathChanged" [arg "" qString];
     slot "_q_renameCurrent" [];
-    slot "_q_rowsInserted" [qModelIndex];
+    slot "_q_rowsInserted" [arg "" qModelIndex];
     slot "_q_selectionChanged" [];
-    slot "_q_showContextMenu" [qPoint];
+    slot "_q_showContextMenu" [arg "" qPoint];
     slot "_q_showDetailsView" [];
-    slot "_q_showHeader" [qAction];
+    slot "_q_showHeader" [arg "" qAction];
     slot "_q_showHidden" [];
     slot "_q_showListView" [];
     slot "_q_updateOkButton" [];
-    slot "_q_useNameFilter" [int];
-    signal "currentChanged" [qString];
-    signal "currentUrlChanged" [qUrl];
-    signal "directoryEntered" [qString];
-    signal "directoryUrlEntered" [qUrl];
-    signal "fileSelected" [qString];
-    signal "filesSelected" [const qStringList];
-    signal "filterSelected" [qString];
-    signal "urlSelected" [qUrl];
+    slot "_q_useNameFilter" [arg "" int];
+    signal "currentChanged" [arg "" qString];
+    signal "currentUrlChanged" [arg "" qUrl];
+    signal "directoryEntered" [arg "" qString];
+    signal "directoryUrlEntered" [arg "" qUrl];
+    signal "fileSelected" [arg "" qString];
+    signal "filesSelected" [arg "" (const qStringList)];
+    signal "filterSelected" [arg "" qString];
+    signal "urlSelected" [arg "" qUrl];
     (*signal "urlsSelected" [qList<QUrl>];*)
   ]
 let () = with_class qFontDialog [
@@ -2644,14 +2644,14 @@ let () = with_class qFontDialog [
     (*static  "getFont" [arg "ok" bool;arg "initial" qFont;arg "parent" qWidget;arg "title" qString;arg "options" qFontDialog'FontDialogOptions] ~ret:qFont;*)
     dynamic "currentFontChanged" [arg "font" qFont];
     dynamic "fontSelected" [arg "font" qFont];
-    slot "_q_familyHighlighted" [int];
-    slot "_q_sizeChanged" [qString];
-    slot "_q_sizeHighlighted" [int];
-    slot "_q_styleHighlighted" [int];
+    slot "_q_familyHighlighted" [arg "" int];
+    slot "_q_sizeChanged" [arg "" qString];
+    slot "_q_sizeHighlighted" [arg "" int];
+    slot "_q_styleHighlighted" [arg "" int];
     slot "_q_updateSample" [];
-    slot "_q_writingSystemHighlighted" [int];
-    signal "currentFontChanged" [qFont];
-    signal "fontSelected" [qFont];
+    slot "_q_writingSystemHighlighted" [arg "" int];
+    signal "currentFontChanged" [arg "" qFont];
+    signal "fontSelected" [arg "" qFont];
   ]
 let () = with_class qInputDialog [
     constructor "" [arg "parent" (optional qWidget);arg "flags" qt'WindowFlags];
@@ -2710,15 +2710,15 @@ let () = with_class qInputDialog [
     dynamic "doubleValueChanged" [arg "value" double];
     dynamic "doubleValueSelected" [arg "value" double];
     dynamic "done" [arg "result" int];
-    slot "_q_currentRowChanged" [qModelIndex;qModelIndex];
+    slot "_q_currentRowChanged" [arg "" qModelIndex;arg "" qModelIndex];
     slot "_q_plainTextEditTextChanged" [];
-    slot "_q_textChanged" [qString];
-    signal "doubleValueChanged" [float];
-    signal "doubleValueSelected" [float];
-    signal "intValueChanged" [int];
-    signal "intValueSelected" [int];
-    signal "textValueChanged" [qString];
-    signal "textValueSelected" [qString];
+    slot "_q_textChanged" [arg "" qString];
+    signal "doubleValueChanged" [arg "" float];
+    signal "doubleValueSelected" [arg "" float];
+    signal "intValueChanged" [arg "" int];
+    signal "intValueSelected" [arg "" int];
+    signal "textValueChanged" [arg "" qString];
+    signal "textValueSelected" [arg "" qString];
   ]
 let () = with_class qMessageBox [
     constructor "" [arg "parent" (optional qWidget)];
@@ -2779,9 +2779,9 @@ let () = with_class qMessageBox [
     (*static  "standardIcon" [arg "icon" qMessageBox'Icon] ~ret:qPixmap;*)
     dynamic "buttonClicked" [arg "button" qAbstractButton];
     dynamic "exec" [] ~ret:int;
-    signal "buttonClicked" [qAbstractButton];
-    slot "_q_buttonClicked" [qAbstractButton];
-    (*slot "_q_clicked" [qPlatformDialogHelper'StandardButton;qPlatformDialogHelper'ButtonRole];*)
+    signal "buttonClicked" [arg "" qAbstractButton];
+    slot "_q_buttonClicked" [arg "" qAbstractButton];
+    (*slot "_q_clicked" [arg "" qPlatformDialogHelper'StandardButton;arg "" qPlatformDialogHelper'ButtonRole];*)
   ]
 let () = with_class qProgressDialog [
     constructor "" [arg "parent" (optional qWidget);arg "f" qt'WindowFlags];
@@ -2815,13 +2815,13 @@ let () = with_class qProgressDialog [
     slot ~protected "forceShow" [];
     slot "_q_disconnectOnClose" [];
     slot "reset" [];
-    slot "setCancelButtonText" [qString];
-    slot "setLabelText" [qString];
-    slot "setMaximum" [int];
-    slot "setMinimumDuration" [int];
-    slot "setMinimum" [int];
-    slot "setRange" [int;int];
-    slot "setValue" [int];
+    slot "setCancelButtonText" [arg "" qString];
+    slot "setLabelText" [arg "" qString];
+    slot "setMaximum" [arg "" int];
+    slot "setMinimumDuration" [arg "" int];
+    slot "setMinimum" [arg "" int];
+    slot "setRange" [arg "" int;arg "" int];
+    slot "setValue" [arg "" int];
     signal "canceled" [];
   ]
 let () = with_class qWizard [
@@ -2927,15 +2927,15 @@ let () = with_class qMdiArea [
     slot "cascadeSubWindows" [];
     slot "closeActiveSubWindow" [];
     slot "closeAllSubWindows" [];
-    slot "_q_closeTab" [int];
-    slot "_q_currentTabChanged" [int];
+    slot "_q_closeTab" [arg "" int];
+    slot "_q_currentTabChanged" [arg "" int];
     slot "_q_deactivateAllWindows" [];
-    slot "_q_moveTab" [int;int];
-    slot "_q_processWindowStateChanged" [qt'WindowStates;qt'WindowStates];
-    slot "setActiveSubWindow" [qMdiSubWindow];
-    slot ~protected "setupViewport" [qWidget];
+    slot "_q_moveTab" [arg "" int;arg "" int];
+    slot "_q_processWindowStateChanged" [arg "" qt'WindowStates;arg "" qt'WindowStates];
+    slot "setActiveSubWindow" [arg "" qMdiSubWindow];
+    slot ~protected "setupViewport" [arg "" qWidget];
     slot "tileSubWindows" [];
-    signal "subWindowActivated" [qMdiSubWindow];
+    signal "subWindowActivated" [arg "" qMdiSubWindow];
   ]
 let () = with_class qPlainTextEdit [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3009,35 +3009,35 @@ let () = with_class qPlainTextEdit [
     dynamic "updateRequest" [arg "rect" qRect;arg "dy" int];
     dynamic "blockCountChanged" [arg "newBlockCount" int];
     dynamic "modificationChanged" [arg "changed" bool];
-    slot "appendHtml" [qString];
-    slot "appendPlainText" [qString];
+    slot "appendHtml" [arg "" qString];
+    slot "appendPlainText" [arg "" qString];
     slot "centerCursor" [];
     slot "clear" [];
     slot "copy" [];
     slot "cut" [];
-    slot "insertPlainText" [qString];
+    slot "insertPlainText" [arg "" qString];
     slot "paste" [];
     slot "_q_adjustScrollbars" [];
     slot "_q_cursorPositionChanged" [];
-    slot "_q_repaintContents" [qRectF];
-    slot "_q_verticalScrollbarActionTriggered" [int];
+    slot "_q_repaintContents" [arg "" qRectF];
+    slot "_q_verticalScrollbarActionTriggered" [arg "" int];
     slot "redo" [];
     slot "selectAll" [];
-    slot "setPlainText" [qString];
+    slot "setPlainText" [arg "" qString];
     slot "undo" [];
     slot "zoomIn" [];
-    slot "zoomIn" [int];
+    slot "zoomIn" [arg "" int];
     slot "zoomOut" [];
-    slot "zoomOut" [int];
-    signal "blockCountChanged" [int];
-    signal "copyAvailable" [bool];
+    slot "zoomOut" [arg "" int];
+    signal "blockCountChanged" [arg "" int];
+    signal "copyAvailable" [arg "" bool];
     signal "cursorPositionChanged" [];
-    signal "modificationChanged" [bool];
-    signal "redoAvailable" [bool];
+    signal "modificationChanged" [arg "" bool];
+    signal "redoAvailable" [arg "" bool];
     signal "selectionChanged" [];
     signal "textChanged" [];
-    signal "undoAvailable" [bool];
-    signal "updateRequest" [const qRect;int];
+    signal "undoAvailable" [arg "" bool];
+    signal "updateRequest" [arg "" (const qRect);arg "" int];
   ]
 let () = with_class qScrollArea [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3085,18 +3085,18 @@ let () = with_class qTextBrowser [
     slot "backward" [];
     slot "forward" [];
     slot "home" [];
-    slot "_q_activateAnchor" [qString];
+    slot "_q_activateAnchor" [arg "" qString];
     slot "_q_documentModified" [];
-    slot "_q_highlightLink" [qString];
+    slot "_q_highlightLink" [arg "" qString];
     slot "reload" [];
-    slot "setSource" [qUrl];
-    signal "anchorClicked" [qUrl];
-    signal "backwardAvailable" [bool];
-    signal "forwardAvailable" [bool];
-    signal "highlighted" [qString];
-    signal "highlighted" [qUrl];
+    slot "setSource" [arg "" qUrl];
+    signal "anchorClicked" [arg "" qUrl];
+    signal "backwardAvailable" [arg "" bool];
+    signal "forwardAvailable" [arg "" bool];
+    signal "highlighted" [arg "" qString];
+    signal "highlighted" [arg "" qUrl];
     signal "historyChanged" [];
-    signal "sourceChanged" [qUrl];
+    signal "sourceChanged" [arg "" qUrl];
   ]
 let () = with_class qColumnView [
     dynamic "updatePreviewWidget" [arg "index" qModelIndex];
@@ -3200,26 +3200,26 @@ let () = with_class qHeaderView [
     dynamic "sectionHandleDoubleClicked" [arg "logicalIndex" int];
     dynamic "geometriesChanged" [];
     dynamic "sortIndicatorChanged" [arg "logicalIndex" int;arg "order" qt'SortOrder];
-    slot "headerDataChanged" [qt'Orientation;int;int];
+    slot "headerDataChanged" [arg "" qt'Orientation;arg "" int;arg "" int];
     slot "_q_layoutAboutToBeChanged" [];
-    slot "_q_sectionsRemoved" [qModelIndex;int;int];
+    slot "_q_sectionsRemoved" [arg "" qModelIndex;arg "" int;arg "" int];
     slot ~protected "resizeSections" [];
-    slot ~protected "sectionsAboutToBeRemoved" [qModelIndex;int;int];
-    slot ~protected "sectionsInserted" [qModelIndex;int;int];
-    slot "setOffset" [int];
+    slot ~protected "sectionsAboutToBeRemoved" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot ~protected "sectionsInserted" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "setOffset" [arg "" int];
     slot "setOffsetToLastSection" [];
-    slot "setOffsetToSectionPosition" [int];
-    slot ~protected "updateSection" [int];
+    slot "setOffsetToSectionPosition" [arg "" int];
+    slot ~protected "updateSection" [arg "" int];
     signal "geometriesChanged" [];
-    signal "sectionClicked" [int];
-    signal "sectionCountChanged" [int;int];
-    signal "sectionDoubleClicked" [int];
-    signal "sectionEntered" [int];
-    signal "sectionHandleDoubleClicked" [int];
-    signal "sectionMoved" [int;int;int];
-    signal "sectionPressed" [int];
-    signal "sectionResized" [int;int;int];
-    signal "sortIndicatorChanged" [int;qt'SortOrder];
+    signal "sectionClicked" [arg "" int];
+    signal "sectionCountChanged" [arg "" int;arg "" int];
+    signal "sectionDoubleClicked" [arg "" int];
+    signal "sectionEntered" [arg "" int];
+    signal "sectionHandleDoubleClicked" [arg "" int];
+    signal "sectionMoved" [arg "" int;arg "" int;arg "" int];
+    signal "sectionPressed" [arg "" int];
+    signal "sectionResized" [arg "" int;arg "" int;arg "" int];
+    signal "sortIndicatorChanged" [arg "" int;arg "" qt'SortOrder];
   ]
 let () = with_class qListView [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3256,7 +3256,7 @@ let () = with_class qListView [
     dynamic "scrollTo" [arg "index" qModelIndex;arg "hint" qAbstractItemView'ScrollHint];
     dynamic "indexAt" [arg "p" qPoint] ~ret:qModelIndex;
     dynamic "indexesMoved" [arg "indexes" qModelIndexList];
-    (*signal "indexesMoved" [qModelIndexList];*)
+    (*signal "indexesMoved" [arg "" qModelIndexList];*)
   ]
 let () = with_class qTableView [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3306,30 +3306,30 @@ let () = with_class qTableView [
     dynamic "resizeColumnsToContents" [];
     dynamic "sortByColumn" [arg "column" int];
     dynamic "setShowGrid" [arg "show" bool];
-    slot ~protected "columnCountChanged" [int;int];
-    slot ~protected "columnMoved" [int;int;int];
-    slot ~protected "columnResized" [int;int;int];
-    slot "hideColumn" [int];
-    slot "hideRow" [int];
-    slot "_q_selectColumn" [int];
-    slot "_q_selectRow" [int];
-    slot "_q_updateSpanInsertedColumns" [qModelIndex;int;int];
-    slot "_q_updateSpanInsertedRows" [qModelIndex;int;int];
-    slot "_q_updateSpanRemovedColumns" [qModelIndex;int;int];
-    slot "_q_updateSpanRemovedRows" [qModelIndex;int;int];
+    slot ~protected "columnCountChanged" [arg "" int;arg "" int];
+    slot ~protected "columnMoved" [arg "" int;arg "" int;arg "" int];
+    slot ~protected "columnResized" [arg "" int;arg "" int;arg "" int];
+    slot "hideColumn" [arg "" int];
+    slot "hideRow" [arg "" int];
+    slot "_q_selectColumn" [arg "" int];
+    slot "_q_selectRow" [arg "" int];
+    slot "_q_updateSpanInsertedColumns" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "_q_updateSpanInsertedRows" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "_q_updateSpanRemovedColumns" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "_q_updateSpanRemovedRows" [arg "" qModelIndex;arg "" int;arg "" int];
     slot "resizeColumnsToContents" [];
-    slot "resizeColumnToContents" [int];
+    slot "resizeColumnToContents" [arg "" int];
     slot "resizeRowsToContents" [];
-    slot "resizeRowToContents" [int];
-    slot ~protected "rowCountChanged" [int;int];
-    slot ~protected "rowMoved" [int;int;int];
-    slot ~protected "rowResized" [int;int;int];
-    slot "selectColumn" [int];
-    slot "selectRow" [int];
-    slot "setShowGrid" [bool];
-    slot "showColumn" [int];
-    slot "showRow" [int];
-    slot "sortByColumn" [int];
+    slot "resizeRowToContents" [arg "" int];
+    slot ~protected "rowCountChanged" [arg "" int;arg "" int];
+    slot ~protected "rowMoved" [arg "" int;arg "" int;arg "" int];
+    slot ~protected "rowResized" [arg "" int;arg "" int;arg "" int];
+    slot "selectColumn" [arg "" int];
+    slot "selectRow" [arg "" int];
+    slot "setShowGrid" [arg "" bool];
+    slot "showColumn" [arg "" int];
+    slot "showRow" [arg "" int];
+    slot "sortByColumn" [arg "" int];
   ]
 let () = with_class qListWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3382,26 +3382,26 @@ let () = with_class qListWidget [
     dynamic "currentRowChanged" [arg "currentRow" int];
     dynamic "itemSelectionChanged" [];
     slot "clear" [];
-    slot "_q_dataChanged" [qModelIndex;qModelIndex];
-    slot "_q_emitCurrentItemChanged" [qModelIndex;qModelIndex];
-    slot "_q_emitItemActivated" [qModelIndex];
-    slot "_q_emitItemChanged" [qModelIndex];
-    slot "_q_emitItemClicked" [qModelIndex];
-    slot "_q_emitItemDoubleClicked" [qModelIndex];
-    slot "_q_emitItemEntered" [qModelIndex];
-    slot "_q_emitItemPressed" [qModelIndex];
+    slot "_q_dataChanged" [arg "" qModelIndex;arg "" qModelIndex];
+    slot "_q_emitCurrentItemChanged" [arg "" qModelIndex;arg "" qModelIndex];
+    slot "_q_emitItemActivated" [arg "" qModelIndex];
+    slot "_q_emitItemChanged" [arg "" qModelIndex];
+    slot "_q_emitItemClicked" [arg "" qModelIndex];
+    slot "_q_emitItemDoubleClicked" [arg "" qModelIndex];
+    slot "_q_emitItemEntered" [arg "" qModelIndex];
+    slot "_q_emitItemPressed" [arg "" qModelIndex];
     slot "_q_sort" [];
-    slot "scrollToItem" [qListWidgetItem];
-    slot "scrollToItem" [qListWidgetItem;qAbstractItemView'ScrollHint];
-    signal "currentItemChanged" [qListWidgetItem;qListWidgetItem];
-    signal "currentRowChanged" [int];
-    signal "currentTextChanged" [qString];
-    signal "itemActivated" [qListWidgetItem];
-    signal "itemChanged" [qListWidgetItem];
-    signal "itemClicked" [qListWidgetItem];
-    signal "itemDoubleClicked" [qListWidgetItem];
-    signal "itemEntered" [qListWidgetItem];
-    signal "itemPressed" [qListWidgetItem];
+    slot "scrollToItem" [arg "" qListWidgetItem];
+    slot "scrollToItem" [arg "" qListWidgetItem;arg "" qAbstractItemView'ScrollHint];
+    signal "currentItemChanged" [arg "" qListWidgetItem;arg "" qListWidgetItem];
+    signal "currentRowChanged" [arg "" int];
+    signal "currentTextChanged" [arg "" qString];
+    signal "itemActivated" [arg "" qListWidgetItem];
+    signal "itemChanged" [arg "" qListWidgetItem];
+    signal "itemClicked" [arg "" qListWidgetItem];
+    signal "itemDoubleClicked" [arg "" qListWidgetItem];
+    signal "itemEntered" [arg "" qListWidgetItem];
+    signal "itemPressed" [arg "" qListWidgetItem];
     signal "itemSelectionChanged" [];
   ]
 let () = with_class qListWidgetItem [
@@ -3518,24 +3518,24 @@ let () = with_class qTreeView [
     dynamic "expandToDepth" [arg "depth" int];
 
     slot "collapseAll" [];
-    slot "collapse" [qModelIndex];
-    slot ~protected "columnCountChanged" [int;int];
+    slot "collapse" [arg "" qModelIndex];
+    slot ~protected "columnCountChanged" [arg "" int;arg "" int];
     slot ~protected "columnMoved" [];
-    slot ~protected "columnResized" [int;int;int];
+    slot ~protected "columnResized" [arg "" int;arg "" int;arg "" int];
     slot "expandAll" [];
-    slot "expand" [qModelIndex];
-    slot "expandToDepth" [int];
-    slot "hideColumn" [int];
+    slot "expand" [arg "" qModelIndex];
+    slot "expandToDepth" [arg "" int];
+    slot "hideColumn" [arg "" int];
     slot "_q_endAnimatedOperation" [];
     slot "_q_modelAboutToBeReset" [];
-    slot "_q_sortIndicatorChanged" [int;qt'SortOrder];
+    slot "_q_sortIndicatorChanged" [arg "" int;arg "" qt'SortOrder];
     slot ~protected "reexpand" [];
-    slot "resizeColumnToContents" [int];
-    slot ~protected "rowsRemoved" [qModelIndex;int;int];
-    slot "showColumn" [int];
-    slot "sortByColumn" [int];
-    signal "collapsed" [qModelIndex];
-    signal "expanded" [qModelIndex];
+    slot "resizeColumnToContents" [arg "" int];
+    slot ~protected "rowsRemoved" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "showColumn" [arg "" int];
+    slot "sortByColumn" [arg "" int];
+    signal "collapsed" [arg "" qModelIndex];
+    signal "expanded" [arg "" qModelIndex];
   ]
 let () = with_class qTreeWidget [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3598,31 +3598,31 @@ let () = with_class qTreeWidget [
     dynamic "currentItemChanged" [arg "current" qTreeWidgetItem;arg "previous" qTreeWidgetItem];
     dynamic "itemSelectionChanged" [];
     slot "clear" [];
-    (*  slot "collapseItem" [const qTreeWidgetItem];*)
-    (*  slot "expandItem" [const qTreeWidgetItem];*)
-    slot "_q_dataChanged" [qModelIndex;qModelIndex];
-    slot "_q_emitCurrentItemChanged" [qModelIndex;qModelIndex];
-    slot "_q_emitItemActivated" [qModelIndex];
-    slot "_q_emitItemChanged" [qModelIndex];
-    slot "_q_emitItemClicked" [qModelIndex];
-    slot "_q_emitItemCollapsed" [qModelIndex];
-    slot "_q_emitItemDoubleClicked" [qModelIndex];
-    slot "_q_emitItemEntered" [qModelIndex];
-    slot "_q_emitItemExpanded" [qModelIndex];
-    slot "_q_emitItemPressed" [qModelIndex];
-    (*slot "_q_selectionChanged" [qItemSelection;qItemSelection];*)
+    (*  slot "collapseItem" [const arg "" qTreeWidgetItem];*)
+    (*  slot "expandItem" [const arg "" qTreeWidgetItem];*)
+    slot "_q_dataChanged" [arg "" qModelIndex;arg "" qModelIndex];
+    slot "_q_emitCurrentItemChanged" [arg "" qModelIndex;arg "" qModelIndex];
+    slot "_q_emitItemActivated" [arg "" qModelIndex];
+    slot "_q_emitItemChanged" [arg "" qModelIndex];
+    slot "_q_emitItemClicked" [arg "" qModelIndex];
+    slot "_q_emitItemCollapsed" [arg "" qModelIndex];
+    slot "_q_emitItemDoubleClicked" [arg "" qModelIndex];
+    slot "_q_emitItemEntered" [arg "" qModelIndex];
+    slot "_q_emitItemExpanded" [arg "" qModelIndex];
+    slot "_q_emitItemPressed" [arg "" qModelIndex];
+    (*slot "_q_selectionChanged" [arg "" qItemSelection;arg "" qItemSelection];*)
     slot "_q_sort" [];
-    (*  slot "scrollToItem" [const qTreeWidgetItem];*)
-    (*  slot "scrollToItem" [const qTreeWidgetItem;QAbstractItemView::ScrollHint];*)
+    (*  slot "scrollToItem" [const arg "" qTreeWidgetItem];*)
+    (*  slot "scrollToItem" [const arg "" qTreeWidgetItem;QAbstractItemView::arg "" ScrollHint];*)
     (*  signal "currentItemChanged" [qTreeWidgetItem*;QTreeWidgetItem*];*)
-    (*  signal "itemActivated" [qTreeWidgetItem*;int];*)
-    (*  signal "itemChanged" [qTreeWidgetItem*;int];*)
-    (*  signal "itemClicked" [qTreeWidgetItem*;int];*)
+    (*  signal "itemActivated" [qTreeWidgetItem*;arg "" int];*)
+    (*  signal "itemChanged" [qTreeWidgetItem*;arg "" int];*)
+    (*  signal "itemClicked" [qTreeWidgetItem*;arg "" int];*)
     (*  signal "itemCollapsed" [qTreeWidgetItem*];*)
-    (*  signal "itemDoubleClicked" [qTreeWidgetItem*;int];*)
-    (*  signal "itemEntered" [qTreeWidgetItem*;int];*)
+    (*  signal "itemDoubleClicked" [qTreeWidgetItem*;arg "" int];*)
+    (*  signal "itemEntered" [qTreeWidgetItem*;arg "" int];*)
     (*  signal "itemExpanded" [qTreeWidgetItem*];*)
-    (*  signal "itemPressed" [qTreeWidgetItem*;int];*)
+    (*  signal "itemPressed" [qTreeWidgetItem*;arg "" int];*)
     signal "itemSelectionChanged" [];
   ]
 let () = with_class qTableWidget [
@@ -3696,35 +3696,35 @@ let () = with_class qTableWidget [
     dynamic "currentCellChanged" [arg "currentRow" int;arg "currentColumn" int;arg "previousRow" int;arg "previousColumn" int];
     slot "clear" [];
     slot "clearContents" [];
-    slot "insertColumn" [int];
-    slot "insertRow" [int];
-    slot "_q_dataChanged" [qModelIndex;qModelIndex];
-    slot "_q_emitCurrentItemChanged" [qModelIndex;qModelIndex];
-    slot "_q_emitItemActivated" [qModelIndex];
-    slot "_q_emitItemChanged" [qModelIndex];
-    slot "_q_emitItemClicked" [qModelIndex];
-    slot "_q_emitItemDoubleClicked" [qModelIndex];
-    slot "_q_emitItemEntered" [qModelIndex];
-    slot "_q_emitItemPressed" [qModelIndex];
+    slot "insertColumn" [arg "" int];
+    slot "insertRow" [arg "" int];
+    slot "_q_dataChanged" [arg "" qModelIndex;arg "" qModelIndex];
+    slot "_q_emitCurrentItemChanged" [arg "" qModelIndex;arg "" qModelIndex];
+    slot "_q_emitItemActivated" [arg "" qModelIndex];
+    slot "_q_emitItemChanged" [arg "" qModelIndex];
+    slot "_q_emitItemClicked" [arg "" qModelIndex];
+    slot "_q_emitItemDoubleClicked" [arg "" qModelIndex];
+    slot "_q_emitItemEntered" [arg "" qModelIndex];
+    slot "_q_emitItemPressed" [arg "" qModelIndex];
     slot "_q_sort" [];
-    slot "removeColumn" [int];
-    slot "removeRow" [int];
-    (*  slot "scrollToItem" [const qTableWidgetItem];*)
-    (*  slot "scrollToItem" [const qTableWidgetItem*;QAbstractItemView::ScrollHint];*)
-    signal "cellActivated" [int;int];
-    signal "cellChanged" [int;int];
-    signal "cellClicked" [int;int];
-    signal "cellDoubleClicked" [int;int];
-    signal "cellEntered" [int;int];
-    signal "cellPressed" [int;int];
-    signal "currentCellChanged" [int;int;int;int];
-    (*  signal "currentItemChanged" [qTableWidgetItem;qTableWidgetItem];*)
-    (*  signal "itemActivated" [qTableWidgetItem];*)
-    (*  signal "itemChanged" [qTableWidgetItem];*)
-    (*  signal "itemClicked" [qTableWidgetItem];*)
-    (*  signal "itemDoubleClicked" [qTableWidgetItem];*)
-    (*  signal "itemEntered" [qTableWidgetItem];*)
-    (*  signal "itemPressed" [qTableWidgetItem];*)
+    slot "removeColumn" [arg "" int];
+    slot "removeRow" [arg "" int];
+    (*  slot "scrollToItem" [const arg "" qTableWidgetItem];*)
+    (*  slot "scrollToItem" [const qTableWidgetItem*;QAbstractItemView::arg "" ScrollHint];*)
+    signal "cellActivated" [arg "" int;arg "" int];
+    signal "cellChanged" [arg "" int;arg "" int];
+    signal "cellClicked" [arg "" int;arg "" int];
+    signal "cellDoubleClicked" [arg "" int;arg "" int];
+    signal "cellEntered" [arg "" int;arg "" int];
+    signal "cellPressed" [arg "" int;arg "" int];
+    signal "currentCellChanged" [arg "" int;arg "" int;arg "" int;arg "" int];
+    (*  signal "currentItemChanged" [arg "" qTableWidgetItem;arg "" qTableWidgetItem];*)
+    (*  signal "itemActivated" [arg "" qTableWidgetItem];*)
+    (*  signal "itemChanged" [arg "" qTableWidgetItem];*)
+    (*  signal "itemClicked" [arg "" qTableWidgetItem];*)
+    (*  signal "itemDoubleClicked" [arg "" qTableWidgetItem];*)
+    (*  signal "itemEntered" [arg "" qTableWidgetItem];*)
+    (*  signal "itemPressed" [arg "" qTableWidgetItem];*)
     signal "itemSelectionChanged" [];
   ]
 let () = with_class qTreeWidgetItem [
@@ -5255,9 +5255,9 @@ let () = with_class qTableWidgetSelectionRange [
   slot "_q_availableGeometryChanged" [];
   slot "_q_updateScreens" [];
   signal "primaryScreenChanged" [];
-  signal "resized" [int];
-  signal "screenCountChanged" [int];
-  signal "workAreaResized" [int];
+  signal "resized" [arg "" int];
+  signal "screenCountChanged" [arg "" int];
+  signal "workAreaResized" [arg "" int];
   ]
   let () = with_class qSplitterHandle [
     constructor "" [arg "orientation" qt'Orientation;arg "parent" qSplitter];
@@ -5531,14 +5531,14 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "updateSceneRect" [arg "rect" qRectF];
     dynamic "rubberBandChanged" [arg "rubberBandRect" qRect;arg "fromScenePoint" qPointF;arg "toScenePoint" qPointF];
   slot "invalidateScene" [];
-  slot "invalidateScene" [qRectF];
-  slot "invalidateScene" [qRectF;qGraphicsScene'SceneLayers];
-  slot "_q_setViewportCursor" [qCursor];
+  slot "invalidateScene" [arg "" qRectF];
+  slot "invalidateScene" [arg "" qRectF;arg "" qGraphicsScene'SceneLayers];
+  slot "_q_setViewportCursor" [arg "" qCursor];
   slot "_q_unsetViewportCursor" [];
-  slot "setupViewport" [qWidget];
+  slot "setupViewport" [arg "" qWidget];
   (*slot "updateScene" [qList<QRectF>];*)
-  slot "updateSceneRect" [qRectF];
-  signal "rubberBandChanged" [qRect;qPointF;qPointF];
+  slot "updateSceneRect" [arg "" qRectF];
+  signal "rubberBandChanged" [arg "" qRect;arg "" qPointF;arg "" qPointF];
   ]
 *)
 let () = with_class qAbstractItemView [
@@ -5619,48 +5619,48 @@ let () = with_class qAbstractItemView [
     dynamic "viewportEntered" [];
     dynamic "iconSizeChanged" [arg "size" qSize];
     slot "clearSelection" [];
-    (*  slot "closeEditor" [qWidget*;QAbstractItemDelegate::EndEditHint];*)
-    (*  slot "commitData" [qWidget];*)
-    slot ~protected "currentChanged" [qModelIndex;qModelIndex];
-    slot ~protected "dataChanged" [qModelIndex;qModelIndex];
-    (*slot "dataChanged" [qModelIndex;qModelIndex;QVector<int>];*)
+    (*  slot "closeEditor" [qWidget*;QAbstractItemDelegate::arg "" EndEditHint];*)
+    (*  slot "commitData" [arg "" qWidget];*)
+    slot ~protected "currentChanged" [arg "" qModelIndex;arg "" qModelIndex];
+    slot ~protected "dataChanged" [arg "" qModelIndex;arg "" qModelIndex];
+    (*slot "dataChanged" [arg "" qModelIndex;arg "" qModelIndex;QVector<int>];*)
     slot "doItemsLayout" [];
-    (*  slot "editorDestroyed" [qObject];*)
-    slot "edit" [qModelIndex];
-    slot ~protected "horizontalScrollbarAction" [int];
-    slot ~protected "horizontalScrollbarValueChanged" [int];
-    slot "_q_columnsAboutToBeRemoved" [qModelIndex;int;int];
-    slot "_q_columnsInserted" [qModelIndex;int;int];
-    slot "_q_columnsMoved" [qModelIndex;int;int;qModelIndex;int];
-    slot "_q_columnsRemoved" [qModelIndex;int;int];
+    (*  slot "editorDestroyed" [arg "" qObject];*)
+    slot "edit" [arg "" qModelIndex];
+    slot ~protected "horizontalScrollbarAction" [arg "" int];
+    slot ~protected "horizontalScrollbarValueChanged" [arg "" int];
+    slot "_q_columnsAboutToBeRemoved" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "_q_columnsInserted" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "_q_columnsMoved" [arg "" qModelIndex;arg "" int;arg "" int;arg "" qModelIndex;arg "" int];
+    slot "_q_columnsRemoved" [arg "" qModelIndex;arg "" int;arg "" int];
     slot "_q_headerDataChanged" [];
     slot "_q_layoutChanged" [];
     slot "_q_modelDestroyed" [];
-    slot "_q_rowsInserted" [qModelIndex;int;int];
-    slot "_q_rowsMoved" [qModelIndex;int;int;qModelIndex;int];
-    slot "_q_rowsRemoved" [qModelIndex;int;int];
+    slot "_q_rowsInserted" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot "_q_rowsMoved" [arg "" qModelIndex;arg "" int;arg "" int;arg "" qModelIndex;arg "" int];
+    slot "_q_rowsRemoved" [arg "" qModelIndex;arg "" int;arg "" int];
     slot "_q_scrollerStateChanged" [];
     slot "reset" [];
-    slot ~protected "rowsAboutToBeRemoved" [qModelIndex;int;int];
-    slot ~protected "rowsInserted" [qModelIndex;int;int];
+    slot ~protected "rowsAboutToBeRemoved" [arg "" qModelIndex;arg "" int;arg "" int];
+    slot ~protected "rowsInserted" [arg "" qModelIndex;arg "" int;arg "" int];
     slot "scrollToBottom" [];
     slot "scrollToTop" [];
     slot "selectAll" [];
-    slot ~protected "selectionChanged" [qItemSelection;qItemSelection];
-    slot "setCurrentIndex" [qModelIndex];
-    slot "setRootIndex" [qModelIndex];
+    slot ~protected "selectionChanged" [arg "" qItemSelection;arg "" qItemSelection];
+    slot "setCurrentIndex" [arg "" qModelIndex];
+    slot "setRootIndex" [arg "" qModelIndex];
     slot ~protected "updateEditorData" [];
     slot ~protected "updateEditorGeometries" [];
     slot ~protected "updateGeometries" [];
-    slot "update" [qModelIndex];
-    slot ~protected "verticalScrollbarAction" [int];
-    slot ~protected "verticalScrollbarValueChanged" [int];
-    signal "activated" [qModelIndex];
-    signal "clicked" [qModelIndex];
-    signal "doubleClicked" [qModelIndex];
-    signal "entered" [qModelIndex];
-    signal "iconSizeChanged" [qSize];
-    signal "pressed" [qModelIndex];
+    slot "update" [arg "" qModelIndex];
+    slot ~protected "verticalScrollbarAction" [arg "" int];
+    slot ~protected "verticalScrollbarValueChanged" [arg "" int];
+    signal "activated" [arg "" qModelIndex];
+    signal "clicked" [arg "" qModelIndex];
+    signal "doubleClicked" [arg "" qModelIndex];
+    signal "entered" [arg "" qModelIndex];
+    signal "iconSizeChanged" [arg "" qSize];
+    signal "pressed" [arg "" qModelIndex];
     signal "viewportEntered" [];
   ]
 
@@ -5670,5 +5670,5 @@ let () = with_class qSignalMapper [
     dynamic "setMapping" [arg "sender" qObject;arg "widget" qWidget];
     dynamic "mapping" [arg "widget" qWidget] ~ret:qObject;
     dynamic "mapped" [arg "widget" qWidget];
-    signal "mapped" [qWidget];
+    signal "mapped" [arg "" qWidget];
   ]

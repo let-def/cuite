@@ -71,14 +71,14 @@ let () = with_class qGuiApplication [
     dynamic "applicationDisplayNameChanged" [];
 
     signal  "applicationDisplayNameChanged" [];
-    signal  "applicationStateChanged" [qt'ApplicationState];
+    signal  "applicationStateChanged" [arg "" qt'ApplicationState];
     (*signal "commitDataRequest" [QSessionManager &manager];*)
-    signal "focusObjectChanged" [qObject];
-    signal "focusWindowChanged" [qWindow];
+    signal "focusObjectChanged" [arg "" qObject];
+    signal "focusWindowChanged" [arg "" qWindow];
     signal "fontDatabaseChanged" [];
     signal "lastWindowClosed" [];
-    signal "layoutDirectionChanged" [qt'LayoutDirection];
-    signal "paletteChanged" [reference (const qPalette)];
+    signal "layoutDirectionChanged" [arg "" qt'LayoutDirection];
+    signal "paletteChanged" [arg "" (reference (const qPalette))];
     (*signal "primaryScreenChanged" [QScreen *screen];*)
     (*signal "saveStateRequest" [QSessionManager &manager];*)
     (*signal "screenAdded" [QScreen *screen];*)
@@ -497,24 +497,24 @@ let () = with_class qWindow [
     dynamic "focusObjectChanged" [arg "object" qObject];
     dynamic "opacityChanged" [arg "opacity" qreal];
     signal "activeChanged" [];
-    signal "contentOrientationChanged" [qt'ScreenOrientation];
-    signal "focusObjectChanged" [qObject];
-    signal "heightChanged" [int];
-    signal "maximumHeightChanged" [int];
-    signal "maximumWidthChanged" [int];
-    signal "minimumHeightChanged" [int];
-    signal "minimumWidthChanged" [int];
-    signal "modalityChanged" [qt'WindowModality];
-    signal "opacityChanged" [float];
-    (*  signal "screenChanged" [qScreen];*)
-    signal "visibilityChanged" [qWindow'Visibility];
-    signal "visibleChanged" [bool];
-    signal "widthChanged" [int];
-    signal "windowStateChanged" [qt'WindowState];
-    signal "windowTitleChanged" [qString];
-    signal "xChanged" [int];
-    signal "yChanged" [int];
-    slot "alert" [int];
+    signal "contentOrientationChanged" [arg "" qt'ScreenOrientation];
+    signal "focusObjectChanged" [arg "" qObject];
+    signal "heightChanged" [arg "" int];
+    signal "maximumHeightChanged" [arg "" int];
+    signal "maximumWidthChanged" [arg "" int];
+    signal "minimumHeightChanged" [arg "" int];
+    signal "minimumWidthChanged" [arg "" int];
+    signal "modalityChanged" [arg "" qt'WindowModality];
+    signal "opacityChanged" [arg "" float];
+    (*  signal "screenChanged" [arg "" qScreen];*)
+    signal "visibilityChanged" [arg "" qWindow'Visibility];
+    signal "visibleChanged" [arg "" bool];
+    signal "widthChanged" [arg "" int];
+    signal "windowStateChanged" [arg "" qt'WindowState];
+    signal "windowTitleChanged" [arg "" qString];
+    signal "xChanged" [arg "" int];
+    signal "yChanged" [arg "" int];
+    slot "alert" [arg "" int];
     slot "close" [];
     slot "hide" [];
     slot "lower" [];
@@ -522,16 +522,16 @@ let () = with_class qWindow [
     slot "raise" [];
     slot "requestActivate" [];
     slot "requestUpdate" [];
-    slot "setHeight" [int];
-    slot "setMaximumHeight" [int];
-    slot "setMaximumWidth" [int];
-    slot "setMinimumHeight" [int];
-    slot "setMinimumWidth" [int];
-    slot "setTitle" [qString];
-    slot "setVisible" [bool];
-    slot "setWidth" [int];
-    slot "setX" [int];
-    slot "setY" [int];
+    slot "setHeight" [arg "" int];
+    slot "setMaximumHeight" [arg "" int];
+    slot "setMaximumWidth" [arg "" int];
+    slot "setMinimumHeight" [arg "" int];
+    slot "setMinimumWidth" [arg "" int];
+    slot "setTitle" [arg "" qString];
+    slot "setVisible" [arg "" bool];
+    slot "setWidth" [arg "" int];
+    slot "setX" [arg "" int];
+    slot "setY" [arg "" int];
     slot "show" [];
     slot "showFullScreen" [];
     slot "showMaximized" [];

@@ -22,7 +22,9 @@ let about this =
 let help =
   let help_p = lazy (
     let file = new'QFile'1 ":/readme.html" in
-    QTextBrowser.setHtml
+    QFile.set
+
+    QTextBrowser.setHtml'from'QString
         if ( h.open(QFile::ReadOnly) )
         {
             help_p = new QTextBrowser();

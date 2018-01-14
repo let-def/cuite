@@ -21,9 +21,9 @@ let () = with_class qSignalMapper [
     dynamic "mapped" [arg "object" qObject];
     dynamic "map" [];
     dynamic "map" [arg "sender" qObject];
-    signal "mapped" [int];
-    signal "mapped" [qString];
-    signal "mapped" [qObject];
+    signal "mapped" [arg "" int];
+    signal "mapped" [arg "" qString];
+    signal "mapped" [arg "" qObject];
   ]
 
 let () = with_class qRegExp [
@@ -245,14 +245,14 @@ let () = with_class qItemSelectionModel [
     dynamic "currentColumnChanged" [arg "current" qModelIndex;arg "previous" qModelIndex];
     dynamic "modelChanged" [arg "model" qAbstractItemModel];
 
-    signal  "selectionChanged"     [qItemSelection; qItemSelection];
-    signal  "currentChanged"       [qModelIndex; qModelIndex];
-    signal  "currentRowChanged"    [qModelIndex; qModelIndex];
-    signal  "currentColumnChanged" [qModelIndex; qModelIndex];
-    signal  "modelChanged"         [qAbstractItemModel];
-    slot  "setCurrentIndex" [qModelIndex; qItemSelectionModel'SelectionFlags];
-    slot  "select" [qModelIndex; qItemSelectionModel'SelectionFlags];
-    slot  "select" [qItemSelection; qItemSelectionModel'SelectionFlags];
+    signal  "selectionChanged"     [arg "" qItemSelection; arg "" qItemSelection];
+    signal  "currentChanged"       [arg "" qModelIndex; arg "" qModelIndex];
+    signal  "currentRowChanged"    [arg "" qModelIndex; arg "" qModelIndex];
+    signal  "currentColumnChanged" [arg "" qModelIndex; arg "" qModelIndex];
+    signal  "modelChanged"         [arg "" qAbstractItemModel];
+    slot  "setCurrentIndex" [arg "" qModelIndex; arg "" qItemSelectionModel'SelectionFlags];
+    slot  "select" [arg "" qModelIndex; arg "" qItemSelectionModel'SelectionFlags];
+    slot  "select" [arg "" qItemSelection; arg "" qItemSelectionModel'SelectionFlags];
     slot  "clear" [];
     slot  "reset" [];
     slot  "clearSelection" [];
@@ -434,9 +434,95 @@ let () = with_class qCoreApplication [
 
 let () = with_class qObject [
     (*signal "objectNameChanged" [qString];*)
-    signal "destroyed" [qObject];
+    signal "destroyed" [arg "" qObject];
     slot "deleteLater" [];
     (*  slot "_q_reregisterTimers" [void*];*)
+  ]
+
+let () = with_class qFileSystemWatcher [
+    constructor "" [arg "parent" (optional qObject)];
+    constructor "" [arg "paths" qStringList;arg "parent" (optional qObject)];
+    dynamic "addPath" [arg "path" qString] ~ret:bool;
+    dynamic "addPaths" [arg "paths" qStringList] ~ret:qStringList;
+    dynamic "removePath" [arg "path" qString] ~ret:bool;
+    dynamic "removePaths" [arg "paths" qStringList] ~ret:qStringList;
+    dynamic "files" [] ~ret:qStringList;
+    dynamic "directories" [] ~ret:qStringList;
+    signal "fileChanged" [arg "path" qString] ~private_:true;
+    signal "directoryChanged" [arg "path" qString] ~private_:true;
+  ]
+
+let () = with_class qIODevice [
+    (*constructor "" [];
+      constructor "" [arg "parent" (optional qObject)];*)
+    dynamic "openMode" [] ~ret:qIODevice'OpenMode;
+    dynamic "setTextModeEnabled" [arg "enabled" bool];
+    dynamic "isTextModeEnabled" [] ~ret:bool;
+    dynamic "isOpen" [] ~ret:bool;
+    dynamic "isReadable" [] ~ret:bool;
+    dynamic "isWritable" [] ~ret:bool;
+    dynamic "isSequential" [] ~ret:bool;
+    dynamic "readChannelCount" [] ~ret:int;
+    dynamic "writeChannelCount" [] ~ret:int;
+    dynamic "currentReadChannel" [] ~ret:int;
+    dynamic "setCurrentReadChannel" [arg "channel" int];
+    dynamic "currentWriteChannel" [] ~ret:int;
+    dynamic "setCurrentWriteChannel" [arg "channel" int];
+    dynamic "open" [arg "mode" qIODevice'OpenMode] ~ret:bool;
+    dynamic "close" [];
+    dynamic "pos" [] ~ret:qint64;
+    dynamic "size" [] ~ret:qint64;
+    dynamic "seek" [arg "pos" qint64] ~ret:bool;
+    dynamic "atEnd" [] ~ret:bool;
+    dynamic "reset" [] ~ret:bool;
+    dynamic "bytesAvailable" [] ~ret:qint64;
+    dynamic "bytesToWrite" [] ~ret:qint64;
+    dynamic "read" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
+    dynamic "read" [arg "maxSize" qint64] ~ret:qByteArray;
+    dynamic "readAll" [] ~ret:qByteArray;
+    dynamic "readLine" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
+    dynamic "readLine" [arg "maxSize" qint64] ~ret:qByteArray;
+    dynamic "canReadLine" [] ~ret:bool;
+    dynamic "startTransaction" [];
+    dynamic "commitTransaction" [];
+    dynamic "rollbackTransaction" [];
+    dynamic "isTransactionStarted" [] ~ret:bool;
+    dynamic "write" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
+    dynamic "write" [arg "data" pchar] ~ret:qint64;
+    dynamic "write" [arg "byteArray" qByteArray] ~ret:qint64;
+    dynamic "peek" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
+    dynamic "peek" [arg "maxSize" qint64] ~ret:qByteArray;
+    dynamic "waitForReadyRead" [arg "msecs" int] ~ret:bool;
+    dynamic "waitForBytesWritten" [arg "msecs" int] ~ret:bool;
+    (*dynamic "ungetChar" [arg "c" pchar];
+    dynamic "putChar" [arg "c" pchar] ~ret:bool;
+    dynamic "getChar" [arg "c" pchar] ~ret:bool;*)
+    dynamic "errorString" [] ~ret:qString;
+    dynamic "readyRead" [];
+    dynamic "channelReadyRead" [arg "channel" int];
+    dynamic "bytesWritten" [arg "bytes" qint64];
+    dynamic "channelBytesWritten" [arg "channel" int;arg "bytes" qint64];
+    dynamic "aboutToClose" [];
+    dynamic "readChannelFinished" [];
+  ]
+
+let () = with_class qFileDevice [
+    dynamic "error" [] ~ret:qFileDevice'FileError;
+    dynamic "unsetError" [];
+    dynamic "close" [];
+    dynamic "isSequential" [] ~ret:bool;
+    dynamic "handle" [] ~ret:int;
+    dynamic "fileName" [] ~ret:qString;
+    dynamic "pos" [] ~ret:qint64;
+    dynamic "seek" [arg "pos" qint64] ~ret:bool;
+    dynamic "atEnd" [] ~ret:bool;
+    dynamic "flush" [] ~ret:bool;
+    dynamic "size" [] ~ret:qint64;
+    dynamic "resize" [arg "sz" qint64] ~ret:bool;
+    dynamic "permissions" [] ~ret:qFileDevice'Permissions;
+    dynamic "setPermissions" [arg "permissions" qFileDevice'Permissions] ~ret:bool;
+    (*dynamic "map" [arg "offset" qint64;arg "size" qint64;arg "flags" qFileDevice'MemoryMapFlags] ~ret:uchar;
+    dynamic "unmap" [arg "address" uchar] ~ret:bool;*)
   ]
 
 let () = with_class qFile [
@@ -5262,71 +5348,6 @@ let () = with_class qFileSelector [
     dynamic "setExtraSelectors" [arg "list" qStringList];
     dynamic "allSelectors" [] ~ret:qStringList;
   ]
-let () = with_class qFileSystemWatcher [
-    constructor "" [arg "parent" (optional qObject)];
-    constructor "" [arg "paths" qStringList;arg "parent" (optional qObject)];
-    dynamic "addPath" [arg "path" qString] ~ret:bool;
-    dynamic "addPaths" [arg "paths" qStringList] ~ret:qStringList;
-    dynamic "removePath" [arg "path" qString] ~ret:bool;
-    dynamic "removePaths" [arg "paths" qStringList] ~ret:qStringList;
-    dynamic "files" [] ~ret:qStringList;
-    dynamic "directories" [] ~ret:qStringList;
-    dynamic "fileChanged" [arg "path" qString];
-    dynamic "directoryChanged" [arg "path" qString];
-  ]
-let () = with_class qIODevice [
-    constructor "" [];
-    constructor "" [arg "parent" (optional qObject)];
-    dynamic "openMode" [] ~ret:openMode;
-    dynamic "setTextModeEnabled" [arg "enabled" bool];
-    dynamic "isTextModeEnabled" [] ~ret:bool;
-    dynamic "isOpen" [] ~ret:bool;
-    dynamic "isReadable" [] ~ret:bool;
-    dynamic "isWritable" [] ~ret:bool;
-    dynamic "isSequential" [] ~ret:bool;
-    dynamic "readChannelCount" [] ~ret:int;
-    dynamic "writeChannelCount" [] ~ret:int;
-    dynamic "currentReadChannel" [] ~ret:int;
-    dynamic "setCurrentReadChannel" [arg "channel" int];
-    dynamic "currentWriteChannel" [] ~ret:int;
-    dynamic "setCurrentWriteChannel" [arg "channel" int];
-    dynamic "open" [arg "mode" openMode] ~ret:bool;
-    dynamic "close" [];
-    dynamic "pos" [] ~ret:qint64;
-    dynamic "size" [] ~ret:qint64;
-    dynamic "seek" [arg "pos" qint64] ~ret:bool;
-    dynamic "atEnd" [] ~ret:bool;
-    dynamic "reset" [] ~ret:bool;
-    dynamic "bytesAvailable" [] ~ret:qint64;
-    dynamic "bytesToWrite" [] ~ret:qint64;
-    dynamic "read" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
-    dynamic "read" [arg "maxSize" qint64] ~ret:qByteArray;
-    dynamic "readAll" [] ~ret:qByteArray;
-    dynamic "readLine" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
-    dynamic "readLine" [arg "maxSize" qint64] ~ret:qByteArray;
-    dynamic "canReadLine" [] ~ret:bool;
-    dynamic "startTransaction" [];
-    dynamic "commitTransaction" [];
-    dynamic "rollbackTransaction" [];
-    dynamic "isTransactionStarted" [] ~ret:bool;
-    dynamic "write" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
-    dynamic "write" [arg "data" pchar] ~ret:qint64;
-    dynamic "write" [arg "byteArray" qByteArray] ~ret:qint64;
-    dynamic "peek" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
-    dynamic "peek" [arg "maxSize" qint64] ~ret:qByteArray;
-    dynamic "waitForReadyRead" [arg "msecs" int] ~ret:bool;
-    dynamic "waitForBytesWritten" [arg "msecs" int] ~ret:bool;
-    dynamic "ungetChar" [arg "c" pchar];
-    dynamic "putChar" [arg "c" pchar] ~ret:bool;
-    dynamic "getChar" [arg "c" pchar] ~ret:bool;
-    dynamic "errorString" [] ~ret:qString;
-    dynamic "readyRead" [];
-    dynamic "channelReadyRead" [arg "channel" int];
-    dynamic "bytesWritten" [arg "bytes" qint64];
-    dynamic "channelBytesWritten" [arg "channel" int;arg "bytes" qint64];
-    dynamic "aboutToClose" [];
-    dynamic "readChannelFinished" [];
-  ]
 let () = with_class qSettings [
     constructor "" [arg "organization" qString;arg "application" qString;arg "parent" (optional qObject)];
     constructor "" [arg "scope" scope;arg "organization" qString;arg "application" qString;arg "parent" (optional qObject)];
@@ -5743,24 +5764,6 @@ let () = with_class qBuffer [
     dynamic "seek" [arg "pos" qint64] ~ret:bool;
     dynamic "atEnd" [] ~ret:bool;
     dynamic "canReadLine" [] ~ret:bool;
-  ]
-let () = with_class qFileDevice [
-    dynamic "error" [] ~ret:fileError;
-    dynamic "unsetError" [];
-    dynamic "close" [];
-    dynamic "isSequential" [] ~ret:bool;
-    dynamic "handle" [] ~ret:int;
-    dynamic "fileName" [] ~ret:qString;
-    dynamic "pos" [] ~ret:qint64;
-    dynamic "seek" [arg "pos" qint64] ~ret:bool;
-    dynamic "atEnd" [] ~ret:bool;
-    dynamic "flush" [] ~ret:bool;
-    dynamic "size" [] ~ret:qint64;
-    dynamic "resize" [arg "sz" qint64] ~ret:bool;
-    dynamic "permissions" [] ~ret:permissions;
-    dynamic "setPermissions" [arg "permissions" permissions] ~ret:bool;
-    dynamic "map" [arg "offset" qint64;arg "size" qint64;arg "flags" memoryMapFlags] ~ret:uchar;
-    dynamic "unmap" [arg "address" uchar] ~ret:bool;
   ]
 let () = with_class qProcess [
     constructor "" [arg "parent" (optional qObject)];

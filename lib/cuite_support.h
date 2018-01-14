@@ -158,4 +158,7 @@ uint cuite_flag_from_ocaml(const value& v);
 
 void cuite_debug_aborted_callback(const char *context, value exn);
 
+template <typename... Args, typename U> Q_CONSTEXPR Q_DECL_UNUSED QOverload<Args..., U>
+qPrivateOverload = {};
+
 #endif /* CUITE_SUPPORT */
