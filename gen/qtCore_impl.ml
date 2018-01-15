@@ -682,7 +682,69 @@ let () = with_class qByteArray [
     dynamic "isNull" [] ~ret:bool;*)
   ]
 
-(*let () = with_class qObject [
+let () = with_class qFileInfo [
+    constructor "" [];
+    constructor "" [arg "file" qString];
+    constructor "" [arg "file" (reference qFile)];
+    constructor "" [arg "dir" (reference qDir);arg "file" qString];
+    (*constructor "" [arg "fileinfo" qFileInfo];*)
+    (*dynamic "operator=" [arg "fileinfo" qFileInfo] ~ret:qFileInfo;*)
+    (*dynamic "operator=" [arg "other" qFileInfo] ~ret:qFileInfo;*)
+    (*dynamic "swap" [arg "other" qFileInfo];*)
+    (*dynamic "operator==" [arg "fileinfo" qFileInfo] ~ret:bool;*)
+    (*dynamic "operator!=" [arg "fileinfo" qFileInfo] ~ret:bool;*)
+    dynamic "setFile" [arg "file" qString];
+    dynamic "setFile" [arg "file" (reference qFile)];
+    dynamic "setFile" [arg "dir" (reference qDir);arg "file" qString];
+    dynamic "exists" [] ~ret:bool;
+    static  "exists" [arg "file" qString] ~ret:bool;
+    dynamic "refresh" [];
+    dynamic "filePath" [] ~ret:qString;
+    dynamic "absoluteFilePath" [] ~ret:qString;
+    dynamic "canonicalFilePath" [] ~ret:qString;
+    dynamic "fileName" [] ~ret:qString;
+    dynamic "baseName" [] ~ret:qString;
+    dynamic "completeBaseName" [] ~ret:qString;
+    dynamic "suffix" [] ~ret:qString;
+    dynamic "bundleName" [] ~ret:qString;
+    dynamic "completeSuffix" [] ~ret:qString;
+    dynamic "path" [] ~ret:qString;
+    dynamic "absolutePath" [] ~ret:qString;
+    dynamic "canonicalPath" [] ~ret:qString;
+    dynamic "dir" [] ~ret:qDir;
+    dynamic "absoluteDir" [] ~ret:qDir;
+    dynamic "isReadable" [] ~ret:bool;
+    dynamic "isWritable" [] ~ret:bool;
+    dynamic "isExecutable" [] ~ret:bool;
+    dynamic "isHidden" [] ~ret:bool;
+    dynamic "isNativePath" [] ~ret:bool;
+    dynamic "isRelative" [] ~ret:bool;
+    dynamic "isAbsolute" [] ~ret:bool;
+    dynamic "makeAbsolute" [] ~ret:bool;
+    dynamic "isFile" [] ~ret:bool;
+    dynamic "isDir" [] ~ret:bool;
+    dynamic "isSymLink" [] ~ret:bool;
+    dynamic "isRoot" [] ~ret:bool;
+    dynamic "isBundle" [] ~ret:bool;
+    dynamic "readLink" [] ~ret:qString;
+    dynamic "symLinkTarget" [] ~ret:qString;
+    dynamic "owner" [] ~ret:qString;
+    dynamic "ownerId" [] ~ret:int;
+    dynamic "group" [] ~ret:qString;
+    dynamic "groupId" [] ~ret:int;
+    dynamic "permission" [arg "permissions" qFileDevice'Permissions] ~ret:bool;
+    dynamic "permissions" [] ~ret:qFileDevice'Permissions;
+    dynamic "size" [] ~ret:qint64;
+    dynamic "created" [] ~ret:qDateTime;
+    dynamic "lastModified" [] ~ret:qDateTime;
+    dynamic "lastRead" [] ~ret:qDateTime;
+    dynamic "caching" [] ~ret:bool;
+    dynamic "setCaching" [arg "enable" bool];
+  ]
+
+(* END
+
+let () = with_class qObject [
     constructor "" [arg "parent" (optional qObject)];
     dynamic "event" [arg "e" qEvent] ~ret:bool;
     dynamic "eventFilter" [arg "watched" qObject;arg "event" qEvent] ~ret:bool;
@@ -807,65 +869,6 @@ let () = with_class qPoint [
     (*dynamic "operator/=" [arg "divisor" qreal] ~ret:qPoint;*)
     static  "dotProduct" [arg "arg0" qPoint &p1;arg "arg1" qPoint &p2] ~ret:int;
     dynamic "toCGPoint" [] ~ret:cGPoint;
-  ]
-let () = with_class qFileInfo [
-    constructor "" [];
-    constructor "" [arg "file" qString];
-    constructor "" [arg "file" qFile];
-    constructor "" [arg "dir" qDir;arg "file" qString];
-    constructor "" [arg "fileinfo" qFileInfo];
-    (*dynamic "operator=" [arg "fileinfo" qFileInfo] ~ret:qFileInfo;*)
-    (*dynamic "operator=" [arg "other" qFileInfo] ~ret:qFileInfo;*)
-    dynamic "swap" [arg "other" qFileInfo];
-    (*dynamic "operator==" [arg "fileinfo" qFileInfo] ~ret:bool;*)
-    (*dynamic "operator!=" [arg "fileinfo" qFileInfo] ~ret:bool;*)
-    dynamic "setFile" [arg "file" qString];
-    dynamic "setFile" [arg "file" qFile];
-    dynamic "setFile" [arg "dir" qDir;arg "file" qString];
-    dynamic "exists" [] ~ret:bool;
-    static  "exists" [arg "file" qString] ~ret:bool;
-    dynamic "refresh" [];
-    dynamic "filePath" [] ~ret:qString;
-    dynamic "absoluteFilePath" [] ~ret:qString;
-    dynamic "canonicalFilePath" [] ~ret:qString;
-    dynamic "fileName" [] ~ret:qString;
-    dynamic "baseName" [] ~ret:qString;
-    dynamic "completeBaseName" [] ~ret:qString;
-    dynamic "suffix" [] ~ret:qString;
-    dynamic "bundleName" [] ~ret:qString;
-    dynamic "completeSuffix" [] ~ret:qString;
-    dynamic "path" [] ~ret:qString;
-    dynamic "absolutePath" [] ~ret:qString;
-    dynamic "canonicalPath" [] ~ret:qString;
-    dynamic "dir" [] ~ret:qDir;
-    dynamic "absoluteDir" [] ~ret:qDir;
-    dynamic "isReadable" [] ~ret:bool;
-    dynamic "isWritable" [] ~ret:bool;
-    dynamic "isExecutable" [] ~ret:bool;
-    dynamic "isHidden" [] ~ret:bool;
-    dynamic "isNativePath" [] ~ret:bool;
-    dynamic "isRelative" [] ~ret:bool;
-    dynamic "isAbsolute" [] ~ret:bool;
-    dynamic "makeAbsolute" [] ~ret:bool;
-    dynamic "isFile" [] ~ret:bool;
-    dynamic "isDir" [] ~ret:bool;
-    dynamic "isSymLink" [] ~ret:bool;
-    dynamic "isRoot" [] ~ret:bool;
-    dynamic "isBundle" [] ~ret:bool;
-    dynamic "readLink" [] ~ret:qString;
-    dynamic "symLinkTarget" [] ~ret:qString;
-    dynamic "owner" [] ~ret:qString;
-    dynamic "ownerId" [] ~ret:uint;
-    dynamic "group" [] ~ret:qString;
-    dynamic "groupId" [] ~ret:uint;
-    dynamic "permission" [arg "permissions" qFile'Permissions] ~ret:bool;
-    dynamic "permissions" [] ~ret:qFile'Permissions;
-    dynamic "size" [] ~ret:qint64;
-    dynamic "created" [] ~ret:qDateTime;
-    dynamic "lastModified" [] ~ret:qDateTime;
-    dynamic "lastRead" [] ~ret:qDateTime;
-    dynamic "caching" [] ~ret:bool;
-    dynamic "setCaching" [arg "enable" bool];
   ]
 let () = with_class qSet'const_iterator [
     constructor "" [];

@@ -94,9 +94,12 @@ let setup_tabs self table ~selection_changed =
     ["ABC"; "DEF"; "GHI"; "JKL"; "MNO"; "PQR"; "STU"; "VW"; "XYZ"]
 
 let cast widget clss =
-  match Qt.cast widget clss with
+  match widget with
   | None -> assert false
-  | Some x -> x
+  | Some widget ->
+    match Qt.cast widget clss with
+    | None -> assert false
+    | Some x -> x
 
 let address_widget_read_from_file addr_widget filename =
   ()
@@ -107,7 +110,7 @@ let address_widget_write_to_file addr_widget filename =
 let address_widget_edit_entry table addr_widget _ =
   prerr_endline "editing entry";
   let tableview = cast (QTabWidget.currentWidget addr_widget) (QTableView.class'()) in
-  let proxy = cast (QTableView.model tableview) (QSortFilterProxyModel.class'()) in
+  let proxy = cast (Some (QTableView.model tableview)) (QSortFilterProxyModel.class'()) in
   let selection = QTableView.selectionModel tableview in
   let indexes = QItemSelectionModel.selectedRows selection 0 in
   if QModelIndexList.count indexes > 0 then (
@@ -139,7 +142,7 @@ let address_widget_edit_entry table addr_widget _ =
 
 let address_widget_remove_entry new_addr_tab table addr_widget _ =
   let tableview = cast (QTabWidget.currentWidget addr_widget) (QTableView.class'()) in
-  let proxy = cast (QTableView.model tableview) (QSortFilterProxyModel.class'()) in
+  let proxy = cast (Some (QTableView.model tableview)) (QSortFilterProxyModel.class'()) in
   let selection = QTableView.selectionModel tableview in
   let indexes = QItemSelectionModel.selectedRows selection 0 in
   let dummy = new'QModelIndex() in

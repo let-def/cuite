@@ -1,12 +1,26 @@
 open Cuite
 
-let simple_highlighter =
-  let color = (QColor.fromRgb 128 128 128 128) in
-  { QModels.highlight_block = (fun () self block ->
-        QModels.OCamlSyntaxHighlighter.setFormatColor self
-          0 (min (String.length block) 5) color);
-    release_state = (fun _ _ _ -> ());
-  }
+module Highlighter = QModels.StatefulHighlighter(struct
+    type t = int
+    let hash x = x
+    let equal (a : t) (b : t) = a = b
+  end)
+
+let colors =
+  Array.init 16 (fun i ->
+      let x = 15 + i * 16 in
+      QColor.fromRgb x x x 255
+    )
+
+let highlight context block initial =
+  let state = ref initial in
+  for i = 0 to (String.length block - 1) / 8 do
+    state := (!state + 1) land 0xF;
+    Highlighter.set_format_color context
+      (i * 8) (min (String.length block) ((i + 1) * 8))
+      colors.(!state);
+  done;
+  !state
 
 type mainwindow = {
   self: qMainWindow qt;
@@ -32,7 +46,7 @@ let mainwindow_setup_editor state =
     setPointSize font 10
   );
   QTextEdit.setFont state.editor font;
-  let hl = QModels.new'QOCamlSyntaxHighlighter simple_highlighter () (Some state.self) in
+  let hl = Highlighter.make 0 highlight (Some state.self) in
   QSyntaxHighlighter.setDocument hl (QTextEdit.document state.editor);
   if Array.length Sys.argv > 1 then
     load_file state.editor Sys.argv.(1);

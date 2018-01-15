@@ -193,14 +193,14 @@ let optional = function
 
 let reference = function
   | QClass def -> QClass { def with cl_qual = `ref }
-  | typ -> failwithf "optional: type %s is not a class" (qtype_name typ)
+  | typ -> failwithf "reference: type %s is not a class" (qtype_name typ)
 
 let qstruct ?converter ?extend cl_name =
   reference (qclass ~direct:true ?extend ?converter cl_name)
 
 let pointer = function
   | QClass def -> QClass { def with cl_qual = `pointer }
-  | typ -> failwithf "optional: type %s is not a class" (qtype_name typ)
+  | typ -> failwithf "pointer: type %s is not a class" (qtype_name typ)
 
 let constructor ?(custom=false) name args ~cl =
   let cl = qclass_of_typ cl in

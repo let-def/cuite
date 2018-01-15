@@ -38,6 +38,11 @@
 #define CALL_METHOD(result, inj, offset) \
   CALL_CLOSURE(result, inj, model_callback(_call_this, offset))
 
+external value cuite_get_payload(value v)
+{
+  return model_payload(v);
+}
+
 /* QAbstractTableModel */
 
 class QOCamlTableModel : public QAbstractTableModel
@@ -189,6 +194,9 @@ bool QOCamlTableModel::removeRows(int position, int rows, const QModelIndex &ind
 
 /* QSyntaxHighlighter */
 
+#define meth_highlight_block 0
+#define meth_release_data    1
+
 class QOCamlSyntaxHighlighter : public QSyntaxHighlighter
 {
   public:
@@ -205,8 +213,6 @@ class QOCamlSyntaxHighlighter : public QSyntaxHighlighter
     { return this->format(position); }
     inline int call_previousBlockState() const
     { return this->previousBlockState(); }
-    inline void call_setCurrentBlockState(int newState)
-    { this->setCurrentBlockState(newState); }
     inline void call_setFormat(int start, int count, const QTextCharFormat &format)
     { this->setFormat(start, count, format); }
     inline void call_setFormat(int start, int count, const QColor &color)
@@ -214,11 +220,55 @@ class QOCamlSyntaxHighlighter : public QSyntaxHighlighter
     inline void call_setFormat(int start, int count, const QFont &font)
     { this->setFormat(start, count, font); }
 
+    inline void call_setCurrentBlockState(int newState)
+    {
+      this->setCurrentBlockState(newState);
+      this->setCurrentBlockUserData(NULL);
+    }
+
+    struct QOCamlTextBlockUserData : QTextBlockUserData
+    {
+      QOCamlSyntaxHighlighter *highlighter;
+      int state;
+
+      QOCamlTextBlockUserData(QOCamlSyntaxHighlighter *_highlighter, int _state)
+        : highlighter(_highlighter), state(_state)
+      {}
+
+      void changeState(int newState)
+      {
+        value result;
+        PREPARE_METHOD(1, highlighter);
+        PUSH_ARG(Val_long(state));
+        CALL_METHOD(result, ID, meth_release_data);
+        state = newState;
+      }
+
+      ~QOCamlTextBlockUserData()
+      {
+        changeState(-1);
+      }
+    };
+
+    inline void call_setCurrentBlockStateAndNotifyRelease(int newState)
+    {
+      this->setCurrentBlockState(newState);
+      QTextBlockUserData *userData = this->currentBlockUserData();
+      QOCamlTextBlockUserData *ocamlData = NULL;
+      if (userData != NULL)
+        ocamlData = dynamic_cast<QOCamlTextBlockUserData*>(userData);
+      if (ocamlData != NULL)
+        ocamlData->changeState(newState);
+      else
+      {
+        ocamlData = new QOCamlTextBlockUserData(this, newState);
+        this->setCurrentBlockUserData(ocamlData);
+      }
+    }
+
   protected:
     void highlightBlock(const QString &text) override;
 };
-
-#define meth_highlight_block    0
 
 QOCamlSyntaxHighlighter::QOCamlSyntaxHighlighter(QObject *parent)
   : QSyntaxHighlighter(parent) {}
@@ -289,6 +339,15 @@ external value cuite_QOCamlSyntaxHighlighter_setCurrentBlockState(value _self, v
   CUITE_Region region;
   QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
   self->call_setCurrentBlockState(Long_val(newState));
+  return Val_unit;
+}
+
+external value cuite_QOCamlSyntaxHighlighter_setCurrentBlockStateAndNotifyRelease(value _self, value newState)
+{
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
+  CUITE_Region region;
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  self->call_setCurrentBlockStateAndNotifyRelease(Long_val(newState));
   return Val_unit;
 }
 
