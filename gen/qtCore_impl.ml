@@ -266,38 +266,17 @@ let () = with_class qAbstractProxyModel [
     dynamic "mapFromSource" [arg "sourceIndex" qModelIndex] ~ret:qModelIndex;
     dynamic "mapSelectionToSource" [arg "proxySelection" qItemSelection] ~ret:qItemSelection;
     dynamic "mapSelectionFromSource" [arg "sourceSelection" qItemSelection] ~ret:qItemSelection;
-    dynamic "submit" [] ~ret:bool;
-    dynamic "revert" [];
     dynamic "data" [arg "proxyIndex" qModelIndex;arg "role" int] ~ret:qVariant;
     dynamic "headerData" [arg "section" int;arg "orientation" qt'Orientation;arg "role" int] ~ret:qVariant;
     (*dynamic "itemData" [arg "proxyIndex" qModelIndex] ~ret:qMap<int, QVariant>;*)
-    dynamic "flags" [arg "index" qModelIndex] ~ret:qt'ItemFlags;
     dynamic "setData" [arg "index" qModelIndex;arg "value" qVariant;arg "role" int] ~ret:bool;
     (*dynamic "setItemData" [arg "index" qModelIndex;arg "roles" qMap<int,QVariant>] ~ret:bool;*)
     dynamic "setHeaderData" [arg "section" int;arg "orientation" qt'Orientation;arg "value" qVariant;arg "role" int] ~ret:bool;
-    dynamic "buddy" [arg "index" qModelIndex] ~ret:qModelIndex;
-    dynamic "canFetchMore" [arg "parent" qModelIndex] ~ret:bool;
-    dynamic "fetchMore" [arg "parent" qModelIndex];
-    dynamic "sort" [arg "column" int;arg "order" qt'SortOrder];
-    dynamic "span" [arg "index" qModelIndex] ~ret:qSize;
-    dynamic "hasChildren" [arg "parent" qModelIndex] ~ret:bool;
-    dynamic "sibling" [arg "row" int;arg "column" int;arg "idx" qModelIndex] ~ret:qModelIndex;
-    dynamic "mimeData" [arg "indexes" qModelIndexList] ~ret:qMimeData;
-    dynamic "canDropMimeData" [arg "data" qMimeData;arg "action" qt'DropAction;arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:bool;
-    dynamic "dropMimeData" [arg "data" qMimeData;arg "action" qt'DropAction;arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:bool;
-    dynamic "mimeTypes" [] ~ret:qStringList;
-    dynamic "supportedDragActions" [] ~ret:qt'DropActions;
-    dynamic "supportedDropActions" [] ~ret:qt'DropActions;
     (*dynamic "sourceModelChanged" [];*)
   ]
 
 let () = with_class qSortFilterProxyModel [
     constructor "" [arg "parent" (optional qObject)];
-    dynamic "setSourceModel" [arg "sourceModel" qAbstractItemModel];
-    dynamic "mapToSource" [arg "proxyIndex" qModelIndex] ~ret:qModelIndex;
-    dynamic "mapFromSource" [arg "sourceIndex" qModelIndex] ~ret:qModelIndex;
-    dynamic "mapSelectionToSource" [arg "proxySelection" qItemSelection] ~ret:qItemSelection;
-    dynamic "mapSelectionFromSource" [arg "sourceSelection" qItemSelection] ~ret:qItemSelection;
     dynamic "filterRegExp" [] ~ret:qRegExp;
     dynamic "setFilterRegExp" [arg "regExp" qRegExp];
     dynamic "filterKeyColumn" [] ~ret:int;
@@ -321,31 +300,6 @@ let () = with_class qSortFilterProxyModel [
     dynamic "setFilterFixedString" [arg "pattern" qString];
     dynamic "clear" [];
     dynamic "invalidate" [];
-    dynamic "index" [arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:qModelIndex;
-    dynamic "parent" [arg "child" qModelIndex] ~ret:qModelIndex;
-    dynamic "sibling" [arg "row" int;arg "column" int;arg "idx" qModelIndex] ~ret:qModelIndex;
-    dynamic "rowCount" [arg "parent" qModelIndex] ~ret:int;
-    dynamic "columnCount" [arg "parent" qModelIndex] ~ret:int;
-    dynamic "hasChildren" [arg "parent" qModelIndex] ~ret:bool;
-    dynamic "data" [arg "index" qModelIndex;arg "role" int] ~ret:qVariant;
-    dynamic "setData" [arg "index" qModelIndex;arg "value" qVariant;arg "role" int] ~ret:bool;
-    dynamic "headerData" [arg "section" int;arg "orientation" qt'Orientation;arg "role" int] ~ret:qVariant;
-    dynamic "setHeaderData" [arg "section" int;arg "orientation" qt'Orientation;arg "value" qVariant;arg "role" int] ~ret:bool;
-    dynamic "mimeData" [arg "indexes" qModelIndexList] ~ret:qMimeData;
-    dynamic "dropMimeData" [arg "data" qMimeData;arg "action" qt'DropAction;arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:bool;
-    dynamic "insertRows" [arg "row" int;arg "count" int;arg "parent" qModelIndex] ~ret:bool;
-    dynamic "insertColumns" [arg "column" int;arg "count" int;arg "parent" qModelIndex] ~ret:bool;
-    dynamic "removeRows" [arg "row" int;arg "count" int;arg "parent" qModelIndex] ~ret:bool;
-    dynamic "removeColumns" [arg "column" int;arg "count" int;arg "parent" qModelIndex] ~ret:bool;
-    dynamic "fetchMore" [arg "parent" qModelIndex];
-    dynamic "canFetchMore" [arg "parent" qModelIndex] ~ret:bool;
-    dynamic "flags" [arg "index" qModelIndex] ~ret:qt'ItemFlags;
-    dynamic "buddy" [arg "index" qModelIndex] ~ret:qModelIndex;
-    dynamic "match" [arg "start" qModelIndex;arg "role" int;arg "value" qVariant;arg "hits" int;arg "flags" qt'MatchFlags] ~ret:qModelIndexList;
-    dynamic "span" [arg "index" qModelIndex] ~ret:qSize;
-    dynamic "sort" [arg "column" int;arg "order" qt'SortOrder];
-    dynamic "mimeTypes" [] ~ret:qStringList;
-    dynamic "supportedDropActions" [] ~ret:qt'DropActions;
   ]
 
 let () = with_class qItemSelectionRange [
@@ -509,15 +463,9 @@ let () = with_class qIODevice [
 let () = with_class qFileDevice [
     dynamic "error" [] ~ret:qFileDevice'FileError;
     dynamic "unsetError" [];
-    dynamic "close" [];
-    dynamic "isSequential" [] ~ret:bool;
     dynamic "handle" [] ~ret:int;
     dynamic "fileName" [] ~ret:qString;
-    dynamic "pos" [] ~ret:qint64;
-    dynamic "seek" [arg "pos" qint64] ~ret:bool;
-    dynamic "atEnd" [] ~ret:bool;
     dynamic "flush" [] ~ret:bool;
-    dynamic "size" [] ~ret:qint64;
     dynamic "resize" [arg "sz" qint64] ~ret:bool;
     dynamic "permissions" [] ~ret:qFileDevice'Permissions;
     dynamic "setPermissions" [arg "permissions" qFileDevice'Permissions] ~ret:bool;
@@ -530,7 +478,6 @@ let () = with_class qFile [
     constructor "" [arg "name" qString];
     constructor "" [arg "parent" (optional qObject)];
     constructor "" [arg "name" qString;arg "parent" (optional qObject)];
-    dynamic "fileName" [] ~ret:qString;
     dynamic "setFileName" [arg "name" qString];
     static  "encodeName" [arg "fileName" qString] ~ret:qByteArray;
     static  "decodeName" [arg "localFileName" qByteArray] ~ret:qString;
@@ -551,16 +498,182 @@ let () = with_class qFile [
     static  "link" [arg "fileName" qString;arg "linkName" qString] ~ret:bool;
     dynamic "copy" [arg "newName" qString] ~ret:bool;
     static  "copy" [arg "fileName" qString;arg "newName" qString] ~ret:bool;
-    dynamic "open" [arg "mode" qIODevice'OpenMode] ~ret:bool;
     dynamic "open" [arg "fd" int;arg "mode" qIODevice'OpenMode;arg "handleFlags" qFileDevice'FileHandleFlags] ~ret:bool;
-    dynamic "size" [] ~ret:qint64;
-    dynamic "resize" [arg "sz" qint64] ~ret:bool;
     static  "resize" [arg "fileName" qString;arg "sz" qint64] ~ret:bool;
-    dynamic "permissions" [] ~ret:qFileDevice'Permissions;
     static  "permissions" [arg "fileName" qString] ~ret:qFileDevice'Permissions;
-    dynamic "setPermissions" [arg "permissions" qFileDevice'Permissions] ~ret:bool;
     static  "setPermissions" [arg "fileName" qString;arg "permissions" qFileDevice'Permissions] ~ret:bool;
   ]
+
+let () = with_class qByteArray [
+    constructor "" [];
+    constructor "" [arg "data" pchar;arg "size" int];
+    (*constructor "" [arg "size" int;arg "ch" pchar];
+    constructor "" [arg "other" qByteArray];*)
+    (*dynamic "operator=" [arg "other" qByteArray] ~ret:qByteArray;*)
+    (*dynamic "operator=" [arg "str" pchar] ~ret:qByteArray;*)
+    (*constructor "" [arg "other" qByteArray];*)
+    (*dynamic "operator=" [arg "other" qByteArray] ~ret:qByteArray;*)
+    (*dynamic "swap" [arg "other" qByteArray];
+    dynamic "size" [] ~ret:int;
+    dynamic "isEmpty" [] ~ret:bool;
+    dynamic "resize" [arg "size" int];
+    dynamic "fill" [arg "ch" pchar;arg "size" int] ~ret:qByteArray;
+    dynamic "capacity" [] ~ret:int;
+    dynamic "reserve" [arg "size" int];
+    dynamic "squeeze" [];*)
+    dynamic "data" [] ~ret:pchar;
+    (*dynamic "data" [] ~ret:pchar;
+    dynamic "constData" [] ~ret:pchar;
+    dynamic "clear" [];
+    dynamic "at" [arg "i" int] ~ret:pchar;*)
+    (*dynamic "operator[]" [arg "i" int] ~ret:pchar;*)
+    (*dynamic "operator[]" [arg "i" uint] ~ret:pchar;*)
+    (*dynamic "operator[]" [arg "i" int] ~ret:qByteRef;*)
+    (*dynamic "operator[]" [arg "i" uint] ~ret:qByteRef;*)
+    (*dynamic "indexOf" [arg "ch" pchar;arg "from" int] ~ret:int;
+    dynamic "indexOf" [arg "str" pchar;arg "from" int] ~ret:int;
+    dynamic "indexOf" [arg "ba" qByteArray;arg "from" int] ~ret:int;
+    dynamic "lastIndexOf" [arg "ch" pchar;arg "from" int] ~ret:int;
+    dynamic "lastIndexOf" [arg "str" pchar;arg "from" int] ~ret:int;
+    dynamic "lastIndexOf" [arg "ba" qByteArray;arg "from" int] ~ret:int;
+    dynamic "contains" [arg "ch" pchar] ~ret:bool;
+    dynamic "contains" [arg "str" pchar] ~ret:bool;
+    dynamic "contains" [arg "ba" qByteArray] ~ret:bool;
+    dynamic "count" [arg "ch" pchar] ~ret:int;
+    dynamic "count" [arg "str" pchar] ~ret:int;
+    dynamic "count" [arg "ba" qByteArray] ~ret:int;
+    dynamic "left" [arg "len" int] ~ret:qByteArray;
+    dynamic "right" [arg "len" int] ~ret:qByteArray;
+    dynamic "mid" [arg "pos" int;arg "len" int] ~ret:qByteArray;
+    dynamic "startsWith" [arg "ba" qByteArray] ~ret:bool;
+    dynamic "startsWith" [arg "ch" pchar] ~ret:bool;
+    dynamic "startsWith" [arg "str" pchar] ~ret:bool;
+    dynamic "endsWith" [arg "ba" qByteArray] ~ret:bool;
+    dynamic "endsWith" [arg "ch" pchar] ~ret:bool;
+    dynamic "endsWith" [arg "str" pchar] ~ret:bool;
+    dynamic "truncate" [arg "pos" int];
+    dynamic "chop" [arg "n" int];
+    dynamic "toLower" [] ~ret:qByteArray;
+    dynamic "toUpper" [] ~ret:qByteArray;
+    dynamic "trimmed" [] ~ret:qByteArray;
+    dynamic "simplified" [] ~ret:qByteArray;
+    dynamic "leftJustified" [arg "width" int;arg "fill" pchar;arg "truncate" bool] ~ret:qByteArray;
+    dynamic "rightJustified" [arg "width" int;arg "fill" pchar;arg "truncate" bool] ~ret:qByteArray;
+    dynamic "prepend" [arg "ch" pchar] ~ret:qByteArray;
+    dynamic "prepend" [arg "count" int;arg "ch" pchar] ~ret:qByteArray;
+    dynamic "prepend" [arg "str" pchar] ~ret:qByteArray;
+    dynamic "prepend" [arg "str" pchar;arg "len" int] ~ret:qByteArray;
+    dynamic "prepend" [arg "ba" qByteArray] ~ret:qByteArray;
+    dynamic "append" [arg "ch" pchar] ~ret:qByteArray;
+    dynamic "append" [arg "count" int;arg "ch" pchar] ~ret:qByteArray;
+    dynamic "append" [arg "str" pchar] ~ret:qByteArray;
+    dynamic "append" [arg "str" pchar;arg "len" int] ~ret:qByteArray;
+    dynamic "append" [arg "ba" qByteArray] ~ret:qByteArray;
+    dynamic "insert" [arg "i" int;arg "ch" pchar] ~ret:qByteArray;
+    dynamic "insert" [arg "i" int;arg "count" int;arg "ch" pchar] ~ret:qByteArray;
+    dynamic "insert" [arg "i" int;arg "str" pchar] ~ret:qByteArray;
+    dynamic "insert" [arg "i" int;arg "str" pchar;arg "len" int] ~ret:qByteArray;
+    dynamic "insert" [arg "i" int;arg "ba" qByteArray] ~ret:qByteArray;
+    dynamic "remove" [arg "pos" int;arg "len" int] ~ret:qByteArray;
+    dynamic "replace" [arg "pos" int;arg "len" int;arg "after" pchar] ~ret:qByteArray;
+    dynamic "replace" [arg "pos" int;arg "len" int;arg "after" pchar;arg "alen" int] ~ret:qByteArray;
+    dynamic "replace" [arg "pos" int;arg "len" int;arg "after" qByteArray] ~ret:qByteArray;
+    dynamic "replace" [arg "before" pchar;arg "after" pchar] ~ret:qByteArray;
+    dynamic "replace" [arg "before" pchar;arg "after" qByteArray] ~ret:qByteArray;
+    dynamic "replace" [arg "before" pchar;arg "after" pchar] ~ret:qByteArray;
+    dynamic "replace" [arg "before" pchar;arg "bsize" int;arg "after" pchar;arg "asize" int] ~ret:qByteArray;
+    dynamic "replace" [arg "before" qByteArray;arg "after" qByteArray] ~ret:qByteArray;
+    dynamic "replace" [arg "before" qByteArray;arg "after" pchar] ~ret:qByteArray;
+    dynamic "replace" [arg "before" pchar;arg "after" qByteArray] ~ret:qByteArray;
+    dynamic "replace" [arg "before" pchar;arg "after" pchar] ~ret:qByteArray;*)
+    (*dynamic "operator+=" [arg "ch" pchar] ~ret:qByteArray;*)
+    (*dynamic "operator+=" [arg "str" pchar] ~ret:qByteArray;*)
+    (*dynamic "operator+=" [arg "ba" qByteArray] ~ret:qByteArray;*)
+    (*dynamic "split" [arg "sep" pchar] ~ret:qList<QByteArray>;*)
+    (*dynamic "repeated" [arg "times" int] ~ret:qByteArray;
+    dynamic "append" [arg "str" qString] ~ret:qByteArray;
+    dynamic "insert" [arg "i" int;arg "str" qString] ~ret:qByteArray;
+    dynamic "replace" [arg "before" qString;arg "after" pchar] ~ret:qByteArray;
+    dynamic "replace" [arg "before" pchar;arg "after" qString] ~ret:qByteArray;
+    dynamic "replace" [arg "before" qString;arg "after" qByteArray] ~ret:qByteArray;*)
+    (*dynamic "operator+=" [arg "str" qString] ~ret:qByteArray;*)
+    (*dynamic "indexOf" [arg "str" qString;arg "from" int] ~ret:int;
+    dynamic "lastIndexOf" [arg "str" qString;arg "from" int] ~ret:int;*)
+    (*dynamic "operator==" [arg "str" qString] ~ret:bool;*)
+    (*dynamic "operator!=" [arg "str" qString] ~ret:bool;*)
+    (*dynamic "operator<" [arg "str" qString] ~ret:bool;*)
+    (*dynamic "operator>" [arg "str" qString] ~ret:bool;*)
+    (*dynamic "operator<=" [arg "str" qString] ~ret:bool;*)
+    (*dynamic "operator>=" [arg "str" qString] ~ret:bool;*)
+    (*dynamic "toShort" [arg "ok" bool;arg "base" int] ~ret:short;
+    dynamic "toUShort" [arg "ok" bool;arg "base" int] ~ret:ushort;
+    dynamic "toInt" [arg "ok" bool;arg "base" int] ~ret:int;
+    dynamic "toUInt" [arg "ok" bool;arg "base" int] ~ret:uint;
+    dynamic "toLong" [arg "ok" bool;arg "base" int] ~ret:long;
+    dynamic "toULong" [arg "ok" bool;arg "base" int] ~ret:ulong;
+    dynamic "toLongLong" [arg "ok" bool;arg "base" int] ~ret:qlonglong;
+    dynamic "toULongLong" [arg "ok" bool;arg "base" int] ~ret:qulonglong;
+    dynamic "toFloat" [arg "ok" bool] ~ret:float;
+    dynamic "toDouble" [arg "ok" bool] ~ret:double;
+    dynamic "toBase64" [arg "options" base64Options] ~ret:qByteArray;
+    dynamic "toBase64" [] ~ret:qByteArray;
+    dynamic "toHex" [] ~ret:qByteArray;
+    dynamic "toHex" [arg "separator" pchar] ~ret:qByteArray;
+    dynamic "toPercentEncoding" [arg "exclude" qByteArray;arg "include" qByteArray;arg "percent" pchar] ~ret:qByteArray;
+    dynamic "setNum" [arg "n" short;arg "base" int] ~ret:qByteArray;
+    dynamic "setNum" [arg "n" ushort;arg "base" int] ~ret:qByteArray;
+    dynamic "setNum" [arg "n" int;arg "base" int] ~ret:qByteArray;
+    dynamic "setNum" [arg "n" uint;arg "base" int] ~ret:qByteArray;
+    dynamic "setNum" [arg "n" qlonglong;arg "base" int] ~ret:qByteArray;
+    dynamic "setNum" [arg "n" qulonglong;arg "base" int] ~ret:qByteArray;
+    dynamic "setNum" [arg "n" float;arg "f" pchar;arg "prec" int] ~ret:qByteArray;
+    dynamic "setNum" [arg "n" double;arg "f" pchar;arg "prec" int] ~ret:qByteArray;
+    dynamic "setRawData" [arg "data" pchar;arg "size" uint] ~ret:qByteArray;
+    static  "number" [arg "n" int;arg "base" int] ~ret:qByteArray;
+    static  "number" [arg "n" uint;arg "base" int] ~ret:qByteArray;
+    static  "number" [arg "n" qlonglong;arg "base" int] ~ret:qByteArray;
+    static  "number" [arg "n" qulonglong;arg "base" int] ~ret:qByteArray;
+    static  "number" [arg "n" double;arg "f" pchar;arg "prec" int] ~ret:qByteArray;
+    static  "fromRawData" [arg "data" pchar;arg "size" int] ~ret:qByteArray;
+    static  "fromBase64" [arg "arg0" qByteArray &base64;arg "options" base64Options] ~ret:qByteArray;
+    static  "fromBase64" [arg "arg0" qByteArray &base64] ~ret:qByteArray;
+    static  "fromHex" [arg "hexEncoded" qByteArray] ~ret:qByteArray;
+    static  "fromPercentEncoding" [arg "input" qByteArray;arg "percent" pchar] ~ret:qByteArray;
+    static  "fromCFData" [arg "data" cFDataRef] ~ret:qByteArray;
+    static  "fromRawCFData" [arg "data" cFDataRef] ~ret:qByteArray;
+    dynamic "toCFData" [] ~ret:cFDataRef;
+    dynamic "toRawCFData" [] ~ret:cFDataRef;
+    static  "fromNSData" [arg "data" nSData] ~ret:qByteArray;
+    static  "fromRawNSData" [arg "data" nSData] ~ret:qByteArray;
+    dynamic "toNSData" [] ~ret:nSData;
+    dynamic "toRawNSData" [] ~ret:nSData;
+    dynamic "begin" [] ~ret:iterator;
+    dynamic "begin" [] ~ret:const_iterator;
+    dynamic "cbegin" [] ~ret:const_iterator;
+    dynamic "constBegin" [] ~ret:const_iterator;
+    dynamic "end" [] ~ret:iterator;
+    dynamic "end" [] ~ret:const_iterator;
+    dynamic "cend" [] ~ret:const_iterator;
+    dynamic "constEnd" [] ~ret:const_iterator;
+    dynamic "rbegin" [] ~ret:reverse_iterator;
+    dynamic "rend" [] ~ret:reverse_iterator;
+    dynamic "rbegin" [] ~ret:const_reverse_iterator;
+    dynamic "rend" [] ~ret:const_reverse_iterator;
+    dynamic "crbegin" [] ~ret:const_reverse_iterator;
+    dynamic "crend" [] ~ret:const_reverse_iterator;
+    dynamic "push_back" [arg "ch" pchar];
+    dynamic "push_back" [arg "str" pchar];
+    dynamic "push_back" [arg "other" qByteArray];
+    dynamic "push_front" [arg "ch" pchar];
+    dynamic "push_front" [arg "str" pchar];
+    dynamic "push_front" [arg "other" qByteArray];
+    static  "fromStdString" [arg "str" std'string] ~ret:qByteArray;
+    dynamic "toStdString" [] ~ret:std'string;
+    dynamic "count" [] ~ret:int;
+    dynamic "length" [] ~ret:int;
+    dynamic "isNull" [] ~ret:bool;*)
+  ]
+
 (*let () = with_class qObject [
     constructor "" [arg "parent" (optional qObject)];
     dynamic "event" [arg "e" qEvent] ~ret:bool;
@@ -1210,177 +1323,6 @@ let () = with_class qVersionNumber [
   ]
 let () = with_class qXmlStreamEntityResolver [
     dynamic "resolveUndeclaredEntity" [arg "name" qString] ~ret:qString;
-  ]
-let () = with_class qByteArray [
-    constructor "" [];
-    constructor "" [arg "data" pchar;arg "size" int];
-    constructor "" [arg "size" int;arg "ch" pchar];
-    constructor "" [arg "other" qByteArray];
-    (*dynamic "operator=" [arg "other" qByteArray] ~ret:qByteArray;*)
-    (*dynamic "operator=" [arg "str" pchar] ~ret:qByteArray;*)
-    constructor "" [arg "other" qByteArray];
-    (*dynamic "operator=" [arg "other" qByteArray] ~ret:qByteArray;*)
-    dynamic "swap" [arg "other" qByteArray];
-    dynamic "size" [] ~ret:int;
-    dynamic "isEmpty" [] ~ret:bool;
-    dynamic "resize" [arg "size" int];
-    dynamic "fill" [arg "ch" pchar;arg "size" int] ~ret:qByteArray;
-    dynamic "capacity" [] ~ret:int;
-    dynamic "reserve" [arg "size" int];
-    dynamic "squeeze" [];
-    constructor "" [];
-    constructor "" [];
-    dynamic "data" [] ~ret:pchar;
-    dynamic "data" [] ~ret:pchar;
-    dynamic "constData" [] ~ret:pchar;
-    dynamic "clear" [];
-    dynamic "at" [arg "i" int] ~ret:pchar;
-    (*dynamic "operator[]" [arg "i" int] ~ret:pchar;*)
-    (*dynamic "operator[]" [arg "i" uint] ~ret:pchar;*)
-    (*dynamic "operator[]" [arg "i" int] ~ret:qByteRef;*)
-    (*dynamic "operator[]" [arg "i" uint] ~ret:qByteRef;*)
-    dynamic "indexOf" [arg "ch" pchar;arg "from" int] ~ret:int;
-    dynamic "indexOf" [arg "str" pchar;arg "from" int] ~ret:int;
-    dynamic "indexOf" [arg "ba" qByteArray;arg "from" int] ~ret:int;
-    dynamic "lastIndexOf" [arg "ch" pchar;arg "from" int] ~ret:int;
-    dynamic "lastIndexOf" [arg "str" pchar;arg "from" int] ~ret:int;
-    dynamic "lastIndexOf" [arg "ba" qByteArray;arg "from" int] ~ret:int;
-    dynamic "contains" [arg "ch" pchar] ~ret:bool;
-    dynamic "contains" [arg "str" pchar] ~ret:bool;
-    dynamic "contains" [arg "ba" qByteArray] ~ret:bool;
-    dynamic "count" [arg "ch" pchar] ~ret:int;
-    dynamic "count" [arg "str" pchar] ~ret:int;
-    dynamic "count" [arg "ba" qByteArray] ~ret:int;
-    dynamic "left" [arg "len" int] ~ret:qByteArray;
-    dynamic "right" [arg "len" int] ~ret:qByteArray;
-    dynamic "mid" [arg "pos" int;arg "len" int] ~ret:qByteArray;
-    dynamic "startsWith" [arg "ba" qByteArray] ~ret:bool;
-    dynamic "startsWith" [arg "ch" pchar] ~ret:bool;
-    dynamic "startsWith" [arg "str" pchar] ~ret:bool;
-    dynamic "endsWith" [arg "ba" qByteArray] ~ret:bool;
-    dynamic "endsWith" [arg "ch" pchar] ~ret:bool;
-    dynamic "endsWith" [arg "str" pchar] ~ret:bool;
-    dynamic "truncate" [arg "pos" int];
-    dynamic "chop" [arg "n" int];
-    dynamic "toLower" [] ~ret:qByteArray;
-    dynamic "toUpper" [] ~ret:qByteArray;
-    dynamic "trimmed" [] ~ret:qByteArray;
-    dynamic "simplified" [] ~ret:qByteArray;
-    dynamic "leftJustified" [arg "width" int;arg "fill" pchar;arg "truncate" bool] ~ret:qByteArray;
-    dynamic "rightJustified" [arg "width" int;arg "fill" pchar;arg "truncate" bool] ~ret:qByteArray;
-    dynamic "prepend" [arg "ch" pchar] ~ret:qByteArray;
-    dynamic "prepend" [arg "count" int;arg "ch" pchar] ~ret:qByteArray;
-    dynamic "prepend" [arg "str" pchar] ~ret:qByteArray;
-    dynamic "prepend" [arg "str" pchar;arg "len" int] ~ret:qByteArray;
-    dynamic "prepend" [arg "ba" qByteArray] ~ret:qByteArray;
-    dynamic "append" [arg "ch" pchar] ~ret:qByteArray;
-    dynamic "append" [arg "count" int;arg "ch" pchar] ~ret:qByteArray;
-    dynamic "append" [arg "str" pchar] ~ret:qByteArray;
-    dynamic "append" [arg "str" pchar;arg "len" int] ~ret:qByteArray;
-    dynamic "append" [arg "ba" qByteArray] ~ret:qByteArray;
-    dynamic "insert" [arg "i" int;arg "ch" pchar] ~ret:qByteArray;
-    dynamic "insert" [arg "i" int;arg "count" int;arg "ch" pchar] ~ret:qByteArray;
-    dynamic "insert" [arg "i" int;arg "str" pchar] ~ret:qByteArray;
-    dynamic "insert" [arg "i" int;arg "str" pchar;arg "len" int] ~ret:qByteArray;
-    dynamic "insert" [arg "i" int;arg "ba" qByteArray] ~ret:qByteArray;
-    dynamic "remove" [arg "pos" int;arg "len" int] ~ret:qByteArray;
-    dynamic "replace" [arg "pos" int;arg "len" int;arg "after" pchar] ~ret:qByteArray;
-    dynamic "replace" [arg "pos" int;arg "len" int;arg "after" pchar;arg "alen" int] ~ret:qByteArray;
-    dynamic "replace" [arg "pos" int;arg "len" int;arg "after" qByteArray] ~ret:qByteArray;
-    dynamic "replace" [arg "before" pchar;arg "after" pchar] ~ret:qByteArray;
-    dynamic "replace" [arg "before" pchar;arg "after" qByteArray] ~ret:qByteArray;
-    dynamic "replace" [arg "before" pchar;arg "after" pchar] ~ret:qByteArray;
-    dynamic "replace" [arg "before" pchar;arg "bsize" int;arg "after" pchar;arg "asize" int] ~ret:qByteArray;
-    dynamic "replace" [arg "before" qByteArray;arg "after" qByteArray] ~ret:qByteArray;
-    dynamic "replace" [arg "before" qByteArray;arg "after" pchar] ~ret:qByteArray;
-    dynamic "replace" [arg "before" pchar;arg "after" qByteArray] ~ret:qByteArray;
-    dynamic "replace" [arg "before" pchar;arg "after" pchar] ~ret:qByteArray;
-    (*dynamic "operator+=" [arg "ch" pchar] ~ret:qByteArray;*)
-    (*dynamic "operator+=" [arg "str" pchar] ~ret:qByteArray;*)
-    (*dynamic "operator+=" [arg "ba" qByteArray] ~ret:qByteArray;*)
-    (*dynamic "split" [arg "sep" pchar] ~ret:qList<QByteArray>;*)
-    dynamic "repeated" [arg "times" int] ~ret:qByteArray;
-    dynamic "append" [arg "str" qString] ~ret:qByteArray;
-    dynamic "insert" [arg "i" int;arg "str" qString] ~ret:qByteArray;
-    dynamic "replace" [arg "before" qString;arg "after" pchar] ~ret:qByteArray;
-    dynamic "replace" [arg "before" pchar;arg "after" qString] ~ret:qByteArray;
-    dynamic "replace" [arg "before" qString;arg "after" qByteArray] ~ret:qByteArray;
-    (*dynamic "operator+=" [arg "str" qString] ~ret:qByteArray;*)
-    dynamic "indexOf" [arg "str" qString;arg "from" int] ~ret:int;
-    dynamic "lastIndexOf" [arg "str" qString;arg "from" int] ~ret:int;
-    (*dynamic "operator==" [arg "str" qString] ~ret:bool;*)
-    (*dynamic "operator!=" [arg "str" qString] ~ret:bool;*)
-    (*dynamic "operator<" [arg "str" qString] ~ret:bool;*)
-    (*dynamic "operator>" [arg "str" qString] ~ret:bool;*)
-    (*dynamic "operator<=" [arg "str" qString] ~ret:bool;*)
-    (*dynamic "operator>=" [arg "str" qString] ~ret:bool;*)
-    dynamic "toShort" [arg "ok" bool;arg "base" int] ~ret:short;
-    dynamic "toUShort" [arg "ok" bool;arg "base" int] ~ret:ushort;
-    dynamic "toInt" [arg "ok" bool;arg "base" int] ~ret:int;
-    dynamic "toUInt" [arg "ok" bool;arg "base" int] ~ret:uint;
-    dynamic "toLong" [arg "ok" bool;arg "base" int] ~ret:long;
-    dynamic "toULong" [arg "ok" bool;arg "base" int] ~ret:ulong;
-    dynamic "toLongLong" [arg "ok" bool;arg "base" int] ~ret:qlonglong;
-    dynamic "toULongLong" [arg "ok" bool;arg "base" int] ~ret:qulonglong;
-    dynamic "toFloat" [arg "ok" bool] ~ret:float;
-    dynamic "toDouble" [arg "ok" bool] ~ret:double;
-    dynamic "toBase64" [arg "options" base64Options] ~ret:qByteArray;
-    dynamic "toBase64" [] ~ret:qByteArray;
-    dynamic "toHex" [] ~ret:qByteArray;
-    dynamic "toHex" [arg "separator" pchar] ~ret:qByteArray;
-    dynamic "toPercentEncoding" [arg "exclude" qByteArray;arg "include" qByteArray;arg "percent" pchar] ~ret:qByteArray;
-    dynamic "setNum" [arg "n" short;arg "base" int] ~ret:qByteArray;
-    dynamic "setNum" [arg "n" ushort;arg "base" int] ~ret:qByteArray;
-    dynamic "setNum" [arg "n" int;arg "base" int] ~ret:qByteArray;
-    dynamic "setNum" [arg "n" uint;arg "base" int] ~ret:qByteArray;
-    dynamic "setNum" [arg "n" qlonglong;arg "base" int] ~ret:qByteArray;
-    dynamic "setNum" [arg "n" qulonglong;arg "base" int] ~ret:qByteArray;
-    dynamic "setNum" [arg "n" float;arg "f" pchar;arg "prec" int] ~ret:qByteArray;
-    dynamic "setNum" [arg "n" double;arg "f" pchar;arg "prec" int] ~ret:qByteArray;
-    dynamic "setRawData" [arg "data" pchar;arg "size" uint] ~ret:qByteArray;
-    static  "number" [arg "n" int;arg "base" int] ~ret:qByteArray;
-    static  "number" [arg "n" uint;arg "base" int] ~ret:qByteArray;
-    static  "number" [arg "n" qlonglong;arg "base" int] ~ret:qByteArray;
-    static  "number" [arg "n" qulonglong;arg "base" int] ~ret:qByteArray;
-    static  "number" [arg "n" double;arg "f" pchar;arg "prec" int] ~ret:qByteArray;
-    static  "fromRawData" [arg "data" pchar;arg "size" int] ~ret:qByteArray;
-    static  "fromBase64" [arg "arg0" qByteArray &base64;arg "options" base64Options] ~ret:qByteArray;
-    static  "fromBase64" [arg "arg0" qByteArray &base64] ~ret:qByteArray;
-    static  "fromHex" [arg "hexEncoded" qByteArray] ~ret:qByteArray;
-    static  "fromPercentEncoding" [arg "input" qByteArray;arg "percent" pchar] ~ret:qByteArray;
-    static  "fromCFData" [arg "data" cFDataRef] ~ret:qByteArray;
-    static  "fromRawCFData" [arg "data" cFDataRef] ~ret:qByteArray;
-    dynamic "toCFData" [] ~ret:cFDataRef;
-    dynamic "toRawCFData" [] ~ret:cFDataRef;
-    static  "fromNSData" [arg "data" nSData] ~ret:qByteArray;
-    static  "fromRawNSData" [arg "data" nSData] ~ret:qByteArray;
-    dynamic "toNSData" [] ~ret:nSData;
-    dynamic "toRawNSData" [] ~ret:nSData;
-    dynamic "begin" [] ~ret:iterator;
-    dynamic "begin" [] ~ret:const_iterator;
-    dynamic "cbegin" [] ~ret:const_iterator;
-    dynamic "constBegin" [] ~ret:const_iterator;
-    dynamic "end" [] ~ret:iterator;
-    dynamic "end" [] ~ret:const_iterator;
-    dynamic "cend" [] ~ret:const_iterator;
-    dynamic "constEnd" [] ~ret:const_iterator;
-    dynamic "rbegin" [] ~ret:reverse_iterator;
-    dynamic "rend" [] ~ret:reverse_iterator;
-    dynamic "rbegin" [] ~ret:const_reverse_iterator;
-    dynamic "rend" [] ~ret:const_reverse_iterator;
-    dynamic "crbegin" [] ~ret:const_reverse_iterator;
-    dynamic "crend" [] ~ret:const_reverse_iterator;
-    dynamic "push_back" [arg "ch" pchar];
-    dynamic "push_back" [arg "str" pchar];
-    dynamic "push_back" [arg "other" qByteArray];
-    dynamic "push_front" [arg "ch" pchar];
-    dynamic "push_front" [arg "str" pchar];
-    dynamic "push_front" [arg "other" qByteArray];
-    static  "fromStdString" [arg "str" std'string] ~ret:qByteArray;
-    dynamic "toStdString" [] ~ret:std'string;
-    dynamic "count" [] ~ret:int;
-    dynamic "length" [] ~ret:int;
-    dynamic "isNull" [] ~ret:bool;
   ]
 let () = with_class qPointer [
     constructor "" [];

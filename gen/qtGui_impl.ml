@@ -48,7 +48,6 @@ let () = with_class qGuiApplication [
     static  "quitOnLastWindowClosed" [] ~ret:bool;
     (*static  "applicationState" [] ~ret:qt'ApplicationState;*)
     static  "exec" [] ~ret:int;
-    dynamic "notify" [arg "object" qObject;arg "event" qEvent] ~ret:bool;
     dynamic "isSessionRestored" [] ~ret:bool;
     dynamic "sessionId" [] ~ret:qString;
     dynamic "sessionKey" [] ~ret:qString;
