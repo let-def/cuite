@@ -2,6 +2,8 @@ open Cuite
 
 let version = "0.0"
 
+let resource name = ("./" ^ name)
+
 let about this =
   QMessageBox.about this "About OQamlDebug"
     (Printf.sprintf
@@ -24,7 +26,7 @@ let help =
     let help_p = new'QTextBrowser None in
     QTextBrowser.setReadOnly help_p true;
     QTextBrowser.setWindowTitle help_p "Help";
-    let file = new'QFile'from'QString ":/readme.html" in
+    let file = new'QFile'from'QString (resource "readme.html") in
     if QFile.open_'from'OpenMode file (QFlags.singleton qIODevice'OpenMode `ReadOnly) then
       QTextBrowser.setHtml help_p (QByteArray.data (QFile.readAll file));
     Qt.delete file;
@@ -93,7 +95,7 @@ let create_dock_windows this
   QTreeView.setModel filebrowser filebrowser_model_p;
   QDockWidget.setObjectName filebrowser_dock "FileBrowser";
   QDockWidget.setWidget filebrowser_dock filebrowser;
-  QDockWidget.setTitleBarWidget filebrowser_dock (new'QLabel None QFlags.empty);
+  (*QDockWidget.setTitleBarWidget filebrowser_dock (new'QLabel None QFlags.empty);*)
   Qt.connect filebrowser_model_p QFileSystemModel.signal'rootPathChanged
     fileBrowserPathChanged;
   (*QString dir = Options::get_opt_str( "SOURCE_DIRECTORY", QDir::current().path() );*)
@@ -110,7 +112,7 @@ let create_dock_windows this
     this `BottomDockWidgetArea filebrowser_dock;
   begin
     let action = QDockWidget.toggleViewAction filebrowser_dock in
-    QAction.setIcon action (new'QIcon'from'QString ":/images/open.png");
+    QAction.setIcon action (new'QIcon'from'QString (resource "images/open.png"));
     QMenu.addAction'from'QAction windowMenu action;
     QToolBar.addAction'from'QAction mainToolBar action;
   end;
@@ -124,7 +126,7 @@ let create_dock_windows this
   QMainWindow.addDockWidget this `BottomDockWidgetArea ocamlrun_dock;
   begin
     let action = QDockWidget.toggleViewAction ocamlrun_dock in
-    QAction.setIcon action (new'QIcon'from'QString ":/images/terminal.png");
+    QAction.setIcon action (new'QIcon'from'QString (resource "images/terminal.png"));
     QMenu.addAction'from'QAction windowMenu action;
     QToolBar.addAction'from'QAction debugWindowToolBar action;
   end;
@@ -142,7 +144,7 @@ let create_dock_windows this
   QDockWidget.setWidget ocamldebug_dock ocamldebug;
   begin
     let action = QDockWidget.toggleViewAction ocamldebug_dock in
-    QAction.setIcon action (new'QIcon'from'QString ":/images/oqamldebug.png");
+    QAction.setIcon action (new'QIcon'from'QString (resource "images/oqamldebug.png"));
     QMenu.addAction'from'QAction windowMenu action;
     QToolBar.addAction'from'QAction debugWindowToolBar action;
   end;
@@ -169,7 +171,7 @@ let create_dock_windows this
   QMainWindow.addDockWidget this `BottomDockWidgetArea ocamlbreakpoints_dock;
   begin
     let action = QDockWidget.toggleViewAction ocamlbreakpoints_dock in
-    QAction.setIcon action (new'QIcon'from'QString ":/images/breakpoints.png");
+    QAction.setIcon action (new'QIcon'from'QString (resource "images/breakpoints.png"));
     QMenu.addAction'from'QAction windowMenu action;
     QToolBar.addAction'from'QAction debugWindowToolBar action;
   end;
@@ -187,7 +189,7 @@ let create_dock_windows this
   QMainWindow.addDockWidget this `BottomDockWidgetArea ocamlstack_dock;
   begin
     let action = QDockWidget.toggleViewAction ocamlstack_dock in
-    QAction.setIcon action (new'QIcon'from'QString ":/images/callstack.png");
+    QAction.setIcon action (new'QIcon'from'QString (resource "images/callstack.png"));
     QMenu.addAction'from'QAction windowMenu action;
     QToolBar.addAction'from'QAction debugWindowToolBar action;
   end
@@ -250,7 +252,7 @@ let create_actions_and_menus app this mdiArea
       ~fn:setOCamlDebugInitScript
   in
   let createWatchWindowAct =
-    action "&Create Watch Window..." ~icon:":/images/watch.png"
+    action "&Create Watch Window..." ~icon:(resource "images/watch.png")
       ~key:"Ctrl+W"
       ~tip:"Create a variable watch window"
       ~fn:createWatchWindow
@@ -262,7 +264,7 @@ let create_actions_and_menus app this mdiArea
       ~slot:(app,QApplication.slot'closeAllWindows)
   in
   let copyAct =
-    action "&Copy" ~icon:":/images/copy.png"
+    action "&Copy" ~icon:(resource "images/copy.png")
       ~tip:"Copy the current selection's contents to the clipboard"
       ~shortcut:`Copy
       ~fn:copy
@@ -316,68 +318,68 @@ let create_actions_and_menus app this mdiArea
       ~slot:(app,QApplication.slot'aboutQt)
   in
   let debuggerStartAct =
-    action "&Start" ~icon:":/images/debugger.png"
+    action "&Start" ~icon:(resource "images/debugger.png")
       ~key:"Ctrl+Shift+S"
       ~checkable:true
       ~tip:"Start/Stop the ocamldebug process"
       ~fn:debuggerStart
   in
   let debugReverseAct =
-    action "&Reverse" ~icon:":/images/debug-reverse.png"
+    action "&Reverse" ~icon:(resource "images/debug-reverse.png")
       ~tip:"Reverse execution of the application"
       ~key:"Ctrl+E"
       ~fn:debugReverse
   in
   let debugRunAct =
-    action "&Run" ~icon:":/images/debug-run.png"
+    action "&Run" ~icon:(resource "images/debug-run.png")
     ~key:"Ctrl+R"
     ~tip:"Execution of the application"
     ~fn:debugRun
   in
   let debugNextAct =
-    action "&Next" ~icon:":/images/debug-next.png"
+    action "&Next" ~icon:(resource "images/debug-next.png")
       ~key:"Ctrl+N"
       ~tip:"Step over (Mouse Wheel with Ctrl)"
       ~fn:debugNext
   in
   let debugPreviousAct =
-    action "&Previous" ~icon:":/images/debug-previous.png"
+    action "&Previous" ~icon:(resource "images/debug-previous.png")
     ~key:"Ctrl+P"
     ~tip:"Back step over (Mouse Wheel with Ctrl)"
     ~fn:debugPrevious
   in
   let debugFinishAct =
-    action "&Finish" ~icon:":/images/debug-finish.png"
+    action "&Finish" ~icon:(resource "images/debug-finish.png")
     ~tip:"Run until function exit"
       ~key:"Ctrl+F"
     ~fn:debugFinish
   in
   let debugBackStepAct =
-    action "&Back Step" ~icon:":/images/debug-backstep.png"
+    action "&Back Step" ~icon:(resource "images/debug-backstep.png")
     ~tip:"Step into (Mouse Wheel with Shift)"
     ~key:"Ctrl+B"
     ~fn:debugBackStep
   in
   let debugStepAct =
-    action "&Step" ~icon:":/images/debug-step.png"
+    action "&Step" ~icon:(resource "images/debug-step.png")
     ~key:"Ctrl+S"
     ~tip:"Back step into (Mouse Wheel with Shift)"
     ~fn:debugStep
   in
   let debugInterruptAct =
-    action "&Interrupt" ~icon:":/images/debug-interrupt.png"
+    action "&Interrupt" ~icon:(resource "images/debug-interrupt.png")
     ~key:"Ctrl+C"
     ~tip:"Interrupt the execution of the application"
     ~fn:debugInterrupt
   in
   let debugDownAct =
-    action "&Down" ~icon:":/images/debug-down.png"
+    action "&Down" ~icon:(resource "images/debug-down.png")
     ~key:"Ctrl+D"
     ~tip:"Call stack down (Mouse Wheel with Shift+Ctrl)"
     ~fn:debugDown
   in
   let debugUpAct =
-    action "&Up" ~icon:":/images/debug-up.png"
+    action "&Up" ~icon:(resource "images/debug-up.png")
       ~key:"Ctrl+U"
       ~tip:"Call stack up (Mouse Wheel with Shift+Ctrl)"
     ~fn:debugUp
@@ -466,8 +468,11 @@ let write_settings () = () (* TODO *)
 
 let mainwindow app =
   let window = new'QMainWindow None QFlags.empty in
+  QMainWindow.setWindowTitle window "OQamlDebug";
+  QMainWindow.setUnifiedTitleAndToolBarOnMac window true;
+    ocamlDebugFocus();
   QMainWindow.setWindowIcon window
-    (new'QIcon'from'QString ":/images/oqamldebug.png");
+    (new'QIcon'from'QString (resource "images/oqamldebug.png"));
   QMainWindow.setDockNestingEnabled window true;
   let mdiarea = new'QMdiArea None in
   QMdiArea.setHorizontalScrollBarPolicy mdiarea `ScrollBarAsNeeded;
@@ -485,8 +490,8 @@ let mainwindow app =
     ~createWatchWindow:ignore
     ~updateWindowMenu:ignore
     ~copy:ignore
-    ~about:ignore
-    ~help:ignore
+    ~about:(fun _ -> about window)
+    ~help:(fun _ -> help ())
     ~debuggerStart:ignore
     ~debugRun:ignore
     ~debugNext:ignore
@@ -517,11 +522,7 @@ let () =
   *)
 
   (*
-    createDockWindows();
     readSettings();
-
-    setWindowTitle( "OQamlDebug" );
-    setUnifiedTitleAndToolBarOnMac( true );
     ocamlDebugFocus();
 }
 
@@ -712,78 +713,6 @@ void MainWindow::copy()
 {
     if ( activeMdiChild() )
         activeMdiChild()->copy();
-}
-
-void MainWindow::help()
-{
-    if ( help_p == NULL )
-    {
-        QFile h ( ":/readme.html" );
-        if ( h.open(QFile::ReadOnly) )
-        {
-            help_p = new QTextBrowser();
-            help_p->setReadOnly(true);
-            help_p->setWindowTitle("Help");
-            help_p->setHtml( h.readAll() );
-        }
-    }
-    help_p->show();
-}
-
-void MainWindow::updateWindowMenu()
-{
-    windowMenu->clear();
-    windowMenu->addAction( closeAct );
-    windowMenu->addAction( closeAllAct );
-    windowMenu->addSeparator();
-    windowMenu->addAction( tileAct );
-    windowMenu->addAction( cascadeAct );
-    windowMenu->addSeparator();
-    windowMenu->addAction( nextAct );
-    windowMenu->addAction( previousAct );
-
-    if ( ocamldebug_dock )
-    {
-        windowMenu->addSeparator();
-        windowMenu->addAction( ocamldebug_dock->toggleViewAction() );
-    }
-    if ( ocamlbreakpoints_dock )
-        windowMenu->addAction( ocamlbreakpoints_dock->toggleViewAction() );
-    if ( ocamlstack_dock )
-        windowMenu->addAction( ocamlstack_dock->toggleViewAction() );
-    if ( ocamlrun_dock )
-        windowMenu->addAction( ocamlrun_dock->toggleViewAction() );
-
-    windowMenu->addAction( separatorAct );
-    QList<QMdiSubWindow *> windows = mdiArea->subWindowList();
-    separatorAct->setVisible( !windows.isEmpty() );
-
-    for ( int i = 0; i < windows.size(); ++i )
-    {
-        QWidget *widget_p = windows.at( i )->widget();
-        OCamlSource *child = qobject_cast<OCamlSource *>( widget_p );
-
-        QString text;
-        if (child )
-        {
-            if ( i < 9 )
-            {
-                text = "&%1 %2".arg( i + 1 )
-                    .arg( child->userFriendlyCurrentFile() );
-            }
-            else
-            {
-                text = "%1 %2".arg( i + 1 )
-                    .arg( child->userFriendlyCurrentFile() );
-            }
-
-            QAction *action  = windowMenu->addAction( text );
-            action->setCheckable( true );
-            action ->setChecked( widget_p == activeMdiChild() );
-            connect( action, SIGNAL( triggered() ), windowMapper, SLOT( map() ) );
-            windowMapper->setMapping( action, windows.at( i ) );
-        }
-    }
 }
 
 OCamlSource *MainWindow::createMdiChild()

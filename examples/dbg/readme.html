@@ -1,0 +1,94 @@
+<HTML>
+    <HEAD>
+    </HEAD>
+    <BODY>
+        <H1>OQamlDebug</H1>
+
+        <H2>Demonstration Video</H2>
+
+        <iframe width="640" height="480" src="http://www.youtube.com/embed/y70u5fHym_s" frameborder="0" allowfullscreen></iframe>
+
+        <H2>Features</H2>
+
+        <UL>
+            <LI> Emulates only the emacs mode from OCamlDebug, does not need any hooks into ocaml core. </LI>
+            <LI> Full Qt application: can be compiled on Windows, MacOS and Linux </LI>
+            <LI> Save/Restore of window position, and debug parameter. </LI>
+            <LI> Detection of the modification of the debugged application or sources. (automatically reloaded when modifed) </LI>
+            <LI> Syntax highlighting of ocamldebug command and ocaml sources. </LI>
+            <LI> Persistent command line history </LI>
+            <LI> Mouse support: middle click on a symbol in the code to print it, and mouse wheel to step/backstep through the code. </LI>
+            <LI> Setting breakpoints directly into the source code and highlighting it into the source code.  </LI>
+            <LI> Expression watch window. </LI>
+            <LI> Breakpoint management window. </LI>
+            <LI> Call stack window. </LI>
+            <LI> Application output is displayed in a separate window. </LI>
+            <LI> Execution control command (step, run, ...) from the graphical interface are hidden. </LI>
+            <LI> ocamldebug command line window displays the execution timestamp for each command. </LI>
+            <LI> Source window has now an incremental search dialog. </LI>
+        </UL>
+
+        <H2>Download</H2>
+
+        <H3>Sources</H3>
+        <TABLE border="0">
+            <TR><TH>Version 0.9.5:</TH> <TD><a href="http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.5.tar.gz">http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.5.tar.gz</a></TD></TR>
+            <TR><TH>Version 0.9.4:</TH> <TD><a href="http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.4.tar.gz">http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.4.tar.gz</a></TD></TR>
+            <TR><TH>Version 0.9.3:</TH> <TD><a href="http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.3.tar.gz">http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.3.tar.gz</a></TD></TR>
+            <TR><TH>Version 0.9.2:</TH> <TD><a href="http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.2.tar.gz">http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.2.tar.gz</a></TD></TR>
+            <TR><TH>Version 0.9.1:</TH> <TD><a href="http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.1.tar.gz">http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.1.tar.gz</a></TD></TR>
+            <TR><TH>Version 0.9.0:</TH> <TD><a href="http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.0.tar.gz">http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.9.0.tar.gz</a></TD></TR>
+            <TR><TH>Version 0.0.0:</TH> <TD><a href="http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.0.0.tar.gz">http://oqamldebug.forge.ocamlcore.org/oqamldebug-0.0.0.tar.gz</a></TD></TR>
+        </TABLE>
+        <H2>Compiling</H2>
+
+        First install Qt 4.7 or above.
+
+        then:
+        <BLOCKQUOTE>
+<PRE>
+$ qmake
+$ make
+</PRE>
+        </BLOCKQUOTE>
+
+        <H2>Usage</H2>
+
+        <BLOCKQUOTE>
+<PRE>
+$ oqamldebug "ocamldebug arguments"
+</PRE>
+        </BLOCKQUOTE>
+
+        if no arguments are provided, OQamlDebug starts with the arguments of the previous session.
+
+        <H3>Using it with an IDE</H3>
+
+        OQamlDebug reloads automatically the ocaml sources as soon as they are modified.
+        If the debugged application is modified, the debugger is automatically reinitialized.
+        So it is not necessary to close OQamlDebug when editing a project.
+
+        <H3>Mouse</H3>
+
+        <H4>Source Window</H4>
+        In the source window, a click with the middle button displays the contains of a variable. 
+        The context menu permits to set a breakpoint to the selected location.
+
+        <H4>Debugger Window</H4>
+        In the debugger window, the wheel mouse can be use for debugging purpose:
+        <DL>
+            <DT>Shift+Wheel:</DT><DD> performs a single step or a single backstep.</DD>
+            <DT>Control+Wheel:</DT><DD> performs a step over (next command) or a step over backwards (previous command).</DD>
+            <DT>Control+Shift+Wheel:</DT><DD> navigate through the call stack.</DD>
+        </DL>
+
+        <H2>Limitation</H2>
+
+        <H3>Ctrl-C on Windows</H3>
+        Ctrl-C on Unix is implemented by sending a SIGINT to a process. This mechanism does not work on Windows. 
+        This explains why interrupting an application does not work on Windows.
+        <BR>
+        For a support of this, ocamldebug has to be extended.
+
+    </BODY>
+</HTML>
