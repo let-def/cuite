@@ -984,7 +984,7 @@ let () = with_class qLayout [
   ]
 
 let () = with_class qDataWidgetMapper [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "setModel" [arg "model" qAbstractItemModel];
     dynamic "model" [] ~ret:qAbstractItemModel;
     dynamic "setItemDelegate" [arg "delegate" qAbstractItemDelegate];
@@ -1014,7 +1014,7 @@ let () = with_class qDataWidgetMapper [
     dynamic "currentIndexChanged" [arg "index" int];
   ]
 let () = with_class qAction [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     constructor "" [arg "text" qString;arg "parent" qObject];
     constructor "" [arg "icon" qIcon;arg "text" qString;arg "parent" qObject];
     dynamic "setActionGroup" [arg "group" qActionGroup];
@@ -1088,7 +1088,7 @@ let () = with_class qAction [
     signal "triggered" [arg "" bool];
   ]
 let () = with_class qActionGroup [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "addAction" [arg "action" qAction] ~ret:qAction;
     dynamic "addAction" [arg "text" qString] ~ret:qAction;
     dynamic "addAction" [arg "icon" qIcon;arg "text" qString] ~ret:qAction;
@@ -1106,7 +1106,7 @@ let () = with_class qActionGroup [
     dynamic "hovered" [arg "action" qAction];
   ]
 let () = with_class qGesture [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "gestureType" [] ~ret:qt'GestureType;
     dynamic "state" [] ~ret:qt'GestureState;
     dynamic "hotSpot" [] ~ret:qPointF;
@@ -1135,7 +1135,7 @@ let () = with_class qShortcut [
     dynamic "activatedAmbiguously" [];
   ]
 let () = with_class qCompleter [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     constructor "" [arg "model" qAbstractItemModel;arg "parent" qObject];
     constructor "" [arg "list" qStringList;arg "parent" qObject];
     dynamic "setWidget" [arg "widget" qWidget];
@@ -1177,7 +1177,7 @@ let () = with_class qCompleter [
     dynamic "highlighted" [arg "index" qModelIndex];
   ]
 let () = with_class qSystemTrayIcon [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     constructor "" [arg "icon" qIcon;arg "parent" qObject];
     dynamic "setContextMenu" [arg "menu" qMenu];
     dynamic "contextMenu" [] ~ret:qMenu;
@@ -1198,7 +1198,7 @@ let () = with_class qSystemTrayIcon [
     dynamic "messageClicked" [];
   ]
 let () = with_class qButtonGroup [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "setExclusive" [arg "arg0" bool];
     dynamic "exclusive" [] ~ret:bool;
     dynamic "addButton" [arg "button" qAbstractButton;arg "id" int];
@@ -1227,14 +1227,14 @@ let () = with_class qButtonGroup [
     signal "buttonToggled" [arg "" qAbstractButton;arg "" bool];
   ]
 let () = with_class qWidgetAction [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "setDefaultWidget" [arg "widget" qWidget];
     dynamic "defaultWidget" [] ~ret:(optional qWidget);
     dynamic "requestWidget" [arg "parent" qWidget] ~ret:(optional qWidget);
     dynamic "releaseWidget" [arg "widget" qWidget];
   ]
 let () = with_class qGraphicsScale [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "origin" [] ~ret:qVector3D;
     dynamic "setOrigin" [arg "point" qVector3D];
     dynamic "xScale" [] ~ret:qreal;
@@ -1251,7 +1251,7 @@ let () = with_class qGraphicsScale [
     dynamic "scaleChanged" [];
   ]
 let () = with_class qGraphicsRotation [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "origin" [] ~ret:qVector3D;
     dynamic "setOrigin" [arg "point" qVector3D];
     dynamic "angle" [] ~ret:qreal;
@@ -1265,7 +1265,7 @@ let () = with_class qGraphicsRotation [
     dynamic "axisChanged" [];
   ]
 let () = with_class qGraphicsColorizeEffect [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "color" [] ~ret:qColor;
     dynamic "strength" [] ~ret:qreal;
     dynamic "setColor" [arg "c" qColor];
@@ -1274,7 +1274,7 @@ let () = with_class qGraphicsColorizeEffect [
     dynamic "strengthChanged" [arg "strength" qreal];
   ]
 let () = with_class qGraphicsBlurEffect [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "boundingRectFor" [arg "rect" qRectF] ~ret:qRectF;
     dynamic "blurRadius" [] ~ret:qreal;
     dynamic "blurHints" [] ~ret:qGraphicsBlurEffect'BlurHints;
@@ -1284,7 +1284,7 @@ let () = with_class qGraphicsBlurEffect [
     dynamic "blurHintsChanged" [arg "hints" qGraphicsBlurEffect'BlurHints];
   ]
 let () = with_class qGraphicsDropShadowEffect [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "boundingRectFor" [arg "rect" qRectF] ~ret:qRectF;
     dynamic "offset" [] ~ret:qPointF;
     dynamic "xOffset" [] ~ret:qreal;
@@ -1303,7 +1303,7 @@ let () = with_class qGraphicsDropShadowEffect [
     dynamic "colorChanged" [arg "color" qColor];
   ]
 let () = with_class qGraphicsOpacityEffect [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "opacity" [] ~ret:qreal;
     dynamic "opacityMask" [] ~ret:qBrush;
     dynamic "setOpacity" [arg "opacity" qreal];
@@ -2809,10 +2809,10 @@ let () = with_class qDateEdit [
   ]
 let () = with_class qMdiArea [
     constructor "" [arg "parent" (optional qWidget)];
-    dynamic "currentSubWindow" [] ~ret:qMdiSubWindow;
-    dynamic "activeSubWindow" [] ~ret:qMdiSubWindow;
+    dynamic "currentSubWindow" [] ~ret:(optional qMdiSubWindow);
+    dynamic "activeSubWindow" [] ~ret:(optional qMdiSubWindow);
     (*dynamic "subWindowList" [arg "order" windowOrder] ~ret:qList<QMdiSubWindow *>;*)
-    dynamic "addSubWindow" [arg "widget" qWidget;arg "windowFlags" qt'WindowFlags] ~ret:qMdiSubWindow;
+    dynamic "addSubWindow" [arg "widget" qWidget;arg "windowFlags" qt'WindowFlags] ~ret:(optional qMdiSubWindow);
     dynamic "removeSubWindow" [arg "widget" qWidget];
     dynamic "background" [] ~ret:qBrush;
     dynamic "setBackground" [arg "background" qBrush];
@@ -3744,7 +3744,60 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "rowCount" [] ~ret:int;
     dynamic "columnCount" [] ~ret:int;
   ]
-(*let () = with_class qTileRules [
+let () = with_class qFileSystemModel [
+    constructor "" [arg "parent" (optional qObject)];
+    signal "rootPathChanged" [arg "newPath" qString];
+    signal "fileRenamed" [arg "path" qString;arg "oldName" qString;arg "newName" qString];
+    signal "directoryLoaded" [arg "path" qString];
+    dynamic "index" [arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:qModelIndex;
+    dynamic "index" [arg "path" qString;arg "column" int] ~ret:qModelIndex;
+    dynamic "parent" [arg "index" qModelIndex] ~ret:qModelIndex;
+    dynamic "sibling" [arg "row" int;arg "column" int;arg "idx" qModelIndex] ~ret:qModelIndex;
+    dynamic "hasChildren" [arg "parent" qModelIndex] ~ret:bool;
+    dynamic "canFetchMore" [arg "parent" qModelIndex] ~ret:bool;
+    dynamic "fetchMore" [arg "parent" qModelIndex];
+    dynamic "rowCount" [arg "parent" qModelIndex] ~ret:int;
+    dynamic "columnCount" [arg "parent" qModelIndex] ~ret:int;
+    dynamic "myComputer" [arg "role" int] ~ret:qVariant;
+    dynamic "data" [arg "index" qModelIndex;arg "role" int] ~ret:qVariant;
+    dynamic "setData" [arg "idx" qModelIndex;arg "value" qVariant;arg "role" int] ~ret:bool;
+    dynamic "headerData" [arg "section" int;arg "orientation" qt'Orientation;arg "role" int] ~ret:qVariant;
+    dynamic "flags" [arg "index" qModelIndex] ~ret:qt'ItemFlags;
+    dynamic "sort" [arg "column" int;arg "order" qt'SortOrder];
+    dynamic "mimeTypes" [] ~ret:qStringList;
+    dynamic "mimeData" [arg "indexes" qModelIndexList] ~ret:qMimeData;
+    dynamic "dropMimeData" [arg "data" qMimeData;arg "action" qt'DropAction;arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:bool;
+    dynamic "supportedDropActions" [] ~ret:qt'DropActions;
+    dynamic "setRootPath" [arg "newPath" qString] ~ret:qModelIndex;
+    dynamic "rootPath" [] ~ret:qString;
+    dynamic "rootDirectory" [] ~ret:qDir;
+    dynamic "setIconProvider" [arg "provider" qFileIconProvider];
+    dynamic "iconProvider" [] ~ret:qFileIconProvider;
+    dynamic "setFilter" [arg "filters" qDir'Filters];
+    dynamic "filter" [] ~ret:qDir'Filters;
+    dynamic "setResolveSymlinks" [arg "enable" bool];
+    dynamic "resolveSymlinks" [] ~ret:bool;
+    dynamic "setReadOnly" [arg "enable" bool];
+    dynamic "isReadOnly" [] ~ret:bool;
+    dynamic "setNameFilterDisables" [arg "enable" bool];
+    dynamic "nameFilterDisables" [] ~ret:bool;
+    dynamic "setNameFilters" [arg "filters" qStringList];
+    dynamic "nameFilters" [] ~ret:qStringList;
+    dynamic "filePath" [arg "index" qModelIndex] ~ret:qString;
+    dynamic "isDir" [arg "index" qModelIndex] ~ret:bool;
+    dynamic "size" [arg "index" qModelIndex] ~ret:qint64;
+    dynamic "type" [arg "index" qModelIndex] ~ret:qString;
+    dynamic "lastModified" [arg "index" qModelIndex] ~ret:qDateTime;
+    dynamic "mkdir" [arg "parent" qModelIndex;arg "name" qString] ~ret:qModelIndex;
+    dynamic "rmdir" [arg "index" qModelIndex] ~ret:bool;
+    dynamic "fileName" [arg "index" qModelIndex] ~ret:qString;
+    dynamic "fileIcon" [arg "index" qModelIndex] ~ret:qIcon;
+    dynamic "permissions" [arg "index" qModelIndex] ~ret:qFileDevice'Permissions;
+    dynamic "fileInfo" [arg "index" qModelIndex] ~ret:qFileInfo;
+    dynamic "remove" [arg "index" qModelIndex] ~ret:bool;
+  ]
+(* END
+let () = with_class qTileRules [
     constructor "" [arg "horizontalRule" qt'TileRule;arg "verticalRule" qt'TileRule];
     constructor "" [arg "rule" qt'TileRule];
   ]
@@ -4197,61 +4250,9 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "hitTestPath" [] ~ret:qPainterPath;
     dynamic "setHitTestPath" [arg "path" qPainterPath];
   ]
-  let () = with_class qFileSystemModel [
-    dynamic "rootPathChanged" [arg "newPath" qString];
-    dynamic "fileRenamed" [arg "path" qString;arg "oldName" qString;arg "newName" qString];
-    dynamic "directoryLoaded" [arg "path" qString];
-    constructor "" [arg "parent" qObject];
-    dynamic "index" [arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:qModelIndex;
-    dynamic "index" [arg "path" qString;arg "column" int] ~ret:qModelIndex;
-    dynamic "parent" [arg "index" qModelIndex] ~ret:qModelIndex;
-    dynamic "sibling" [arg "row" int;arg "column" int;arg "idx" qModelIndex] ~ret:qModelIndex;
-    dynamic "hasChildren" [arg "parent" qModelIndex] ~ret:bool;
-    dynamic "canFetchMore" [arg "parent" qModelIndex] ~ret:bool;
-    dynamic "fetchMore" [arg "parent" qModelIndex];
-    dynamic "rowCount" [arg "parent" qModelIndex] ~ret:int;
-    dynamic "columnCount" [arg "parent" qModelIndex] ~ret:int;
-    dynamic "myComputer" [arg "role" int] ~ret:qVariant;
-    dynamic "data" [arg "index" qModelIndex;arg "role" int] ~ret:qVariant;
-    dynamic "setData" [arg "idx" qModelIndex;arg "value" qVariant;arg "role" int] ~ret:bool;
-    dynamic "headerData" [arg "section" int;arg "orientation" qt'Orientation;arg "role" int] ~ret:qVariant;
-    dynamic "flags" [arg "index" qModelIndex] ~ret:qt'ItemFlags;
-    dynamic "sort" [arg "column" int;arg "order" qt'SortOrder];
-    dynamic "mimeTypes" [] ~ret:qStringList;
-    dynamic "mimeData" [arg "indexes" qModelIndexList] ~ret:qMimeData;
-    dynamic "dropMimeData" [arg "data" qMimeData;arg "action" qt'DropAction;arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:bool;
-    dynamic "supportedDropActions" [] ~ret:qt'DropActions;
-    dynamic "setRootPath" [arg "newPath" qString] ~ret:qModelIndex;
-    dynamic "rootPath" [] ~ret:qString;
-    dynamic "rootDirectory" [] ~ret:qDir;
-    dynamic "setIconProvider" [arg "provider" qFileIconProvider];
-    dynamic "iconProvider" [] ~ret:qFileIconProvider;
-    dynamic "setFilter" [arg "filters" qDir'Filters];
-    dynamic "filter" [] ~ret:qDir'Filters;
-    dynamic "setResolveSymlinks" [arg "enable" bool];
-    dynamic "resolveSymlinks" [] ~ret:bool;
-    dynamic "setReadOnly" [arg "enable" bool];
-    dynamic "isReadOnly" [] ~ret:bool;
-    dynamic "setNameFilterDisables" [arg "enable" bool];
-    dynamic "nameFilterDisables" [] ~ret:bool;
-    dynamic "setNameFilters" [arg "filters" qStringList];
-    dynamic "nameFilters" [] ~ret:qStringList;
-    dynamic "filePath" [arg "index" qModelIndex] ~ret:qString;
-    dynamic "isDir" [arg "index" qModelIndex] ~ret:bool;
-    dynamic "size" [arg "index" qModelIndex] ~ret:qint64;
-    dynamic "type" [arg "index" qModelIndex] ~ret:qString;
-    dynamic "lastModified" [arg "index" qModelIndex] ~ret:qDateTime;
-    dynamic "mkdir" [arg "parent" qModelIndex;arg "name" qString] ~ret:qModelIndex;
-    dynamic "rmdir" [arg "index" qModelIndex] ~ret:bool;
-    dynamic "fileName" [arg "index" qModelIndex] ~ret:qString;
-    dynamic "fileIcon" [arg "index" qModelIndex] ~ret:qIcon;
-    dynamic "permissions" [arg "index" qModelIndex] ~ret:qFile'Permissions;
-    dynamic "fileInfo" [arg "index" qModelIndex] ~ret:qFileInfo;
-    dynamic "remove" [arg "index" qModelIndex] ~ret:bool;
-  ]
   let () = with_class qDirModel [
     constructor "" [arg "nameFilters" qStringList;arg "filters" qDir'Filters;arg "sort" qDir'SortFlags;arg "parent" qObject];
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "index" [arg "row" int;arg "column" int;arg "parent" qModelIndex] ~ret:qModelIndex;
     dynamic "parent" [arg "child" qModelIndex] ~ret:qModelIndex;
     dynamic "rowCount" [arg "parent" qModelIndex] ~ret:int;
@@ -4529,7 +4530,7 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "mapToGraphicsScene" [arg "gesturePoint" qPointF] ~ret:qPointF;
   ]
   let () = with_class qGraphicsEffect [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "boundingRectFor" [arg "rect" qRectF] ~ret:qRectF;
     dynamic "boundingRect" [] ~ret:qRectF;
     dynamic "isEnabled" [] ~ret:bool;
@@ -4545,7 +4546,7 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "sizePolicy" [] ~ret:qSizePolicy'Policy;
   ]
   let () = with_class qGraphicsItemAnimation [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "item" [] ~ret:qGraphicsItem;
     dynamic "setItem" [arg "item" qGraphicsItem];
     dynamic "timeLine" [] ~ret:qTimeLine;
@@ -4574,7 +4575,7 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "reset" [];
   ]
   let () = with_class qGraphicsScene [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     constructor "" [arg "sceneRect" qRectF;arg "parent" qObject];
     constructor "" [arg "x" qreal;arg "y" qreal;arg "width" qreal;arg "height" qreal;arg "parent" qObject];
     dynamic "sceneRect" [] ~ret:qRectF;
@@ -4664,11 +4665,11 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "focusItemChanged" [arg "newFocusItem" qGraphicsItem;arg "oldFocusItem" qGraphicsItem;arg "reason" qt'FocusReason];
   ]
   let () = with_class qGraphicsTransform [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "applyTo" [arg "matrix" (pointer qMatrix4x4)];
   ]
   let () = with_class qAbstractItemDelegate [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "paint" [arg "painter" qPainter;arg "option" qStyleOptionViewItem;arg "index" qModelIndex];
     dynamic "sizeHint" [arg "option" qStyleOptionViewItem;arg "index" qModelIndex] ~ret:qSize;
     dynamic "createEditor" [arg "parent" qWidget;arg "option" qStyleOptionViewItem;arg "index" qModelIndex] ~ret:(optional qWidget);
@@ -4718,7 +4719,7 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "proxy" [] ~ret:qStyle;
   ]
   let () = with_class qStylePlugin [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "create" [arg "key" qString] ~ret:qStyle;
   ]
   let () = with_class qScroller [
@@ -5277,7 +5278,7 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "keyBindingsForAction" [arg "actionName" qString] ~ret:qStringList;
   ]
   let () = with_class qUndoGroup [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "addStack" [arg "stack" qUndoStack];
     dynamic "removeStack" [arg "stack" qUndoStack];
     (*dynamic "stacks" [] ~ret:qList<QUndoStack *>;*)
@@ -5301,7 +5302,7 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "redoTextChanged" [arg "redoText" qString];
   ]
   let () = with_class qUndoStack [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "clear" [];
     dynamic "push" [arg "cmd" qUndoCommand];
     dynamic "canUndo" [] ~ret:bool;
@@ -5335,7 +5336,7 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "redoTextChanged" [arg "redoText" qString];
   ]
   let () = with_class qItemDelegate [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "hasClipping" [] ~ret:bool;
     dynamic "setClipping" [arg "clip" bool];
     dynamic "paint" [arg "painter" qPainter;arg "option" qStyleOptionViewItem;arg "index" qModelIndex];
@@ -5348,7 +5349,7 @@ let () = with_class qTableWidgetSelectionRange [
     dynamic "setItemEditorFactory" [arg "factory" qItemEditorFactory];
   ]
   let () = with_class qStyledItemDelegate [
-    constructor "" [arg "parent" qObject];
+    constructor "" [arg "parent" (optional qObject)];
     dynamic "paint" [arg "painter" qPainter;arg "option" qStyleOptionViewItem;arg "index" qModelIndex];
     dynamic "sizeHint" [arg "option" qStyleOptionViewItem;arg "index" qModelIndex] ~ret:qSize;
     dynamic "createEditor" [arg "parent" qWidget;arg "option" qStyleOptionViewItem;arg "index" qModelIndex] ~ret:(optional qWidget);

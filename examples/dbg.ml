@@ -25,14 +25,17 @@ let help =
     QTextBrowser.setReadOnly help_p true;
     QTextBrowser.setWindowTitle help_p "Help";
     let file = new'QFile'from'QString ":/readme.html" in
-    if QFile.open_ file (QFlags.singleton qIODevice'OpenMode `ReadOnly) then
+    if QFile.open_'from'OpenMode file (QFlags.singleton qIODevice'OpenMode `ReadOnly) then
       QTextBrowser.setHtml help_p (QByteArray.data (QFile.readAll file));
     Qt.delete file;
     help_p
   ) in
   fun () -> QTextBrowser.show (Lazy.force help_p)
 
-let update_menu _ = ()
+let active_ocaml_source mdiarea =
+  match QMdiArea.activeSubWindow mdiarea with
+  | None -> None
+  | Some _ -> Some ()
 
 let option_iter o f =
   match o with
@@ -41,24 +44,23 @@ let option_iter o f =
 
 let qignore : _ qt -> unit = ignore
 
-let make_menu menubar items =
+let make_menu menubar title items =
+  let item = QMenuBar.addMenu'from'QString menubar title in
   List.iter (function
+      | `Action action ->
+        QWidget.addAction item action
       | `Separator ->
-        qignore (QMenuBar.addSeparator menubar)
-      | `Sub (title, items) ->
-        let top = QMenuBar.addMenu'from'QString menubar title in
-        List.iter (function
-            | `Action action ->
-              QWidget.addAction top action
-            | `Separator ->
-              qignore (QMenu.addSeparator top)
-          ) items
-      | `Dynamic (title, fn) ->
-        let top = QMenuBar.addMenu'from'QString menubar title in
-        fn top;
-        Qt.connect top (QMenu.signal'aboutToShow)
-          (fun () -> fn top)
-    ) items
+        qignore (QMenu.addSeparator item)
+    ) items;
+  item
+
+let make_dynamic_menu menubar title fn =
+  let item = QMenuBar.addMenu'from'QString menubar title in
+  fn item;
+  Qt.connect item (QMenu.signal'aboutToShow)
+    (fun () -> fn item);
+  item
+
 
 let make_toolbar this title items =
   let toolbar = QMainWindow.addToolBar'from'QString this title in
@@ -67,6 +69,128 @@ let make_toolbar this title items =
     ) items;
   toolbar
 
+let create_dock_windows this
+    ~mainToolBar ~windowMenu ~debugWindowToolBar
+    ~fileBrowserPathChanged
+    ~fileBrowserItemActivated
+  =
+  let filebrowser_dock = new'QDockWidget "Source File Browser" (Some this) QFlags.empty in
+  let allowed_areas = QFlags.of_list qt'DockWidgetAreas
+      [ `TopDockWidgetArea ; `BottomDockWidgetArea
+      ; `LeftDockWidgetArea ; `RightDockWidgetArea ]
+  in
+  QDockWidget.setAllowedAreas filebrowser_dock allowed_areas;
+  let filebrowser = new'QTreeView (Some filebrowser_dock) in
+  let filebrowser_model_p = new'QFileSystemModel None in
+  QFileSystemModel.setNameFilters filebrowser_model_p
+    (let lst = new'QStringList () in
+     QStringList.append lst "*.ml";
+     lst);
+  QFileSystemModel.setReadOnly filebrowser_model_p true;
+  QFileSystemModel.setFilter filebrowser_model_p
+    (QFlags.of_list qDir'Filters [`AllDirs;`AllEntries;`NoDot]);
+  QFileSystemModel.setNameFilterDisables filebrowser_model_p false;
+  QTreeView.setModel filebrowser filebrowser_model_p;
+  QDockWidget.setObjectName filebrowser_dock "FileBrowser";
+  QDockWidget.setWidget filebrowser_dock filebrowser;
+  QDockWidget.setTitleBarWidget filebrowser_dock (new'QLabel None QFlags.empty);
+  Qt.connect filebrowser_model_p QFileSystemModel.signal'rootPathChanged
+    fileBrowserPathChanged;
+  (*QString dir = Options::get_opt_str( "SOURCE_DIRECTORY", QDir::current().path() );*)
+  let source_directory = "TODO" in
+  QTreeView.setItemsExpandable filebrowser false;
+  QTreeView.setRootIndex filebrowser
+    (QFileSystemModel.setRootPath filebrowser_model_p source_directory);
+  QTreeView.setSortingEnabled filebrowser true;
+  QTreeView.setRootIsDecorated filebrowser false;
+  ignore (QHeaderView.restoreState (QTreeView.header filebrowser)
+            (new'QByteArray()) : bool)
+  (*TODO Options::get_opt_array( "FILEBROWSER_STATE" )*);
+  QMainWindow.addDockWidget'from'DockWidgetArea'QDockWidget
+    this `BottomDockWidgetArea filebrowser_dock;
+  begin
+    let action = QDockWidget.toggleViewAction filebrowser_dock in
+    QAction.setIcon action (new'QIcon'from'QString ":/images/open.png");
+    QMenu.addAction'from'QAction windowMenu action;
+    QToolBar.addAction'from'QAction mainToolBar action;
+  end;
+  Qt.connect filebrowser QTreeView.signal'activated fileBrowserItemActivated;
+  let ocamlrun_dock = new'QDockWidget "Application Output" (Some this) QFlags.empty in
+  QDockWidget.setAllowedAreas ocamlrun_dock allowed_areas;
+  let ocamlrun = new'QWidget (Some ocamlrun_dock) in
+  (* TODO new OCamlRun( ocamlrun_dock, args ); *)
+  QDockWidget.setObjectName ocamlrun_dock "OCamlRun";
+  QDockWidget.setWidget ocamlrun_dock ocamlrun;
+  QMainWindow.addDockWidget this `BottomDockWidgetArea ocamlrun_dock;
+  begin
+    let action = QDockWidget.toggleViewAction ocamlrun_dock in
+    QAction.setIcon action (new'QIcon'from'QString ":/images/terminal.png");
+    QMenu.addAction'from'QAction windowMenu action;
+    QToolBar.addAction'from'QAction debugWindowToolBar action;
+  end;
+  let ocamldebug_dock = new'QDockWidget "OCamlDebug" (Some this) QFlags.empty in
+  QDockWidget.setAllowedAreas ocamldebug_dock allowed_areas;
+  let ocamldebug = new'QWidget (Some ocamldebug_dock) in
+    (*TODO OCamlDebug( ocamldebug_dock , ocamlrun, _ocamldebug, args, _ocamldebug_init_script );*)
+  QDockWidget.setObjectName ocamldebug_dock "OCamlDebugDock";
+  (* TODO
+     connect(ocamldebug, SIGNAL(stopDebugging(const QString &, int, int, bool)), this, SLOT(stopDebugging(const QString &, int, int, bool)));
+     connect(ocamldebug, SIGNAL(debuggerStarted(bool)) , this ,SLOT(debuggerStarted(bool)));
+     connect(ocamldebug, SIGNAL(breakPointList(const BreakPoints &)), this, SLOT(breakPointList(const BreakPoints &)));
+     connect(ocamldebug, SIGNAL(debuggerStarted(bool)), ocamlrun, SLOT(debuggerStarted(bool)));
+  *)
+  QDockWidget.setWidget ocamldebug_dock ocamldebug;
+  begin
+    let action = QDockWidget.toggleViewAction ocamldebug_dock in
+    QAction.setIcon action (new'QIcon'from'QString ":/images/oqamldebug.png");
+    QMenu.addAction'from'QAction windowMenu action;
+    QToolBar.addAction'from'QAction debugWindowToolBar action;
+  end;
+  QMainWindow.addDockWidget this `BottomDockWidgetArea ocamldebug_dock;
+  (*ocamldebug->startDebug();
+    QList<int> watch_ids = Options::get_opt_intlst( "WATCH_IDS" );
+    for (QList<int>::const_iterator itId = watch_ids.begin(); itId != watch_ids.end(); ++itId)
+          createWatchWindow( *itId );*)
+  let ocamlbreakpoints_dock = new'QDockWidget "Breakpoints" (Some this) QFlags.empty in
+  QDockWidget.setAllowedAreas ocamlbreakpoints_dock allowed_areas;
+  let ocamlbreakpoints =
+    new'QWidget (Some ocamlbreakpoints_dock)
+    (*OCamlBreakpoint(ocamlbreakpoints_dock)*)
+  in
+  QDockWidget.setObjectName ocamlbreakpoints_dock "Breakpoints";
+  (*
+    connect( ocamlbreakpoints, SIGNAL( debugger( const DebuggerCommand & ) ), ocamldebug, SLOT( debugger( const DebuggerCommand & ) ) );
+    connect ( ocamldebug , SIGNAL( stopDebugging( const QString &, int , int , bool) ) , ocamlbreakpoints  ,SLOT( stopDebugging( const QString &, int , int , bool) ) );
+    connect ( ocamldebug , SIGNAL( debuggerStarted( bool) ) , ocamlbreakpoints  ,SLOT( debuggerStarted( bool) ) );
+    connect ( ocamldebug , SIGNAL( breakPointList( const BreakPoints &) ) , ocamlbreakpoints ,SLOT( breakPointList( const BreakPoints &) ) );
+    connect ( ocamldebug , SIGNAL( breakPointHit( const QList<int> &) ) , ocamlbreakpoints ,SLOT( breakPointHit( const QList<int> &) ) );
+  *)
+  QDockWidget.setWidget ocamlbreakpoints_dock ocamlbreakpoints;
+  QMainWindow.addDockWidget this `BottomDockWidgetArea ocamlbreakpoints_dock;
+  begin
+    let action = QDockWidget.toggleViewAction ocamlbreakpoints_dock in
+    QAction.setIcon action (new'QIcon'from'QString ":/images/breakpoints.png");
+    QMenu.addAction'from'QAction windowMenu action;
+    QToolBar.addAction'from'QAction debugWindowToolBar action;
+  end;
+  let ocamlstack_dock = new'QDockWidget "Stack" (Some this) QFlags.empty in
+  QDockWidget.setAllowedAreas ocamlstack_dock allowed_areas;
+  let ocamlstack = new'QWidget (Some ocamlstack_dock) (*TODO new OCamlStack(ocamlstack_dock*) in
+  QDockWidget.setObjectName ocamlstack_dock "stack";
+  (*
+    connect(ocamlstack, SIGNAL(debugger(const DebuggerCommand &)), ocamldebug, SLOT(debugger(const DebuggerCommand &)));
+    connect(ocamldebug,SIGNAL(stopDebugging(const QString &, int,int,bool)),ocamlstack,SLOT(stopDebugging(const QString &,int,int,bool)));
+    connect(ocamldebug,SIGNAL(debuggerStarted(bool)),ocamlstack ,SLOT(debuggerStarted(bool)));
+    connect(ocamldebug,SIGNAL(debuggerCommand(const QString &, const QString &)),ocamlstack ,SLOT(debuggerCommand(const QString &,const QString &)));
+  *)
+  QDockWidget.setWidget ocamlstack_dock ocamlstack;
+  QMainWindow.addDockWidget this `BottomDockWidgetArea ocamlstack_dock;
+  begin
+    let action = QDockWidget.toggleViewAction ocamlstack_dock in
+    QAction.setIcon action (new'QIcon'from'QString ":/images/callstack.png");
+    QMenu.addAction'from'QAction windowMenu action;
+    QToolBar.addAction'from'QAction debugWindowToolBar action;
+  end
 
 let create_actions_and_menus app this mdiArea
     ~setWorkingDirectory
@@ -175,7 +299,7 @@ let create_actions_and_menus app this mdiArea
       ~shortcut:`PreviousChild
       ~slot:(mdiArea,QMdiArea.slot'activatePreviousSubWindow)
   in
-  let separatorAct = new'QAction this in
+  let separatorAct = new'QAction (Some this) in
   QAction.setSeparator separatorAct true;
   let helpAct =
     action "&Help"
@@ -258,42 +382,42 @@ let create_actions_and_menus app this mdiArea
       ~tip:"Call stack up (Mouse Wheel with Shift+Ctrl)"
     ~fn:debugUp
   in
-  make_menu (QMainWindow.menuBar this) [
-    `Sub ("&Main", [
-        `Action setOCamlDebugArgsAct;
-        `Action setOCamlDebugInitScriptAct;
-        `Action setWorkingDirectoryAct;
-        `Separator;
-        `Action exitAct;
-      ]);
-    `Sub ("&Debug", [
-        `Action debuggerStartAct;
-        `Action debugReverseAct;
-        `Action debugPreviousAct;
-        `Action debugBackStepAct;
-        `Action debugStepAct;
-        `Action debugNextAct;
-        `Action debugFinishAct;
-        `Action debugRunAct;
-        `Action debugInterruptAct;
-        `Separator;
-        `Action debugDownAct;
-        `Action debugUpAct;
-        `Separator;
-        `Action createWatchWindowAct;
-      ]);
-    `Sub ("&Edit", [
-        `Action copyAct;
-      ]);
-    `Dynamic ("&Window", updateWindowMenu);
-    `Separator;
-    `Sub ("&Hello", [
-        `Action helpAct;
-        `Action aboutAct;
-        `Action aboutQtAct;
-      ])
-  ];
-  let _mainToolBar = make_toolbar this "Main" [] in
+  let menu_bar = QMainWindow.menuBar this in
+  let _mainMenu = make_menu menu_bar "&Main" [
+      `Action setOCamlDebugArgsAct;
+      `Action setOCamlDebugInitScriptAct;
+      `Action setWorkingDirectoryAct;
+      `Separator;
+      `Action exitAct;
+    ]
+  in
+  qignore (make_menu menu_bar "&Debug" [
+      `Action debuggerStartAct;
+      `Action debugReverseAct;
+      `Action debugPreviousAct;
+      `Action debugBackStepAct;
+      `Action debugStepAct;
+      `Action debugNextAct;
+      `Action debugFinishAct;
+      `Action debugRunAct;
+      `Action debugInterruptAct;
+      `Separator;
+      `Action debugDownAct;
+      `Action debugUpAct;
+      `Separator;
+      `Action createWatchWindowAct;
+    ]);
+  qignore (make_menu menu_bar "&Edit" [
+      `Action copyAct;
+    ]);
+  let windowMenu = make_dynamic_menu menu_bar "&Window" updateWindowMenu in
+  qignore (QMenuBar.addSeparator menu_bar);
+  qignore (make_menu menu_bar "&Help" [
+      `Action helpAct;
+      `Action aboutAct;
+      `Action aboutQtAct;
+    ]);
+  let mainToolBar = make_toolbar this "Main" [] in
   let _editToolBar = make_toolbar this "Edit" [
       `Action copyAct
     ]
@@ -312,11 +436,30 @@ let create_actions_and_menus app this mdiArea
       `Action debugUpAct;
     ]
   in
-  let _debugWindowToolBar = make_toolbar this "Debug Windows" [
+  let debugWindowToolBar = make_toolbar this "Debug Windows" [
       `Action createWatchWindowAct;
     ]
   in
-  QStatusBar.showMessage'from'QString (QMainWindow.statusBar this) "Ready"
+  QStatusBar.showMessage'from'QString (QMainWindow.statusBar this) "Ready";
+  let update_menu _ =
+    let hasChild, hasSelection =
+      match active_ocaml_source mdiArea with
+      | None -> false, false
+      | Some _ -> true, true
+      (*activeMdiChild()->textCursor().hasSelection()*)
+    in
+    List.iter (fun act -> QAction.setEnabled act hasChild)
+      [closeAct; closeAllAct; tileAct; cascadeAct; nextAct; previousAct];
+    QAction.setVisible separatorAct hasChild;
+    QAction.setEnabled copyAct hasSelection;
+  in
+  Qt.connect mdiArea QMdiArea.signal'subWindowActivated update_menu;
+  create_dock_windows this
+    ~windowMenu
+    ~mainToolBar
+    ~debugWindowToolBar
+    ~fileBrowserPathChanged:ignore
+    ~fileBrowserItemActivated:ignore
 
 let read_settings () = () (* TODO *)
 let write_settings () = () (* TODO *)
@@ -330,7 +473,6 @@ let mainwindow app =
   QMdiArea.setHorizontalScrollBarPolicy mdiarea `ScrollBarAsNeeded;
   QMdiArea.setVerticalScrollBarPolicy mdiarea `ScrollBarAsNeeded;
   QMainWindow.setCentralWidget window mdiarea;
-  Qt.connect mdiarea QMdiArea.signal'subWindowActivated update_menu;
   let mapper = new'QSignalMapper (Some window) in
   Qt.connect mapper QSignalMapper.signal'mapped'from'QWidget
     (fun widget -> match Qt.cast widget (QMdiSubWindow.class'()) with
@@ -375,11 +517,6 @@ let () =
   *)
 
   (*
-    createActions();
-    createMenus();
-    createToolBars();
-    createStatusBar();
-    updateMenus();
     createDockWindows();
     readSettings();
 
@@ -394,99 +531,6 @@ MainWindow::~MainWindow()
         Options::set_opt( "FILEBROWSER_STATE", filebrowser->header()->saveState() );
 }
 
-void MainWindow::createDockWindows()
-{
-    Arguments args( _arguments );
-    filebrowser_dock = new QDockWidget( "Source File Browser", this );
-    filebrowser_dock->setAllowedAreas( Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea | Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
-    filebrowser = new QTreeView( );
-    filebrowser_model_p = new QFileSystemModel;
-    filebrowser_model_p->setNameFilters( QStringList() << "*.ml" );
-    filebrowser_model_p->setReadOnly( true );
-#if QT_VERSION >= 0x040700
-    filebrowser_model_p->setFilter( QDir::AllDirs | QDir::AllEntries | QDir::NoDot );
-#else
-    filebrowser_model_p->setFilter( QDir::AllDirs | QDir::AllEntries );
-#endif
-    filebrowser_model_p->setNameFilterDisables( false  );
-    filebrowser->setModel( filebrowser_model_p );
-    filebrowser_dock->setObjectName("FileBrowser");
-    filebrowser_dock->setWidget( filebrowser );
-    filebrowser_dock->setTitleBarWidget( new QLabel(filebrowser_dock) );
-    connect( filebrowser_model_p, SIGNAL( rootPathChanged ( const QString & ) ), this, SLOT( fileBrowserPathChanged( const QString & ) ) );
-    QString dir = Options::get_opt_str( "SOURCE_DIRECTORY", QDir::current().path() );
-    filebrowser_model_p->setRootPath( dir );
-    filebrowser->setItemsExpandable( false );
-    filebrowser->setRootIndex( filebrowser_model_p->index( dir ) );
-    filebrowser->setSortingEnabled( true );
-    filebrowser->setRootIsDecorated( false );
-    filebrowser->header()->restoreState( Options::get_opt_array( "FILEBROWSER_STATE" ) );
-    addDockWidget( Qt::BottomDockWidgetArea, filebrowser_dock );
-    filebrowser_dock->toggleViewAction()->setIcon( QIcon( ":/images/open.png" ) );
-    mainMenu->addAction( filebrowser_dock->toggleViewAction() );
-    mainToolBar->addAction( filebrowser_dock->toggleViewAction() );
-    connect( filebrowser, SIGNAL( activated ( const QModelIndex & ) ), this, SLOT( fileBrowserItemActivated( const QModelIndex & ) ) );
-
-    ocamlrun_dock = new QDockWidget( "Application Output", this );
-    ocamlrun_dock->setAllowedAreas( Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea | Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
-    ocamlrun = new OCamlRun( ocamlrun_dock, args );
-    ocamlrun_dock->setObjectName("OCamlRun");
-    ocamlrun_dock->setWidget( ocamlrun );
-    addDockWidget( Qt::BottomDockWidgetArea, ocamlrun_dock );
-    ocamlrun_dock->toggleViewAction()->setIcon( QIcon( ":/images/terminal.png" ) );
-    windowMenu->addAction( ocamlrun_dock->toggleViewAction() );
-    debugWindowToolBar->addAction( ocamlrun_dock->toggleViewAction() );
-
-    ocamldebug_dock = new QDockWidget( "OCamlDebug", this );
-    ocamldebug_dock->setAllowedAreas( Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea | Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
-    ocamldebug = new OCamlDebug( ocamldebug_dock , ocamlrun, _ocamldebug, args, _ocamldebug_init_script );
-    ocamldebug_dock->setObjectName("OCamlDebugDock");
-    connect ( ocamldebug , SIGNAL( stopDebugging( const QString &, int , int , bool) ) , this ,SLOT( stopDebugging( const QString &, int , int , bool) ) );
-    connect ( ocamldebug , SIGNAL( debuggerStarted( bool) ) , this ,SLOT( debuggerStarted( bool) ) );
-    connect ( ocamldebug , SIGNAL( breakPointList( const BreakPoints &) ) , this ,SLOT( breakPointList( const BreakPoints &) ) );
-    connect ( ocamldebug , SIGNAL( debuggerStarted( bool) ) , ocamlrun ,SLOT( debuggerStarted( bool) ) );
-    ocamldebug_dock->setWidget( ocamldebug );
-    ocamldebug_dock->toggleViewAction()->setIcon( QIcon( ":/images/oqamldebug.png" ) );
-    addDockWidget( Qt::BottomDockWidgetArea, ocamldebug_dock );
-    windowMenu->addAction( ocamldebug_dock->toggleViewAction() );
-    debugWindowToolBar->addAction( ocamldebug_dock->toggleViewAction() );
-
-    ocamldebug->startDebug();
-
-    QList<int> watch_ids = Options::get_opt_intlst( "WATCH_IDS" );
-    for (QList<int>::const_iterator itId = watch_ids.begin(); itId != watch_ids.end(); ++itId)
-        createWatchWindow( *itId );
-
-    ocamlbreakpoints_dock = new QDockWidget( "Breakpoints", this );
-    ocamlbreakpoints_dock->setAllowedAreas( Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea | Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
-    ocamlbreakpoints = new OCamlBreakpoint( ocamlbreakpoints_dock );
-    ocamlbreakpoints_dock->setObjectName("Breakpoints");
-    connect( ocamlbreakpoints, SIGNAL( debugger( const DebuggerCommand & ) ), ocamldebug, SLOT( debugger( const DebuggerCommand & ) ) );
-    connect ( ocamldebug , SIGNAL( stopDebugging( const QString &, int , int , bool) ) , ocamlbreakpoints  ,SLOT( stopDebugging( const QString &, int , int , bool) ) );
-    connect ( ocamldebug , SIGNAL( debuggerStarted( bool) ) , ocamlbreakpoints  ,SLOT( debuggerStarted( bool) ) );
-    connect ( ocamldebug , SIGNAL( breakPointList( const BreakPoints &) ) , ocamlbreakpoints ,SLOT( breakPointList( const BreakPoints &) ) );
-    connect ( ocamldebug , SIGNAL( breakPointHit( const QList<int> &) ) , ocamlbreakpoints ,SLOT( breakPointHit( const QList<int> &) ) );
-    ocamlbreakpoints_dock->setWidget( ocamlbreakpoints );
-    addDockWidget( Qt::BottomDockWidgetArea, ocamlbreakpoints_dock );
-    ocamlbreakpoints_dock->toggleViewAction()->setIcon( QIcon( ":/images/breakpoints.png" ) );
-    windowMenu->addAction( ocamlbreakpoints_dock->toggleViewAction() );
-    debugWindowToolBar->addAction( ocamlbreakpoints_dock->toggleViewAction() );
-
-
-    ocamlstack_dock = new QDockWidget( "Stack", this );
-    ocamlstack_dock->setAllowedAreas( Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea | Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
-    ocamlstack = new OCamlStack( ocamlstack_dock );
-    ocamlstack_dock->setObjectName("Stack");
-    connect( ocamlstack, SIGNAL( debugger( const DebuggerCommand & ) ), ocamldebug, SLOT( debugger( const DebuggerCommand & ) ) );
-    connect ( ocamldebug , SIGNAL( stopDebugging( const QString &, int , int , bool) ) , ocamlstack  ,SLOT( stopDebugging( const QString &, int , int , bool) ) );
-    connect ( ocamldebug , SIGNAL( debuggerStarted( bool) ) , ocamlstack ,SLOT( debuggerStarted( bool) ) );
-    connect ( ocamldebug , SIGNAL( debuggerCommand( const QString &, const QString &) ) , ocamlstack ,SLOT( debuggerCommand( const QString &, const QString &) ) );
-    ocamlstack_dock->setWidget( ocamlstack );
-    addDockWidget( Qt::BottomDockWidgetArea, ocamlstack_dock );
-    ocamlstack_dock->toggleViewAction()->setIcon( QIcon( ":/images/callstack.png" ) );
-    windowMenu->addAction( ocamlstack_dock->toggleViewAction() );
-    debugWindowToolBar->addAction( ocamlstack_dock->toggleViewAction() );
-}
 
 void MainWindow::createWatchWindow()
 {
@@ -684,22 +728,6 @@ void MainWindow::help()
         }
     }
     help_p->show();
-}
-
-void MainWindow::updateMenus()
-{
-    bool hasMdiChild = ( activeMdiChild() != 0 );
-    closeAct->setEnabled( hasMdiChild );
-    closeAllAct->setEnabled( hasMdiChild );
-    tileAct->setEnabled( hasMdiChild );
-    cascadeAct->setEnabled( hasMdiChild );
-    nextAct->setEnabled( hasMdiChild );
-    previousAct->setEnabled( hasMdiChild );
-    separatorAct->setVisible( hasMdiChild );
-
-    bool hasSelection = ( activeMdiChild() &&
-                          activeMdiChild()->textCursor().hasSelection() );
-    copyAct->setEnabled( hasSelection );
 }
 
 void MainWindow::updateWindowMenu()

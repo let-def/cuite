@@ -387,10 +387,18 @@ let () = with_class qCoreApplication [
   ]
 
 let () = with_class qObject [
+    dynamic "objectName" [] ~ret:qString;
+    dynamic "setObjectName" [arg "name" qString];
     (*signal "objectNameChanged" [qString];*)
     signal "destroyed" [arg "" qObject];
     slot "deleteLater" [];
     (*  slot "_q_reregisterTimers" [void*];*)
+    dynamic "parent" [] ~ret:qObject;
+    dynamic "setParent" [arg "parent" qObject];
+    dynamic "isWidgetType" [] ~ret:bool;
+    dynamic "isWindowType" [] ~ret:bool;
+    dynamic "dumpObjectTree" [];
+    dynamic "dumpObjectInfo" [];
   ]
 
 let () = with_class qFileSystemWatcher [
@@ -681,10 +689,6 @@ let () = with_class qByteArray [
     static  "tr" [arg "sourceText" pchar;arg "disambiguation" pchar;arg "n" int] ~ret:qString;
     static  "trUtf8" [arg "sourceText" pchar;arg "disambiguation" pchar;arg "n" int] ~ret:qString;
     (*dynamic "metaObject" [] ~ret:qMetaObject;*)
-    dynamic "objectName" [] ~ret:qString;
-    dynamic "setObjectName" [arg "name" qString];
-    dynamic "isWidgetType" [] ~ret:bool;
-    dynamic "isWindowType" [] ~ret:bool;
     dynamic "signalsBlocked" [] ~ret:bool;
     dynamic "blockSignals" [arg "block" bool] ~ret:bool;
     (*dynamic "thread" [] ~ret:qThread;
@@ -697,7 +701,6 @@ let () = with_class qByteArray [
     (*dynamic "findChildren" [arg "regExp" qRegExp;arg "options" qt'FindChildOptions] ~ret:qList<T>;*)
     (*dynamic "findChildren" [arg "re" qRegularExpression;arg "options" qt'FindChildOptions] ~ret:qList<T>;*)
     (*dynamic "children" [] ~ret:qObjectList;*)
-    dynamic "setParent" [arg "parent" qObject];
     dynamic "installEventFilter" [arg "filterObj" qObject];
     dynamic "removeEventFilter" [arg "obj" qObject];
     (*static  "connect" [arg "sender" qObject;arg "signal" pchar;arg "receiver" qObject;arg "method" pchar;arg "type" qt'ConnectionType] ~ret:qMetaObject'Connection;*)
@@ -712,16 +715,10 @@ let () = with_class qByteArray [
     (*dynamic "disconnect" [arg "receiver" qObject;arg "method" pchar] ~ret:bool;*)
     (*static  "disconnect" [arg "connection" qMetaObject'Connection] ~ret:bool;*)
     (*static  "disconnect" [arg "sender" qObject;arg "signal" pointerToMemberFunction;arg "receiver" qObject;arg "method" pointerToMemberFunction] ~ret:bool;*)
-    dynamic "dumpObjectTree" [];
-    dynamic "dumpObjectInfo" [];
-    dynamic "dumpObjectTree" [];
-    dynamic "dumpObjectInfo" [];
     (*dynamic "setProperty" [arg "name" pchar;arg "value" qVariant] ~ret:bool;*)
     (*dynamic "property" [arg "name" pchar] ~ret:qVariant;*)
     (*dynamic "dynamicPropertyNames" [] ~ret:qList<QByteArray>;*)
     dynamic "destroyed" [arg "obj" qObject];
-    dynamic "objectNameChanged" [arg "objectName" qString];
-    dynamic "parent" [] ~ret:qObject;
     dynamic "inherits" [arg "className" pchar] ~ret:bool;
     dynamic "deleteLater" [];
   ]
