@@ -1,7 +1,7 @@
 OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
 
-TARGETS=abook_addresswidget test example_1 syntaxhl
+TARGETS=abook_addresswidget test example_1 syntaxhl dbg
 
 all: $(TARGETS)
 
@@ -22,5 +22,8 @@ test: test.ml
 	$(CUITEOPT) -o $@ $^
 
 syntaxhl: syntaxhl.ml
+	$(CUITEOPT) -o $@ $^
+
+dbg: dbg.ml
 	$(CUITEOPT) -o $@ $^
 

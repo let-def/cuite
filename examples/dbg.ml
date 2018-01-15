@@ -11,7 +11,7 @@ let about this =
         <TD><a href=\"https://forge.ocamlcore.org/projects/oqamldebug/\">https://forge.ocamlcore.org/projects/oqamldebug/</a></TD>\
        </TR><TR>\
        <TH>Version:</TH>\
-       <TD>%f</TD>\
+       <TD>%s</TD>\
        </TR><TR>\
        <TH>License:</TH>\
        <TD><a href=\"http://www.gnu.org/licenses/gpl-3.0.en.html\">GPLv3</a> &copy;&nbsp;<a href=\"mailto:sebastien.fricker@gmail.com\">S&eacute;bastien Fricker</a></TD>\
@@ -21,18 +21,14 @@ let about this =
 
 let help =
   let help_p = lazy (
-    let file = new'QFile'1 ":/readme.html" in
-    QFile.set
-
-    QTextBrowser.setHtml'from'QString
-        if ( h.open(QFile::ReadOnly) )
-        {
-            help_p = new QTextBrowser();
-            help_p->setReadOnly(true);
-            help_p->setWindowTitle("Help");
-            help_p->setHtml( h.readAll() );
-        }
-
+    let help_p = new'QTextBrowser None in
+    QTextBrowser.setReadOnly help_p true;
+    QTextBrowser.setWindowTitle help_p "Help";
+    let file = new'QFile'from'QString ":/readme.html" in
+    if QFile.open_ file (QFlags.singleton qIODevice'OpenMode `ReadOnly) then
+      QTextBrowser.setHtml help_p (QByteArray.data (QFile.readAll file));
+    Qt.delete file;
+    help_p
   ) in
   fun () -> QTextBrowser.show (Lazy.force help_p)
 
@@ -50,24 +46,24 @@ let make_menu menubar items =
       | `Separator ->
         qignore (QMenuBar.addSeparator menubar)
       | `Sub (title, items) ->
-        let top = QMenuBar.addMenu1 menubar title in
+        let top = QMenuBar.addMenu'from'QString menubar title in
         List.iter (function
             | `Action action ->
-              qignore (QWidget.addAction top action)
+              QWidget.addAction top action
             | `Separator ->
               qignore (QMenu.addSeparator top)
           ) items
       | `Dynamic (title, fn) ->
-        let top = QMenuBar.addMenu1 menubar title in
+        let top = QMenuBar.addMenu'from'QString menubar title in
         fn top;
         Qt.connect top (QMenu.signal'aboutToShow)
           (fun () -> fn top)
     ) items
 
 let make_toolbar this title items =
-  let toolbar = QMainWindow.addToolBar2 this title in
+  let toolbar = QMainWindow.addToolBar'from'QString this title in
   List.iter (function
-      | `Action act -> qignore (QWidget.addAction toolbar act)
+      | `Action act -> QWidget.addAction toolbar act
     ) items;
   toolbar
 
@@ -101,8 +97,8 @@ let create_actions_and_menus app this mdiArea
       title =
     let action =
       match icon with
-      | None -> new'QAction'1 title this
-      | Some icon -> new'QAction'2 (new'QIcon'4 icon) title this
+      | None -> new'QAction'from'QString'QObject title this
+      | Some icon -> new'QAction'from'QIcon'QString'QObject (new'QIcon'from'QString icon) title this
     in
     option_iter tip (QAction.setStatusTip action);
     option_iter slot (fun (target, slot) ->
@@ -110,8 +106,9 @@ let create_actions_and_menus app this mdiArea
     option_iter fn (Qt.connect action QAction.signal'triggered);
     option_iter shortcut (QAction.setShortcuts action);
     option_iter key (fun key -> QAction.setShortcut action
-                        (new'QKeySequence'1 key `PortableText));
-    option_iter checkable (QAction.setCheckable action)
+                        (new'QKeySequence'from'QString'SequenceFormat key `PortableText));
+    option_iter checkable (QAction.setCheckable action);
+    action
   in
   let setOCamlDebugArgsAct =
     action "&Command Line Arguments..."
@@ -296,12 +293,12 @@ let create_actions_and_menus app this mdiArea
         `Action aboutQtAct;
       ])
   ];
-  let mainToolBar = make_toolbar this "Main" [] in
-  let editToolBar = make_toolbar this "Edit" [
+  let _mainToolBar = make_toolbar this "Main" [] in
+  let _editToolBar = make_toolbar this "Edit" [
       `Action copyAct
     ]
   in
-  let debugToolBar = make_toolbar this "Debug" [
+  let _debugToolBar = make_toolbar this "Debug" [
       `Action debuggerStartAct;
       `Action debugReverseAct;
       `Action debugPreviousAct;
@@ -315,18 +312,19 @@ let create_actions_and_menus app this mdiArea
       `Action debugUpAct;
     ]
   in
-  let debugWindowToolBar = make_toolbar this "Debug Windows" [
+  let _debugWindowToolBar = make_toolbar this "Debug Windows" [
       `Action createWatchWindowAct;
     ]
   in
-  QStatusBar.showMessage1 (QMainWindow.statusBar this) "Ready"
+  QStatusBar.showMessage'from'QString (QMainWindow.statusBar this) "Ready"
 
 let read_settings () = () (* TODO *)
 let write_settings () = () (* TODO *)
 
-let mainwindow () =
+let mainwindow app =
   let window = new'QMainWindow None QFlags.empty in
-  QMainWindow.setWindowIcon window (new'QIcon'4 ":/images/oqamldebug.png");
+  QMainWindow.setWindowIcon window
+    (new'QIcon'from'QString ":/images/oqamldebug.png");
   QMainWindow.setDockNestingEnabled window true;
   let mdiarea = new'QMdiArea None in
   QMdiArea.setHorizontalScrollBarPolicy mdiarea `ScrollBarAsNeeded;
@@ -334,10 +332,37 @@ let mainwindow () =
   QMainWindow.setCentralWidget window mdiarea;
   Qt.connect mdiarea QMdiArea.signal'subWindowActivated update_menu;
   let mapper = new'QSignalMapper (Some window) in
-  Qt.connect mapper QSignalMapper.signal'mapped3
+  Qt.connect mapper QSignalMapper.signal'mapped'from'QWidget
     (fun widget -> match Qt.cast widget (QMdiSubWindow.class'()) with
        | None -> ()
-       | Some mapped -> QMdiArea.setActiveSubWindow1 mdiarea mapped)
+       | Some mapped -> QMdiArea.setActiveSubWindow mdiarea mapped);
+  create_actions_and_menus app window mdiarea
+    ~setWorkingDirectory:ignore
+    ~setOCamlDebugArgs:ignore
+    ~setOCamlDebugInitScript:ignore
+    ~createWatchWindow:ignore
+    ~updateWindowMenu:ignore
+    ~copy:ignore
+    ~about:ignore
+    ~help:ignore
+    ~debuggerStart:ignore
+    ~debugRun:ignore
+    ~debugNext:ignore
+    ~debugPrevious:ignore
+    ~debugFinish:ignore
+    ~debugBackStep:ignore
+    ~debugReverse:ignore
+    ~debugStep:ignore
+    ~debugInterrupt:ignore
+    ~debugDown:ignore
+    ~debugUp:ignore;
+  window
+;;
+
+let () =
+  let app = new'QApplication Sys.argv in
+  QMainWindow.show (mainwindow app);
+  exit (QApplication.exec ())
 
   (* _ocamldebug = findOCamlDebug();
      if ( _ocamldebug.isEmpty() )
