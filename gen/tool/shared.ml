@@ -208,14 +208,24 @@ let constructor ?(custom=false) name args ~cl =
 
 let dynamic ?(custom=false) ?ret name args ~cl =
   let cl = qclass_of_typ cl in
-  if List.exists (function
-      | Dynamic_method (_, name', args', _) ->
-        name = name' &&
-        List.length args = List.length args' &&
-        List.for_all2 eq_arg args args'
-      | _ -> false
-    ) cl.cl_fields
-  then prerr_endline ("Duplicate method: " ^ cl.cl_name ^ "::" ^ name);
+  let rec is_dup cl' =
+    if List.exists (function
+        | Dynamic_method (ret', name', args', _) ->
+          name = name' &&
+          (match ret, ret' with
+           | None, None -> true
+           | Some t, Some t' -> eq_typ t t'
+           | _ -> false) &&
+          List.length args = List.length args' &&
+          List.for_all2 eq_arg args args'
+        | _ -> false
+      ) cl'.cl_fields
+    then prerr_endline ("Duplicate method: {" ^ cl'.cl_name ^ "," ^ cl.cl_name ^ "}::" ^ name)
+    else match cl'.cl_extend with
+      | None -> ()
+      | Some cl' -> is_dup cl'
+  in
+  is_dup cl;
   cl.cl_fields <- Dynamic_method (ret, name, args, custom) :: cl.cl_fields
 
 let static ?(custom=false) ?ret name args ~cl =

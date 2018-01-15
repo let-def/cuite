@@ -1,11 +1,13 @@
 open Shared
 
 let () =
+  let mlsplit =
+    match Sys.getenv "CUITE_MLSPLIT" with
+    | exception Not_found -> false | "" -> false | _ -> true
+  in
   with_file "cuite.ml" @@ fun ml ->
   ml "module Qt = Cuite__qt";
-  ml "module QVariant = Cuite__variant";
   ml "module QFlags = Cuite__flags";
-  ml "module QModels = Cuite__models";
   ml "";
   ml "type 'a qt = 'a Qt.t";
   ml "";
@@ -22,17 +24,46 @@ let () =
     Gen_enum.gen ~h ~c ~ml
   end;
   ml "";
+  let csplit =
+    match Sys.getenv "CUITE_CSPLIT" with
+    | exception Not_found -> false | "" -> false | _ -> true
+  in
   begin
-    let split =
-      match Sys.getenv "CUITE_SPLIT" with
-      | exception Not_found -> false | "" -> false | _ -> true
+    let contents fname =
+      let ic = open_in fname in
+      let len = in_channel_length ic in
+      let b = Buffer.create len in
+      Buffer.add_channel b ic len;
+      close_in_noerr ic;
+      Buffer.contents b
     in
-    if split then
-      Gen_classes.gen ~ml ()
+    Gen_classes.gen_types ~ml ~mlsplit ();
+    if mlsplit then (
+      ml "module QVariant = Cuite__variant";
+      ml "module QModels = Cuite__models";
+    ) else (
+      let module_contents name fname =
+        if Sys.file_exists (fname ^ ".mli") then (
+          print ml "module %s : sig" name;
+          ml (contents (fname ^ ".mli"));
+          ml "end = struct";
+          ml (contents (fname ^ ".ml"));
+          ml "end"
+        ) else (
+          print ml "module %s = struct" name;
+          ml (contents (fname ^ ".ml"));
+          ml "end"
+        )
+      in
+      module_contents "QVariant" "../lib/cuite__variant";
+      module_contents "QModels" "../lib/cuite__models";
+    );
+    if csplit then
+      Gen_classes.gen ~ml ~mlsplit ()
     else
       with_file "cuite_stubs.gen.cpp" @@ fun c ->
       print c "#include \"cuite_stubs.h\"";
-      Gen_classes.gen ~ml ~c ();
+      Gen_classes.gen ~ml ~c ~mlsplit ();
   end;
   with_file "Makefile.gen"
-    (fun makefile -> Gen_classes.gen_dep ~makefile ())
+    (fun makefile -> Gen_classes.gen_dep ~makefile ~mlsplit ())

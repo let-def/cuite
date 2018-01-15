@@ -223,7 +223,7 @@ let cfield ~h ~c ~ml cl = function
           (cl_c_name cl.cl) uname
       ) unames
 
-let gen ?c ~ml () =
+let gen_types ~ml ~mlsplit () =
   List.iter (fun cl ->
       begin match cl.cl.cl_extend with
       | None ->
@@ -231,8 +231,11 @@ let gen ?c ~ml () =
       | Some cl' ->
         print ml "type %s = [`%s | %s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl')
       end;
-      print ml "module %s = Cuite___%s" (cl_Ml_name cl.cl) (cl_fs_name cl.cl)
-    ) (all_class ());
+      if mlsplit then
+        print ml "module %s = Cuite___%s" (cl_Ml_name cl.cl) (cl_fs_name cl.cl)
+    ) (all_class ())
+
+let gen ?c ~ml ~mlsplit () =
   with_file "cuite_stubs.gen.h" @@ fun h ->
   List.iter (fun cl ->
       let fs_name = cl_fs_name cl.cl in
@@ -244,40 +247,66 @@ let gen ?c ~ml () =
       end @@ fun c ->
       let fields = List.rev cl.cl.cl_fields in
       List.iter (constructor ~h ~c ~ml cl) fields;
-      with_file (sprint "cuite___%s.ml" fs_name) @@ fun ml ->
-      ml "open Cuite";
-      begin match cl.cl.cl_extend with
-        | None -> ()
-        | Some cl' -> print ml "include Cuite___%s" (cl_fs_name cl')
-      end;
-      let rec qmetaobject cl' =
-        if cl_c_name cl' = "QObject" then (
-          print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
-          print ml "external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
-            (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
-        )
-        else match cl'.cl_extend with
-          | Some cl' -> qmetaobject cl'
+      if mlsplit then (
+        with_file (sprint "cuite___%s.ml" fs_name) @@ fun ml ->
+        ml "open Cuite";
+        begin match cl.cl.cl_extend with
           | None -> ()
-      in
-      qmetaobject cl.cl;
-      List.iter (cfield ~h ~c ~ml cl) fields;
+          | Some cl' -> print ml "include Cuite___%s" (cl_fs_name cl')
+        end;
+        let rec qmetaobject cl' =
+          if cl_c_name cl' = "QObject" then (
+            print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
+            print ml "external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
+              (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
+          )
+          else match cl'.cl_extend with
+            | Some cl' -> qmetaobject cl'
+            | None -> ()
+        in
+        qmetaobject cl.cl;
+        List.iter (cfield ~h ~c ~ml cl) fields;
+      ) else (
+        print ml "module %s = struct" (cl_Ml_name cl.cl);
+        begin match cl.cl.cl_extend with
+          | None -> ()
+          | Some cl' -> print ml "include %s" (cl_Ml_name cl')
+        end;
+        let rec qmetaobject cl' =
+          if cl_c_name cl' = "QObject" then (
+            print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
+            print ml "  external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
+              (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
+          )
+          else match cl'.cl_extend with
+            | Some cl' -> qmetaobject cl'
+            | None -> ()
+        in
+        qmetaobject cl.cl;
+        List.iter (cfield ~h ~c ~ml cl) fields;
+        ml "end"
+      )
     ) (all_class ())
 
-let gen_dep ~makefile () =
-  let cmo cl = sprint "cuite___%s.cmo" (cl_fs_name cl) in
-  let cmx cl = sprint "cuite___%s.cmx" (cl_fs_name cl) in
-  List.iter (fun cl ->
-      match cl.cl.cl_extend with
-      | None -> ()
-      | Some cl' ->
-        print makefile "%s: %s" (cmo cl.cl) (cmo cl');
-        makefile "";
-        print makefile "%s: %s" (cmx cl.cl) (cmx cl');
-        makefile ""
-    ) (all_class ());
-  let all_modules = List.map (fun cl -> cl.cl) (all_class ()) in
-  print makefile "GEN_BYTECODE = %s"
-    (String.concat " " (List.map cmo all_modules));
-  print makefile "GEN_NATIVE = %s"
-    (String.concat " " (List.map cmx all_modules));
+let gen_dep ~makefile ~mlsplit () =
+  if mlsplit then (
+    let cmo cl = sprint "cuite___%s.cmo" (cl_fs_name cl) in
+    let cmx cl = sprint "cuite___%s.cmx" (cl_fs_name cl) in
+    List.iter (fun cl ->
+        match cl.cl.cl_extend with
+        | None -> ()
+        | Some cl' ->
+          print makefile "%s: %s" (cmo cl.cl) (cmo cl');
+          makefile "";
+          print makefile "%s: %s" (cmx cl.cl) (cmx cl');
+          makefile ""
+      ) (all_class ());
+    let all_modules = List.map (fun cl -> cl.cl) (all_class ()) in
+    print makefile "GEN_BYTECODE = %s"
+      (String.concat " " (List.map cmo all_modules));
+    print makefile "GEN_NATIVE = %s"
+      (String.concat " " (List.map cmx all_modules));
+  ) else (
+    print makefile "GEN_BYTECODE =";
+    print makefile "GEN_NATIVE =";
+  )

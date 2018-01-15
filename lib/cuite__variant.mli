@@ -1,5 +1,3 @@
-open Cuite
-
 type qVariantList and qVariantMap and qVariantHash and qVariantOther
 
 type t =

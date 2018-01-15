@@ -1,5 +1,3 @@
-open Cuite
-
 (* QAbstractTableModel *)
 type 'a qOCamlTableModel = [ `QOCamlTableModel of 'a | qAbstractTableModel ]
 

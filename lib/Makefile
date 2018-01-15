@@ -42,7 +42,11 @@ libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 
 ## ML COMPILATION
 
-PRE_SOURCES = cuite__flags.mli cuite__flags.ml cuite__alloc.mli cuite__alloc.ml cuite__qt.mli cuite__qt.ml cuite.ml cuite__variant.mli cuite__variant.ml cuite__models.ml
+PRE_SOURCES = cuite__flags.mli cuite__flags.ml cuite__alloc.mli cuite__alloc.ml cuite__qt.mli cuite__qt.ml cuite.ml 
+
+ifeq ($(CUITE_MLSPLIT),true)
+PRE_SOURCES += cuite__variant.mli cuite__variant.ml cuite__models.ml
+endif
 
 -include Makefile.gen
 
@@ -59,25 +63,21 @@ cuite__models.cmo: cuite__variant.cmi cuite.cmx
 cuite__models.cmx: cuite__variant.cmx cuite__variant.cmi cuite.cmx
 
 %.cmi: %.mli
-	$(OCAMLC) -c $<
+	$(OCAMLC) $(FLAGS) -c $<
 
 %.cmo: %.ml
-	$(OCAMLC) -c $<
+	$(OCAMLC) $(FLAGS) -c $<
 
 %.cmx: %.ml
-	$(OCAMLOPT) -c $<
+	$(OCAMLOPT) $(FLAGS) -c $<
 
-cuite___%.cmo: cuite___%.ml
-	$(OCAMLC) -c -opaque $<
+cuite___%.cmo: FLAGS += -opaque
 
-cuite___%.cmx: cuite___%.ml
-	$(OCAMLOPT) -c -opaque $<
+cuite___%.cmx: FLAGS += -opaque
 
-cuite.cmo: cuite.ml
-	$(OCAMLC) -c -no-alias-deps $^
+cuite.cmo cuite.cmx: FLAGS += -no-alias-deps
 
-cuite.cmx: cuite.ml
-	$(OCAMLOPT) -c -no-alias-deps $^
+cuite__variant.cmi cuite__variant.cmo cuite__variant.cmx cuite__models.cmo cuite__models.cmx: FLAGS += -open Cuite
 
 cuite.cma: $(PRE_BYTECODE) $(GEN_BYTECODE) | libcuite.so
 	$(OCAMLC) -a -o $@ -cclib -L$(LIB_PREFIX) -cclib -lcuite -cclib -Wl,-rpath,$(LIB_PREFIX) $(patsubst %.cmi,,$^)
