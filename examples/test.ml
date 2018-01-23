@@ -85,6 +85,11 @@ let create_dialog () =
     ) btns;
   dialog
 
+let qt_engine = object
+  inherit Lwt_engine.select_based
+  method select = Qt.qselect
+end
+
 let () =
   ignore (new'QApplication Sys.argv : _ qt);
   (*let dialog' = create_dialog () in
@@ -92,4 +97,6 @@ let () =
     assert (Qt.is_deleted dialog');*)
   let dialog = create_dialog () in
   QWidget.show dialog;
-  ignore (QApplication.exec () : int);
+  Lwt_engine.set qt_engine;
+  Lwt_main.run (Lwt_unix.sleep 10.0);
+  (*ignore (QApplication.exec () : int);*)

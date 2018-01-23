@@ -94,3 +94,21 @@ let parent x = object_option (parent x)
 
 external children : [> `QObject] t -> Obj.t = "cuite_children"
 let children x = object_option (children x)
+
+(* A Qt driven select function *)
+external qselect : Unix.file_descr array -> Unix.file_descr array -> int -> int * int = "cuite_select"
+
+let array_prefix_to_list arr n =
+  let result = ref [] in
+  for i = n - 1 downto 0 do
+    result := arr.(i) :: !result
+  done;
+  !result
+
+let qselect rds wds timeout =
+  let timeout = int_of_float (timeout *. 1000.0) in
+  let rds = Array.of_list rds in
+  let wds = Array.of_list wds in
+  let (nrds, nwds) = qselect rds wds timeout in
+  (array_prefix_to_list rds nrds, array_prefix_to_list wds nwds)
+  (*: Unix.file_descr list -> Unix.file_descr list -> float -> Unix.file_descr list * Unix.file_descr list*)

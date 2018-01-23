@@ -19,7 +19,7 @@ abook_addresswidget: abook_addresswidget.ml
 	$(CUITEOPT) -o $@ $^ -no-alias-deps
 
 test: test.ml
-	$(CUITEOPT) -o $@ $^
+	ocamlfind opt -I ../lib ../lib/cuite.cmxa -o $@ -linkpkg -package lwt.unix $^
 
 syntaxhl: syntaxhl.ml
 	$(CUITEOPT) -o $@ $^

@@ -33,3 +33,6 @@ val prev_sibling : [> `QObject] t -> [`QObject] t option
 val next_sibling : [> `QObject] t -> [`QObject] t option
 val parent : [> `QObject] t -> [`QObject] t option
 val children : [> `QObject] t -> [`QObject] t option
+
+(* A Qt driven select function *)
+val qselect : Unix.file_descr list -> Unix.file_descr list -> float -> Unix.file_descr list * Unix.file_descr list

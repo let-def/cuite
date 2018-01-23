@@ -302,6 +302,8 @@ let main_window () =
   QMainWindow.setWindowTitle self "Address Book";
   self
 
+let () = Statmemprof_emacs.start 1E-4 30 5
+
 let () = (
   let _app = new'QApplication Sys.argv in
   let mw = main_window () in

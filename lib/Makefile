@@ -20,7 +20,8 @@ distclean: clean
 
 CPP_SOURCES=$(wildcard *.gen.cpp) \
 						cuite_models.cpp cuite_stubs.cpp cuite_support.cpp \
-						cuite_wrappers.cpp cuite_variant.cpp cuite_csupport.c
+						cuite_wrappers.cpp cuite_variant.cpp cuite_csupport.c \
+						cuite_select.cpp
 
 %.o: %.cpp %.h %.gen.cpp %.gen.h
 	$(CXX) -c $<
@@ -80,7 +81,7 @@ cuite.cmo cuite.cmx: FLAGS += -no-alias-deps
 cuite__variant.cmi cuite__variant.cmo cuite__variant.cmx cuite__models.cmo cuite__models.cmx: FLAGS += -open Cuite
 
 cuite.cma: $(PRE_BYTECODE) $(GEN_BYTECODE) | libcuite.so
-	$(OCAMLC) -a -o $@ -cclib -L$(LIB_PREFIX) -cclib -lcuite -cclib -Wl,-rpath,$(LIB_PREFIX) $(patsubst %.cmi,,$^)
+	$(OCAMLC) -a -o $@ -cclib -L$(LIB_PREFIX) -cclib -lcuite -cclib -Wl,-rpath,$(LIB_PREFIX) $(patsubst %.cmi,,$^) -dllib dllcuite
 
 cuite.cmxa: $(PRE_NATIVE) $(GEN_NATIVE) | libcuite.so
 	$(OCAMLOPT) -a -o $@ -cclib -L$(LIB_PREFIX) -cclib -lcuite -cclib -Wl,-rpath,$(LIB_PREFIX) $(patsubst %.cmi,,$^)
