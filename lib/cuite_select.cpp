@@ -22,8 +22,6 @@ struct QSelect : QObject
     int *rfds, nrfds;
     int *wfds, nwfds;
 
-    bool stoppable;
-
     QSelect()
       : rfds(NULL), wfds(NULL)
     {
@@ -35,26 +33,6 @@ struct QSelect : QObject
     {
       this->rfds = (int*)realloc((void*)this->rfds, 0);
       this->wfds = (int*)realloc((void*)this->wfds, 0);
-    }
-
-    void socketReadable(int socket)
-    {
-        this->rfds[this->nrfds++] = socket;
-        if (this->stoppable)
-        {
-            this->stoppable = false;
-            this->loop.quit();
-        }
-    }
-
-    void socketWritable(int socket)
-    {
-        this->wfds[this->nwfds++] = socket;
-        if (this->stoppable)
-        {
-            this->stoppable = false;
-            this->loop.quit();
-        }
     }
 
     int *allocateReadable(int size)
@@ -121,29 +99,25 @@ struct QSelect : QObject
         for (int i = 0; i < this->nrfds; ++i)
         {
             QSocketNotifier *notifier = new QSocketNotifier(rfds[i], QSocketNotifier::Read);
-            QObject::connect(notifier, &QSocketNotifier::activated, this, &QSelect::socketReadable);
+            QObject::connect(notifier, &QSocketNotifier::activated, &this->loop, &QEventLoop::quit);
             notifier->setEnabled(true);
             notifiers[i] = notifier;
         }
         for (int i = 0; i < this->nwfds; ++i)
         {
             QSocketNotifier *notifier = new QSocketNotifier(wfds[i], QSocketNotifier::Write);
-            QObject::connect(notifier, &QSocketNotifier::activated, this, &QSelect::socketWritable);
+            QObject::connect(notifier, &QSocketNotifier::activated, &this->loop, &QEventLoop::quit);
             notifier->setEnabled(true);
             notifiers[this->nrfds + i] = notifier;
         }
         this->nrfds = this->nwfds = 0;
 
-        this->stoppable = true;
         if (timeout >= 0)
           this->timer.start(timeout);
         if (!unix_select())
           this->loop.exec();
         if (timeout >= 0)
           this->timer.stop();
-
-        /*if (!stoppable)
-            loop.processEvents();*/
 
         for (int i = 0; i < total; ++i)
             delete notifiers[i];
@@ -181,6 +155,7 @@ struct QSelect : QObject
         timeout -= delta;
 
       runStepSlow(timeout);
+      unix_select();
     }
 
 };
