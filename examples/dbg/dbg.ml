@@ -18,7 +18,8 @@ let make_action this title
   let action =
     match icon with
     | None -> new'QAction'from'QString'QObject title this
-    | Some icon -> new'QAction'from'QIcon'QString'QObject (new'QIcon'from'QString icon) title this
+    | Some icon -> new'QAction'from'QIcon'QString'QObject
+                     (new'QIcon'from'QString icon) title this
   in
   option_iter tip (QAction.setStatusTip action);
   option_iter slot (fun (target, slot) ->
@@ -514,6 +515,26 @@ struct
   let read_settings () = () (* TODO *)
   let write_settings () = () (* TODO *)
 
+  let () =
+    let filter = QModels.new'QOCamlEventFilter
+        { QModels. filter = fun () _this _ event ->
+              match QEvent.type_ event with
+              | `Close ->
+                write_settings ();
+                QMdiArea.closeAllSubWindows mdiarea;
+                begin match QMdiArea.currentSubWindow mdiarea with
+                  | Some _ ->
+                    QEvent.ignore event;
+                  | None ->
+                    QEvent.accept event;
+                end;
+                false
+              | _ -> false
+        } ()
+    in
+    QObject.setParent filter window;
+    QObject.installEventFilter window filter
+
   let () = ()
     (*ocamlDebugFocus();*)
 end
@@ -595,20 +616,6 @@ void MainWindow::watchWindowDestroyed( QObject *o )
             _watch_windows.removeAll( watch );
             Options::set_opt( "WATCH_IDS", _watch_ids );
         }
-    }
-}
-
-void MainWindow::closeEvent( QCloseEvent *event )
-{
-    writeSettings();
-    mdiarea->closeAllSubWindows();
-    if ( mdiarea->currentSubWindow() )
-    {
-        event->ignore();
-    }
-    else
-    {
-        event->accept();
     }
 }
 

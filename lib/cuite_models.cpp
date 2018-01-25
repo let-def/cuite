@@ -389,3 +389,40 @@ external value cuite_QOCamlSyntaxHighlighter_setFormatFont(value _self, value st
   self->call_setFormat(Long_val(start), Long_val(count), *font);
   return Val_unit;
 }
+
+/* Event Filter */
+
+class QOCamlEventFilter : public QObject
+{
+  public:
+    QOCamlEventFilter() {};
+
+    bool eventFilter(QObject *watched, QEvent *event);
+};
+
+#define meth_filter    0
+
+external value cuite_new_QOCamlEventFilter(value _callbacks, value _payload)
+{
+  CUITE_Region region;
+  value& callbacks = cuite_region_register(_callbacks);
+  value& payload = cuite_region_register(_payload);
+
+  QOCamlEventFilter *filter = new QOCamlEventFilter();
+  value& v(cuite_QObject_allocate_value(filter, 2));
+  Store_field(v, QObject_fields_count + 0, payload);
+  Store_field(v, QObject_fields_count + 1, callbacks);
+  CUITE_LOG("new QOCamlEventFilter(callbacks = %08x) = %08x\n", callbacks, v);
+  return v;
+}
+
+bool QOCamlEventFilter::eventFilter(QObject *watched, QEvent *event)
+{
+  bool result = false;
+  PREPARE_METHOD(2, this);
+    PUSH_ARG(cuite_QObject_to_ocaml(watched));
+    PUSH_ARG(cuite_QEvent_to_ocaml(event));
+  CALL_METHOD(result, Val_bool, meth_filter);
+  return result;
+}
+

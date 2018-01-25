@@ -58,7 +58,7 @@ let () = with_class qApplication [
     static  "setEffectEnabled" [arg "effect" qt'UIEffect;arg "enable" bool];
     (*static  "keyboardInputLocale" [] ~ret:qLocale;*)
     (*static  "keyboardInputDirection" [] ~ret:qt'LayoutDirection;*)
-    static  "exec" [] ~ret:int;
+    static  "exec" [] ~ret:int ~custom:true;
     (*static  "setKeypadNavigationEnabled" [arg "enable" bool];*)
     (*static  "keypadNavigationEnabled" [] ~ret:bool;*)
     (*static  "setNavigationMode" [arg "mode" qt'NavigationMode];*)

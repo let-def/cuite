@@ -399,6 +399,8 @@ let () = with_class qObject [
     dynamic "isWindowType" [] ~ret:bool;
     dynamic "dumpObjectTree" [];
     dynamic "dumpObjectInfo" [];
+    dynamic "installEventFilter" [arg "filterObj" qObject];
+    dynamic "removeEventFilter" [arg "obj" qObject];
   ]
 
 let () = with_class qFileSystemWatcher [
@@ -740,6 +742,17 @@ let () = with_class qFileInfo [
     dynamic "lastRead" [] ~ret:qDateTime;
     dynamic "caching" [] ~ret:bool;
     dynamic "setCaching" [arg "enable" bool];
+  ]
+
+let () = with_class qEvent [
+    constructor "" [arg "type" qEvent'Type];
+    dynamic "type" [] ~ret:qEvent'Type;
+    dynamic "spontaneous" [] ~ret:bool;
+    dynamic "setAccepted" [arg "accepted" bool];
+    dynamic "isAccepted" [] ~ret:bool;
+    dynamic "accept" [];
+    dynamic "ignore" [];
+    (*static  "registerEventType" [arg "hint" int] ~ret:int;*)
   ]
 
 (* END
@@ -1112,16 +1125,6 @@ let () = with_class qPair [
     constructor "" [arg "p" qPair<TT1, TT2>];
     (*dynamic "operator=" [arg "p" qPair<TT1,TT2>] ~ret:qPair;*)
     dynamic "swap" [arg "other" qPair];
-  ]
-let () = with_class qEvent [
-    constructor "" [arg "type" type];
-    (*dynamic "type" [] ~ret:type;*)
-    dynamic "spontaneous" [] ~ret:bool;
-    dynamic "setAccepted" [arg "accepted" bool];
-    dynamic "isAccepted" [] ~ret:bool;
-    dynamic "accept" [];
-    dynamic "ignore" [];
-    static  "registerEventType" [arg "hint" int] ~ret:int;
   ]
 let () = with_class qMimeDatabase [
     constructor "" [];

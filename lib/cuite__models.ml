@@ -155,3 +155,19 @@ end = struct
     in
     (result : t qOCamlSyntaxHighlighter qt :> qSyntaxHighlighter qt)
 end
+
+(* QEventFilter *)
+
+type 'a qOCamlEventFilter =
+  [ `QOCamlEventFilter | `Payload of 'a | qObject ]
+
+type 'a qOCamlEventFilter'callback = {
+  filter : 'a -> 'a qOCamlEventFilter qt -> qObject qt -> qEvent qt -> bool;
+}
+
+let qOCamlEventFilter'callback ~filter =
+  { filter }
+
+external new'QOCamlEventFilter : 'a qOCamlEventFilter'callback -> 'a -> 'a qOCamlEventFilter qt =
+  "cuite_new_QOCamlEventFilter"
+
