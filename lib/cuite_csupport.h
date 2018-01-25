@@ -19,6 +19,10 @@ void cuite_region_leave(cuite_region_t region);
 value *cuite_region_alloc(void);
 value *cuite_region_allocn(int count);
 
+extern int cuite_ocaml_released;
+void cuite_release_ocaml(void);
+int cuite_acquire_ocaml(void);
+
 #ifdef __cplusplus
 }
 #endif

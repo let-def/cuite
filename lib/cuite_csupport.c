@@ -3,6 +3,29 @@
 #include "caml/memory.h"
 #include "caml/callback.h"
 #include "caml/custom.h"
+#include "caml/threads.h"
+
+int cuite_ocaml_released = 0;
+
+void cuite_release_ocaml(void)
+{
+  cuite_assert(!cuite_ocaml_released);
+  cuite_ocaml_released = 1;
+  caml_release_runtime_system();
+}
+
+int cuite_acquire_ocaml(void)
+{
+  if (cuite_ocaml_released)
+  {
+    caml_acquire_runtime_system();
+    cuite_assert(cuite_ocaml_released);
+    cuite_ocaml_released = 0;
+    return 1;
+  }
+  else
+    return 0;
+}
 
 typedef struct {
   struct caml__roots_block desc;
@@ -43,6 +66,7 @@ static void region_release(region_t *region)
 
 cuite_region_t cuite_region_enter(void)
 {
+  cuite_assert (!cuite_ocaml_released);
   if (region_root == NULL)
   {
     region_root = region_alloc();
@@ -58,7 +82,7 @@ cuite_region_t cuite_region_enter(void)
 
 void cuite_region_leave(cuite_region_t region)
 {
-  cuite_assert (region_root);
+  cuite_assert (region_root && !cuite_ocaml_released);
   while (region.block != root_sentinel.next)
   {
     region_t *current = (region_t*)root_sentinel.next;
@@ -78,7 +102,7 @@ void cuite_region_leave(cuite_region_t region)
 
 value *cuite_region_alloc(void)
 {
-  cuite_assert (region_root);
+  cuite_assert (region_root && !cuite_ocaml_released);
   value *result;
 
   if (root_sentinel.next->nitems < 1024)
@@ -104,7 +128,7 @@ value *cuite_region_alloc(void)
 
 value *cuite_region_allocn(int count)
 {
-  cuite_assert (region_root && count <= 1024);
+  cuite_assert (region_root && count <= 1024 && !cuite_ocaml_released);
   value *result;
 
   if (root_sentinel.next->nitems + count <= 1024)

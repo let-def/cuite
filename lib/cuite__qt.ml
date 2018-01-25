@@ -31,8 +31,7 @@ let () =
   let cb_alloc x = Cuite__alloc.wref cb_table x in
   let cb_deref x = Cuite__alloc.wderef cb_table x in
   Callback.register "cuitecb_alloc" cb_alloc;
-  Callback.register "cuitecb_deref" cb_deref;
-  prerr_endline "registered cuite callbacks"
+  Callback.register "cuitecb_deref" cb_deref
 
 type connection
 external disconnect : connection -> unit = "cuite_disconnect"

@@ -71,7 +71,7 @@ let constructor ~h ~c ~ml cl = function
       List.iteri (fun i (_, typ) ->
           qtype_c_check_use_after_free c typ (sprint "arg%d" i)
         ) args;
-      print c "  CUITE_Region region;";
+      print c "  CUITE_GC_REGION;";
       List.iteri (fun i (_,_) ->
           print c "  value& ml%d = cuite_region_register(arg%d);" i i
         ) args;
@@ -103,7 +103,7 @@ let cfield ~h ~c ~ml cl = function
       List.iteri (fun i (_, typ) ->
           qtype_c_check_use_after_free c typ (sprint "arg%d" i)
         ) args;
-      print c "  CUITE_Region region;";
+      print c "  CUITE_GC_REGION;";
       print c "  value& mlself = cuite_region_register(argself);";
       List.iteri (fun i (_,_) ->
           print c "  value& ml%d = cuite_region_register(arg%d);" i i
@@ -141,7 +141,7 @@ let cfield ~h ~c ~ml cl = function
       List.iteri (fun i (_, typ) ->
           qtype_c_check_use_after_free c typ (sprint "arg%d" i)
         ) args;
-      print c "  CUITE_Region region;";
+      print c "  CUITE_GC_REGION;";
       List.iteri (fun i (_,_) ->
           print c "  value& ml%d = cuite_region_register(arg%d);" i i
         ) args;
@@ -190,7 +190,7 @@ let cfield ~h ~c ~ml cl = function
       (String.concat "," ("intnat *cbid" :: List.map (fun (k,v) -> k^" "^ v) cparams))
     ;
     print c "{";
-    print c "  CUITE_Region region;";
+    print c "  CUITE_OCAML_REGION;";
     print c "  value& arg = *cuite_region_alloc();";
     begin match args with
       | [] -> print c "  arg = Val_unit;";

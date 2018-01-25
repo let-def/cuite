@@ -165,9 +165,10 @@ QVariant cuite_QVariant_from_ocaml(const value& v)
       return QVariant(*cuite_QSizePolicy_from_ocaml(x));
     case TAG_QString:
       {
-        printf("converting %s to QVariant\n", String_val(x));
+        CUITE_LOG("converting %s to QVariant\n", String_val(x));
         QVariant v(cuite_QString_from_ocaml(x));
-        qDebug() << "cuite_QVariant_from_ocaml(" << v << ")";
+        if (cuite_is_logging())
+          qDebug() << "cuite_QVariant_from_ocaml(" << v << ")";
         return v;
       }
     case TAG_QStringList:

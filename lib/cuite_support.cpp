@@ -9,6 +9,20 @@
 #include <QCoreApplication>
 #include <QWidget>
 
+int cuite_is_logging(void)
+{
+  static int should_log = 0;
+  if (should_log == 0)
+  {
+    char *setting = getenv("CUITE_LOG");
+    if (setting && *setting)
+      should_log = 1;
+    else
+      should_log = -1;
+  }
+  return should_log == 1;
+}
+
 enum CUITE_Tags {
   CUITE_Tag_Cb = 1,
   CUITE_Tag_QObject = Object_tag,
@@ -59,7 +73,7 @@ static value val_unit = Val_unit;
 void cuite_debug_aborted_callback(const char *context, value exn)
 {
   const char *message = caml_format_exception(exn);
-  fprintf(stderr, "%s aborted with exception: %s\n", context, message);
+  CUITE_LOG("%s aborted with exception: %s\n", context, message);
   free((void*)message);
 }
 
@@ -132,7 +146,7 @@ static bool cuite_check_deleted(value v)
   }
   else
   {
-    fprintf(stderr, "cuite_is_deleted: unknown object");
+    CUITE_WARN("cuite_is_deleted: unknown object");
     abort();
   }
 }
@@ -161,8 +175,8 @@ static void do_delete(value& obj)
   {
     QObject *qobject = cuite_QObject_from_ocaml(obj);
     cuite_assert(qobject);
-    printf("delete ");
-    qobject->dumpObjectInfo();
+    CUITE_LOG("delete ");
+    if (cuite_is_logging()) { qobject->dumpObjectInfo(); };
     delete qobject;
     cuite_do_delete(obj);
   }
@@ -188,21 +202,21 @@ static void do_delete(value& obj)
   }
   else
   {
-    fprintf(stderr, "cuite_delete: unknown object");
+    CUITE_WARN("cuite_delete: unknown object");
     abort();
   }
 }
 
 external value cuite_delete(value vobj)
 {
-  CUITE_Region region;
+  CUITE_GC_REGION;
   do_delete(cuite_region_register(vobj));
   return Val_unit;
 }
 
 external value cuite_weak_delete(value vobj)
 {
-  CUITE_Region region;
+  CUITE_GC_REGION;
   if (cuite_check_deleted(vobj))
     return Val_bool(1);
 
@@ -390,7 +404,7 @@ static value& cuite_QObject_initialize_proxy(const QObject *obj, QObjectMLProxy 
   cuite_assert(!Is_block(id));
 
   proxy->id = id;
-  printf("allocated id %ld\n", Long_val(id));
+  CUITE_LOG("allocated id %ld\n", Long_val(id));
 
   GraphTracker_register(obj);
   return block;
@@ -415,7 +429,7 @@ value& cuite_QObject_to_ocaml(const QObject *obj)
     deref = caml_named_value("cuite_deref");
 
   value block = caml_callback_exn(*deref, proxy->id);
-  printf("accessing id %ld = 0x%016x from thread 0x%016x\n", Long_val(proxy->id), block, pthread_self());
+  CUITE_LOG("accessing id %ld = 0x%016x from thread 0x%016x\n", Long_val(proxy->id), block, pthread_self());
   if (Is_exception_result(block))
   {
     cuite_debug_aborted_callback("cuite_QObject_to_ocaml(deref)", Extract_exception(block));
@@ -448,11 +462,13 @@ QObject *cuite_QObject_option_from_ocaml(value v)
 
 void cuite_QObject_register_root(QObject *obj, bool is_explicit)
 {
+  CUITE_OCAML_REGION;
   QObject_proxy(obj)->register_root(is_explicit);
 }
 
 void cuite_QObject_unregister_root(QObject *obj, bool is_explicit)
 {
+  CUITE_OCAML_REGION;
   QObject_proxy(obj)->unregister_root(is_explicit);
 }
 
@@ -515,17 +531,17 @@ static void connect_parent(value vobj)
 
 static void update_parent(const QObject *obj)
 {
-  CUITE_Region region;
+  CUITE_GC_REGION;
   value& vobj = cuite_QObject_to_ocaml(obj);
   QObject *parent = obj->parent();
   value& vparent = parent ? cuite_QObject_to_ocaml(parent) : val_unit;
 
-  printf("%s child of %s(%x)\n", obj->metaObject()->className(),
+  CUITE_LOG("%s child of %s(%x)\n", obj->metaObject()->className(),
       parent ? parent->metaObject()->className() : "NULL", vparent);
 
   if (Field(vobj, QObject_field_parent) == vparent)
   {
-    printf("skipping: parent didn't change (?!)\n");
+    CUITE_LOG("skipping: parent didn't change (?!)\n");
     return;
   }
 
@@ -568,7 +584,7 @@ bool GraphTracker::eventFilter(QObject *target, QEvent *event)
 
 static void GraphTracker_register(const QObject *obj)
 {
-  printf("registering %s\n", obj->metaObject()->className());
+  CUITE_LOG("registering %s\n", obj->metaObject()->className());
   if (!obj->metaObject()->inherits(&QCoreApplication::staticMetaObject))
     const_cast<QObject*>(obj)->installEventFilter(&graphTracker);
   update_parent(obj);
@@ -768,14 +784,14 @@ external value cuite_connect_slot0(value vsource, value vsig, value vtarget, val
 
 external value cuite_connect_slot1(value vsource, value vsig, value vtarget, value vslot)
 {
-  CUITE_Region region;
+  CUITE_GC_REGION;
   return cuite_Connection_to_ocaml(cuite_connect_slot_gen(vsource, vsig, vtarget, vslot), NULL);
 }
 
 static value cuite_connect_gen(value vsource, value vsig, value vfn, bool witness)
 {
   CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vsource));
-  CUITE_Region region;
+  CUITE_GC_REGION;
 
   value& vobj = cuite_region_register(vsource);
   value& vclosure = cuite_region_register(vfn);

@@ -1,22 +1,21 @@
 #ifndef CUITE_SUPPORT
 #define CUITE_SUPPORT
 
-#include "cuite_csupport.h"
+#include "cuite_gc.h"
 #include <QObject>
 #include "caml/custom.h"
 #include "caml/fail.h"
 
 #define external extern "C"
 
-/* GC interface */
+int cuite_is_logging(void);
 
-struct CUITE_Region
-{
-  cuite_region_t region;
+#define CUITE_WARN(...) \
+  fprintf(stderr, "CUITE(ERR) " __VA_ARGS__)
 
-  CUITE_Region() : region(cuite_region_enter()) {}
-  ~CUITE_Region() { cuite_region_leave(region); }
-};
+#define CUITE_LOG(...) \
+  do { if (cuite_is_logging()) { fprintf(stderr, "CUITE(LOG) " __VA_ARGS__); } } \
+  while (0)
 
 /* QObject wrapping */
 
@@ -161,4 +160,4 @@ void cuite_debug_aborted_callback(const char *context, value exn);
 template <typename... Args, typename U> Q_CONSTEXPR Q_DECL_UNUSED QOverload<Args..., U>
 qPrivateOverload = {};
 
-#endif /* CUITE_SUPPORT */
+#endif /* !CUITE_SUPPORT */
