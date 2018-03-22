@@ -85,7 +85,10 @@ and qtype =
 
 and cfield =
   | Constructor of string * (string * qtype) list * bool
-  | Dynamic_method of qtype option * string * (string * qtype) list * bool
+  | Dynamic_method of { ret: qtype option;
+                        name: string;
+                        args: (string * qtype) list;
+                        kind: [`Normal | `Custom | `Protected] }
   | Static_method of qtype option * string * (string * qtype) list * bool
   | Signal of string * (string * qtype) list * bool
   | Slot of string * (string * qtype) list
@@ -206,18 +209,18 @@ let constructor ?(custom=false) name args ~cl =
   let cl = qclass_of_typ cl in
   cl.cl_fields <- Constructor (name, args, custom) :: cl.cl_fields
 
-let dynamic ?(custom=false) ?ret name args ~cl =
+let dynamic ?(kind=`Normal) ?ret name args ~cl =
   let cl = qclass_of_typ cl in
   let rec is_dup cl' =
     if List.exists (function
-        | Dynamic_method (ret', name', args', _) ->
-          name = name' &&
-          (match ret, ret' with
+        | Dynamic_method meth ->
+          name = meth.name &&
+          (match ret, meth.ret with
            | None, None -> true
            | Some t, Some t' -> eq_typ t t'
            | _ -> false) &&
-          List.length args = List.length args' &&
-          List.for_all2 eq_arg args args'
+          List.length args = List.length meth.args &&
+          List.for_all2 eq_arg args meth.args
         | _ -> false
       ) cl'.cl_fields
     then prerr_endline ("Duplicate method: {" ^ cl'.cl_name ^ "," ^ cl.cl_name ^ "}::" ^ name)
@@ -226,7 +229,7 @@ let dynamic ?(custom=false) ?ret name args ~cl =
       | Some cl' -> is_dup cl'
   in
   is_dup cl;
-  cl.cl_fields <- Dynamic_method (ret, name, args, custom) :: cl.cl_fields
+  cl.cl_fields <- Dynamic_method {ret; name; args; kind} :: cl.cl_fields
 
 let static ?(custom=false) ?ret name args ~cl =
   let cl = qclass_of_typ cl in
@@ -240,14 +243,14 @@ let slot ?ret ?(protected=false) name args ~cl =
        (String.length name >= 3 &&
         name.[0] = '_' && name.[1] = 'q' && name.[2] = '_') ||
        List.exists (function
-           | Dynamic_method (_, name', args', _) ->
-             name = name' &&
-             List.length args = List.length args' &&
-             List.for_all2 eq_arg args args'
+           | Dynamic_method meth ->
+             name = meth.name &&
+             List.length args = List.length meth.args &&
+             List.for_all2 eq_arg args meth.args
            | _ -> false
          ) fields
     then fields
-    else Dynamic_method (ret, name, args, false) :: fields
+    else Dynamic_method {ret; name; args; kind = `Normal} :: fields
   in
   cl.cl_fields <- fields
 

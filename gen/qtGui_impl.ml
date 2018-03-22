@@ -574,6 +574,46 @@ let () = with_class qIcon [
     static  "setThemeName" [arg "name" qString];
   ]
 
+let () = with_class qFontMetrics [
+    constructor "" [arg "font" qFont];
+    (*constructor "" [arg "font" qFont;arg "paintdevice" qPaintDevice];*)
+    (*constructor "" [arg "fm" qFontMetrics];*)
+    (*dynamic "operator=" [arg "fm" qFontMetrics] ~ret:qFontMetrics;
+    dynamic "operator=" [arg "other" qFontMetrics] ~ret:qFontMetrics;*)
+    (*dynamic "swap" [arg "other" qFontMetrics];*)
+    dynamic "ascent" [] ~ret:int;
+    dynamic "capHeight" [] ~ret:int;
+    dynamic "descent" [] ~ret:int;
+    dynamic "height" [] ~ret:int;
+    dynamic "leading" [] ~ret:int;
+    dynamic "lineSpacing" [] ~ret:int;
+    dynamic "minLeftBearing" [] ~ret:int;
+    dynamic "minRightBearing" [] ~ret:int;
+    dynamic "maxWidth" [] ~ret:int;
+    dynamic "xHeight" [] ~ret:int;
+    dynamic "averageCharWidth" [] ~ret:int;
+    dynamic "inFont" [arg "ch" qChar] ~ret:bool;
+    (*dynamic "inFontUcs4" [arg "arg0" uint ucs4] ~ret:bool;*)
+    dynamic "leftBearing" [arg "ch" qChar] ~ret:int;
+    dynamic "rightBearing" [arg "ch" qChar] ~ret:int;
+    dynamic "width" [arg "text" qString;arg "len" int] ~ret:int;
+    dynamic "width" [arg "ch" qChar] ~ret:int;
+    dynamic "charWidth" [arg "text" qString;arg "pos" int] ~ret:int;
+    (*dynamic "boundingRect" [arg "ch" qChar] ~ret:qRect;*)
+    dynamic "boundingRect" [arg "text" qString] ~ret:qRect;
+    (*dynamic "boundingRect" [arg "rect" qRect;arg "flags" int;arg "text" qString;arg "tabStops" int;arg "tabArray" int] ~ret:qRect;*)
+    (*dynamic "boundingRect" [arg "x" int;arg "y" int;arg "width" int;arg "height" int;arg "flags" int;arg "text" qString;arg "tabStops" int;arg "tabArray" int] ~ret:qRect;*)
+    (*dynamic "size" [arg "flags" int;arg "text" qString;arg "tabStops" int;arg "tabArray" int] ~ret:qSize;*)
+    dynamic "tightBoundingRect" [arg "text" qString] ~ret:qRect;
+    dynamic "elidedText" [arg "text" qString;arg "mode" qt'TextElideMode;arg "width" int;arg "flags" int] ~ret:qString;
+    dynamic "underlinePos" [] ~ret:int;
+    dynamic "overlinePos" [] ~ret:int;
+    dynamic "strikeOutPos" [] ~ret:int;
+    dynamic "lineWidth" [] ~ret:int;
+    (*dynamic "operator==" [arg "other" qFontMetrics] ~ret:bool;
+    dynamic "operator!=" [arg "other" qFontMetrics] ~ret:bool;*)
+  ]
+
 let () = with_class qKeySequence [
     constructor "" [];
     constructor "" [arg "key" qString;arg "format" qKeySequence'SequenceFormat];
@@ -599,6 +639,88 @@ let () = with_class qKeySequence [
     dynamic "operator>" [arg "other" qKeySequence] ~ret:bool;
     dynamic "operator<=" [arg "other" qKeySequence] ~ret:bool;
     dynamic "operator>=" [arg "other" qKeySequence] ~ret:bool;*)
+  ]
+
+let () = with_class qTextCursor [
+    constructor "" [];
+    constructor "" [arg "document" qTextDocument];
+    constructor "" [arg "frame" qTextFrame];
+    constructor "" [arg "block" qTextBlock];
+    constructor "" [arg "cursor" qTextCursor];
+    (*dynamic "operator=" [arg "other" qTextCursor] ~ret:qTextCursor;*)
+    (*dynamic "operator=" [arg "cursor" qTextCursor] ~ret:qTextCursor;*)
+    (*dynamic "swap" [arg "other" qTextCursor];*)
+    dynamic "isNull" [] ~ret:bool;
+    dynamic "setPosition" [arg "pos" int;arg "m" qTextCursor'MoveMode];
+    dynamic "position" [] ~ret:int;
+    dynamic "positionInBlock" [] ~ret:int;
+    dynamic "insertText" [arg "text" qString];
+    dynamic "insertText" [arg "text" qString;arg "format" qTextCharFormat];
+    dynamic "movePosition" [arg "operation" qTextCursor'MoveOperation;arg "mode" qTextCursor'MoveMode;arg "n" int] ~ret:bool;
+    dynamic "visualNavigation" [] ~ret:bool;
+    dynamic "setVisualNavigation" [arg "b" bool];
+    dynamic "setVerticalMovementX" [arg "x" int];
+    dynamic "verticalMovementX" [] ~ret:int;
+    dynamic "setKeepPositionOnInsert" [arg "b" bool];
+    dynamic "keepPositionOnInsert" [] ~ret:bool;
+    dynamic "deleteChar" [];
+    dynamic "deletePreviousChar" [];
+    dynamic "select" [arg "selection" qTextCursor'SelectionType];
+    dynamic "hasSelection" [] ~ret:bool;
+    dynamic "hasComplexSelection" [] ~ret:bool;
+    dynamic "removeSelectedText" [];
+    dynamic "clearSelection" [];
+    dynamic "selectionStart" [] ~ret:int;
+    dynamic "selectionEnd" [] ~ret:int;
+    dynamic "selectedText" [] ~ret:qString;
+    dynamic "selection" [] ~ret:qTextDocumentFragment;
+    (*dynamic "selectedTableCells" [arg "firstRow" int;arg "numRows" int;arg "firstColumn" int;arg "numColumns" int];*)
+    dynamic "block" [] ~ret:qTextBlock;
+    dynamic "charFormat" [] ~ret:qTextCharFormat;
+    dynamic "setCharFormat" [arg "format" qTextCharFormat];
+    dynamic "mergeCharFormat" [arg "modifier" qTextCharFormat];
+    dynamic "blockFormat" [] ~ret:qTextBlockFormat;
+    dynamic "setBlockFormat" [arg "format" qTextBlockFormat];
+    dynamic "mergeBlockFormat" [arg "modifier" qTextBlockFormat];
+    dynamic "blockCharFormat" [] ~ret:qTextCharFormat;
+    dynamic "setBlockCharFormat" [arg "format" qTextCharFormat];
+    dynamic "mergeBlockCharFormat" [arg "modifier" qTextCharFormat];
+    dynamic "atBlockStart" [] ~ret:bool;
+    dynamic "atBlockEnd" [] ~ret:bool;
+    dynamic "atStart" [] ~ret:bool;
+    dynamic "atEnd" [] ~ret:bool;
+    dynamic "insertBlock" [];
+    dynamic "insertBlock" [arg "format" qTextBlockFormat];
+    dynamic "insertBlock" [arg "format" qTextBlockFormat;arg "charFormat" qTextCharFormat];
+    dynamic "insertList" [arg "format" qTextListFormat] ~ret:qTextList;
+    dynamic "insertList" [arg "style" qTextListFormat'Style] ~ret:qTextList;
+    dynamic "createList" [arg "format" qTextListFormat] ~ret:qTextList;
+    dynamic "createList" [arg "style" qTextListFormat'Style] ~ret:qTextList;
+    dynamic "currentList" [] ~ret:qTextList;
+    dynamic "insertTable" [arg "rows" int;arg "columns" int;arg "format" qTextTableFormat] ~ret:qTextTable;
+    dynamic "insertTable" [arg "rows" int;arg "columns" int] ~ret:qTextTable;
+    dynamic "currentTable" [] ~ret:qTextTable;
+    dynamic "insertFrame" [arg "format" qTextFrameFormat] ~ret:qTextFrame;
+    dynamic "currentFrame" [] ~ret:qTextFrame;
+    dynamic "insertFragment" [arg "fragment" qTextDocumentFragment];
+    dynamic "insertHtml" [arg "html" qString];
+    dynamic "insertImage" [arg "format" qTextImageFormat;arg "alignment" qTextFrameFormat'Position];
+    dynamic "insertImage" [arg "format" qTextImageFormat];
+    dynamic "insertImage" [arg "name" qString];
+    dynamic "insertImage" [arg "image" qImage;arg "name" qString];
+    dynamic "beginEditBlock" [];
+    dynamic "joinPreviousEditBlock" [];
+    dynamic "endEditBlock" [];
+    (*dynamic "operator!=" [arg "other" qTextCursor] ~ret:bool;
+    dynamic "operator<" [arg "other" qTextCursor] ~ret:bool;
+    dynamic "operator<=" [arg "other" qTextCursor] ~ret:bool;
+    dynamic "operator==" [arg "other" qTextCursor] ~ret:bool;
+    dynamic "operator>=" [arg "other" qTextCursor] ~ret:bool;
+    dynamic "operator>" [arg "other" qTextCursor] ~ret:bool;*)
+    dynamic "isCopyOf" [arg "other" qTextCursor] ~ret:bool;
+    dynamic "blockNumber" [] ~ret:int;
+    dynamic "columnNumber" [] ~ret:int;
+    dynamic "document" [] ~ret:qTextDocument;
   ]
 
 (*let () = with_class qAccessibleEditableTextInterface [
@@ -1182,87 +1304,7 @@ let () = with_class qKeySequence [
     static  "storageLocation" [arg "type" standardLocation] ~ret:qString;
     static  "displayName" [arg "type" standardLocation] ~ret:qString;
   ]
-  let () = with_class qTextCursor [
-    constructor "" [];
-    constructor "" [arg "document" qTextDocument];
-    constructor "" [arg "frame" qTextFrame];
-    constructor "" [arg "block" qTextBlock];
-    constructor "" [arg "cursor" qTextCursor];
-    dynamic "operator=" [arg "other" qTextCursor] ~ret:qTextCursor;
-    dynamic "operator=" [arg "cursor" qTextCursor] ~ret:qTextCursor;
-    dynamic "swap" [arg "other" qTextCursor];
-    dynamic "isNull" [] ~ret:bool;
-    dynamic "setPosition" [arg "pos" int;arg "m" moveMode];
-    dynamic "position" [] ~ret:int;
-    dynamic "positionInBlock" [] ~ret:int;
-    dynamic "insertText" [arg "text" qString];
-    dynamic "insertText" [arg "text" qString;arg "format" qTextCharFormat];
-    dynamic "movePosition" [arg "operation" moveOperation;arg "mode" moveMode;arg "n" int] ~ret:bool;
-    dynamic "visualNavigation" [] ~ret:bool;
-    dynamic "setVisualNavigation" [arg "b" bool];
-    dynamic "setVerticalMovementX" [arg "x" int];
-    dynamic "verticalMovementX" [] ~ret:int;
-    dynamic "setKeepPositionOnInsert" [arg "b" bool];
-    dynamic "keepPositionOnInsert" [] ~ret:bool;
-    dynamic "deleteChar" [];
-    dynamic "deletePreviousChar" [];
-    dynamic "select" [arg "selection" selectionType];
-    dynamic "hasSelection" [] ~ret:bool;
-    dynamic "hasComplexSelection" [] ~ret:bool;
-    dynamic "removeSelectedText" [];
-    dynamic "clearSelection" [];
-    dynamic "selectionStart" [] ~ret:int;
-    dynamic "selectionEnd" [] ~ret:int;
-    dynamic "selectedText" [] ~ret:qString;
-    dynamic "selection" [] ~ret:qTextDocumentFragment;
-    dynamic "selectedTableCells" [arg "firstRow" int;arg "numRows" int;arg "firstColumn" int;arg "numColumns" int];
-    dynamic "block" [] ~ret:qTextBlock;
-    dynamic "charFormat" [] ~ret:qTextCharFormat;
-    dynamic "setCharFormat" [arg "format" qTextCharFormat];
-    dynamic "mergeCharFormat" [arg "modifier" qTextCharFormat];
-    dynamic "blockFormat" [] ~ret:qTextBlockFormat;
-    dynamic "setBlockFormat" [arg "format" qTextBlockFormat];
-    dynamic "mergeBlockFormat" [arg "modifier" qTextBlockFormat];
-    dynamic "blockCharFormat" [] ~ret:qTextCharFormat;
-    dynamic "setBlockCharFormat" [arg "format" qTextCharFormat];
-    dynamic "mergeBlockCharFormat" [arg "modifier" qTextCharFormat];
-    dynamic "atBlockStart" [] ~ret:bool;
-    dynamic "atBlockEnd" [] ~ret:bool;
-    dynamic "atStart" [] ~ret:bool;
-    dynamic "atEnd" [] ~ret:bool;
-    dynamic "insertBlock" [];
-    dynamic "insertBlock" [arg "format" qTextBlockFormat];
-    dynamic "insertBlock" [arg "format" qTextBlockFormat;arg "charFormat" qTextCharFormat];
-    dynamic "insertList" [arg "format" qTextListFormat] ~ret:qTextList;
-    dynamic "insertList" [arg "style" qTextListFormat'Style] ~ret:qTextList;
-    dynamic "createList" [arg "format" qTextListFormat] ~ret:qTextList;
-    dynamic "createList" [arg "style" qTextListFormat'Style] ~ret:qTextList;
-    dynamic "currentList" [] ~ret:qTextList;
-    dynamic "insertTable" [arg "rows" int;arg "columns" int;arg "format" qTextTableFormat] ~ret:qTextTable;
-    dynamic "insertTable" [arg "rows" int;arg "columns" int] ~ret:qTextTable;
-    dynamic "currentTable" [] ~ret:qTextTable;
-    dynamic "insertFrame" [arg "format" qTextFrameFormat] ~ret:qTextFrame;
-    dynamic "currentFrame" [] ~ret:qTextFrame;
-    dynamic "insertFragment" [arg "fragment" qTextDocumentFragment];
-    dynamic "insertHtml" [arg "html" qString];
-    dynamic "insertImage" [arg "format" qTextImageFormat;arg "alignment" qTextFrameFormat'Position];
-    dynamic "insertImage" [arg "format" qTextImageFormat];
-    dynamic "insertImage" [arg "name" qString];
-    dynamic "insertImage" [arg "image" qImage;arg "name" qString];
-    dynamic "beginEditBlock" [];
-    dynamic "joinPreviousEditBlock" [];
-    dynamic "endEditBlock" [];
-    dynamic "operator!=" [arg "other" qTextCursor] ~ret:bool;
-    dynamic "operator<" [arg "other" qTextCursor] ~ret:bool;
-    dynamic "operator<=" [arg "other" qTextCursor] ~ret:bool;
-    dynamic "operator==" [arg "other" qTextCursor] ~ret:bool;
-    dynamic "operator>=" [arg "other" qTextCursor] ~ret:bool;
-    dynamic "operator>" [arg "other" qTextCursor] ~ret:bool;
-    dynamic "isCopyOf" [arg "other" qTextCursor] ~ret:bool;
-    dynamic "blockNumber" [] ~ret:int;
-    dynamic "columnNumber" [] ~ret:int;
-    dynamic "document" [] ~ret:qTextDocument;
-  ]
+
   let () = with_class qVector4D [
     constructor "" [];
     constructor "" [arg "xpos" float;arg "ypos" float;arg "zpos" float;arg "wpos" float];
@@ -1908,45 +1950,6 @@ let () = with_class qKeySequence [
     dynamic "supportedWritingSystems" [] ~ret:qList<QFontDatabase'WritingSystem>;
     dynamic "fontTable" [arg "tagName" char] ~ret:qByteArray;
     static  "fromFont" [arg "font" qFont;arg "writingSystem" qFontDatabase'WritingSystem] ~ret:qRawFont;
-  ]
-  let () = with_class qFontMetrics [
-    constructor "" [arg "font" qFont];
-    constructor "" [arg "font" qFont;arg "paintdevice" qPaintDevice];
-    constructor "" [arg "fm" qFontMetrics];
-    dynamic "operator=" [arg "fm" qFontMetrics] ~ret:qFontMetrics;
-    dynamic "operator=" [arg "other" qFontMetrics] ~ret:qFontMetrics;
-    dynamic "swap" [arg "other" qFontMetrics];
-    dynamic "ascent" [] ~ret:int;
-    dynamic "capHeight" [] ~ret:int;
-    dynamic "descent" [] ~ret:int;
-    dynamic "height" [] ~ret:int;
-    dynamic "leading" [] ~ret:int;
-    dynamic "lineSpacing" [] ~ret:int;
-    dynamic "minLeftBearing" [] ~ret:int;
-    dynamic "minRightBearing" [] ~ret:int;
-    dynamic "maxWidth" [] ~ret:int;
-    dynamic "xHeight" [] ~ret:int;
-    dynamic "averageCharWidth" [] ~ret:int;
-    dynamic "inFont" [arg "ch" qChar] ~ret:bool;
-    dynamic "inFontUcs4" [arg "arg0" uint ucs4] ~ret:bool;
-    dynamic "leftBearing" [arg "ch" qChar] ~ret:int;
-    dynamic "rightBearing" [arg "ch" qChar] ~ret:int;
-    dynamic "width" [arg "text" qString;arg "len" int] ~ret:int;
-    dynamic "width" [arg "ch" qChar] ~ret:int;
-    dynamic "charWidth" [arg "text" qString;arg "pos" int] ~ret:int;
-    dynamic "boundingRect" [arg "ch" qChar] ~ret:qRect;
-    dynamic "boundingRect" [arg "text" qString] ~ret:qRect;
-    dynamic "boundingRect" [arg "rect" qRect;arg "flags" int;arg "text" qString;arg "tabStops" int;arg "tabArray" int] ~ret:qRect;
-    dynamic "boundingRect" [arg "x" int;arg "y" int;arg "width" int;arg "height" int;arg "flags" int;arg "text" qString;arg "tabStops" int;arg "tabArray" int] ~ret:qRect;
-    dynamic "size" [arg "flags" int;arg "text" qString;arg "tabStops" int;arg "tabArray" int] ~ret:qSize;
-    dynamic "tightBoundingRect" [arg "text" qString] ~ret:qRect;
-    dynamic "elidedText" [arg "text" qString;arg "mode" qt'TextElideMode;arg "width" int;arg "flags" int] ~ret:qString;
-    dynamic "underlinePos" [] ~ret:int;
-    dynamic "overlinePos" [] ~ret:int;
-    dynamic "strikeOutPos" [] ~ret:int;
-    dynamic "lineWidth" [] ~ret:int;
-    dynamic "operator==" [arg "other" qFontMetrics] ~ret:bool;
-    dynamic "operator!=" [arg "other" qFontMetrics] ~ret:bool;
   ]
   let () = with_class qAccessibleTableInterface [
     dynamic "caption" [] ~ret:qAccessibleInterface;

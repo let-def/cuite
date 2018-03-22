@@ -205,6 +205,7 @@ value& cuite_QSizeF_to_ocaml(const QSizeF& v)
   };                                                               \
   static inline value cuite_val_##T(const T& t)                     \
   {                                                                \
+    static_assert(QTypeInfoQuery<T>::isRelocatable, #T " should be relocatable"); \
     value v = caml_alloc_custom(&cuite_##T##_ops, sizeof(T), 0, 1); \
     new(Data_custom_val(v)) T(t);                                  \
     return v;                                                      \
@@ -242,11 +243,15 @@ CUITE_RELOCATABLE_CONVERTER(QPalette);
 CUITE_RELOCATABLE_CONVERTER(QRegExp);
 CUITE_RELOCATABLE_CONVERTER(QRegion);
 CUITE_RELOCATABLE_CONVERTER(QStringList);
-CUITE_RELOCATABLE_CONVERTER(QSurfaceFormat);
 CUITE_RELOCATABLE_CONVERTER(QTextBlock);
 CUITE_RELOCATABLE_CONVERTER(QTextCursor);
 CUITE_RELOCATABLE_CONVERTER(QTextFormat);
+CUITE_RELOCATABLE_CONVERTER(QTextBlockFormat);
 CUITE_RELOCATABLE_CONVERTER(QTextCharFormat);
+CUITE_RELOCATABLE_CONVERTER(QTextFrameFormat);
+CUITE_RELOCATABLE_CONVERTER(QTextImageFormat);
+CUITE_RELOCATABLE_CONVERTER(QTextListFormat);
+CUITE_RELOCATABLE_CONVERTER(QTextTableFormat);
 CUITE_RELOCATABLE_CONVERTER(QTime);
 CUITE_RELOCATABLE_CONVERTER(QTransform);
 CUITE_RELOCATABLE_CONVERTER(QUrl);
@@ -299,3 +304,5 @@ CUITE_MANUAL_PTR_CONVERTER(QTreeWidgetItem);
 CUITE_MANUAL_PTR_CONVERTER(QTableWidgetItem);
 CUITE_MANUAL_PTR_CONVERTER(QTableWidgetSelectionRange);
 CUITE_MANUAL_PTR_CONVERTER(QFileIconProvider);
+CUITE_MANUAL_PTR_CONVERTER(QSurfaceFormat);
+CUITE_MANUAL_PTR_CONVERTER(QTextDocumentFragment);

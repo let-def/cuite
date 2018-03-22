@@ -85,44 +85,78 @@ let constructor ~h ~c ~ml cl = function
     )
   | _ -> ()
 
+let unprotect_proto ~c cl =
+  if List.exists
+      (function Dynamic_method {kind=`Protected} -> true | _ -> false)
+      cl.cl.cl_fields
+  then (
+    print c "class Unprotect_%s : public %s {" cl.cl.cl_name cl.cl.cl_name;
+    print c "  public:";
+    List.iter (function
+        | Dynamic_method ({kind=`Protected} as meth) ->
+          print c "  value unprotect_%s(%s);" meth.name
+            (String.concat ", "
+               (List.mapi (fun i _ -> sprint "value& ml%d" i) meth.args));
+        | _ -> ())
+      cl.cl.cl_fields;
+    print c "};";
+  )
+
+
+
 
 let cfield ~h ~c ~ml cl = function
   | Constructor _ -> () (* Already processed *)
-  | Dynamic_method (ret, name, args, custom) ->
+  | Dynamic_method {ret; name; args; kind} ->
     let uname, unames = unique_name cl `func name args in
     let mlargs = List.map qtype_ml_negname (QClass cl :: List.map snd args) in
-    let external_symbol = c_external h c ~impl:(not custom) cl uname ~self:true args in
+    let external_symbol = c_external h c ~impl:(kind <> `Custom) cl uname ~self:true args in
     let mlret = match ret with None -> "unit" | Some typ -> qtype_ml_posname typ in
     List.iter (fun uname ->
         print ml "  external %s : %s = %s"
           uname (String.concat " -> " (mlargs @ [mlret])) external_symbol
       ) unames;
-    if not custom then (
-      print c "{";
-      qtype_c_check_use_after_free c (QClass cl) "argself";
-      List.iteri (fun i (_, typ) ->
-          qtype_c_check_use_after_free c typ (sprint "arg%d" i)
-        ) args;
-      print c "  CUITE_GC_REGION;";
-      print c "  value& mlself = cuite_region_register(argself);";
-      List.iteri (fun i (_,_) ->
-          print c "  value& ml%d = cuite_region_register(arg%d);" i i
-        ) args;
-      print c "  auto self = %s;" (qtype_c_from_ocaml (QClass cl) "mlself");
-      List.iteri (fun i (_,typ) ->
-          print c "  %s c%d = %s;" (qtype_c_negname typ) i (qtype_c_from_ocaml typ ("ml" ^string_of_int i))
-        ) args;
-      let cargs = String.concat "," (carg_list args) in
-      let call = Printf.sprintf "self->%s(%s)" name cargs in
-      begin match ret with
-        | None ->
-          print c "  self->%s(%s);" name cargs;
-          print c "  return Val_unit;"
-        | Some typ ->
-          print c "  return %s;" (qtype_c_to_ocaml typ call);
-      end;
-      print c "}\n"
-    )
+    begin match kind with
+      | `Custom -> ()
+      | `Normal | `Protected as kind ->
+        print c "{";
+        qtype_c_check_use_after_free c (QClass cl) "argself";
+        List.iteri (fun i (_, typ) ->
+            qtype_c_check_use_after_free c typ (sprint "arg%d" i)
+          ) args;
+        print c "  CUITE_GC_REGION;";
+        print c "  value& mlself = cuite_region_register(argself);";
+        List.iteri (fun i (_,_) ->
+            print c "  value& ml%d = cuite_region_register(arg%d);" i i
+          ) args;
+        print c "  auto self = %s;" (qtype_c_from_ocaml (QClass cl) "mlself");
+        let self =
+          match kind with
+          | `Normal -> "self"
+          | `Protected ->
+            print c "  return ((Unprotect_%s*)self)->unprotect_%s(%s);"
+              cl.cl.cl_name name
+              (String.concat ", " (List.mapi (fun i _ -> sprint "ml%d" i) args));
+            print c "}";
+            print c "value Unprotect_%s::unprotect_%s(%s) {"
+              cl.cl.cl_name name
+              (String.concat ", " (List.mapi (fun i _ -> sprint "value& ml%d" i) args));
+            "this"
+        in
+        List.iteri (fun i (_,typ) ->
+            print c "  %s c%d = %s;" (qtype_c_negname typ) i (qtype_c_from_ocaml typ ("ml" ^string_of_int i))
+          ) args;
+        let cargs = String.concat "," (carg_list args) in
+        let call = Printf.sprintf "%s->%s(%s)" self name cargs in
+        begin match ret with
+          | None ->
+            print c "  %s;" call;
+            print c "  return Val_unit;"
+          | Some typ ->
+            print c "  return %s;" (qtype_c_to_ocaml typ call);
+        end;
+        print c "}\n"
+    end
 
   | Static_method (ret, name, args, custom) ->
     let uname, unames = unique_name cl `func name args in
@@ -265,6 +299,7 @@ let gen ?c ~ml ~mlsplit () =
             | None -> ()
         in
         qmetaobject cl.cl;
+        unprotect_proto ~c cl;
         List.iter (cfield ~h ~c ~ml cl) fields;
       ) else (
         print ml "module %s = struct" (cl_Ml_name cl.cl);
@@ -283,6 +318,7 @@ let gen ?c ~ml ~mlsplit () =
             | None -> ()
         in
         qmetaobject cl.cl;
+        unprotect_proto ~c cl;
         List.iter (cfield ~h ~c ~ml cl) fields;
         ml "end"
       )

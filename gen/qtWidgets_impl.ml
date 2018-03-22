@@ -639,6 +639,12 @@ let () = with_class qFormLayout [
     dynamic "rowCount" [] ~ret:int;
   ]
 
+let () = with_class qTextEdit'ExtraSelection [
+]
+
+let qTextEdit'ExtraSelection'List =
+  QtCore_classes.qList "QTextEditExtraSelectionList" qTextEdit'ExtraSelection
+
 let () = with_class qTextEdit [
     constructor "" [arg "parent" (optional qWidget)];
     constructor "" [arg "text" qString;arg "parent" (optional qWidget)];
@@ -668,7 +674,7 @@ let () = with_class qTextEdit [
     dynamic "document" [] ~ret:qTextDocument;
     dynamic "documentTitle" [] ~ret:qString;
     dynamic "ensureCursorVisible" [];
-    (*dynamic "extraSelections" [] ~ret:qList<ExtraSelection>;*)
+    dynamic "extraSelections" [] ~ret:qTextEdit'ExtraSelection'List;
     (*dynamic "find" [arg "exp" qRegExp;arg "options" qTextDocument'FindFlags] ~ret:bool;*)
     dynamic "find" [arg "exp" qString;arg "options" qTextDocument'FindFlags] ~ret:bool;
     dynamic "fontFamily" [] ~ret:qString;
@@ -709,7 +715,7 @@ let () = with_class qTextEdit [
     dynamic "setCursorWidth" [arg "width" int];
     dynamic "setDocument" [arg "document" qTextDocument];
     dynamic "setDocumentTitle" [arg "title" qString];
-    (*dynamic "setExtraSelections" [arg "selections" qList<ExtraSelection>];*)
+    dynamic "setExtraSelections" [arg "selections" qTextEdit'ExtraSelection'List];
     slot "setFontFamily" [arg "" qString];
     slot "setFontItalic" [arg "" bool];
     slot "setFontPointSize" [arg "" double];
@@ -2105,6 +2111,11 @@ let () = with_class qAbstractScrollArea [
     (*dynamic "scrollBarWidgets" [arg "alignment" qt'Alignment] ~ret:qWidgetList;*)
     dynamic "viewport" [] ~ret:(optional qWidget);
     dynamic "setViewport" [arg "widget" qWidget];
+
+    dynamic "setViewportMargins" [arg "left" int; arg "top" int; arg "right" int; arg "bottom" int] ~kind:`Protected;
+    dynamic "setViewportMargins" [arg "margins" (reference qMargins)] ~kind:`Protected;
+    dynamic "viewportMargins" [] ~ret:qMargins ~kind:`Protected;
+
     dynamic "maximumViewportSize" [] ~ret:qSize;
     dynamic "setupViewport" [arg "viewport" qWidget];
     dynamic "sizeAdjustPolicy" [] ~ret:qAbstractScrollArea'SizeAdjustPolicy;
@@ -4171,8 +4182,6 @@ let () = with_class qTileRules [
     dynamic "mergeWith" [arg "command" qUndoCommand] ~ret:bool;
     dynamic "childCount" [] ~ret:int;
     dynamic "child" [arg "index" int] ~ret:qUndoCommand;
-  ]
-  let () = with_class qTextEdit'ExtraSelection [
   ]
   let () = with_class qFormLayout'TakeRowResult [
   ]
