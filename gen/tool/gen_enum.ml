@@ -71,6 +71,9 @@ let gen ~h ~c ~ml =
     print h "#define cuite_%s_to_ocaml(v) cuite_flag_to_ocaml((uint)v)" fconverter;
     print h "#define cuite_%s_from_ocaml(v) ((%s)cuite_flag_from_ocaml(v))" fconverter fident
   in
-  List.iter enum (all_enum ());
-  List.iter flags (all_flags ());
+  Dlist.iter all_types (function
+      | QEnum e -> enum e
+      | QFlags f -> flags f
+      | _ -> ()
+  );
   print h "#endif"

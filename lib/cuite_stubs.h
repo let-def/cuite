@@ -11,8 +11,6 @@
 #include <QtWidgets>
 #include "cuite_const.h"
 
-typedef QList<QTextEdit::ExtraSelection> QTextEditExtraSelectionList;
-
 #include "cuite_stubs.gen.h"
 
 #endif /*!__CUITE_STUBS_H__*/

@@ -88,22 +88,18 @@ let constructor ~h ~c ~ml cl = function
 let unprotect_proto ~c cl =
   if List.exists
       (function Dynamic_method {kind=`Protected} -> true | _ -> false)
-      cl.cl.cl_fields
+      (Dlist.read cl.cl_fields)
   then (
-    print c "class Unprotect_%s : public %s {" cl.cl.cl_name cl.cl.cl_name;
+    print c "class Unprotect_%s : public %s {" cl.cl_name cl.cl_name;
     print c "  public:";
-    List.iter (function
+    Dlist.iter cl.cl_fields (function
         | Dynamic_method ({kind=`Protected} as meth) ->
           print c "  value unprotect_%s(%s);" meth.name
             (String.concat ", "
                (List.mapi (fun i _ -> sprint "value& ml%d" i) meth.args));
-        | _ -> ())
-      cl.cl.cl_fields;
+        | _ -> ());
     print c "};";
   )
-
-
-
 
 let cfield ~h ~c ~ml cl = function
   | Constructor _ -> () (* Already processed *)
@@ -258,86 +254,97 @@ let cfield ~h ~c ~ml cl = function
       ) unames
 
 let gen_types ~ml ~mlsplit () =
-  List.iter (fun cl ->
-      begin match cl.cl.cl_extend with
-      | None ->
-        print ml "type %s = [`%s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl))
-      | Some cl' ->
-        print ml "type %s = [`%s | %s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl')
-      end;
-      if mlsplit then
-        print ml "module %s = Cuite___%s" (cl_Ml_name cl.cl) (cl_fs_name cl.cl)
-    ) (all_class ())
+  Dlist.iter all_types (function
+      | QClass cl ->
+        begin match cl.cl.cl_extend with
+          | None ->
+            print ml "type %s = [`%s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl))
+          | Some cl' ->
+            print ml "type %s = [`%s | %s]" (cl_ml_name cl.cl) (ml_mangle (cl_c_name cl.cl)) (cl_ml_name cl')
+        end;
+        if mlsplit then
+          print ml "module %s = Cuite___%s" (cl_Ml_name cl.cl) (cl_fs_name cl.cl)
+      | Custom custom when custom.ml_decl <> "" ->
+        print ml "%s" custom.ml_decl
+      | _ -> ()
+    )
 
 let gen ?c ~ml ~mlsplit () =
   with_file "cuite_stubs.gen.h" @@ fun h ->
-  List.iter (fun cl ->
-      let fs_name = cl_fs_name cl.cl in
-      begin match c with
-        | None ->
-          (fun f -> with_file (sprint "cuite_%s.gen.cpp" fs_name)
-              (fun c -> print c "#include \"cuite_stubs.h\""; f c))
-        | Some c -> (fun f -> f c)
-      end @@ fun c ->
-      let fields = List.rev cl.cl.cl_fields in
-      List.iter (constructor ~h ~c ~ml cl) fields;
-      if mlsplit then (
-        with_file (sprint "cuite___%s.ml" fs_name) @@ fun ml ->
-        ml "open Cuite";
-        begin match cl.cl.cl_extend with
-          | None -> ()
-          | Some cl' -> print ml "include Cuite___%s" (cl_fs_name cl')
-        end;
-        let rec qmetaobject cl' =
-          if cl_c_name cl' = "QObject" then (
-            print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
-            print ml "external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
-              (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
-          )
-          else match cl'.cl_extend with
-            | Some cl' -> qmetaobject cl'
+  Dlist.iter all_types (function
+      | QClass cl ->
+        let fs_name = cl_fs_name cl.cl in
+        begin match c with
+          | None ->
+            (fun f -> with_file (sprint "cuite_%s.gen.cpp" fs_name)
+                (fun c -> print c "#include \"cuite_stubs.h\""; f c))
+          | Some c -> (fun f -> f c)
+        end @@ fun c ->
+        Dlist.iter cl.cl.cl_fields (constructor ~h ~c ~ml cl);
+        if mlsplit then (
+          with_file (sprint "cuite___%s.ml" fs_name) @@ fun ml ->
+          ml "open Cuite";
+          begin match cl.cl.cl_extend with
             | None -> ()
-        in
-        qmetaobject cl.cl;
-        unprotect_proto ~c cl;
-        List.iter (cfield ~h ~c ~ml cl) fields;
-      ) else (
-        print ml "module %s = struct" (cl_Ml_name cl.cl);
-        begin match cl.cl.cl_extend with
-          | None -> ()
-          | Some cl' -> print ml "include %s" (cl_Ml_name cl')
-        end;
-        let rec qmetaobject cl' =
-          if cl_c_name cl' = "QObject" then (
-            print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
-            print ml "  external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
-              (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
-          )
-          else match cl'.cl_extend with
-            | Some cl' -> qmetaobject cl'
+            | Some cl' -> print ml "include Cuite___%s" (cl_fs_name cl')
+          end;
+          let rec qmetaobject cl' =
+            if cl_c_name cl' = "QObject" then (
+              print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
+              print ml "external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
+                (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
+            )
+            else match cl'.cl_extend with
+              | Some cl' -> qmetaobject cl'
+              | None -> ()
+          in
+          qmetaobject cl.cl;
+          unprotect_proto ~c cl.cl;
+          Dlist.iter cl.cl.cl_fields (cfield ~h ~c ~ml cl);
+        ) else (
+          print ml "module %s = struct" (cl_Ml_name cl.cl);
+          begin match cl.cl.cl_extend with
             | None -> ()
-        in
-        qmetaobject cl.cl;
-        unprotect_proto ~c cl;
-        List.iter (cfield ~h ~c ~ml cl) fields;
-        ml "end"
-      )
-    ) (all_class ())
+            | Some cl' -> print ml "include %s" (cl_Ml_name cl')
+          end;
+          let rec qmetaobject cl' =
+            if cl_c_name cl' = "QObject" then (
+              print c "CUITE_CLASS(%s)" (cl_c_name cl.cl);
+              print ml "  external class' : unit -> %s Qt.qt_class = \"cuite_class_%s\" [@@noalloc]"
+                (cl_ml_name cl.cl) (c_mangle (cl_c_name cl.cl))
+            )
+            else match cl'.cl_extend with
+              | Some cl' -> qmetaobject cl'
+              | None -> ()
+          in
+          qmetaobject cl.cl;
+          unprotect_proto ~c cl.cl;
+          Dlist.iter cl.cl.cl_fields (cfield ~h ~c ~ml cl);
+          ml "end"
+        )
+      | _ -> ()
+    )
 
 let gen_dep ~makefile ~mlsplit () =
   if mlsplit then (
     let cmo cl = sprint "cuite___%s.cmo" (cl_fs_name cl) in
     let cmx cl = sprint "cuite___%s.cmx" (cl_fs_name cl) in
-    List.iter (fun cl ->
-        match cl.cl.cl_extend with
-        | None -> ()
-        | Some cl' ->
-          print makefile "%s: %s" (cmo cl.cl) (cmo cl');
-          makefile "";
-          print makefile "%s: %s" (cmx cl.cl) (cmx cl');
-          makefile ""
-      ) (all_class ());
-    let all_modules = List.map (fun cl -> cl.cl) (all_class ()) in
+    Dlist.iter all_types (function
+        | QClass cl ->
+          begin match cl.cl.cl_extend with
+          | None -> ()
+          | Some cl' ->
+            print makefile "%s: %s" (cmo cl.cl) (cmo cl');
+            makefile "";
+            print makefile "%s: %s" (cmx cl.cl) (cmx cl');
+            makefile ""
+          end
+        | _ -> ()
+      );
+    let all_modules = list_filter_map
+        (function QClass cl -> Some cl.cl | _ -> None)
+        (Dlist.read all_types)
+    in
     print makefile "GEN_BYTECODE = %s"
       (String.concat " " (List.map cmo all_modules));
     print makefile "GEN_NATIVE = %s"

@@ -639,12 +639,6 @@ let () = with_class qFormLayout [
     dynamic "rowCount" [] ~ret:int;
   ]
 
-let () = with_class qTextEdit'ExtraSelection [
-]
-
-let qTextEdit'ExtraSelection'List =
-  QtCore_classes.qList "QTextEditExtraSelectionList" qTextEdit'ExtraSelection
-
 let () = with_class qTextEdit [
     constructor "" [arg "parent" (optional qWidget)];
     constructor "" [arg "text" qString;arg "parent" (optional qWidget)];
@@ -2915,8 +2909,8 @@ let () = with_class qPlainTextEdit [
     dynamic "setTabStopWidth" [arg "width" int];
     dynamic "cursorWidth" [] ~ret:int;
     dynamic "setCursorWidth" [arg "width" int];
-    (*dynamic "setExtraSelections" [arg "selections" qList<QTextEdit'ExtraSelection>];*)
-    (*dynamic "extraSelections" [] ~ret:qList<QTextEdit'ExtraSelection>;*)
+    dynamic "setExtraSelections" [arg "selections" qTextEdit'ExtraSelection'List];
+    dynamic "extraSelections" [] ~ret:qTextEdit'ExtraSelection'List;
     dynamic "moveCursor" [arg "operation" qTextCursor'MoveOperation;arg "mode" qTextCursor'MoveMode];
     dynamic "canPaste" [] ~ret:bool;
     (*dynamic "print" [arg "printer" qPagedPaintDevice];*)

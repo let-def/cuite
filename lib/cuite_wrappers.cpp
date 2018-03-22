@@ -99,10 +99,10 @@ QRect cuite_QRect_from_ocaml(const value& v)
 value& cuite_QRect_to_ocaml(const QRect& v)
 {
   value u = caml_alloc_small(4, 0);
-  Field(u, 0) = v.x();
-  Field(u, 1) = v.y();
-  Field(u, 2) = v.width();
-  Field(u, 3) = v.height();
+  Field(u, 0) = Val_long(v.x());
+  Field(u, 1) = Val_long(v.y());
+  Field(u, 2) = Val_long(v.width());
+  Field(u, 3) = Val_long(v.height());
   return cuite_region_register(u);
 }
 
@@ -133,8 +133,8 @@ QPoint cuite_QPoint_from_ocaml(const value& v)
 value& cuite_QPoint_to_ocaml(const QPoint& v)
 {
   value u = caml_alloc_small(2, 0);
-  Field(u, 0) = v.x();
-  Field(u, 1) = v.y();
+  Field(u, 0) = Val_long(v.x());
+  Field(u, 1) = Val_long(v.y());
   return cuite_region_register(u);
 }
 
@@ -163,8 +163,8 @@ QSize cuite_QSize_from_ocaml(const value& v)
 value& cuite_QSize_to_ocaml(const QSize& v)
 {
   value u = caml_alloc_small(2, 0);
-  Field(u, 0) = v.width();
-  Field(u, 1) = v.height();
+  Field(u, 0) = Val_long(v.width());
+  Field(u, 1) = Val_long(v.height());
   return cuite_region_register(u);
 }
 
@@ -181,6 +181,71 @@ value& cuite_QSizeF_to_ocaml(const QSizeF& v)
   Double_field(u, 0) = v.width();
   Double_field(u, 1) = v.height();
   return cuite_region_register(u);
+}
+
+/* ExtraSelection: a pair of a cursor and a text char format */
+
+QTextEdit::ExtraSelection
+cuite_QTextEdit_ExtraSelection_from_ocaml(const value& v)
+{
+  value &v0 = cuite_region_register(Field(v, 0));
+  value &v1 = cuite_region_register(Field(v, 1));
+
+  QTextEdit::ExtraSelection result;
+  result.cursor = *cuite_QTextCursor_from_ocaml(v0);
+  result.format = *cuite_QTextCharFormat_from_ocaml(v1);
+
+  return result;
+}
+
+value&
+cuite_QTextEdit_ExtraSelection_to_ocaml(const QTextEdit::ExtraSelection& v)
+{
+  value& v0 = cuite_QTextCursor_to_ocaml(&v.cursor);
+  value& v1 = cuite_QTextCharFormat_to_ocaml(&v.format);
+  value u = caml_alloc_small(2, 0);
+  Field(u, 0) = v0;
+  Field(u, 1) = v1;
+  return cuite_region_register(u);
+}
+
+value&
+cuite_QList_QTextEdit_ExtraSelection__to_ocaml(const QList<QTextEdit::ExtraSelection>& v)
+{
+  value& head = cuite_region_register(Val_unit);
+  value& tail = cuite_region_register(Val_unit);
+  Q_FOREACH(const QTextEdit::ExtraSelection& sel, v) {
+    if (tail == Val_unit)
+    {
+      tail = caml_alloc_small(2, 0);
+      head = tail;
+    }
+    else
+    {
+      value v = caml_alloc_small(2, 0);
+      Field(tail, 1) = v;
+      tail = v;
+    }
+    Field(tail, 0) = cuite_QTextEdit_ExtraSelection_to_ocaml(sel);
+  }
+  return head;
+}
+
+QList<QTextEdit::ExtraSelection>
+cuite_QList_QTextEdit_ExtraSelection__from_ocaml(const value& v)
+{
+  value& head = cuite_region_register(v);
+  value& item = cuite_region_register(Val_unit);
+
+  QList<QTextEdit::ExtraSelection> list;
+  while (head != Val_unit)
+  {
+    item = Field(head, 0);
+    list.append(cuite_QTextEdit_ExtraSelection_from_ocaml(item));
+    head = Field(head, 1);
+  }
+
+  return list;
 }
 
 /* Relocatable */

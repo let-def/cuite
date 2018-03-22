@@ -1,3 +1,32 @@
+module Dlist : sig
+  type 'a t
+  val empty : unit -> 'a t
+  val prepend : 'a t -> 'a -> unit
+  val append : 'a t -> 'a -> unit
+  val prepend_all : 'a t -> 'a list -> unit
+  val append_all : 'a t -> 'a list -> unit
+  val read : 'a t -> 'a list
+  val iter : 'a t -> ('a -> unit) -> unit
+end = struct
+  type 'a t = {
+    mutable head: 'a list;
+    mutable tail: 'a list;
+  }
+  let empty () = { head = []; tail = [] }
+  let prepend d x = d.head <- x :: d.head
+  let append d x = d.tail <- x :: d.tail
+  let prepend_all d x = d.head <- x @ d.head
+  let append_all d x = d.tail <- List.rev_append x d.tail
+  let read d = match d.tail with
+    | [] -> d.head
+    | items ->
+      d.head <- d.head @ List.rev items;
+      d.tail <- [];
+      d.head
+  let iter d f = List.iter f (read d)
+end
+type 'a dlist = 'a Dlist.t
+
 let with_file name f =
   let file_exists = Sys.file_exists name in
   let name' =
@@ -39,41 +68,38 @@ let sprint = Printf.sprintf
 let failwithf fmt = Printf.ksprintf failwith fmt
 
 let c_mangle name =
-  let name = match String.rindex name ':' with
-    | exception Not_found -> name
+  let b = Buffer.create (String.length name) in
+  let need_delim = ref true in
+  for i = 0 to String.length name - 1 do
+    match name.[i] with
+    | ':' | '<' | '>' ->
+      if !need_delim then (
+        Buffer.add_char b '_';
+        need_delim := false;
+      )
     | _ ->
-      let b = Buffer.create (String.length name) in
-      let need_delim = ref true in
-      for i = 0 to String.length name - 1 do
-        if name.[i] = ':' then (
-          if !need_delim then (
-            Buffer.add_char b '_';
-            need_delim := false;
-          )
-        ) else (
-          need_delim := true;
-          Buffer.add_char b name.[i]
-        )
-      done;
-      Buffer.contents b
-  in
-  name
+      need_delim := true;
+      Buffer.add_char b name.[i]
+  done;
+  Buffer.contents b
 
 type qclass_def = {
   cl_direct: bool;
   cl_name: string;
   cl_converter: string option;
   cl_extend: qclass_def option;
-  mutable cl_fields: cfield list;
+  cl_fields: cfield dlist;
 }
 
-and qclass = { cl_const: bool; cl_qual: [`pointer | `ref | `optional]; cl: qclass_def }
+and qclass =
+  { cl_const: bool; cl_qual: [`pointer | `ref | `optional]; cl: qclass_def }
 
 and qtype =
   | QClass of qclass
   | QEnum of qenum
   | QFlags of qflags
   | Custom of {
+      ml_decl : string;
       ml_posname : string;
       ml_negname : string;
       c_name : string;
@@ -97,11 +123,13 @@ and qenum = { ens : string; ename : string; emembers: string list; econverter: s
 
 and qflags = { fns : string; fname : string; fenum: qenum; fconverter: string }
 
+let all_types = Dlist.empty ()
+
 let eq_typ (typ : qtype) (typ' : qtype) =
   typ == typ' ||
   match typ, typ' with
   | QClass u , QClass v -> u == v
-  | QEnum u  , QEnum v  -> u == v
+  | QEnum  u , QEnum  v -> u == v
   | QFlags u , QFlags v -> u == v
   | Custom u , Custom v ->
     u.ml_posname             == v.ml_posname &&
@@ -117,13 +145,11 @@ let eq_arg (_,t) (_,u) = eq_typ t u
 
 let name_typ = function
   | QClass u -> u.cl.cl_name
-  | QEnum u  -> u.ename
+  | QEnum  u -> u.ename
   | QFlags u -> u.fname
-  | Custom u -> u.c_name
+  | Custom u -> c_mangle u.c_name
 
-let all_class = ref []
-
-let custom_type ?(deletable=false) ?converter ?ml_pos ?ml_neg ?c_neg c_name =
+let custom_type ?(decl="") ?(deletable=false) ?converter ?ml_pos ?ml_neg ?c_neg c_name =
   let ml_posname = match ml_pos with
     | None -> String.uncapitalize_ascii c_name
     | Some mltype -> mltype
@@ -141,18 +167,23 @@ let custom_type ?(deletable=false) ?converter ?ml_pos ?ml_neg ?c_neg c_name =
     | None -> c_name
     | Some c_neg -> c_neg
   in
-  Custom {
-    ml_posname; ml_negname; c_name; c_negname;
-    c_from_ocaml = sprint "cuite_%s_from_ocaml(%s)" c_ident;
-    c_to_ocaml = sprint "cuite_%s_to_ocaml(%s)" c_ident;
-    c_check_use_after_free =
-      if deletable then
-        match converter with
-        | None -> Some (sprint "cuite_qt_check_use(%s)")
-        | Some c -> Some (sprint "cuite_%s_check_use(%s)" c_ident)
-      else
-        None
-  }
+  let t =
+    Custom {
+      ml_decl = decl;
+      ml_posname; ml_negname; c_name; c_negname;
+      c_from_ocaml = sprint "cuite_%s_from_ocaml(%s)" c_ident;
+      c_to_ocaml = sprint "cuite_%s_to_ocaml(%s)" c_ident;
+      c_check_use_after_free =
+        if deletable then
+          match converter with
+          | None -> Some (sprint "cuite_qt_check_use(%s)")
+          | Some c -> Some (sprint "cuite_%s_check_use(%s)" c_ident)
+        else
+          None
+    }
+  in
+  if decl <> "" then Dlist.append all_types t;
+  t
 
 let qtype_name = function
   | QClass { cl; _ } -> cl.cl_name
@@ -185,10 +216,11 @@ let qclass ?(direct=false) ?converter ?extend cl_name =
     | None, Some cl -> cl.cl_converter
     | None, None -> None
   in
-  let cl = { cl_direct = direct; cl_name; cl_converter; cl_extend; cl_fields = [] } in
-  let cl = { cl_const = false; cl_qual = `pointer; cl } in
-  all_class := cl :: !all_class;
-  QClass cl
+  let cl_fields = Dlist.empty () in
+  let cl = { cl_direct = direct; cl_name; cl_converter; cl_extend; cl_fields } in
+  let cl = QClass { cl_const = false; cl_qual = `pointer; cl } in
+  Dlist.append all_types cl;
+  cl
 
 let optional = function
   | QClass def -> QClass { def with cl_qual = `optional }
@@ -207,7 +239,7 @@ let pointer = function
 
 let constructor ?(custom=false) name args ~cl =
   let cl = qclass_of_typ cl in
-  cl.cl_fields <- Constructor (name, args, custom) :: cl.cl_fields
+  Dlist.append cl.cl_fields (Constructor (name, args, custom))
 
 let dynamic ?(kind=`Normal) ?ret name args ~cl =
   let cl = qclass_of_typ cl in
@@ -222,41 +254,38 @@ let dynamic ?(kind=`Normal) ?ret name args ~cl =
           List.length args = List.length meth.args &&
           List.for_all2 eq_arg args meth.args
         | _ -> false
-      ) cl'.cl_fields
+      ) (Dlist.read cl'.cl_fields)
     then prerr_endline ("Duplicate method: {" ^ cl'.cl_name ^ "," ^ cl.cl_name ^ "}::" ^ name)
     else match cl'.cl_extend with
       | None -> ()
       | Some cl' -> is_dup cl'
   in
   is_dup cl;
-  cl.cl_fields <- Dynamic_method {ret; name; args; kind} :: cl.cl_fields
+  Dlist.append cl.cl_fields (Dynamic_method {ret; name; args; kind})
 
 let static ?(custom=false) ?ret name args ~cl =
   let cl = qclass_of_typ cl in
-  cl.cl_fields <- Static_method (ret, name, args, custom) :: cl.cl_fields
+  Dlist.append cl.cl_fields (Static_method (ret, name, args, custom))
 
 let slot ?ret ?(protected=false) name args ~cl =
   let cl = qclass_of_typ cl in
-  let fields = Slot (name, args) :: cl.cl_fields in
-  let fields =
-    if protected ||
-       (String.length name >= 3 &&
-        name.[0] = '_' && name.[1] = 'q' && name.[2] = '_') ||
-       List.exists (function
-           | Dynamic_method meth ->
-             name = meth.name &&
-             List.length args = List.length meth.args &&
-             List.for_all2 eq_arg args meth.args
-           | _ -> false
-         ) fields
-    then fields
-    else Dynamic_method {ret; name; args; kind = `Normal} :: fields
-  in
-  cl.cl_fields <- fields
+  Dlist.append cl.cl_fields (Slot (name, args));
+  if not (protected ||
+          (String.length name >= 3 &&
+           name.[0] = '_' && name.[1] = 'q' && name.[2] = '_') ||
+          List.exists (function
+              | Dynamic_method meth ->
+                name = meth.name &&
+                List.length args = List.length meth.args &&
+                List.for_all2 eq_arg args meth.args
+              | _ -> false
+            ) (Dlist.read cl.cl_fields))
+  then
+    Dlist.append cl.cl_fields (Dynamic_method {ret; name; args; kind = `Normal})
 
 let signal ?(private_=false) name args ~cl =
   let cl = qclass_of_typ cl in
-  cl.cl_fields <- Signal (name, args, private_) :: cl.cl_fields
+  Dlist.append cl.cl_fields (Signal (name, args, private_))
 
 let with_class cl fields =
   List.iter (fun f -> f ~cl) fields
@@ -266,9 +295,6 @@ let arg name typ = name, typ
 let int = custom_type "int"
 let bool = custom_type "bool"
 let float = custom_type ~ml_pos:"float" "double"
-
-let all_enum = ref []
-let all_flags = ref []
 
 let ml_mangle name =
   let b = Buffer.create (String.length name) in
@@ -288,19 +314,15 @@ let ml_val_mangle name =
 
 let qenum ens ename emembers =
   let converter = c_mangle (ens ^ "::" ^ ename) in
-  let t = { ens; ename; emembers; econverter = converter } in
-  all_enum := t :: !all_enum;
-  QEnum t
+  let t = QEnum { ens; ename; emembers; econverter = converter } in
+  Dlist.append all_types t;
+  t
 
 let qflags fns fname qenum =
   let converter = c_mangle (fns ^ "::" ^ fname) in
-  let t = { fns; fname; fenum = qenum_of_typ qenum; fconverter = converter } in
-  all_flags := t :: !all_flags;
-  QFlags t
-
-let all_class () = List.rev !all_class
-let all_enum () = List.rev !all_enum
-let all_flags () = List.rev !all_flags
+  let t = QFlags { fns; fname; fenum = qenum_of_typ qenum; fconverter = converter } in
+  Dlist.append all_types t;
+  t
 
 let const = function
   | Custom custom ->
@@ -410,3 +432,9 @@ let cl_c_name cl = cl.cl_name
 let cl_fs_name cl = c_mangle cl.cl_name
 let cl_ml_name cl = ml_val_mangle cl.cl_name
 let cl_Ml_name cl = String.capitalize_ascii (ml_val_mangle cl.cl_name)
+
+let rec list_filter_map f = function
+  | [] -> []
+  | x :: xs -> match f x with
+    | None -> list_filter_map f xs
+    | Some y -> y :: list_filter_map f xs

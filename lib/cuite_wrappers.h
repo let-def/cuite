@@ -76,6 +76,11 @@ CUITE_PTR_CONVERTER(QVector3D);
 CUITE_PTR_CONVERTER(QPixmap);
 CUITE_PTR_CONVERTER(QFileInfo);
 
+typedef QTextEdit::ExtraSelection QTextEdit_ExtraSelection;
+typedef QList<QTextEdit_ExtraSelection> QList_QTextEdit_ExtraSelection_;
+CUITE_CONVERTER(QTextEdit_ExtraSelection);
+CUITE_CONVERTER(QList_QTextEdit_ExtraSelection_);
+
 typedef QVariant QVariantOther;
 CUITE_PTR_CONVERTER(QVariantOther);
 
