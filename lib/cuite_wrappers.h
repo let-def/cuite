@@ -24,6 +24,7 @@ CUITE_IMMEDIATE_CONVERTER(bool);
 CUITE_IMMEDIATE_CONVERTER(double);
 CUITE_IMMEDIATE_CONVERTER(intnat);
 typedef char *pchar;
+typedef QPaintDevice *pQPaintDevice;
 CUITE_CONVERTER(pchar);
 CUITE_CONVERTER(QString);
 CUITE_CONVERTER(QRect);
@@ -43,6 +44,7 @@ CUITE_PTR_CONVERTER(QDateTime);
 CUITE_PTR_CONVERTER(QDir);
 CUITE_PTR_CONVERTER(QFont);
 CUITE_PTR_CONVERTER(QFontMetrics);
+CUITE_PTR_CONVERTER(QGradient);
 CUITE_PTR_CONVERTER(QIcon);
 CUITE_PTR_CONVERTER(QKeySequence);
 CUITE_PTR_CONVERTER(QLocale);
@@ -69,6 +71,8 @@ CUITE_PTR_CONVERTER(QTextFrameFormat);
 CUITE_PTR_CONVERTER(QTextImageFormat);
 CUITE_PTR_CONVERTER(QTextListFormat);
 CUITE_PTR_CONVERTER(QTextTableFormat);
+CUITE_PTR_CONVERTER(QTextTableCellFormat);
+CUITE_PTR_CONVERTER(QTextOption);
 CUITE_PTR_CONVERTER(QTime);
 CUITE_PTR_CONVERTER(QTransform);
 CUITE_PTR_CONVERTER(QUrl);
@@ -106,6 +110,7 @@ CUITE_PTR_CONVERTER(QBitmap);
 /* Manual */
 
 CUITE_PTR_CONVERTER(QPainter);
+CUITE_PTR_CONVERTER(QPaintEngine);
 CUITE_PTR_CONVERTER(QStyleOption);
 CUITE_PTR_CONVERTER(QItemEditorFactory);
 CUITE_PTR_CONVERTER(QEvent);
@@ -119,5 +124,8 @@ CUITE_PTR_CONVERTER(QRegularExpressionMatch);
 CUITE_PTR_CONVERTER(QRegularExpressionMatchIterator);
 CUITE_PTR_CONVERTER(QStringRef);
 CUITE_PTR_CONVERTER(QSurfaceFormat);
+
+QPaintDevice *cuite_pQPaintDevice_from_ocaml(const value& v);
+value& cuite_pQPaintDevice_to_ocaml(const value& object, const QPaintDevice *device);
 
 #endif

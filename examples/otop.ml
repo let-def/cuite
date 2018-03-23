@@ -1,5 +1,7 @@
 open Cuite
 
+let app = new'QApplication'from'string_array Sys.argv
+
 module CodeEditor = struct
   let main = new'QPlainTextEdit'from'QWidget None
 
@@ -25,20 +27,45 @@ module CodeEditor = struct
     (*if (rect.contains(viewport()->rect()))
         updateLineNumberAreaWidth(0);*)
 
+  let line_format =
+    let color = QColor.fromCmyk 0 0 255 0 255 in
+    let color = QColor.lighter color 160 in
+    let format = new'QTextCharFormat () in
+    QTextCharFormat.setBackground format
+      (new'QBrush'from'QColor'BrushStyle color `SolidPattern);
+    QTextCharFormat.setProperty format
+      `FullWidthSelection (QVariant.Bool true);
+    format
+
   let highlight_current_line () =
-    QPlainTextEdit.set
+    if QPlainTextEdit.isReadOnly main then
+      QPlainTextEdit.setExtraSelections main []
+    else
+      let cursor = QPlainTextEdit.textCursor main in
+      QTextCursor.clearSelection cursor;
+      QPlainTextEdit.setExtraSelections main [(cursor, line_format)]
+
+  let line_number_area_paint_event event =
+    ()
 
   let () =
-    Qt.connect main QPlainTextEdit.signal'blockCountChanged block_count_changed;
-    Qt.connect main QPlainTextEdit.signal'updateRequest (fun (rect, n) ->
-        ()
-      );
-    Qt.connect main QPlainTextEdit.signal'cursorPositionChanged (fun () ->
-        ()
-      );
+    Qt.connect main
+      QPlainTextEdit.signal'blockCountChanged block_count_changed;
+    Qt.connect main
+      QPlainTextEdit.signal'updateRequest update_line_number_area;
+    Qt.connect main
+      QPlainTextEdit.signal'cursorPositionChanged highlight_current_line
+
 end
 
-module Icons = struct
+let main () =
+  QWidget.setWindowTitle'from'QString CodeEditor.main "Code Editor Example";
+  QWidget.show CodeEditor.main;
+  exit (QApplication.exec ())
+
+let () = main ()
+
+(*module Icons = struct
   type t =
     | Logo
     | Block_marker
@@ -144,4 +171,4 @@ let () = QApplication.setWindowIcon Icons.(get Logo);
 
 module Window = Mainwindow(struct end)
 
-let exitcode : int = QApplication.exec ()
+let exitcode : int = QApplication.exec ()*)

@@ -317,6 +317,8 @@ CUITE_RELOCATABLE_CONVERTER(QTextFrameFormat);
 CUITE_RELOCATABLE_CONVERTER(QTextImageFormat);
 CUITE_RELOCATABLE_CONVERTER(QTextListFormat);
 CUITE_RELOCATABLE_CONVERTER(QTextTableFormat);
+CUITE_RELOCATABLE_CONVERTER(QTextTableCellFormat);
+CUITE_RELOCATABLE_CONVERTER(QTextOption);
 CUITE_RELOCATABLE_CONVERTER(QTime);
 CUITE_RELOCATABLE_CONVERTER(QTransform);
 CUITE_RELOCATABLE_CONVERTER(QUrl);
@@ -371,3 +373,19 @@ CUITE_MANUAL_PTR_CONVERTER(QTableWidgetSelectionRange);
 CUITE_MANUAL_PTR_CONVERTER(QFileIconProvider);
 CUITE_MANUAL_PTR_CONVERTER(QSurfaceFormat);
 CUITE_MANUAL_PTR_CONVERTER(QTextDocumentFragment);
+CUITE_MANUAL_PTR_CONVERTER(QGradient);
+CUITE_MANUAL_PTR_CONVERTER(QPaintEngine);
+
+QPaintDevice *cuite_pQPaintDevice_from_ocaml(const value& v)
+{
+  intnat ptr = Field(v, 1);
+  return (QPaintDevice *)(ptr & ~1);
+}
+
+value& cuite_pQPaintDevice_to_ocaml(const value& object, const QPaintDevice *device)
+{
+  value& result = cuite_region_register(caml_alloc_small(2, 0));
+  Field(result, 0) = object;
+  Field(result, 1) = ((intnat)device) | 1;
+  return result;
+}

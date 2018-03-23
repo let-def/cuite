@@ -2648,6 +2648,7 @@ let qt'ImageConversionFlag = qenum "Qt" "ImageConversionFlag" [
   "NoOpaqueDetection";
   "NoFormatConversion";
 ]
+let qt'ImageConversionFlags = qflags "Qt" "ImageConversionFlags" qt'ImageConversionFlag
 let qt'BGMode = qenum "Qt" "BGMode" [
   "TransparentMode";
   "OpaqueMode";
