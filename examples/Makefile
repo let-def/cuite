@@ -18,9 +18,6 @@ example_1: example_1.ml
 abook_addresswidget: abook_addresswidget.ml
 	$(CUITEOPT) -o $@ $^ -no-alias-deps
 
-test: test.ml
-	ocamlfind opt -I ../lib ../lib/cuite.cmxa -o $@ -linkpkg -package lwt.unix $^
-
 syntaxhl: syntaxhl.ml
 	$(CUITEOPT) -o $@ $^
 
@@ -29,4 +26,10 @@ syntaxhl2: syntaxhl2.ml
 
 dbg/dbg: dbg/dbg.ml
 	$(CUITEOPT) -o $@ $^
+
+minimal: minimal.ml
+	ocamlfind opt -I ../lib ../lib/cuite.cmxa -o $@ -linkpkg -package lwt.unix $^
+
+minimal_lwt: minimal_lwt.ml
+	ocamlfind opt -I ../lib ../lib/cuite.cmxa -o $@ -linkpkg -package lwt.unix $^
 
