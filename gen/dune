@@ -1,0 +1,21 @@
+(executable
+ (name gen_value)
+ (modes byte)
+ (modules gen_value)
+ (flags -w -9-33)
+ (link_flags -linkall)
+ (libraries spec))
+
+(executable
+ (name driver)
+ (modes byte)
+ (modules flag_values gen_classes gen_enum driver)
+ (flags -w -9-33)
+ (link_flags -linkall)
+ (libraries spec))
+
+(rule
+ (targets flag_values.ml)
+ (action
+   (with-stdout-to %{targets}
+     (run %{exe:gen_value.exe}))))

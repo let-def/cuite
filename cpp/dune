@@ -1,0 +1,22 @@
+(rule
+ (deps cuite__variant.ml cuite__models.ml)
+ (targets cuite.ml cuite_stubs.gen.h cuite_const.gen.cpp 
+          cuite_const.gen.h cuite_stubs.gen.cpp)
+ (action
+   (run %{exe:../gen/driver.exe})))
+
+(rule
+ (deps 
+   cuite_gc.h
+   cuite_csupport.h cuite_csupport.c 
+   cuite_support.h cuite_support.cpp 
+   cuite_models.cpp cuite_select.cpp
+   cuite_variant.h cuite_variant.cpp 
+   cuite_wrappers.h cuite_wrappers.cpp 
+   cuite_const.h 
+   cuite_const.gen.h cuite_const.gen.cpp 
+   cuite_stubs.h cuite_stubs.cpp 
+   cuite_stubs.gen.h cuite_stubs.gen.cpp
+   Makefile.libcuite)
+ (targets libcuite.so)
+ (action (run %{make} -j4 -f Makefile.libcuite %{targets})))

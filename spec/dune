@@ -1,0 +1,4 @@
+(library
+ (flags -w -27)
+ (wrapped false)
+ (name spec))
