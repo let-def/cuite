@@ -1,6 +1,6 @@
 OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
-CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib)
+CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -I ../cpp -I .
 
 all: libcuite.so
 
@@ -10,6 +10,8 @@ CPP_SOURCES= \
 						cuite_models.cpp cuite_stubs.cpp cuite_support.cpp \
 						cuite_wrappers.cpp cuite_variant.cpp cuite_csupport.c \
 						cuite_select.cpp
+
+CPP_OBJECTS=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 
 %.o: %.cpp %.h %.gen.cpp %.gen.h
 	$(CXX) -c $<
@@ -26,5 +28,5 @@ CPP_SOURCES= \
 %.o: %.c
 	$(OCAMLC) -ccopt -fPIC -c $<
 
-libcuite.so: $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
-	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $^
+libcuite.so: $(patsubst %,../cpp/%,$(CPP_OBJECTS))
+	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $(CPP_OBJECTS)
