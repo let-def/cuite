@@ -1,9 +1,1 @@
-*.o
-*.cmo
-*.cmi
-*.cmx
-*.cma
-*.cmxa
-*.gen.*
-cuite.ml
-cuite___*.ml
+_build

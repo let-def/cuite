@@ -22,7 +22,7 @@ val connect_slot' : 'a t -> ('a, _, 't) signal stub -> 'b t -> ('b, _, 't) slot 
 
 (*val trigger_slot : 'a t -> ('a, 'b, _) slot stub -> 'b -> unit*)
 
-val connect_by_name : 'a t -> string -> 'b t -> string -> unit
+val connect_by_name : 'a t -> string -> 'b t -> string -> bool
 
 (* Deterministic memory management *)
 val is_deleted : 'a t -> bool

@@ -833,8 +833,8 @@ external value cuite_connect_by_name0(value vsource, value vsig, value vtarget, 
   QObject *target = cuite_QObject_from_ocaml(vtarget);
   const char *signal = String_val(vsig);
   const char *slot = String_val(vslot);
-  QObject::connect(source, signal, target, slot);
-  return Val_unit;
+  bool success = QObject::connect(source, signal, target, slot);
+  return Val_bool(success);
 }
 
 /* Reified classes */

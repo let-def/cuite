@@ -69,7 +69,7 @@ let connect_slot' a signal b slot =
   connect_slot' a (signal ()) b (slot ())
 
 external connect_by_name
-  : 'a t -> string -> 'b t -> string -> unit
+  : 'a t -> string -> 'b t -> string -> bool
   = "cuite_connect_by_name0"
 
 (*external trigger_slot
