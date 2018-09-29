@@ -1,9 +1,10 @@
-LIB_PREFIX ?= $(shell pwd)
+all:
+	dune build lib/libcuite.so
 
-all clean:
-	$(MAKE) -C gen $@
-	$(MAKE) -C lib LIB_PREFIX=$(LIB_PREFIX) $@
-	$(MAKE) -C examples $@
+clean:
+	dune clean
+
+LIB_PREFIX ?= $(shell pwd)
 
 default:
 	$(MAKE) -C gen
