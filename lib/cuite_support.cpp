@@ -646,6 +646,7 @@ external value cuite_disconnect(value connection)
     connection = Field(connection, Cb_field_custom);
   }
   QObject::disconnect(cuite_Connection_from_ocaml(connection));
+  return Val_unit;
 }
 
 /* Call-back wrapping */
