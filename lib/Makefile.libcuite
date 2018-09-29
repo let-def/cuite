@@ -1,10 +1,12 @@
+OCAMLC=ocamlc.opt -g
+OCAMLOPT=ocamlopt.opt -g
 CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib)
 
 all: libcuite.so
 
 ## C++ COMPILATION
 
-CPP_SOURCES=
+CPP_SOURCES= \
 						cuite_models.cpp cuite_stubs.cpp cuite_support.cpp \
 						cuite_wrappers.cpp cuite_variant.cpp cuite_csupport.c \
 						cuite_select.cpp
