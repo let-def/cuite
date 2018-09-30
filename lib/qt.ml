@@ -1,6 +1,13 @@
 type -'a t
 type -'a qt_class
 
+type qRect   = { rx: int; ry: int; rw: int; rh: int }
+type qRectF  = { rxf: float; ryf: float; rwf: float; rhf: float }
+type qPoint  = { px: int; py: int }
+type qPointF = { pxf: float; pyf: float }
+type qSize   = { sx: int ; sy: int }
+type qSizeF  = { sxf: float ; syf: float }
+
 external class_name : _ qt_class -> string = "cuite_metaobject_name"
 external class_of : 'a t -> 'a qt_class = "cuite_metaobject_get"
 external cast : _ t -> 'a qt_class -> 'a t option = "cuite_metaobject_cast"

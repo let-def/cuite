@@ -9,24 +9,24 @@ all: libcuite.so
 CPP_SOURCES= \
 						cuite_models.cpp cuite_stubs.cpp cuite_support.cpp \
 						cuite_wrappers.cpp cuite_variant.cpp cuite_csupport.c \
-						cuite_select.cpp
+						cuite_select.cpp cuite_const.gen.cpp cuite_stubs.gen.cpp
 
 CPP_OBJECTS=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 
-%.o: %.cpp %.h %.gen.cpp %.gen.h
+%.o: ../cpp/%.cpp ../cpp/%.h %.gen.h
 	$(CXX) -c $<
 
-%.o: %.cpp %.h
+%.o: ../cpp/%.cpp ../cpp/%.h
 	$(CXX) -c $<
 
-%.o: %.cpp
+%.o: ../cpp/%.cpp
 	$(CXX) -c $<
 
-%.o: %.c %.h
+%.o: ../cpp/%.c ../cpp/%.h
 	$(OCAMLC) -ccopt -fPIC -c $<
 
-%.o: %.c
+%.o: ../cpp/%.c
 	$(OCAMLC) -ccopt -fPIC -c $<
 
-libcuite.so: $(patsubst %,../cpp/%,$(CPP_OBJECTS))
+libcuite.so: $(CPP_OBJECTS) #$(patsubst %,../cpp/%,$(CPP_OBJECTS))
 	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $(CPP_OBJECTS)

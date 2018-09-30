@@ -1,3 +1,5 @@
+open QtLib
+
 external get_payload
   : [>`Payload of 'a qt] -> 'a
   = "cuite_get_payload" [@@noalloc]

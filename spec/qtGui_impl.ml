@@ -884,14 +884,14 @@ let () = with_class qBrush [
       dynamic "operator!=" [arg "brush" qBrush] ~ret:bool;*)
   ]
 
-let () = with_class qPainter [
+(*let () = with_class qPainter [
     constructor "" [];
-    constructor "" [arg "device" qPaintDevice];
+    (*constructor "" [arg "device" qPaintDevice];
     dynamic "device" [] ~ret:qPaintDevice;
-    dynamic "begin" [arg "device" qPaintDevice] ~ret:bool;
+    dynamic "begin" [arg "device" qPaintDevice] ~ret:bool;*)
     dynamic "end" [] ~ret:bool;
     dynamic "isActive" [] ~ret:bool;
-    dynamic "initFrom" [arg "device" qPaintDevice];
+    (*dynamic "initFrom" [arg "device" qPaintDevice];*)
     dynamic "setCompositionMode" [arg "mode" qPainter'CompositionMode];
     dynamic "compositionMode" [] ~ret:qPainter'CompositionMode;
     dynamic "font" [] ~ret:qFont;
@@ -1085,12 +1085,12 @@ let () = with_class qPainter [
     dynamic "renderHints" [] ~ret:qPainter'RenderHints;
     dynamic "testRenderHint" [arg "hint" qPainter'RenderHint] ~ret:bool;
     dynamic "paintEngine" [] ~ret:qPaintEngine;
-    static  "setRedirected" [arg "device" qPaintDevice;arg "replacement" qPaintDevice;arg "offset" qPoint];
+    (*static  "setRedirected" [arg "device" qPaintDevice;arg "replacement" qPaintDevice;arg "offset" qPoint];*)
     (*static  "redirected" [arg "device" qPaintDevice;arg "offset" qPoint] ~ret:qPaintDevice;*)
-    static  "restoreRedirected" [arg "device" qPaintDevice];
+    (*static  "restoreRedirected" [arg "device" qPaintDevice];*)
     dynamic "beginNativePainting" [];
     dynamic "endNativePainting" [];
-  ]
+  ]*)
 
 (*let () = with_class qAccessibleEditableTextInterface [
     dynamic "deleteText" [arg "startOffset" int;arg "endOffset" int];
@@ -1548,7 +1548,7 @@ let () = with_class qPainter [
   let () = with_class qTextLayout [
     constructor "" [];
     constructor "" [arg "text" qString];
-    constructor "" [arg "text" qString;arg "font" qFont;arg "paintdevice" qPaintDevice];
+    (*constructor "" [arg "text" qString;arg "font" qFont;arg "paintdevice" qPaintDevice];*)
     dynamic "setFont" [arg "font" qFont];
     dynamic "font" [] ~ret:qFont;
     dynamic "setText" [arg "string" qString];

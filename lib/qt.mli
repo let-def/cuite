@@ -2,6 +2,13 @@
 type -'a t
 type -'a qt_class
 
+type qRect   = { rx: int; ry: int; rw: int; rh: int }
+type qRectF  = { rxf: float; ryf: float; rwf: float; rhf: float }
+type qPoint  = { px: int; py: int }
+type qPointF = { pxf: float; pyf: float }
+type qSize   = { sx: int ; sy: int }
+type qSizeF  = { sxf: float ; syf: float }
+
 val class_name : _ qt_class -> string
 val class_of : ([>`QObject] as 'a) t -> 'a qt_class
 val cast : [>`QObject] t -> 'a qt_class -> 'a t option

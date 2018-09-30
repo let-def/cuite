@@ -5,18 +5,15 @@ let () =
     match Sys.getenv "CUITE_MLSPLIT" with
     | exception Not_found -> false | "" -> false | _ -> true
   in
-  with_file "cuite.ml" @@ fun ml ->
-  ml "module Qt = Cuite__qt";
-  ml "module QFlags = Cuite__flags";
-  ml "";
+  with_file "qtLib.ml" @@ fun ml ->
   ml "type 'a qt = 'a Qt.t";
   ml "";
-  ml "type qRect   = { rx: int; ry: int; rw: int; rh: int }";
-  ml "type qRectF  = { rxf: float; ryf: float; rwf: float; rhf: float }";
-  ml "type qPoint  = { px: int; py: int }";
-  ml "type qPointF = { pxf: float; pyf: float }";
-  ml "type qSize   = { sx: int ; sy: int }";
-  ml "type qSizeF  = { sxf: float ; syf: float }";
+  ml "type qRect   = Qt.qRect   = { rx: int; ry: int; rw: int; rh: int }";
+  ml "type qRectF  = Qt.qRectF  = { rxf: float; ryf: float; rwf: float; rhf: float }";
+  ml "type qPoint  = Qt.qPoint  = { px: int; py: int }";
+  ml "type qPointF = Qt.qPointF = { pxf: float; pyf: float }";
+  ml "type qSize   = Qt.qSize   = { sx: int ; sy: int }";
+  ml "type qSizeF  = Qt.qSizeF  = { sxf: float ; syf: float }";
   ml "";
   begin
     with_file "cuite_const.gen.h" @@ fun h ->
@@ -29,19 +26,19 @@ let () =
     | exception Not_found -> false | "" -> false | _ -> true
   in
   begin
-    let contents fname =
-      let ic = open_in fname in
-      let len = in_channel_length ic in
-      let b = Buffer.create len in
-      Buffer.add_channel b ic len;
-      close_in_noerr ic;
-      Buffer.contents b
-    in
     Gen_classes.gen_types ~ml ~mlsplit ();
-    if mlsplit then (
+    (*if mlsplit then (
       ml "module QVariant = Cuite__variant";
       ml "module QModels = Cuite__models";
     ) else (
+      let contents fname =
+        let ic = open_in fname in
+        let len = in_channel_length ic in
+        let b = Buffer.create len in
+        Buffer.add_channel b ic len;
+        close_in_noerr ic;
+        Buffer.contents b
+      in
       let module_contents name fname =
         if Sys.file_exists (fname ^ ".mli") then (
           print ml "module %s : sig" name;
@@ -57,7 +54,7 @@ let () =
       in
       module_contents "QVariant" "../lib/cuite__variant";
       module_contents "QModels" "../lib/cuite__models";
-    );
+    );*)
     if csplit then
       Gen_classes.gen ~ml ~mlsplit ()
     else

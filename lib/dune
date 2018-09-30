@@ -1,9 +1,10 @@
 (library
- (name cuite))
+ (name cuite)
+ (flags -w -32)
+ (c_library_flags (-lcuite)))
 
 (rule
- (deps cuite__variant.ml cuite__models.ml)
- (targets cuite.ml cuite_stubs.gen.h cuite_const.gen.cpp 
+ (targets qtLib.ml cuite_stubs.gen.h cuite_const.gen.cpp 
           cuite_const.gen.h cuite_stubs.gen.cpp)
  (action
    (run %{exe:../gen/driver.exe})))

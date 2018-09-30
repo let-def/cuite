@@ -412,8 +412,8 @@ let () = with_class qFileSystemWatcher [
     dynamic "removePaths" [arg "paths" qStringList] ~ret:qStringList;
     dynamic "files" [] ~ret:qStringList;
     dynamic "directories" [] ~ret:qStringList;
-    signal "fileChanged" [arg "path" qString] ~private_:true;
-    signal "directoryChanged" [arg "path" qString] ~private_:true;
+    (*signal "fileChanged" [arg "path" qString] ~private_:true;*)
+    (*signal "directoryChanged" [arg "path" qString] ~private_:true;*)
   ]
 
 let () = with_class qIODevice [

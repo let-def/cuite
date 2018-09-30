@@ -1,4 +1,5 @@
 open Cuite
+open QtLib
 
 let add_dialog ?edit parent =
   let dialog = new'QDialog parent QFlags.empty in
