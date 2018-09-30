@@ -1,3 +1,6 @@
+(library
+ (name cuite))
+
 (rule
  (deps cuite__variant.ml cuite__models.ml)
  (targets cuite.ml cuite_stubs.gen.h cuite_const.gen.cpp 

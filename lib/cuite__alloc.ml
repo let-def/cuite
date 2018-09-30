@@ -42,7 +42,7 @@ let resize t n =
   Weak.blit t.weak 0 weak 0 count;
   t.weak <- weak
 
-let compact ({ weak } as t) =
+let compact ({ weak; _ } as t) =
   let rec scan_left l r =
     if l > r then l
     else match Weak.get weak l with
@@ -87,9 +87,9 @@ let wref t v =
   t.first_free <- succ index;
   index
 
-let wget { weak } i =
+let wget { weak; _ } i =
   Weak.get weak i
 
-let wderef { weak } i = match Weak.get weak i with
+let wderef { weak; _ } i = match Weak.get weak i with
   | Some v -> v
   | None -> failwith "Invalid index, should not be reachable"
