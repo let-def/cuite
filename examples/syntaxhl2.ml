@@ -1,4 +1,5 @@
 open Cuite
+open QtLib
 
 module Highlighter = QModels.StatefulHighlighter(struct
     type t = int

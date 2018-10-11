@@ -1,4 +1,5 @@
 open Cuite
+open QtLib
 
 let simple_highlighter =
   let color = (QColor.fromRgb 128 128 128 128) in
