@@ -5,8 +5,7 @@ open QtGui_enum
 open QtWidgets_enum
 
 let () =
-  let out = open_out "/tmp/gen_value.cpp" in
-  Printf.fprintf out "\
+  Printf.printf "\
 #include <cstdio>
 #include <QtCore>
 #include <QtGui>
@@ -20,16 +19,13 @@ int main(void)
       | QFlags {fns; fenum} ->
         List.iter (fun member ->
             let s = fns ^ "::" ^ member in
-            Printf.fprintf out "printf(\"  | \\\"%s\\\" -> 0x%%08lxL\\n\", (int64_t)%s);\n" s s
+            Printf.printf "printf(\"  | \\\"%s\\\" -> 0x%%08lxL\\n\", (int64_t)%s);\n" s s
           ) fenum.emembers
       | _ -> ()
     );
-  Printf.fprintf out "
+  Printf.printf "
   puts(\"  | flag -> invalid_arg (\\\"Unknown flag \\\" ^ flag) \");
   return 0;
 }
 ";
-  close_out out;
-  match Sys.command "g++ -fPIC `pkg-config --cflags --libs Qt5Gui Qt5Widgets` -DQT_KEYPAD_NAVIGATION -o /tmp/gen_value /tmp/gen_value.cpp" with
-  | 0 -> exit (Sys.command "/tmp/gen_value")
-  | n -> exit n
+  flush stdout

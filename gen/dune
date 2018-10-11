@@ -15,7 +15,19 @@
  (libraries spec))
 
 (rule
- (targets flag_values.ml)
+ (targets gen_value_cpp.cpp)
  (action
    (with-stdout-to %{targets}
      (run %{exe:gen_value.exe}))))
+
+(rule
+ (targets gen_value_cpp.exe)
+ (deps gen_value_cpp.cpp)
+ (action
+   (run bash -c "g++ -fPIC `pkg-config --cflags --libs Qt5Gui Qt5Widgets` -DQT_KEYPAD_NAVIGATION -DQT_NO_VERSION_TAGGING -o %{targets} %{deps}")))
+
+(rule
+ (targets flag_values.ml)
+ (action
+   (with-stdout-to %{targets}
+     (run %{exe:gen_value_cpp.exe}))))
