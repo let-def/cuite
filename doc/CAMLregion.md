@@ -2,16 +2,16 @@
 
 # Introduction
 
-Writing code bridging C library to OCaml code is a difficult task. While writing [Cuite], an OCaml library that interfaces the Qt tool-kit, we discovered a few idoims that, we believe, help to keep this plumbing simple to reason about.
+Writing code bridging C library to OCaml code is a difficult task. While writing [Cuite](https://github.com/let-def/cuite), an OCaml library that interfaces the Qt tool-kit, we discovered a few idioms that, we believe, help to keep this plumbing simple to reason about.
 
 Qt is a C++ framework that enables writing portable user interfaces. More generally, it offers many tools for solving many common software engineering problems. User interfaces are challenging to write because they involve complex life times and control flow: data is described as a dynamically changing graph of components, control can jump back-and-forth between user code and library code, different tasks can run concurrently... 
 
 Interfacing with OCaml means replicating all these functionalities while abiding by OCaml & Qt rules about memory management. By revisiting a few assumptions of the OCaml GC interface, we ...
 
-The Cuite case is a bit peculiar: because of the wide surface of Qt API (tens of thousands of definitions), the binding is generated:
+The Cuite case is a bit peculiar. Because of the wide surface of Qt API (tens of thousands of definitions), the binding is generated:
 
 - a manually written runtime support library connects OCaml and Qt memory management infrastructures,
-- a compiler takes a high-level description of the API and generates OCaml and C++ code.
+- a compiler takes a high-level description of the API and generates OCaml and C++ code, linking against the runtime support library.
 
 For this reason when possible we preferred to generate uniform, if repetitive, code that suits the mechanical nature of a compiler. With minor adjustment, we believe this approach is suitable for human beings too -- the inherently tricky nature of binding code is better dealt with boring code rather than subtle one.
 
@@ -21,17 +21,17 @@ We observed that the less natural part of OCaml interaction from C code was the 
 
 <!-- Registration of roots is done through some macros that are provided by the OCaml runtime and look a lot like black magic. Using them properly can, in theory, be done by blindly following rules from the OCaml manual [TODO: reference living in harmony with the OCaml garbage collector]. But this alone is not enough to correctly manage OCaml memory. -->
 
-If the OCaml garbage collector triggers at the wrong time, (1) a value can get moved, (2) a piece of OCaml that is locally referenced but not registered as a root will be collected. If (1) happens in the middle of a _sequence point_ (TODO: reference the definition of C sequence point?) where the same value has been read, this results in an undefined behavior of the C language and, in practice, the lifetime of the value gets disconnected from the lifetime of the variable that holds it. This behavior is completely contradicts the intuition of the C developer who is not used to distinguishing a variable from its contents.
+If the OCaml garbage collector triggers at the wrong time, (1) a value can get moved, (2) a piece of OCaml memory that is locally referenced but not registered as a root can get collected. If (1) happens in the middle of a _sequence point_ (TODO: reference the definition of C sequence point?) where the same value has been read, this results in an undefined behavior of the C language. In practice, the lifetime of the value gets disconnected from the lifetime of the variable that holds it. This behavior completely contradicts the intuition of the C developer who is not used to distinguishing a variable from its contents.
 
 Fortunately (1) can be adressed by a slight, almost mechanical, change to the C API of the garbage collector. By preventing allocating functions from having `value` return type (ideally by preferring them to be `void` functions), this class of error can be ruled-out.
 
-And while the programmer could be blamed for not following the rules in (2), we propose an alternative root management strategy that is more in line with usual C practices.
+And while the programmer could be blamed for not following the rules in (2), we propose an alternative root management strategy that is more in line with usual C practices and should prevent that kind of mistake.
 
 ## Contributions
 
 We claim the following three contributions:
 
-- a general design principle for OCaml FFI helpers function, working with value pointers rather than plain values, that resolves a class of FFI bugs and integrates nicely with existing FFI code,
+- a general design principle for OCaml FFI helpers function, working with value pointers rather than plain values, that resolves a class of FFI bugs and integrates transparently with existing FFI code,
 - an alternative approach to root management that trades some performance for ease of use and safety,
 - a reusable and open-source library that implements both of those.
 
@@ -57,7 +57,7 @@ In short, GC bugs combine two nasty properties: they cannot be studied in isolat
 *: The low-level programming community jokingly dubbed these Heisenbugs and Mandelbugs, for their uncertain and chaotic nature.
 
 On the other hand, the OCaml FFI API enjoys a remarkably low overhead: the restrictions are difficult but lead to a cheap and portable interface with the OCaml runtime.
-This made OCaml applicable to domains where connecting to a foreign programming language is generally considered too expensive [Sundial].
+This made OCaml applicable to domains where connecting to a foreign programming language is generally considered too expensive [TODO reference Sundial].
 
 We propose to explore a different trade-off in the design space of FFI API: providing a safer and more convenient API by giving up some of the performance.
 
@@ -410,7 +410,7 @@ struct MLAgent : Agent
 ```
  -->
 
-#### Region-based management
+## Region-based management
 
 To let the developer dynamically manages the set of roots, we propose a simple API that over-approximates the lifetime of local roots:
 
@@ -455,18 +455,97 @@ value mk_triplet(value x, value y, value z)
 }
 ```
 
-#### Sub-regions
+Setting up a region introduces a new set of local roots that can grow dynamically as new roots are requested. Leaving a region releases all the roots at once.
+
+## Sub-regions
+
+Assuming that roots have the same life-time as an external function works well when a finite amount of work is done by this function, in particular a finite number of root is needed.
+
+However, for long-running function (for instance, an event loop driven by C-code), the over-approximation of lifetimes can be problematic. For these cases, we allow the introduction of sub-regions, valid in a local scope.
+
+These sub-regions follow a stack discipline: they can be nested and are released in the reverse order of their allocation.
+
+```c
+void rcaml_subenter(region_t *region);
+void rcaml_subleave(region_t *region);
+```
+
+For instance, the following code avoids leaking roots while transforming all the elements of an array:
+
+```c
+void fold_array(value *result, value *array)
+{
+    region_t region;
+    size_t count = iget_size(array);
+    *result = initial_value;
+    for (size_t i = 0; i < count; ++i)
+    {
+        rcaml_subenter(&region);
+        value *item = rcaml_root();
+        *item = iget_field(array, i);
+        process_item(*result, *item);
+        rcaml_subleave(&region);
+    }
+}
+```
+
+Like normal regions, macros an be used to automate some of the boilerplate.
+
+## Releasing the lock in a region
+
+So far we demonstrated the use of region to allocate and manage OCaml memory.  The concept can also be applied to the converse: preventing allocation and manipulation of OCaml memory in a given scope.
+
+Although a multi-core runtime is being developed (TODO: Reference Dolan & KC MCGC), the vanilla OCaml runtime can only executes on a single thread of execution. When multiple threads are in use, a lock is used by the OCaml runtime to ensure that only one of them executes OCaml code at any given time.
+
+The C FFI provides an API for releasing the OCaml runtime in a given scope of code.
+
+```c
+// Existing API
+void caml_release_runtime_system(void);
+void caml_acquire_runtime_system(void);
+```
+
+These APIs can be wrapped in corresponding `rcaml_{acquire,release}_runtime_system` functions, that does additional bookkeeping to ensure proper use of regions:
+
+- new roots cannot be allocated,
+- setting up normal regions is forbidden, but a special-kind of region allow reacquiring the runtime,
+- inside a released region, dereferencing a value is forbidden, most helper functions won't work.
+
+```c
+// Wrapper releasing the runtime
+void rcaml_release_runtime_system(void);
+void rcaml_acquire_runtime_sytem(void);
+
+// Wrapper locally reacquiring the runtime
+void rcaml_reacquire_runtime_sytem(void);
+void rcaml_rerelease_runtime_system(void);
+
+// Macros
+#define rcaml_without_ocaml...
+#define rcaml_with_ocaml...
+// Macros that allow writing code such as:
+// rcaml_without_ocaml
+// {
+//   long_running_c1();
+//   rcaml_with_ocaml
+//   {
+//     commit_result();
+//   }
+//   long_running_c2();
+// }
+```
+
+All these restrictions can be tested dynamically. While no checks can be done at compile-time, errors can be detected deterministically during execution.
+
+## Calling OCaml from region-managed code
 
 
 
+### Handling exceptions
+
+# Implementing regions
 
 
-
-# Advanced applications
-
-### Unlocked regions
-
-### Interacting with exceptions
 
 # Conclusion
 
