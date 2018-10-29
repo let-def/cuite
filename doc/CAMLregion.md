@@ -402,22 +402,22 @@ value caml_triplet(value x, value y, value z)
 }
 ```
 
-While true, this case is actually less worrying. The code that dereferences roots can be instrumented to deal with that:
+While problematic indeed, this case is actually less worrying. The code that dereferences roots can be instrumented to deal with that:
 
 - by properly handling aliasing, for instance by ensuring that all arguments are read before any are written
-- by checking for this case and emitting a warning or failing, as illustrated by the assertions in the implementation of `mk_pair` primitive. 
+- by checking for this case and emitting a warning or failing, as illustrated by the assertions in the implementation of `mk_pair` primitive. <!-- in LaTeX, add a reference to the corresponding figure. -->
 
 Actually thanks to the indirection we can go further than that. The observation is that any well-formed argument of type `value*` is actually a root. Native OCaml FFI is `value`-centric: functions directly take and produce values. Our rewriting make it `root`-centric: functions receive roots and manipulate values though them.
 
-The main API function that seems to break the `value*` rule is `iget_field`, which returns a value. But that is precisely because this value is not a root and could be pointing to an arbitrary place in the OCaml heap. To make further use of this value one will have to store it in a root.
+The main API function that seems to break the `value*` rule is `iget_field`, which returns a value. But that is precisely because this value is not a root and could be pointing to an arbitrary place in the OCaml heap. To make further use of this value we would have to store it in a root.
 
-While the connection between a root and its value is lost with native OCaml FFI,  we can access it at any time with the indirect API. Plugging into GC infrastructure we can introspect the roots and provide a debug variant of the FFI where the validity of values are checked dynamically. This prevents a large class of misuse of GC API and delayed heap corruption bugs.
+While the connection between a root and its value is lost with native OCaml FFI,  we can access it at any time with the indirect API. Plugging into GC infrastructure we can introspect the roots and provide a debug variant of the FFI where the validity of values is checked dynamically. This prevents a large class of misuse of GC API and delayed heap corruption bugs.
 
 ##### Discussion: where to add the indirection?
 
 Having made explicit the distinction between values (of type `value`) and roots (of type `value*`) in the API, one could wonder why our API makes use of roots in places where values would be fine: the arguments to `iget_field`, `iLong_val`, etc.
 
-We are not totally decided on this issue and might revisit this decision in the future. However the ability to dynamically check for correct use and the more explicit, safer-looking, nature of the resulting code makes us prefer the approach favoring root arguments.
+We are not totally decided on this issue and might revisit this decision in the future. However the ability to dynamically check for correct use and the more explicit, safer-looking nature of the resulting code makes us prefer the approach favoring root arguments.
 
 Beside the slight increase in verbosity, we did not find any drawback to this approach.
 
@@ -425,13 +425,13 @@ Beside the slight increase in verbosity, we did not find any drawback to this ap
 
 To further simplify the API described above we propose to make allocation of roots simpler.
 
-The `CAMLparam` and `CAMLlocal` macros declare OCaml roots with a static, known at compile-time, lifetime. This is nice for performance but puts more burden on the developer.
+The `CAMLparam` and `CAMLlocal` macros declare OCaml roots with a static lifetime, known at compile-time. This is nice for performance but puts more burden on the developer.
 
-The semantics of these macros alone are hard to understand and some use cases are not easily covered. As we already saw, returning values is tricky, but storing temporary values in code controlled by an external framework is even more problematic.
+The semantics of these macros is hard to understand and some use cases are not easily covered. As we already saw, returning values is tricky, but storing temporary values in code controlled by an external framework is even more problematic.
 
 #### The need for root side-channels
 
-For the sake of the example, let's imagine that we need to sort some C structures that contain OCaml values. To achieve this the `qsort_r` from the C standard library seems appropriate. It takes an array of user-defined structures and a custom comparison operator in the form of a function pointer.
+For the sake of the example, let's imagine that we need to sort some C structures containing OCaml values. To achieve this the `qsort_r` from the C standard library seems appropriate. It takes an array of user-defined structures and a custom comparison operator in the form of a function pointer.
 
 ```c
 struct item {
@@ -455,9 +455,9 @@ void sort_ocaml_items(struct item *items, size_t count, value *comparator)
 }
 ```
 
-`caml_callback2` is a primitive function of native OCaml FFI that allows to invoke an OCaml closure from C code (*for the sake of simplicity we do not deal with the case where the callback raises an exception).
+`caml_callback2` is a primitive function of native OCaml FFI that allows to invoke an OCaml closure from C code (note: for the sake of simplicity we do not deal with the case where the callback raises an exception).
 
-Because some OCaml code is being called in the middle of the comparator, the garbage collector can get called in the middle of the sorting. Even if we registered roots for all the values in this array, the implementation of `qsort_r` might have made some copy that will not be updated by the GC. More generally, rewriting the array in the middle of the sort can lead to unexpected behaviors.
+Because some OCaml code is being called in the middle of the comparator, the garbage collector can get called in the middle of the sorting. Even if we registered roots for all the values in this array, the implementation of `qsort_r` might have made copies that will not be updated by the GC. More generally, rewriting the array in the middle of the sort can lead to unexpected behaviors.
 
 Because we know all the values of interest prior to calling `qsort_r`, a solution is to work with pointer to values. One first allocates an array of roots and pass pointers to this array. However in other situations, the set of roots might be determined dynamically.
 
@@ -483,11 +483,12 @@ struct MLAgent : Agent
   value *x;
 }
 ```
+
  -->
 
 ## Region-based management
 
-To let the developer dynamically manages the set of roots, we propose a simple API that over-approximates the lifetime of local roots:
+To let the developer dynamically manage the set of roots, we propose a simple API that over-approximates the lifetime of local roots:
 
 ```c
 typedef struct ... region_t;
@@ -534,7 +535,7 @@ Setting up a region introduces a new set of local roots that can grow dynamicall
 
 ## Sub-regions
 
-Assuming that roots have the same life-time as an external function works well when a finite amount of work is done by this function, in particular a finite number of root is needed.
+Assuming that roots have the same life-time as an external function works well when a finite amount of work is done by this function, in particular a finite number of roots are needed.
 
 However, for long-running function (for instance, an event loop driven by C-code), the over-approximation of lifetimes can be problematic. For these cases, we allow the introduction of sub-regions, valid in a local scope.
 
@@ -583,7 +584,7 @@ void caml_acquire_runtime_system(void);
 These APIs can be wrapped in corresponding `rcaml_{acquire,release}_runtime_system` functions, that does additional bookkeeping to ensure proper use of regions:
 
 - new roots cannot be allocated,
-- setting up normal regions is forbidden, but a special-kind of region allow reacquiring the runtime,
+- setting up normal regions is forbidden, but a special kind of region allow reacquiring the runtime,
 - inside a released region, dereferencing a value is forbidden, most helper functions won't work.
 
 ```c
@@ -626,7 +627,7 @@ This helps detecting and handling a few unfortunate cases:
 
 The OCaml native FFI provides two means for calling OCaml closures:
 
-- the `CAMLcallback()` variants, that don't intercept exceptions. The C code will be aborted by directly jumping to the OCaml code that called an external function.
+- the `CAMLcallback()` variants, that do not intercept exceptions. The C code will be aborted by directly jumping to the OCaml code that called an external function.
 - the `CAMLcallback_exn()` variants, that tag the return value to distinguish exceptional case.
 
 The return value of `CAMLcallback_exn()` should be tested for the exceptional case with `Is_exception_result` before resuming normal execution.
