@@ -514,7 +514,7 @@ These APIs can be wrapped in corresponding `rcaml_{acquire,release}_runtime_syst
 ```c
 // Wrapper releasing the runtime
 void rcaml_release_runtime_system(void);
-void rcaml_acquire_runtime_sytem(void);
+void rcaml_acquire_runtime_system(void);
 
 // Wrapper locally reacquiring the runtime
 void rcaml_reacquire_runtime_sytem(void);
@@ -539,13 +539,54 @@ All these restrictions can be tested dynamically. While no checks can be done at
 
 ## Calling OCaml from region-managed code
 
+The last feature that needs some special care from the region API is the ability to call OCaml closures from C code. When switching back to OCaml code, the runtime marks a region as disabled: the roots it contains are still reachable, but no new roots can be added to the region.
 
+This helps detecting and handling a few unfortunate cases:
+
+- When re-entering C code from OCaml deeper in the call stack, an entrypoint that forgot to setup a region could allocate from the outer region by mistake.
+- If we are unlucky, the OCaml thread scheduler could preempt the current thread and the re-entry would happen from another thread... messing with regions library internal datastructures. By intercepting calls, we can rely on the OCaml runtime lock to also protect region sections.
+- The OCaml closure could raise an exception. The native FFI deals with this situation by simply dropping roots from the local roots linked list: since node allocated by `CAMLparam/local` macros are stored on the stack, when an exception is raised the local root and stack pointers are simply reset to their value before entering the C code.
 
 ### Handling exceptions
 
+The OCaml native FFI provides two means for calling OCaml closures:
+
+- the `CAMLcallback()` variants, that don't intercept exceptions. The C code will be aborted by directly jumping to the OCaml code that called an external function.
+- the `CAMLcallback_exn()` variants, that tag the return value to distinguish exceptional case.
+
+The return value of `CAMLcallback_exn()` should be tested for the exceptional case with `Is_exception_result` before resuming normal execution.
+
+Because our region management code needs to execute cleanup code when leaving a scope, we forbid the former case. The user-code has to handle the exceptional case without resorting to non-local control flow.
+
+While it would have been possible to provide support for non-local jumps, it did not made much sense in the Qt case: the binding is implemented in C++, which allow arbitrary code to be executed when leaving a scope. C++ exceptions are expressive enough to compose all our requirements (non-local control flow, proper interaction with the regions and with OCaml GC), but the bindings themselves did not need such feature.
+
 # Implementing regions
 
+Besides the code to enter and leave regions, the region API provides these two primitives:
 
+- `value *rcaml_root();` that allocates a new root in the current region.
+- `value rcaml_deref(value *);` that dereferences a root.
+
+In release mode, `rcaml_deref` could simply be implemented by pointer derefencement. But we already made the case that observing all the places where values are dereferenced is important for dynamically checking the soundness of bindings. 
+
+The current region is not threaded by the code. Instead it is implemented by a global variable that is setup by the `enter/leave` functions, effectively implementing a form of dynamic scoping.
+
+Four operators (a pair of corresponding `enter/leave`) are available for manipulating scopes:
+
+- `rcaml_region`, when entering a fresh new region
+- `rcaml_subregion`, when nesting a local region
+- `rcaml_release`, when locally releasing the OCaml GC
+- `rcaml_reacquire`, when locally reacquiring the OCaml GC
+
+Gathering the requirement from the previous sections, the following cases need to be distinguished:
+
+1. no region has been setup: `root` and `deref` are forbidden
+
+2. a region has been setup from a different thread, `root` are forbidden, `deref` are possible
+
+3. a region has been setup
+
+- a region has been setup earlier in the call stack but
 
 # Conclusion
 
