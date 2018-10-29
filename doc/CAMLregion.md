@@ -6,7 +6,7 @@ Writing code bridging C library to OCaml code is a difficult task. While writing
 
 Qt is a C++ framework that enables writing portable user interfaces. More generally, it offers many tools for solving many common software engineering problems. User interfaces are challenging to write because they involve complex life times and control flow: data is described as a dynamically changing graph of components, control can jump back-and-forth between user code and library code, different tasks can run concurrently... 
 
-Interfacing with OCaml means replicating all these functionalities while abiding by OCaml & Qt rules about memory management. By revisiting a few assumptions of the OCaml GC interface, we ...
+Interfacing with OCaml means replicating all these features while abiding by OCaml & Qt rules about memory management. By revisiting a few assumptions of the OCaml GC interface, we ...
 
 The Cuite case is a bit peculiar. Because of the wide surface of Qt API (tens of thousands of definitions), the binding is generated:
 
@@ -23,7 +23,7 @@ We observed that the less natural part of OCaml interaction from C code was the 
 
 If the OCaml garbage collector triggers at the wrong time, (1) a value can get moved, (2) a piece of OCaml memory that is locally referenced but not registered as a root can get collected. If (1) happens in the middle of a _sequence point_ (TODO: reference the definition of C sequence point?) where the same value has been read, this results in an undefined behavior of the C language. In practice, the lifetime of the value gets disconnected from the lifetime of the variable that holds it. This behavior completely contradicts the intuition of the C developer who is not used to distinguishing a variable from its contents.
 
-Fortunately (1) can be adressed by a slight, almost mechanical, change to the C API of the garbage collector. By preventing allocating functions from having `value` return type (ideally by preferring them to be `void` functions), this class of error can be ruled-out.
+Fortunately (1) can be addressed by a slight, almost mechanical, change to the C API of the garbage collector. By preventing allocating functions from having `value` return type (ideally by preferring them to be `void` functions), this class of error can be ruled-out.
 
 And while the programmer could be blamed for not following the rules in (2), we propose an alternative root management strategy that is more in line with usual C practices and should prevent that kind of mistake.
 
@@ -99,7 +99,7 @@ This operation is even more demanding than mere traversal: the GC not only needs
 
 ## The memory management macros.
 
-A few C macros are provided by the OCaml runtime to implement foreign functionalities. We will use a simple function that takes two values and makes a pair out of them as a guiding example:
+A few C macros are provided by the OCaml runtime to implement foreign features. We will use a simple function that takes two values and makes a pair out of them as a guiding example:
 
 ```ocaml
 (* The OCaml version *)
@@ -237,7 +237,7 @@ The first change we propose is to replace return types of type `value` in FFI fu
 
 A tricky source of bug that we highlighted in the previous section was that OCaml values get unexpectedly copied while being manipulated. With this new level of indirection only the pointer gets copied. If the GC comes and rewrites the roots, the pointer will still point to the right one.
 
-Looking at the operations involved in terms of lifetime, reading a value from a root makes it epheremal: the value is valid only until the next OCaml allocation -- or simply undefined if an allocation can happen in the same sequence-point.
+Looking at the operations involved in terms of lifetime, reading a value from a root makes it ephemeral: the value is valid only until the next OCaml allocation -- or simply undefined if an allocation can happen in the same sequence-point.
 
 When directly working with `value`, this operation is implicit. Working with `value*`, the operation becomes explicit and forces the developer to think about its effects -- they choose when to dereference the pointer. In practice, this should only happen in the primitive functions of the Garbage Collector, relieving the user of the API from this burden.
 
@@ -292,6 +292,8 @@ value caml_triplet(value x, value y, value z)
 ##### No need to repeat roots.
 
 Another benefit of this approach is that callees no longer have the responsibility of reregistering roots for their arguments.
+
+<!-- GS: should "reregistering" be "registering"? -->
 
 With the existing OCaml API, any function receiving an argument of type `value` has to register a corresponding root. There are as many roots for a value as sub-routines calls to the value.
 
@@ -517,7 +519,7 @@ void rcaml_release_runtime_system(void);
 void rcaml_acquire_runtime_system(void);
 
 // Wrapper locally reacquiring the runtime
-void rcaml_reacquire_runtime_sytem(void);
+void rcaml_reacquire_runtime_system(void);
 void rcaml_rerelease_runtime_system(void);
 
 // Macros
@@ -567,7 +569,7 @@ Besides the code to enter and leave regions, the region API provides these two p
 - `value *rcaml_root();` that allocates a new root in the current region.
 - `value rcaml_deref(value *);` that dereferences a root.
 
-In release mode, `rcaml_deref` could simply be implemented by pointer derefencement. But we already made the case that observing all the places where values are dereferenced is important for dynamically checking the soundness of bindings. 
+In release mode, `rcaml_deref` could simply be implemented by a pointer dereference. But we already made the case that observing all the places where values are dereferenced is important for dynamically checking the soundness of bindings.
 
 The current region is not threaded by the code. Instead it is implemented by a global variable that is setup by the `enter/leave` functions, effectively implementing a form of dynamic scoping.
 
