@@ -151,9 +151,6 @@ Moving blocks is more demanding than mere traversal: the GC not only needs to kn
 
 A few C macros are provided by the OCaml runtime to implement foreign features. As a guiding example, here is a simple function that takes two values and makes a pair out of them as a guiding example:
 
-<!-- GS: avoid the future form in papers (unless you talk about things
-     that will actually happen after the paper is written). -->
-
 ```ocaml
 (* The OCaml version *)
 let mk_pair_ocaml x y = (x,y)
@@ -334,7 +331,7 @@ void iset_field_long(value *root, int n, long v);
 Now that all functions that interact with the garbage collector take pointers, most offending code patterns become impossible to write:
 
 - functions returning void simply cannot be nested,
-- nesting a call to a function returning `value` where a `value*` <!-- GS: ?? --> requires taking the address of a temporary (`&get_field(x, 0)`), which is rejected by the C compiler.
+- nesting a call to a function returning `value` where a `value*` is expected requires taking the address of a temporary (`&get_field(x, 0)`), which is rejected by the C compiler.
 
 To illustrate the benefits of this approach, let's take a look at how our `triplet` would look like:
 
