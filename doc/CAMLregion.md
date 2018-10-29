@@ -8,6 +8,15 @@ Qt is a C++ framework that enables writing portable user interfaces. More genera
 
 Interfacing with OCaml means replicating all these features while abiding by OCaml & Qt rules about memory management. By revisiting a few assumptions of the OCaml GC interface, we ...
 
+<!-- GS: replicating => exporting? -->
+
+<!-- GS: I'm not sure I understand what the paragraphs below is trying
+     to say, and how it belongs to the introduction. If you are trying
+     to say that your "idioms" were designed to be used in generated
+     code rather than human-written code, you can say it without
+     giving so many details about your Qt binding. It's not clear that
+     it needs to be in the introduction in any case. -->
+
 The Cuite case is a bit peculiar. Because of the wide surface of Qt API (tens of thousands of definitions), the binding is generated:
 
 - a manually written runtime support library connects OCaml and Qt memory management infrastructures,
@@ -15,9 +24,21 @@ The Cuite case is a bit peculiar. Because of the wide surface of Qt API (tens of
 
 For this reason when possible we preferred to generate uniform, if repetitive, code that suits the mechanical nature of a compiler. With minor adjustment, we believe this approach is suitable for human beings too -- the inherently tricky nature of binding code is better dealt with boring code rather than subtle one.
 
+<!-- GS: the whole introduction above lacks a name for the topic of
+     this paper (CAMLregion?), introduced early, and used consistently
+     to reference this part of your work. When you say "this
+     approach", you mean "the CAMLregion approach"
+     (whatever "approach" means in that context). -->
+
 ## Our approach : indirect and dynamic management of roots
 
 We observed that the less natural part of OCaml interaction from C code was the manipulation of roots and the lifetime of OCaml values. [TODO: reference Stephen Dolan Caml-Oxide that encodes the lifetimes rules using Rust type system?]. The C programmer is accustomed to manual memory management: by explicitly creating and destroying pieces of memory or by tying the variable lifetime to the scope. While syntactically the management of OCaml memory seems to fall into these cases, it is actually much more subtle.
+
+<!-- GS: I think Caml-Oxide can be referenced later (eg. in the
+     Related Work section, or at least "less in the
+     introduction"). Think of the introduction as a critical question
+     where you must be as concise as possible while still making your
+     points understandable. Extraneous information can wait -->
 
 <!-- Registration of roots is done through some macros that are provided by the OCaml runtime and look a lot like black magic. Using them properly can, in theory, be done by blindly following rules from the OCaml manual [TODO: reference living in harmony with the OCaml garbage collector]. But this alone is not enough to correctly manage OCaml memory. -->
 
@@ -25,7 +46,21 @@ If the OCaml garbage collector triggers at the wrong time, (1) a value can get m
 
 Fortunately (1) can be addressed by a slight, almost mechanical, change to the C API of the garbage collector. By preventing allocating functions from having `value` return type (ideally by preferring them to be `void` functions), this class of error can be ruled-out.
 
+<!-- GS: Is this approach to (1) related to CAMLregion or a reference
+     to another idea/solution you have in mind? If it is not about
+     CAMLregion, you should say so explicitly. "In this
+     document/paper, we focus on (2) ... . We have ideas for (1) ..."
+     (but the "ideas for (1)" part can go in Future Work, and is not
+     part of the critical introduction section). -->
+
 And while the programmer could be blamed for not following the rules in (2), we propose an alternative root management strategy that is more in line with usual C practices and should prevent that kind of mistake.
+
+<!-- GS: can you say just a bit more about what the solution is?
+     Ideally I would like to have a vague understanding of the
+     solution you propose (not the details of course) by the time
+     I finish reading the introduction. In particular, an expert
+     reader should be able to make a guess at whether it can possibly
+     work, or will never work. -->
 
 ## Contributions
 
@@ -35,9 +70,19 @@ We claim the following three contributions:
 - an alternative approach to root management that trades some performance for ease of use and safety,
 - a reusable and open-source library that implements both of those.
 
+<!-- GS: Point 2, can you say just a couple words about what the
+     "alternative approach" is, to distinguish it from completely
+     different approaches? -->
+
 While these were developed in the context of Cuite, the Qt binding, this paper solely focuses on the management of OCaml memory from C code. However to illustrate its applicability to realistic code, we describe how our proposed API behaves in complex situations -- involving callbacks, exceptions and multi-threaded code.
 
 # The OCaml-C FFI
+
+<!-- GS: if I understand correctly, the content in this section is
+     only about the existing API, none of it is about your new
+     work. This is completely fine (a good idea), but you should point
+     it out explicitly. (Just as you must be clear when something you
+     describe is a new contribution.) -->
 
 The OCaml FFI lets the developer manipulate OCaml values from another programming language. A C library provided by the OCaml distribution exposes the primitive operations to achieve that.
 
@@ -80,6 +125,11 @@ TODO Figure:
 
 - immediate value, LSB=1: integer
 - block value, LSB=0, pointer to a block of memory preceded
+
+<!-- GS: at this point it is not clear to me, for now, why you need to
+     be very clear about the tagging conventions and value
+     representation to present your work. (I guess I will understand
+     later.) -->
 
 <!--  Tags serve two purposes:
 
@@ -234,6 +284,16 @@ To avoid bugs, calls to functions manipulating the OCaml memory should be linear
 
 # value*, one level of indirection
 
+<!-- GS: "the first change we propose" looks like you want to change
+     the current C FFI. If I understand correctly, you propose a *new*
+     set of primitives for the FFI, distinct from the existing
+     ones. So maybe you should formulate it as:
+
+     > With CAMLregion, instead of using return types of type
+     > `value*`, we propose to pass a new output-argument of type
+     > `value*`."
+-->
+
 The first change we propose is to replace return types of type `value` in FFI functions that allocates by a new argument of type `value*`. While it looks like a minor change, this brings a lot of simplifications to the rest of the code and prevents some undefined behaviors.
 
 ##### No risk of unexpected copy
@@ -262,6 +322,12 @@ void iset_field(value *root, int n, value *v);
 void iset_field_long(value *root, int n, long v);
 ...
 ```
+
+<!-- GS: "// Non-allocating functions still work direct values", what
+     does this mean? A word seems to be missing, but I cannot find
+     a completion of the sentence that really makes sense. At first
+     I thought "still work with direct values", but this API uses
+     value pointers, not direct values. -->
 
 #####   Return values become explicit
 
@@ -296,13 +362,19 @@ value caml_triplet(value x, value y, value z)
 
 Another benefit of this approach is that callees no longer have the responsibility of registering roots for their arguments.
 
-With the existing OCaml API, any function receiving an argument of type `value` has to register a corresponding root. There are as many roots for a value as sub-routines calls to the value.
+With the existing OCaml API, any function receiving an argument of type `value` has to register a corresponding root. There are as many roots for a value as sub-routines calls with the value as argument.
 
 ```c
 TODO: some example?
 ```
 
 With the indirect approach it is the duty of whoever produced a `value*` to register the root. The final consumer also has to be careful when dereferencing the value, but this will generally be done by a primitive function of the GC interface. On the other hand, the rest of the binding code no longer has to be littered with root management.
+
+<!-- GS: I'm not completely sure what "produced a `value*`" means. It
+     is the same as initializing it, and it happens whenever the
+     variable is created by a `CAMLparam` macro, right? In particular,
+     is it correct that `value*` objects manipulated in this style are
+     never NULL during their intended usage period? -->
 
 ##### Dealing with immediate values
 
