@@ -413,6 +413,13 @@ The main API function that seems to break the `value*` rule is `iget_field`, whi
 
 While the connection between a root and its value is lost with native OCaml FFI,  we can access it at any time with the indirect API. Plugging into GC infrastructure we can introspect the roots and provide a debug variant of the FFI where the validity of values is checked dynamically. This prevents a large class of misuse of GC API and delayed heap corruption bugs.
 
+<!-- GS: I think that for a non-expert it is not clear that you are
+     proposing a debugging/development workflow (rather than: yet
+     another FFI library, or a fundamental design tradeoff, etc.):
+     write/test your code by linking to an instrumented version of the
+     runtime, but it is linked against the faster-but-unsafe version
+     by default. -->
+
 ##### Discussion: where to add the indirection?
 
 Having made explicit the distinction between values (of type `value`) and roots (of type `value*`) in the API, one could wonder why our API makes use of roots in places where values would be fine: the arguments to `iget_field`, `iLong_val`, etc.
@@ -461,6 +468,11 @@ Because some OCaml code is being called in the middle of the comparator, the gar
 
 Because we know all the values of interest prior to calling `qsort_r`, a solution is to work with pointer to values. One first allocates an array of roots and pass pointers to this array. However in other situations, the set of roots might be determined dynamically.
 
+<!-- GS: to me the status of the last sentence above is not completely
+     clear. Do I correctly understand that the solution described in
+     the paragraph is not always possible, or at least sometimes very
+     tricky to deploy? If so, say it explicitly. -->
+
 <!-- While this might seem contrived, the case occurred for us when binding some C++ object-oriented patterns to OCaml.
 
 ```c++
@@ -473,6 +485,8 @@ struct Simulation
     void run();
 }
 ```
+
+<!-- GS: (I had never seen the `handleChange() = 0;` syntax before.) -->
 
 In this problem an arbitrary number of agents, implemented by inheriting the `Agent`, are managed by a simulation, represented as an instance of the `Simulation` class.
 When `run()` is called, the simulation determines which agents changed and will call their `handleChange` method.  One or more rounds can be executed, depending on parameters determined by the simulation.
@@ -506,6 +520,10 @@ In this approach, we distinguish between external and helper functions:
 
 The external functions are responsible for setting up the region while helper functions assume that a region has already been setup. Mimicking `CAMLparam...` macros, we provide some sugar for registering parameters while setting up the region:
 
+<!-- GS: Why not pass a pointer to the region to helper functions? It
+     would clarify that they are only helpers (besides the absence of
+     CAMLprim macro), and make incorrect usage more difficult? -->
+
 ```c
 value *pair_helper(value *a, value *b)
 {
@@ -531,6 +549,9 @@ value mk_triplet(value x, value y, value z)
 }
 ```
 
+<!-- GS: given that `rcaml_root` creates a new root, I would have
+     expected maybe `new` in the name. -->
+
 Setting up a region introduces a new set of local roots that can grow dynamically as new roots are requested. Leaving a region releases all the roots at once.
 
 ## Sub-regions
@@ -548,6 +569,10 @@ void rcaml_subleave(region_t *region);
 
 For instance, the following code avoids leaking roots while transforming all the elements of an array:
 
+<!-- GS: if I understand correctly, this code must be called only at
+     times where a global region already exists. (I would still prefer
+     to pass an explicit parameter.) -->
+
 ```c
 void fold_array(value *result, value *array)
 {
@@ -564,6 +589,10 @@ void fold_array(value *result, value *array)
     }
 }
 ```
+
+<!-- GS: you could give the prototypes of `initial_value` and
+     `process_item` before the function, to clarify that they are
+     provided by the context. -->
 
 Like normal regions, macros an be used to automate some of the boilerplate.
 
@@ -586,6 +615,9 @@ These APIs can be wrapped in corresponding `rcaml_{acquire,release}_runtime_syst
 - new roots cannot be allocated,
 - setting up normal regions is forbidden, but a special kind of region allow reacquiring the runtime,
 - inside a released region, dereferencing a value is forbidden, most helper functions won't work.
+
+<!-- GS: by "inside a released region", you mean "while the current
+     global region is released"? -->
 
 ```c
 // Wrapper releasing the runtime
@@ -611,17 +643,40 @@ void rcaml_rerelease_runtime_system(void);
 // }
 ```
 
+<!-- GS: without_ocaml => without_ocaml_runtime ? -->
+
 All these restrictions can be tested dynamically. While no checks can be done at compile-time, errors can be detected deterministically during execution.
 
 ## Calling OCaml from region-managed code
 
 The last feature that needs some special care from the region API is the ability to call OCaml closures from C code. When switching back to OCaml code, the runtime marks a region as disabled: the roots it contains are still reachable, but no new roots can be added to the region.
 
+<!-- GS: this is not done by your alternative set of C macros, it
+     needs to be modified directly in the runtime implementation, right?
+
+      What is the status of this changed, as it been submitted? How
+      confident do we feel about it being eventually accepted?
+      (these "soft" aspects are not essential and can related to the
+      conclusion section, but as a reader I would still be curious
+      about them). -->
+
 This helps detecting and handling a few unfortunate cases:
 
 - When re-entering C code from OCaml deeper in the call stack, an entrypoint that forgot to setup a region could allocate from the outer region by mistake.
-- If we are unlucky, the OCaml thread scheduler could preempt the current thread and the re-entry would happen from another thread... messing with regions library internal datastructures. By intercepting calls, we can rely on the OCaml runtime lock to also protect region sections.
-- The OCaml closure could raise an exception. The native FFI deals with this situation by simply dropping roots from the local roots linked list: since node allocated by `CAMLparam/local` macros are stored on the stack, when an exception is raised the local root and stack pointers are simply reset to their value before entering the C code.
+
+- If we are unlucky, the OCaml thread scheduler could preempt the current thread and the re-entry would happen from another thread... messing with the internal datastructures of the regions library. By intercepting calls, we can rely on the OCaml runtime lock to also protect region sections.
+
+   <!-- GS: what does "intercepting calls" mean here? -->
+
+- The OCaml closure could raise an exception. The native FFI deals with this situation by simply dropping roots from the local roots linked list: since the nodes allocated by `CAMLparam/local` macros are stored on the stack, when an exception is raised the local root and stack pointers are simply reset to their value before entering the C code.
+
+   <!-- GS: this paragraph only describes what happens in the
+            pre-existing OCaml FFI, right? What should CAMLregion or
+            its runtime component do when an exception is raised?
+            (I see now that this is the topic of the next section. It
+            was unclear when reading the paragraph. Maybe just add "We
+            discuss how to handle this in CAMLregion in the next
+            section.) -->
 
 ### Handling exceptions
 
@@ -647,12 +702,19 @@ In release mode, `rcaml_deref` could simply be implemented by a pointer derefere
 
 The current region is not threaded by the code. Instead it is implemented by a global variable that is setup by the `enter/leave` functions, effectively implementing a form of dynamic scoping.
 
+<!-- GS: again, why? -->
+
 Four operators (a pair of corresponding `enter/leave`) are available for manipulating scopes:
 
 - `rcaml_region`, when entering a fresh new region
 - `rcaml_subregion`, when nesting a local region
 - `rcaml_release`, when locally releasing the OCaml GC
 - `rcaml_reacquire`, when locally reacquiring the OCaml GC
+
+<!-- GS: This whole section looks a bit redundant with what has been
+     said before. What follows below is maybe more interesting. If
+     there are things you found tricky/surprising when building the
+     implementaiton, it would also be interesting. -->
 
 Gathering the requirement from the previous sections, the following cases need to be distinguished:
 
