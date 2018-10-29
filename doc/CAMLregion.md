@@ -2,9 +2,9 @@
 
 # Introduction
 
-Writing code bridging C library to OCaml code is a difficult task. While writing [Cuite](https://github.com/let-def/cuite), an OCaml library that interfaces the Qt tool-kit, we discovered a few idioms that, we believe, help to keep this plumbing simple to reason about.
+Writing code bridging C libraries to OCaml code is a difficult task. While writing [Cuite](https://github.com/let-def/cuite), an OCaml library that interfaces the Qt tool-kit, we discovered a few idioms that help to keep this plumbing simple to reason about.
 
-Qt is a C++ framework that enables writing portable user interfaces. More generally, it offers many tools for solving many common software engineering problems. User interfaces are challenging to write because they involve complex life times and control flow: data is described as a dynamically changing graph of components, control can jump back-and-forth between user code and library code, different tasks can run concurrently... 
+Qt is a C++ framework that enables writing portable user interfaces. More generally, it offers many tools for solving many common software engineering problems. User interfaces are challenging to write because they involve complex lifetimes and control flow: data is described as a dynamically changing graph of components, control can jump back-and-forth between user code and library code, different tasks can run concurrently...
 
 Interfacing with OCaml means replicating all these features while abiding by OCaml & Qt rules about memory management. By revisiting a few assumptions of the OCaml GC interface, we ...
 
@@ -43,16 +43,16 @@ The OCaml FFI lets the developer manipulate OCaml values from another programmin
 
 This library helps accomplishing two main tasks:
 
-- constructing and deconstructing OCaml values, interpreting them in a meaningful way from the C language (for instance by mapping back-and-forth between OCaml and C representations of integers, of strings, etc);
-- cooperating with the OCaml garbage collector, or GC, the runtime service that takes care of managing OCaml memory.
+1. constructing and deconstructing OCaml values, interpreting them in a meaningful way from the C language (for instance by mapping back-and-forth between OCaml and C representations of integers, of strings, etc);
+2. cooperating with the OCaml garbage collector, or GC, the runtime service that takes care of managing OCaml memory.
 
-Even though both tasks are much more difficult than when working from within OCaml code (the typechecker will not help you in foreign code), it is at least possible to reason locally, in a compositional way, about OCaml values. For instance, building nested tuples just involves repeatedly building flat ones.
+Even though both tasks are much more difficult than when working from within OCaml code (the typechecker will not help you in foreign code), it is at least possible to reason locally, in a compositional way, about OCaml values -- task (1). For instance, building nested tuples just involves repeatedly building flat tuples.
 
-The same cannot be said about the second task. The GC needs to know about all OCaml values that are manipulated from C code, and can look at them at almost any moment.  These restrictions are not natural while programming in C and can lead to subtle bugs that are hard to discover.
+The same cannot be said about task (2). The GC needs to know about all OCaml values that are manipulated from C code, and can look at them at almost any moment.  These restrictions are not natural while programming in C and can lead to subtle bugs that are hard to discover.
 
-Most of the time the GC will not do any work, preferring to wait for a batch of work that is big enough to amortize its overhead. As such an improper use of the OCaml API can go unnoticed for a long time. But even once harm has been done, it might just lead to a corruption of the OCaml heap that will affect an unrelated piece of code.
+Most of the time the GC will not do any work, preferring to wait for a batch of work that is big enough to amortize its overhead. As such an improper use of the OCaml API can go unnoticed for a long time. But even once harm has been done, it might just lead to a corruption of the OCaml heap that will affect an unrelated piece of code, and fail much later in the program.
 
-In short, GC bugs combine two nasty properties: they cannot be studied in isolation and they trigger depending on a complex set of conditions that cannot be inferred by solely looking at the buggy code.
+GC bugs combine two nasty properties: they cannot be studied in isolation and they trigger depending on a complex set of conditions that cannot be inferred by solely looking at the buggy code.
 
 *: The low-level programming community jokingly dubbed these Heisenbugs and Mandelbugs, for their uncertain and chaotic nature.
 
@@ -61,9 +61,9 @@ This made OCaml applicable to domains where connecting to a foreign programming 
 
 We propose to explore a different trade-off in the design space of FFI API: providing a safer and more convenient API by giving up some of the performance.
 
-This might actually be a more useful position as many mainstream languages got away with heavier FFIs by default (Lua, Python, Java JNI, Go), optionally allowing to resort to a lower-level one for performance critical code (Java JIO, ctypes from LuaJit).
+This might actually be a more useful position: many mainstream languages adopted heavier FFIs by default (Lua, Python, Java JNI, Go), optionally allowing to resort to a lower-level one for performance critical code (Java JIO, ctypes from LuaJit).
 
-But before trying to build an alternative to the FFI abstraction, we will take a closer look at the restrictions imposed by the GC.
+Before trying to build an alternative to the FFI abstraction, we will take a closer look at the restrictions imposed by the GC.
 
 ## Value representation
 
@@ -71,7 +71,7 @@ From the C programming language, all OCaml values are represented by the `value`
 
 The least significant bit is reserved to help the GC traverse the OCaml heap:
 
-- if it is set, the value is said to be immediate and the remaining bits are directly interpreted: as a 1-bit shorter integer for the `int` OCaml type, or as a unique pattern of bits for constant variants and polymorphic variant constructors
+- if it is set, the value is said to be immediate and the remaining bits are directly interpreted: as a 31-bit or 63-bit integer for the `int` OCaml type, or as a unique pattern of bits for constant variants and polymorphic variant constructors
 - if it is not set, the value is interpreted as a pointer to a "block", a piece of memory provided by the runtime and guaranteed to be aligned.
 
 Blocks are preceded by a header that determines their "tag" and their size. The tag will determine how to interpret the contents of the block. For common OCaml values, such as algebraic data, records, tuples or arrays, blocks are made of other values.
@@ -95,11 +95,14 @@ Depending on the tag, the OCaml GC will decide whether a block is made of other 
 
 By repeating this operation, the GC can traverse the whole heap. If necessary it might also decide to move some blocks.
 
-This operation is even more demanding than mere traversal: the GC not only needs to know all values referenced from C code, it also needs to be able to update them. The C compiler needs to be aware that all OCaml values have to be reloaded when such an operation can happen, as old ones might have been invalidated.
+Moving blocks is more demanding than mere traversal: the GC not only needs to know all values referenced from C code, it also needs to be able to update them. The C compiler needs to be aware that all OCaml values have to be reloaded when such an operation can happen, as previous values might have been invalidated.
 
 ## The memory management macros.
 
-A few C macros are provided by the OCaml runtime to implement foreign features. We will use a simple function that takes two values and makes a pair out of them as a guiding example:
+A few C macros are provided by the OCaml runtime to implement foreign features. As a guiding example, here is a simple function that takes two values and makes a pair out of them as a guiding example:
+
+<!-- GS: avoid the future form in papers (unless you talk about things
+     that will actually happen after the paper is written). -->
 
 ```ocaml
 (* The OCaml version *)
@@ -112,7 +115,7 @@ external mk_pair_c : 'a -> 'b -> 'a * 'b = "mk_pair_c_impl"
 The string after the external declaration is the name of the C function that implements the functionality:
 
 - when `mk_pair_c` is applied, the OCaml compiler generates a call to `mk_pair_c_impl` symbol,
-- a C file must defines a function of this name
+- a C file must define a function of this name
 - the C compiler turns it into an object file defining this symbol,
 - the system linker connects the two together.
 
@@ -131,14 +134,14 @@ value mk_pair_c_impl(value a, value b)
 }
 ```
 
-The first macro `CAMLprim` makes sure that the symbol will be visible from the OCaml code. The other ones do more interesting jobs.
+The first macro `CAMLprim` makes the symbol visible from OCaml code.
 
 *CAMLparam* `CAMLparam2(a,b)` expands to two other macros:
 
 - `CAMLparam0()` saves the current local roots at the beginning of the function,
 - `CAMLxparam2(a,b)` setups a new block of roots with the addresses of `a` and `b`).
 
-The local root is a linked list of pointer to OCaml values, implemented by the `struct caml__roots_block` type, and stored in the `caml_local_roots` global variable.
+The local roots are in a linked list of pointer to OCaml values, implemented by the `struct caml__roots_block` type, and stored in the `caml_local_roots` global variable.
 
 The job of the memory management macros is to make it as easy as possible to register all local variables of type `value` in this linked list and to remove them when returning from the function.
 
@@ -209,7 +212,7 @@ value c_triplet(value x, value y, value z)
 
 But a bug lies in this implementation: the C compiler might have already loaded the value of `x` (for instance, by copying it on the stack) before the nested call to `mk_pair_c_impl(y, z)`.
 
-If this call triggers a compaction and `x` get moved, the old, and wrong, value of `x` will be passed to the outer call.
+If this call triggers a compaction and `x` gets moved, the old, and wrong, value of `x` will be passed to the outer call.
 
 The correct version uses an intermediate variable for the temporary value:
 
@@ -262,10 +265,10 @@ void iset_field_long(value *root, int n, long v);
 
 #####   Return values become explicit
 
-Now that all functions that interacts with the garbage collector take pointers, most offending code becomes impossible to write:
+Now that all functions that interact with the garbage collector take pointers, most offending code patterns become impossible to write:
 
 - functions returning void simply cannot be nested,
-- nesting a call to a function returning `value` where a `value*` requires taking the address of a temporary (`&get_field(x, 0)`), which is rejected by the C compiler.
+- nesting a call to a function returning `value` where a `value*` <!-- GS: ?? --> requires taking the address of a temporary (`&get_field(x, 0)`), which is rejected by the C compiler.
 
 To illustrate the benefits of this approach, let's take a look at how our `triplet` would look like:
 
@@ -291,9 +294,7 @@ value caml_triplet(value x, value y, value z)
 
 ##### No need to repeat roots.
 
-Another benefit of this approach is that callees no longer have the responsibility of reregistering roots for their arguments.
-
-<!-- GS: should "reregistering" be "registering"? -->
+Another benefit of this approach is that callees no longer have the responsibility of registering roots for their arguments.
 
 With the existing OCaml API, any function receiving an argument of type `value` has to register a corresponding root. There are as many roots for a value as sub-routines calls to the value.
 
