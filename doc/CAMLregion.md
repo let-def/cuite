@@ -362,13 +362,19 @@ value caml_triplet(value x, value y, value z)
 
 Another benefit of this approach is that callees no longer have the responsibility of registering roots for their arguments.
 
-With the existing OCaml API, any function receiving an argument of type `value` has to register a corresponding root. There are as many roots for a value as sub-routines calls to the value.
+With the existing OCaml API, any function receiving an argument of type `value` has to register a corresponding root. There are as many roots for a value as sub-routines calls with the value as argument.
 
 ```c
 TODO: some example?
 ```
 
 With the indirect approach it is the duty of whoever produced a `value*` to register the root. The final consumer also has to be careful when dereferencing the value, but this will generally be done by a primitive function of the GC interface. On the other hand, the rest of the binding code no longer has to be littered with root management.
+
+<!-- GS: I'm not completely sure what "produced a `value*`" means. It
+     is the same as initializing it, and it happens whenever the
+     variable is created by a `CAMLparam` macro, right? In particular,
+     is it correct that `value*` objects manipulated in this style are
+     never NULL during their intended usage period? -->
 
 ##### Dealing with immediate values
 
