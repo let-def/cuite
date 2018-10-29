@@ -40,8 +40,6 @@ We observed that the less natural part of OCaml interaction from C code was the 
      where you must be as concise as possible while still making your
      points understandable. Extraneous information can wait -->
 
-<!-- Registration of roots is done through some macros that are provided by the OCaml runtime and look a lot like black magic. Using them properly can, in theory, be done by blindly following rules from the OCaml manual [TODO: reference living in harmony with the OCaml garbage collector]. But this alone is not enough to correctly manage OCaml memory. -->
-
 If the OCaml garbage collector triggers at the wrong time, (1) a value can get moved, (2) a piece of OCaml memory that is locally referenced but not registered as a root can get collected. If (1) happens in the middle of a _sequence point_ (TODO: reference the definition of C sequence point?) where the same value has been read, this results in an undefined behavior of the C language. In practice, the lifetime of the value gets disconnected from the lifetime of the variable that holds it. This behavior completely contradicts the intuition of the C developer who is not used to distinguishing a variable from its contents.
 
 Fortunately (1) can be addressed by a slight, almost mechanical, change to the C API of the garbage collector. By preventing allocating functions from having `value` return type (ideally by preferring them to be `void` functions), this class of error can be ruled-out.
@@ -99,14 +97,14 @@ Most of the time the GC will not do any work, preferring to wait for a batch of 
 
 GC bugs combine two nasty properties: they cannot be studied in isolation and they trigger depending on a complex set of conditions that cannot be inferred by solely looking at the buggy code.
 
-*: The low-level programming community jokingly dubbed these Heisenbugs and Mandelbugs, for their uncertain and chaotic nature.
+<!-- *: The low-level programming community jokingly dubbed these Heisenbugs and Mandelbugs, for their uncertain and chaotic nature. -->
 
 On the other hand, the OCaml FFI API enjoys a remarkably low overhead: the restrictions are difficult but lead to a cheap and portable interface with the OCaml runtime.
 This made OCaml applicable to domains where connecting to a foreign programming language is generally considered too expensive [TODO reference Sundial].
 
 We propose to explore a different trade-off in the design space of FFI API: providing a safer and more convenient API by giving up some of the performance.
 
-This might actually be a more useful position: many mainstream languages adopted heavier FFIs by default (Lua, Python, Java JNI, Go), optionally allowing to resort to a lower-level one for performance critical code (Java JIO, ctypes from LuaJit).
+This might actually be a more useful position: many mainstream languages adopted heavier FFIs by default (Lua, Python, Java JNI, Go), optionally allowing to resort to a lower-level one for performance critical code (ctypes from LuaJit).
 
 Before trying to build an alternative to the FFI abstraction, we will take a closer look at the restrictions imposed by the GC.
 
@@ -130,12 +128,6 @@ TODO Figure:
      be very clear about the tagging conventions and value
      representation to present your work. (I guess I will understand
      later.) -->
-
-<!--  Tags serve two purposes:
-
-- distinguishing between the different non-constant constructors of algebraic types and arrays,
-- special tags are reserved to represent objects with a special representation (strings, float and float arrays, foreign objects, ...).
-  -->
 
 ## Traversal and compaction
 
@@ -465,6 +457,7 @@ Because some OCaml code is being called in the middle of the comparator, the gar
 
 Because we know all the values of interest prior to calling `qsort_r`, a solution is to work with pointer to values. One first allocates an array of roots and pass pointers to this array. However in other situations, the set of roots might be determined dynamically.
 
+<<<<<<< HEAD
 <!-- GS: to me the status of the last sentence above is not completely
      clear. Do I correctly understand that the solution described in
      the paragraph is not always possible, or at least sometimes very
@@ -497,6 +490,8 @@ struct MLAgent : Agent
 
  -->
 
+=======
+>>>>>>> wip
 ## Region-based management
 
 To let the developer dynamically manage the set of roots, we propose a simple API that over-approximates the lifetime of local roots:
@@ -697,31 +692,32 @@ Besides the code to enter and leave regions, the region API provides these two p
 
 In release mode, `rcaml_deref` could simply be implemented by a pointer dereference. But we already made the case that observing all the places where values are dereferenced is important for dynamically checking the soundness of bindings.
 
-The current region is not threaded by the code. Instead it is implemented by a global variable that is setup by the `enter/leave` functions, effectively implementing a form of dynamic scoping.
+The current region is not threaded by the code. Instead it is implemented by a global variable that is setup by the `enter/leave` functions, implementing a form of dynamic scoping.
 
 <!-- GS: again, why? -->
 
-Four operators (a pair of corresponding `enter/leave`) are available for manipulating scopes:
+Four operators -- a pair of matching `enter/leave` functinos -- are available for manipulating scopes:
 
-- `rcaml_region`, when entering a fresh new region
-- `rcaml_subregion`, when nesting a local region
-- `rcaml_release`, when locally releasing the OCaml GC
-- `rcaml_reacquire`, when locally reacquiring the OCaml GC
+- `rcaml_region` to enter a fresh new region
+- `rcaml_subregion` to nest a local region
+- `rcaml_release` to locally release the OCaml GC
+- `rcaml_reacquire` to locally reacquire the OCaml GC.
 
 <!-- GS: This whole section looks a bit redundant with what has been
      said before. What follows below is maybe more interesting. If
      there are things you found tricky/surprising when building the
      implementaiton, it would also be interesting. -->
 
-Gathering the requirement from the previous sections, the following cases need to be distinguished:
+Gathering the requirements from the previous sections, the following cases need to be distinguished:
 
-1. no region has been setup: `root` and `deref` are forbidden
+1. no region has been setup; `root` and `deref` are forbidden.
+2. a region has been setup in the current thread; `root` and `deref` are possible.
+3. a region has been setup earlier in the call stack and released; `root` and `deref` are forbidden
+4. a region has been setup in a different thread; `root` are forbidden, `deref` are possible but likely incorrect
 
-2. a region has been setup from a different thread, `root` are forbidden, `deref` are possible
+<!-- Maybe: draw a FSM of possible states and transitions. -->
 
-3. a region has been setup
 
-- a region has been setup earlier in the call stack but
 
 # Conclusion
 
