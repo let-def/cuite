@@ -1,64 +1,53 @@
-# CAMLregion: revisiting the OCaml-C FFI
+# CAMLregion: revisiting the OCaml FFI
 
 # Introduction
 
 Writing code bridging C libraries to OCaml code is a difficult task. While writing [Cuite](https://github.com/let-def/cuite), an OCaml library that interfaces the Qt tool-kit, we discovered a few idioms that help to keep this plumbing simple to reason about.
 
-Qt is a C++ framework that enables writing portable user interfaces. More generally, it offers many tools for solving many common software engineering problems. User interfaces are challenging to write because they involve complex lifetimes and control flow: data is described as a dynamically changing graph of components, control can jump back-and-forth between user code and library code, different tasks can run concurrently...
+Qt is a C++ framework that enables writing portable user interfaces. <!-- More generally, it offers many tools for solving many common software engineering problems. --> User interfaces are challenging to write because they involve complex lifetimes and control flow: data is described as a dy:namically changing graph of components, control can jump back-and-forth between user code and library code, different tasks can run concurrently, etc.
 
-Interfacing with OCaml means replicating all these features while abiding by OCaml & Qt rules about memory management. By revisiting a few assumptions of the OCaml GC interface, we ...
+Interfacing with OCaml means exporting all these features while abiding by OCaml & Qt rules about memory management. By revisiting a few assumptions of the OCaml GC interface, the CAMLregion approach makes this work easier to debug and reason about.
 
-<!-- GS: replicating => exporting? -->
-
-<!-- GS: I'm not sure I understand what the paragraphs below is trying
-     to say, and how it belongs to the introduction. If you are trying
-     to say that your "idioms" were designed to be used in generated
-     code rather than human-written code, you can say it without
-     giving so many details about your Qt binding. It's not clear that
-     it needs to be in the introduction in any case. -->
-
-The Cuite case is a bit peculiar. Because of the wide surface of Qt API (tens of thousands of definitions), the binding is generated:
-
-- a manually written runtime support library connects OCaml and Qt memory management infrastructures,
-- a compiler takes a high-level description of the API and generates OCaml and C++ code, linking against the runtime support library.
-
-For this reason when possible we preferred to generate uniform, if repetitive, code that suits the mechanical nature of a compiler. With minor adjustment, we believe this approach is suitable for human beings too -- the inherently tricky nature of binding code is better dealt with boring code rather than subtle one.
+<!-- GS: I'm not sure I understand what the paragraphs below is trying to say, and how it belongs to the introduction. If you are trying to say that your "idioms" were designed to be used in generated code rather than human-written code, you can say it without giving so many details about your Qt binding. It's not clear that it needs to be in the introduction in any case.
+​
+​ The Cuite case is a bit peculiar. Because of the wide surface of Qt API (tens of thousands of definitions), the binding is generated:
+​
+​ - a manually written runtime support library connects OCaml and Qt memory management infrastructures,
+​ - a compiler takes a high-level description of the API and generates OCaml and C++ code, linking against the runtime support library.
+​ 
+​ For this reason when possible we preferred to generate uniform, if repetitive, code that suits the mechanical nature of a compiler. With minor adjustment, we believe this approach is suitable for human beings too -- the inherently tricky nature of binding code is better dealt with boring code rather than subtle one.
+​
+ -->
 
 <!-- GS: the whole introduction above lacks a name for the topic of
-     this paper (CAMLregion?), introduced early, and used consistently
-     to reference this part of your work. When you say "this
-     approach", you mean "the CAMLregion approach"
-     (whatever "approach" means in that context). -->
+​     this paper (CAMLregion?), introduced early, and used consistently
+​     to reference this part of your work. When you say "this
+​     approach", you mean "the CAMLregion approach"
+​     (whatever "approach" means in that context). -->
 
-## Our approach : indirect and dynamic management of roots
+## Our approach: focusing on roots
 
-We observed that the less natural part of OCaml interaction from C code was the manipulation of roots and the lifetime of OCaml values. [TODO: reference Stephen Dolan Caml-Oxide that encodes the lifetimes rules using Rust type system?]. The C programmer is accustomed to manual memory management: by explicitly creating and destroying pieces of memory or by tying the variable lifetime to the scope. While syntactically the management of OCaml memory seems to fall into these cases, it is actually much more subtle.
-
-<!-- GS: I think Caml-Oxide can be referenced later (eg. in the
-     Related Work section, or at least "less in the
-     introduction"). Think of the introduction as a critical question
-     where you must be as concise as possible while still making your
-     points understandable. Extraneous information can wait -->
+We observed that the less natural part of OCaml interaction from C code was the manipulation of roots and the lifetime of OCaml values. The C programmer is accustomed to manual memory management: by explicitly creating and destroying pieces of memory or by tying the variable lifetime to the scope. While syntactically the management of OCaml memory seems to fall into these cases, it is actually much more subtle.
 
 If the OCaml garbage collector triggers at the wrong time, (1) a value can get moved, (2) a piece of OCaml memory that is locally referenced but not registered as a root can get collected. If (1) happens in the middle of a _sequence point_ (TODO: reference the definition of C sequence point?) where the same value has been read, this results in an undefined behavior of the C language. In practice, the lifetime of the value gets disconnected from the lifetime of the variable that holds it. This behavior completely contradicts the intuition of the C developer who is not used to distinguishing a variable from its contents.
 
 Fortunately (1) can be addressed by a slight, almost mechanical, change to the C API of the garbage collector. By preventing allocating functions from having `value` return type (ideally by preferring them to be `void` functions), this class of error can be ruled-out.
 
 <!-- GS: Is this approach to (1) related to CAMLregion or a reference
-     to another idea/solution you have in mind? If it is not about
-     CAMLregion, you should say so explicitly. "In this
-     document/paper, we focus on (2) ... . We have ideas for (1) ..."
-     (but the "ideas for (1)" part can go in Future Work, and is not
-     part of the critical introduction section). -->
+​     to another idea/solution you have in mind? If it is not about
+​     CAMLregion, you should say so explicitly. "In this
+​     document/paper, we focus on (2) ... . We have ideas for (1) ..."
+​     (but the "ideas for (1)" part can go in Future Work, and is not
+​     part of the critical introduction section). -->
 
 And while the programmer could be blamed for not following the rules in (2), we propose an alternative root management strategy that is more in line with usual C practices and should prevent that kind of mistake.
 
 <!-- GS: can you say just a bit more about what the solution is?
-     Ideally I would like to have a vague understanding of the
-     solution you propose (not the details of course) by the time
-     I finish reading the introduction. In particular, an expert
-     reader should be able to make a guess at whether it can possibly
-     work, or will never work. -->
+​     Ideally I would like to have a vague understanding of the
+​     solution you propose (not the details of course) by the time
+​     I finish reading the introduction. In particular, an expert
+​     reader should be able to make a guess at whether it can possibly
+​     work, or will never work. -->
 
 ## Contributions
 
@@ -69,18 +58,18 @@ We claim the following three contributions:
 - a reusable and open-source library that implements both of those.
 
 <!-- GS: Point 2, can you say just a couple words about what the
-     "alternative approach" is, to distinguish it from completely
-     different approaches? -->
+​     "alternative approach" is, to distinguish it from completely
+​     different approaches? -->
 
 While these were developed in the context of Cuite, the Qt binding, this paper solely focuses on the management of OCaml memory from C code. However to illustrate its applicability to realistic code, we describe how our proposed API behaves in complex situations -- involving callbacks, exceptions and multi-threaded code.
 
 # The OCaml-C FFI
 
 <!-- GS: if I understand correctly, the content in this section is
-     only about the existing API, none of it is about your new
-     work. This is completely fine (a good idea), but you should point
-     it out explicitly. (Just as you must be clear when something you
-     describe is a new contribution.) -->
+​     only about the existing API, none of it is about your new
+​     work. This is completely fine (a good idea), but you should point
+​     it out explicitly. (Just as you must be clear when something you
+​     describe is a new contribution.) -->
 
 The OCaml FFI lets the developer manipulate OCaml values from another programming language. A C library provided by the OCaml distribution exposes the primitive operations to achieve that.
 
@@ -125,9 +114,9 @@ TODO Figure:
 - block value, LSB=0, pointer to a block of memory preceded
 
 <!-- GS: at this point it is not clear to me, for now, why you need to
-     be very clear about the tagging conventions and value
-     representation to present your work. (I guess I will understand
-     later.) -->
+​     be very clear about the tagging conventions and value
+​     representation to present your work. (I guess I will understand
+​     later.) -->
 
 ## Traversal and compaction
 
@@ -274,9 +263,9 @@ To avoid bugs, calls to functions manipulating the OCaml memory should be linear
 # value*, one level of indirection
 
 <!-- GS: "the first change we propose" looks like you want to change
-     the current C FFI. If I understand correctly, you propose a *new*
-     set of primitives for the FFI, distinct from the existing
-     ones. So maybe you should formulate it as:
+​     the current C FFI. If I understand correctly, you propose a *new*
+​     set of primitives for the FFI, distinct from the existing
+​     ones. So maybe you should formulate it as:
 
      > With CAMLregion, instead of using return types of type
      > `value*`, we propose to pass a new output-argument of type
@@ -313,10 +302,10 @@ void iset_field_long(value *root, int n, long v);
 ```
 
 <!-- GS: "// Non-allocating functions still work direct values", what
-     does this mean? A word seems to be missing, but I cannot find
-     a completion of the sentence that really makes sense. At first
-     I thought "still work with direct values", but this API uses
-     value pointers, not direct values. -->
+​     does this mean? A word seems to be missing, but I cannot find
+​     a completion of the sentence that really makes sense. At first
+​     I thought "still work with direct values", but this API uses
+​     value pointers, not direct values. -->
 
 #####   Return values become explicit
 
@@ -360,10 +349,10 @@ TODO: some example?
 With the indirect approach it is the duty of whoever produced a `value*` to register the root. The final consumer also has to be careful when dereferencing the value, but this will generally be done by a primitive function of the GC interface. On the other hand, the rest of the binding code no longer has to be littered with root management.
 
 <!-- GS: I'm not completely sure what "produced a `value*`" means. It
-     is the same as initializing it, and it happens whenever the
-     variable is created by a `CAMLparam` macro, right? In particular,
-     is it correct that `value*` objects manipulated in this style are
-     never NULL during their intended usage period? -->
+​     is the same as initializing it, and it happens whenever the
+​     variable is created by a `CAMLparam` macro, right? In particular,
+​     is it correct that `value*` objects manipulated in this style are
+​     never NULL during their intended usage period? -->
 
 ##### Dealing with immediate values
 
@@ -403,11 +392,11 @@ The main API function that seems to break the `value*` rule is `iget_field`, whi
 While the connection between a root and its value is lost with native OCaml FFI,  we can access it at any time with the indirect API. Plugging into GC infrastructure we can introspect the roots and provide a debug variant of the FFI where the validity of values is checked dynamically. This prevents a large class of misuse of GC API and delayed heap corruption bugs.
 
 <!-- GS: I think that for a non-expert it is not clear that you are
-     proposing a debugging/development workflow (rather than: yet
-     another FFI library, or a fundamental design tradeoff, etc.):
-     write/test your code by linking to an instrumented version of the
-     runtime, but it is linked against the faster-but-unsafe version
-     by default. -->
+​     proposing a debugging/development workflow (rather than: yet
+​     another FFI library, or a fundamental design tradeoff, etc.):
+​     write/test your code by linking to an instrumented version of the
+​     runtime, but it is linked against the faster-but-unsafe version
+​     by default. -->
 
 ##### Discussion: where to add the indirection?
 
@@ -457,41 +446,8 @@ Because some OCaml code is being called in the middle of the comparator, the gar
 
 Because we know all the values of interest prior to calling `qsort_r`, a solution is to work with pointer to values. One first allocates an array of roots and pass pointers to this array. However in other situations, the set of roots might be determined dynamically.
 
-<<<<<<< HEAD
-<!-- GS: to me the status of the last sentence above is not completely
-     clear. Do I correctly understand that the solution described in
-     the paragraph is not always possible, or at least sometimes very
-     tricky to deploy? If so, say it explicitly. -->
+<!-- GS: to me the status of the last sentence above is not completely clear. Do I correctly understand that the solution described in the paragraph is not always possible, or at least sometimes very tricky to deploy? If so, say it explicitly. -->
 
-<!-- While this might seem contrived, the case occurred for us when binding some C++ object-oriented patterns to OCaml.
-
-```c++
-struct Agent
-{
-    virtual void handleChange() = 0;
-}
-struct Simulation
-{
-    void run();
-}
-```
-
-<!-- GS: (I had never seen the `handleChange() = 0;` syntax before.) -->
-
-In this problem an arbitrary number of agents, implemented by inheriting the `Agent`, are managed by a simulation, represented as an instance of the `Simulation` class.
-When `run()` is called, the simulation determines which agents changed and will call their `handleChange` method.  One or more rounds can be executed, depending on parameters determined by the simulation.
-
-```c++
-struct MLAgent : Agent
-{
-  value *x;
-}
-```
-
- -->
-
-=======
->>>>>>> wip
 ## Region-based management
 
 To let the developer dynamically manage the set of roots, we propose a simple API that over-approximates the lifetime of local roots:
@@ -500,7 +456,7 @@ To let the developer dynamically manage the set of roots, we propose a simple AP
 typedef struct ... region_t;
 void rcaml_enter(region_t *region);
 void rcaml_leave(region_t *region);
-value *rcaml_root(void);
+value *rcaml_new_root(void);
 #define rCAMLregion(...) ...
 #define rCAMLreturn(p) ...
 ```
@@ -512,14 +468,12 @@ In this approach, we distinguish between external and helper functions:
 
 The external functions are responsible for setting up the region while helper functions assume that a region has already been setup. Mimicking `CAMLparam...` macros, we provide some sugar for registering parameters while setting up the region:
 
-<!-- GS: Why not pass a pointer to the region to helper functions? It
-     would clarify that they are only helpers (besides the absence of
-     CAMLprim macro), and make incorrect usage more difficult? -->
+<!-- GS: Why not pass a pointer to the region to helper functions? It would clarify that they are only helpers (besides the absence of CAMLprim macro), and make incorrect usage more difficult? -->
 
 ```c
 value *pair_helper(value *a, value *b)
 {
-    value *v = rcaml_root();
+    value *v = rcaml_new_root();
     icaml_alloc(v, 2, 0);
     icaml_set_field(v, 0, a);
     icaml_set_field(v, 0, b);
@@ -541,16 +495,11 @@ value mk_triplet(value x, value y, value z)
 }
 ```
 
-<!-- GS: given that `rcaml_root` creates a new root, I would have
-     expected maybe `new` in the name. -->
-
 Setting up a region introduces a new set of local roots that can grow dynamically as new roots are requested. Leaving a region releases all the roots at once.
 
 ## Sub-regions
 
-Assuming that roots have the same life-time as an external function works well when a finite amount of work is done by this function, in particular a finite number of roots are needed.
-
-However, for long-running function (for instance, an event loop driven by C-code), the over-approximation of lifetimes can be problematic. For these cases, we allow the introduction of sub-regions, valid in a local scope.
+Assuming that all roots have the same life-time as the external entrypoint works well if a fixed amount of work has to be done. However, for long-running function (for instance, an event loop driven by C-code), the over-approximation of lifetimes can be problematic. For these cases, we allow the introduction of sub-regions, valid in a local scope.
 
 These sub-regions follow a stack discipline: they can be nested and are released in the reverse order of their allocation.
 
@@ -561,32 +510,27 @@ void rcaml_subleave(region_t *region);
 
 For instance, the following code avoids leaking roots while transforming all the elements of an array:
 
-<!-- GS: if I understand correctly, this code must be called only at
-     times where a global region already exists. (I would still prefer
-     to pass an explicit parameter.) -->
+<!-- GS: if I understand correctly, this code must be called only at times where a global region already exists. (I would still prefer to pass an explicit parameter.) -->
 
 ```c
-void fold_array(value *result, value *array)
+void fold_array(value *acc, value *array)
 {
     region_t region;
     size_t count = iget_size(array);
-    *result = initial_value;
     for (size_t i = 0; i < count; ++i)
     {
         rcaml_subenter(&region);
-        value *item = rcaml_root();
+        value *item = rcaml_new_root();
         *item = iget_field(array, i);
-        process_item(*result, *item);
+        process_item(*acc, *item);
         rcaml_subleave(&region);
     }
 }
 ```
 
-<!-- GS: you could give the prototypes of `initial_value` and
-     `process_item` before the function, to clarify that they are
-     provided by the context. -->
+<!-- GS: you could give the prototypes of `initial_value` and `process_item` before the function, to clarify that they are provided by the context. -->
 
-Like normal regions, macros an be used to automate some of the boilerplate.
+Like normal regions, macros can be used to automate some of the boilerplate.
 
 ## Releasing the lock in a region
 
@@ -606,10 +550,9 @@ These APIs can be wrapped in corresponding `rcaml_{acquire,release}_runtime_syst
 
 - new roots cannot be allocated,
 - setting up normal regions is forbidden, but a special kind of region allow reacquiring the runtime,
-- inside a released region, dereferencing a value is forbidden, most helper functions won't work.
+- while the currnet global region is released, dereferencing a value is forbidden, most helper functions won't work.
 
-<!-- GS: by "inside a released region", you mean "while the current
-     global region is released"? -->
+<!-- GS: by "inside a released region", you mean "while the current global region is released"? -->
 
 ```c
 // Wrapper releasing the runtime
@@ -644,13 +587,10 @@ All these restrictions can be tested dynamically. While no checks can be done at
 The last feature that needs some special care from the region API is the ability to call OCaml closures from C code. When switching back to OCaml code, the runtime marks a region as disabled: the roots it contains are still reachable, but no new roots can be added to the region.
 
 <!-- GS: this is not done by your alternative set of C macros, it
-     needs to be modified directly in the runtime implementation, right?
+​     needs to be modified directly in the runtime implementation, right?
 
-      What is the status of this changed, as it been submitted? How
-      confident do we feel about it being eventually accepted?
-      (these "soft" aspects are not essential and can related to the
-      conclusion section, but as a reader I would still be curious
-      about them). -->
+      What is the status of this changed, as it been submitted? How confident do we feel about it being eventually accepted?
+      (these "soft" aspects are not essential and can related to the conclusion section, but as a reader I would still be curious about them). -->
 
 This helps detecting and handling a few unfortunate cases:
 
@@ -662,13 +602,8 @@ This helps detecting and handling a few unfortunate cases:
 
 - The OCaml closure could raise an exception. The native FFI deals with this situation by simply dropping roots from the local roots linked list: since the nodes allocated by `CAMLparam/local` macros are stored on the stack, when an exception is raised the local root and stack pointers are simply reset to their value before entering the C code.
 
-   <!-- GS: this paragraph only describes what happens in the
-            pre-existing OCaml FFI, right? What should CAMLregion or
-            its runtime component do when an exception is raised?
-            (I see now that this is the topic of the next section. It
-            was unclear when reading the paragraph. Maybe just add "We
-            discuss how to handle this in CAMLregion in the next
-            section.) -->
+   <!-- GS: this paragraph only describes what happens in the pre-existing OCaml FFI, right? What should CAMLregion or its runtime component do when an exception is raised?
+   ​         (I see now that this is the topic of the next section. It was unclear when reading the paragraph. Maybe just add "We discuss how to handle this in CAMLregion in the next section.) -->
 
 ### Handling exceptions
 
@@ -687,7 +622,7 @@ While it would have been possible to provide support for non-local jumps, it did
 
 Besides the code to enter and leave regions, the region API provides these two primitives:
 
-- `value *rcaml_root();` that allocates a new root in the current region.
+- `value *rcaml_new_root();` that allocates a new root in the current region.
 - `value rcaml_deref(value *);` that dereferences a root.
 
 In release mode, `rcaml_deref` could simply be implemented by a pointer dereference. But we already made the case that observing all the places where values are dereferenced is important for dynamically checking the soundness of bindings.
@@ -704,9 +639,9 @@ Four operators -- a pair of matching `enter/leave` functinos -- are available fo
 - `rcaml_reacquire` to locally reacquire the OCaml GC.
 
 <!-- GS: This whole section looks a bit redundant with what has been
-     said before. What follows below is maybe more interesting. If
-     there are things you found tricky/surprising when building the
-     implementaiton, it would also be interesting. -->
+​     said before. What follows below is maybe more interesting. If
+​     there are things you found tricky/surprising when building the
+​     implementaiton, it would also be interesting. -->
 
 Gathering the requirements from the previous sections, the following cases need to be distinguished:
 
@@ -715,9 +650,11 @@ Gathering the requirements from the previous sections, the following cases need 
 3. a region has been setup earlier in the call stack and released; `root` and `deref` are forbidden
 4. a region has been setup in a different thread; `root` are forbidden, `deref` are possible but likely incorrect
 
-<!-- Maybe: draw a FSM of possible states and transitions. -->
+<!-- Maybe: draw a FSM of possible states and transitions.
+[TODO: reference Stephen Dolan Caml-Oxide that encodes the lifetimes rules using Rust type system?]
+-->
 
-
+<!-- GS: I think Caml-Oxide can be referenced later (eg. in the Related Work section, or at least "less in the introduction"). Think of the introduction as a critical question where you must be as concise as possible while still making your points understandable. Extraneous information can wait -->
 
 # Conclusion
 
