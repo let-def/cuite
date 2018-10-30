@@ -4,26 +4,9 @@
 
 Writing code bridging C libraries to OCaml code is a difficult task. While writing [Cuite](https://github.com/let-def/cuite), an OCaml library that interfaces the Qt tool-kit, we discovered a few idioms that help to keep this plumbing simple to reason about.
 
-Qt is a C++ framework that enables writing portable user interfaces. <!-- More generally, it offers many tools for solving many common software engineering problems. --> User interfaces are challenging to write because they involve complex lifetimes and control flow: data is described as a dy:namically changing graph of components, control can jump back-and-forth between user code and library code, different tasks can run concurrently, etc.
+Qt is a C++ framework that enables writing portable user interfaces. User interfaces are challenging to write because they involve complex lifetimes and control flow: data is described as a dy:namically changing graph of components, control can jump back-and-forth between user code and library code, different tasks can run concurrently, etc.
 
 Interfacing with OCaml means exporting all these features while abiding by OCaml & Qt rules about memory management. By revisiting a few assumptions of the OCaml GC interface, the CAMLregion approach makes this work easier to debug and reason about.
-
-<!-- GS: I'm not sure I understand what the paragraphs below is trying to say, and how it belongs to the introduction. If you are trying to say that your "idioms" were designed to be used in generated code rather than human-written code, you can say it without giving so many details about your Qt binding. It's not clear that it needs to be in the introduction in any case.
-​
-​ The Cuite case is a bit peculiar. Because of the wide surface of Qt API (tens of thousands of definitions), the binding is generated:
-​
-​ - a manually written runtime support library connects OCaml and Qt memory management infrastructures,
-​ - a compiler takes a high-level description of the API and generates OCaml and C++ code, linking against the runtime support library.
-​ 
-​ For this reason when possible we preferred to generate uniform, if repetitive, code that suits the mechanical nature of a compiler. With minor adjustment, we believe this approach is suitable for human beings too -- the inherently tricky nature of binding code is better dealt with boring code rather than subtle one.
-​
- -->
-
-<!-- GS: the whole introduction above lacks a name for the topic of
-​     this paper (CAMLregion?), introduced early, and used consistently
-​     to reference this part of your work. When you say "this
-​     approach", you mean "the CAMLregion approach"
-​     (whatever "approach" means in that context). -->
 
 ## Our approach: focusing on roots
 
@@ -33,21 +16,20 @@ If the OCaml garbage collector triggers at the wrong time, (1) a value can get m
 
 Fortunately (1) can be addressed by a slight, almost mechanical, change to the C API of the garbage collector. By preventing allocating functions from having `value` return type (ideally by preferring them to be `void` functions), this class of error can be ruled-out.
 
-<!-- GS: Is this approach to (1) related to CAMLregion or a reference
-​     to another idea/solution you have in mind? If it is not about
-​     CAMLregion, you should say so explicitly. "In this
-​     document/paper, we focus on (2) ... . We have ideas for (1) ..."
-​     (but the "ideas for (1)" part can go in Future Work, and is not
-​     part of the critical introduction section). -->
+<!-- GS: Is this approach to (1) related to CAMLregion or a reference to another idea/solution you have in mind? 
+     If it is not about CAMLregion, you should say so explicitly. 
+     "In this document/paper, we focus on (2) ... . We have ideas for (1) ..."
+     (but the "ideas for (1)" part can go in Future Work, and is not part of the
+     critical introduction section). -->
 
 And while the programmer could be blamed for not following the rules in (2), we propose an alternative root management strategy that is more in line with usual C practices and should prevent that kind of mistake.
 
 <!-- GS: can you say just a bit more about what the solution is?
-​     Ideally I would like to have a vague understanding of the
-​     solution you propose (not the details of course) by the time
-​     I finish reading the introduction. In particular, an expert
-​     reader should be able to make a guess at whether it can possibly
-​     work, or will never work. -->
+     Ideally I would like to have a vague understanding of the
+     solution you propose (not the details of course) by the time
+     I finish reading the introduction. In particular, an expert
+     reader should be able to make a guess at whether it can possibly
+     work, or will never work. -->
 
 ## Contributions
 
@@ -618,44 +600,8 @@ Because our region management code needs to execute cleanup code when leaving a 
 
 While it would have been possible to provide support for non-local jumps, it did not made much sense in the Qt case: the binding is implemented in C++, which allow arbitrary code to be executed when leaving a scope. C++ exceptions are expressive enough to compose all our requirements (non-local control flow, proper interaction with the regions and with OCaml GC), but the bindings themselves did not need such feature.
 
-# Implementing regions
-
-Besides the code to enter and leave regions, the region API provides these two primitives:
-
-- `value *rcaml_new_root();` that allocates a new root in the current region.
-- `value rcaml_deref(value *);` that dereferences a root.
-
-In release mode, `rcaml_deref` could simply be implemented by a pointer dereference. But we already made the case that observing all the places where values are dereferenced is important for dynamically checking the soundness of bindings.
-
-The current region is not threaded by the code. Instead it is implemented by a global variable that is setup by the `enter/leave` functions, implementing a form of dynamic scoping.
-
-<!-- GS: again, why? -->
-
-Four operators -- a pair of matching `enter/leave` functinos -- are available for manipulating scopes:
-
-- `rcaml_region` to enter a fresh new region
-- `rcaml_subregion` to nest a local region
-- `rcaml_release` to locally release the OCaml GC
-- `rcaml_reacquire` to locally reacquire the OCaml GC.
-
-<!-- GS: This whole section looks a bit redundant with what has been
-​     said before. What follows below is maybe more interesting. If
-​     there are things you found tricky/surprising when building the
-​     implementaiton, it would also be interesting. -->
-
-Gathering the requirements from the previous sections, the following cases need to be distinguished:
-
-1. no region has been setup; `root` and `deref` are forbidden.
-2. a region has been setup in the current thread; `root` and `deref` are possible.
-3. a region has been setup earlier in the call stack and released; `root` and `deref` are forbidden
-4. a region has been setup in a different thread; `root` are forbidden, `deref` are possible but likely incorrect
-
-<!-- Maybe: draw a FSM of possible states and transitions.
-[TODO: reference Stephen Dolan Caml-Oxide that encodes the lifetimes rules using Rust type system?]
--->
+# Conclusion
 
 <!-- GS: I think Caml-Oxide can be referenced later (eg. in the Related Work section, or at least "less in the introduction"). Think of the introduction as a critical question where you must be as concise as possible while still making your points understandable. Extraneous information can wait -->
-
-# Conclusion
 
 materializes roots as a different type, here `value*`
