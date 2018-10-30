@@ -86,8 +86,7 @@
 
 \maketitle
 
-\hypertarget{introduction}{%
-\section{Introduction}\label{introduction}}
+\section{Introduction}
 
 Writing code bridging C libraries to OCaml code is a difficult task.
 While writing \href{https://github.com/let-def/cuite}{Cuite}, an OCaml
@@ -96,18 +95,16 @@ help to keep this plumbing simple to reason about.
 
 Qt is a C++ framework that enables writing portable user interfaces.
 User interfaces are challenging to write because they involve complex
-lifetimes and control flow: data is described as a dy:namically changing
+lifetimes and control flow: data is described as a dynamically changing
 graph of components, control can jump back-and-forth between user code
 and library code, different tasks can run concurrently, etc.
 
 Interfacing with OCaml means exporting all these features while abiding
 by OCaml \& Qt rules about memory management. By revisiting a few
-assumptions of the OCaml GC interface, the CAMLregion approach makes
-this work easier to debug and reason about.
+assumptions of the OCaml GC interface, we believe that the CAMLregion 
+approach makes this work more tractable and easier to debug.
 
-\hypertarget{our-approach-focusing-on-roots}{%
-\subsection{Our approach: focusing on
-roots}\label{our-approach-focusing-on-roots}}
+\subsection{Our approach: focusing on roots}
 
 We observed that the less natural part of OCaml interaction from C code
 was the manipulation of roots and the lifetime of OCaml values. The C
@@ -136,22 +133,17 @@ And while the programmer could be blamed for not following the rules in
 (2), we propose an alternative root management strategy that is more in
 line with usual C practices and should prevent that kind of mistake.
 
-\hypertarget{contributions}{%
-\subsection{Contributions}\label{contributions}}
+\subsection{Contributions}
 
 We claim the following three contributions:
 
 \begin{itemize}
-\tightlist
-\item
-  a general design principle for OCaml FFI helpers function, working
-  with value pointers rather than plain values, that resolves a class of
-  FFI bugs and integrates transparently with existing FFI code,
-\item
-  an alternative approach to root management that trades some
-  performance for ease of use and safety,
-\item
-  a reusable and open-source library that implements both of those.
+\item a general design principle for OCaml FFI functions, working with value
+      pointers rather than plain values, that resolves a class of FFI bugs and
+      integrates well with existing FFI code,
+\item an alternative approach for the management of local roots that trades
+      some performance for ease of use and safety,
+\item a reusable, open-source, library that implements both of those.
 \end{itemize}
 
 While these were developed in the context of Cuite, the Qt binding, this
@@ -160,8 +152,7 @@ However to illustrate its applicability to realistic code, we describe
 how our proposed API behaves in complex situations -- involving
 callbacks, exceptions and multi-threaded code.
 
-\hypertarget{the-ocaml-c-ffi}{%
-\section{The OCaml-C FFI}\label{the-ocaml-c-ffi}}
+\section{The original OCaml-C FFI}
 
 The OCaml FFI lets the developer manipulate OCaml values from another
 programming language. A C library provided by the OCaml distribution
@@ -170,16 +161,12 @@ exposes the primitive operations to achieve that.
 This library helps accomplishing two main tasks:
 
 \begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  constructing and deconstructing OCaml values, interpreting them in a
-  meaningful way from the C language (for instance by mapping
-  back-and-forth between OCaml and C representations of integers, of
-  strings, etc);
-\item
-  cooperating with the OCaml garbage collector, or GC, the runtime
-  service that takes care of managing OCaml memory.
+\item constructing and deconstructing OCaml values, interpreting them in a
+      meaningful way from the C language (for instance by mapping
+      back-and-forth between OCaml and C representations of integers, of
+      strings, etc);
+\item cooperating with the OCaml garbage collector, or GC, the runtime
+      service that takes care of managing OCaml memory.
 \end{enumerate}
 
 Even though both tasks are much more difficult than when working from
@@ -197,8 +184,8 @@ Most of the time the GC will not do any work, preferring to wait for a
 batch of work that is big enough to amortize its overhead. As such an
 improper use of the OCaml API can go unnoticed for a long time. But even
 once harm has been done, it might just lead to a corruption of the OCaml
-heap that will affect an unrelated piece of code, and fail much later in
-the program.
+heap that will affect an unrelated piece of code and fail much later in the
+program.
 
 GC bugs combine two nasty properties: they cannot be studied in
 isolation and they trigger depending on a complex set of conditions that
@@ -214,16 +201,15 @@ We propose to explore a different trade-off in the design space of FFI
 API: providing a safer and more convenient API by giving up some of the
 performance.
 
-This might actually be a more useful position: many mainstream languages
-adopted heavier FFIs by default (Lua, Python, Java JNI, Go), optionally
-allowing to resort to a lower-level one for performance critical code
-(ctypes from LuaJit).
+This might actually be a generally more useful position: many mainstream
+languages adopted heavier FFIs by default (Lua, Python, Java JNI, Go),
+optionally allowing to resort to a lower-level one for performance critical
+code (ctypes from LuaJit).
 
-Before trying to build an alternative to the FFI abstraction, we will
-take a closer look at the restrictions imposed by the GC.
+But before trying to build an alternative to the FFI abstraction, we will take
+a closer look at the restrictions imposed by the GC.
 
-\hypertarget{value-representation}{%
-\subsection{Value representation}\label{value-representation}}
+\subsection{Value representation}
 
 From the C programming language, all OCaml values are represented by the
 \texttt{value} type. It is a signed integer of the same size as a
@@ -234,16 +220,13 @@ The least significant bit is reserved to help the GC traverse the OCaml
 heap:
 
 \begin{itemize}
-\tightlist
-\item
-  if it is set, the value is said to be immediate and the remaining bits
-  are directly interpreted: as a 31-bit or 63-bit integer for the
-  \texttt{int} OCaml type, or as a unique pattern of bits for constant
-  variants and polymorphic variant constructors
-\item
-  if it is not set, the value is interpreted as a pointer to a
-  ``block'', a piece of memory provided by the runtime and guaranteed to
-  be aligned.
+\item if it is set, the value is said to be immediate and the remaining bits
+      are directly interpreted: as a 31-bit or 63-bit integer for the
+      \texttt{int} OCaml type, or as a unique pattern of bits for constant
+      variants and polymorphic variant constructors
+\item if it is not set, the value is interpreted as a pointer to a
+      ``block'', a piece of memory provided by the runtime and guaranteed to
+      be aligned.
 \end{itemize}
 
 Blocks are preceded by a header that determines their ``tag'' and their
@@ -251,25 +234,14 @@ size. The tag will determine how to interpret the contents of the block.
 For common OCaml values, such as algebraic data, records, tuples or
 arrays, blocks are made of other values.
 
-TODO Figure:
-
-\begin{itemize}
-\tightlist
-\item
-  immediate value, LSB=1: integer
-\item
-  block value, LSB=0, pointer to a block of memory preceded
-\end{itemize}
-
-\hypertarget{traversal-and-compaction}{%
-\subsection{Traversal and compaction}\label{traversal-and-compaction}}
+\subsection{Traversal and compaction}
 
 Under certain conditions, the OCaml GC might need to traverse the heap.
 The basic operation is to find which blocks are reachable from a value.
 
 Depending on the tag, the OCaml GC will decide whether a block is made
 of other \texttt{value}s (that, in turn, can be immediate or pointer to
-blocks) or just an opaque chunk of memory that does not need to be
+blocks) or just of an opaque chunk of memory that does not need to be
 scanned.
 
 By repeating this operation, the GC can traverse the whole heap. If
@@ -281,70 +253,56 @@ able to update them. The C compiler needs to be aware that all OCaml
 values have to be reloaded when such an operation can happen, as
 previous values might have been invalidated.
 
-\hypertarget{the-memory-management-macros.}{%
-\subsection{The memory management
-macros.}\label{the-memory-management-macros.}}
+\subsection{The memory management macros.}
 
 A few C macros are provided by the OCaml runtime to implement foreign
 features. As a guiding example, here is a simple function that takes two
-values and makes a pair out of them as a guiding example:
+values and makes a pair out of them:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{(* The OCaml version *)}
-\KeywordTok{let}\NormalTok{ mk_pair_ocaml x y = (x,y)}
+\begin{lstlisting}[]
+(* The OCaml version *)
+let mk_pair_ocaml x y = (x,y)
 
-\CommentTok{(* An external function, that we will implement in C *)}
-\KeywordTok{external}\NormalTok{ mk_pair_c : 'a -> 'b -> 'a * 'b = }\StringTok{"mk_pair_c_impl"}
-\end{Highlighting}
-\end{Shaded}
+(* An external function, that we will implement in C *)
+external mk_pair_c : 'a -> 'b -> 'a * 'b = "mk_pair_c_impl"
+\end{lstlisting}
 
 The string after the external declaration is the name of the C function
 that implements the functionality:
 
 \begin{itemize}
-\tightlist
-\item
-  when \texttt{mk\_pair\_c} is applied, the OCaml compiler generates a
-  call to \texttt{mk\_pair\_c\_impl} symbol,
-\item
-  a C file must define a function of this name
-\item
-  the C compiler turns it into an object file defining this symbol,
-\item
-  the system linker connects the two together.
+\item when \texttt{mk\_pair\_c} is applied, the OCaml compiler generates a
+      call to \texttt{mk\_pair\_c\_impl} symbol,
+\item a C file must define a function of this name
+\item the C compiler turns it into an object file defining this symbol,
+\item the system linker connects the two together.
 \end{itemize}
 
 The corresponding C code looks like this:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{CAMLprim}
-\NormalTok{value mk_pair_c_impl(value a, value b)}
-\NormalTok{\{}
-\NormalTok{  CAMLparam2(a, b);}
-\NormalTok{  CAMLlocal1(pair);}
-\NormalTok{  pair = caml_alloc(}\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{);}
-\NormalTok{  Store_field(pair, }\DecValTok{0}\NormalTok{, a);}
-\NormalTok{  Store_field(pair, }\DecValTok{1}\NormalTok{, b);}
-\NormalTok{  CAMLreturn(pair);}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[]
+CAMLprim
+value mk_pair_c_impl(value a, value b)
+{
+  CAMLparam2(a, b);
+  CAMLlocal1(pair);
+  pair = caml_alloc(2, 0);
+  Store_field(pair, 0, a);
+  Store_field(pair, 1, b);
+  CAMLreturn(pair);
+}
+\end{lstlisting}
 
 The first macro \texttt{CAMLprim} makes the symbol visible from OCaml
 code.
 
-\emph{CAMLparam} \texttt{CAMLparam2(a,b)} expands to two other macros:
+\paragraph{CAMLparam} \texttt{CAMLparam2(a,b)} expands to two other macros:
 
 \begin{itemize}
-\tightlist
-\item
-  \texttt{CAMLparam0()} saves the current local roots at the beginning
-  of the function,
-\item
-  \texttt{CAMLxparam2(a,b)} setups a new block of roots with the
-  addresses of \texttt{a} and \texttt{b}).
+\item \texttt{CAMLparam0()} saves the current local roots at the beginning
+      of the function,
+\item \texttt{CAMLxparam2(a,b)} setups a new block of roots with the
+      addresses of \texttt{a} and \texttt{b}).
 \end{itemize}
 
 The local roots are in a linked list of pointer to OCaml values,
@@ -366,11 +324,8 @@ registering array of values.
 \texttt{value\ pair\ =\ Val\_unit;\ CAMLxparam1(pair)}:
 
 \begin{itemize}
-\tightlist
-\item
-  it declares and initializes a local variable named \texttt{pair},
-\item
-  it adds its address to the set of local roots.
+\item it declares and initializes a local variable named \texttt{pair},
+\item it adds its address to the set of local roots.
 \end{itemize}
 
 The next lines, the calls to \texttt{caml\_alloc} and
@@ -384,73 +339,61 @@ The last macro is \texttt{CAMLreturn}. It restores the
 
 The code above can be desugared to the equivalent:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{CAMLprim}
-\NormalTok{value mk_pair_c_impl(value a, value b)}
-\NormalTok{\{}
-  \CommentTok{// CAMLparam2(a, b);}
-\NormalTok{  CAMLparam0();      }\CommentTok{// 1) save the state of local roots}
-\NormalTok{  CAMLxparam2(a, b); }\CommentTok{// 2a) add &a and &b to local roots}
+\begin{lstlisting}[]
+CAMLprim
+value mk_pair_c_impl(value a, value b)
+{
+  // CAMLparam2(a, b);
+  CAMLparam0();      // 1) save the state of local roots
+  CAMLxparam2(a, b); // 2a) add &a and &b to local roots
 
-  \CommentTok{// CAMLlocal1(pair);}
-\NormalTok{  value pair = Val_unit;}
-\NormalTok{  CAMLxparam1(pair); }\CommentTok{// 2b) add &pair to local roots}
+  // CAMLlocal1(pair);
+  value pair = Val_unit;
+  CAMLxparam1(pair); // 2b) add &pair to local roots
 
-\NormalTok{  ...}
+  ...
   
-  \CommentTok{// CAMLreturn(pair);}
-\NormalTok{  CAMLdrop;         }\CommentTok{// 3) restore the state of local roots}
-                     \CommentTok{//    (forgetting &a, &b and &pair)}
-  \ControlFlowTok{return}\NormalTok{(pair);}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+  // CAMLreturn(pair);
+  CAMLdrop;         // 3) restore the state of local roots
+                     //    (forgetting &a, &b and &pair)
+  return(pair);
+}
+\end{lstlisting}
 
 In plain words, the three fundamental operations are:
 
 \begin{itemize}
-\tightlist
-\item
-  saving local roots,
-\item
-  registering roots,
-\item
-  restoring local roots.
+\item saving local roots,
+\item registering roots,
+\item restoring local roots.
 \end{itemize}
 
-\hypertarget{carefully-dealing-with-intermediate-results}{%
-\subsubsection{Carefully dealing with intermediate
-results}\label{carefully-dealing-with-intermediate-results}}
+\subsubsection{Carefully dealing with intermediate results}
 
 To illustrate how easy it is to misuse this API, let us recall an
 example from Dolan{[}caml-oxide{]}.
 
 Lets imagine one wants to make a triplet as two nested pairs:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{let}\NormalTok{ triplet x y z = (x,(y,z))}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[]
+let triplet x y z = (x,(y,z))
+\end{lstlisting}
 
 Armed with \texttt{mk\_pair\_c\_impl} and following the rules above, one
 might be tempted to write:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{CAMLprim}
-\NormalTok{value c_triplet(value x, value y, value z)}
-\NormalTok{\{}
-\NormalTok{  CAMLparam3(x,y,z);}
-\NormalTok{  CAMLlocal1(triplet);}
+\begin{lstlisting}[]
+CAMLprim
+value c_triplet(value x, value y, value z)
+{
+  CAMLparam3(x,y,z);
+  CAMLlocal1(triplet);
 
-\NormalTok{  triplet = mk_pair_c_impl(x, mk_pair_c_impl(y, z));}
+  triplet = mk_pair_c_impl(x, mk_pair_c_impl(y, z));
 
-\NormalTok{  CAMLreturn(triplet);}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+  CAMLreturn(triplet);
+}
+\end{lstlisting}
 
 But a bug lies in this implementation: the C compiler might have already
 loaded the value of \texttt{x} (for instance, by copying it on the
@@ -462,29 +405,25 @@ and wrong, value of \texttt{x} will be passed to the outer call.
 The correct version uses an intermediate variable for the temporary
 value:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{CAMLprim}
-\NormalTok{value c_triplet(value x, value y, value z)}
-\NormalTok{\{}
-\NormalTok{  CAMLparam3(x,y,z);}
-\NormalTok{  CAMLlocal2(intermediate, triplet);}
+\begin{lstlisting}[]
+CAMLprim
+value c_triplet(value x, value y, value z)
+{
+  CAMLparam3(x,y,z);
+  CAMLlocal2(intermediate, triplet);
 
-\NormalTok{  intermediate = mk_pair_c_impl(y, z);}
-\NormalTok{  triplet = mk_pair_c_impl(x, intermediate);}
+  intermediate = mk_pair_c_impl(y, z);
+  triplet = mk_pair_c_impl(x, intermediate);
 
-\NormalTok{  CAMLreturn(triplet);}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+  CAMLreturn(triplet);
+}
+\end{lstlisting}
 
 To avoid bugs, calls to functions manipulating the OCaml memory should
 be linearized as often as possible and temporary results stored in local
 roots.
 
-\hypertarget{value-one-level-of-indirection}{%
-\section{value*, one level of
-indirection}\label{value-one-level-of-indirection}}
+\section{value*, one level of indirection}
 
 The first change we propose is to replace return types of type
 \texttt{value} in FFI functions that allocates by a new argument of type
@@ -492,9 +431,7 @@ The first change we propose is to replace return types of type
 of simplifications to the rest of the code and prevents some undefined
 behaviors.
 
-\hypertarget{no-risk-of-unexpected-copy}{%
-\subparagraph{No risk of unexpected
-copy}\label{no-risk-of-unexpected-copy}}
+\subparagraph{No risk of unexpected copy}
 
 A tricky source of bug that we highlighted in the previous section was
 that OCaml values get unexpectedly copied while being manipulated. With
@@ -514,72 +451,61 @@ dereference the pointer. In practice, this should only happen in the
 primitive functions of the Garbage Collector, relieving the user of the
 API from this burden.
 
-\hypertarget{figure-indirect-api}{%
-\paragraph{Figure: Indirect API}\label{figure-indirect-api}}
+\paragraph{Figure: Indirect API}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{// Allocating functions with the new API}
-\DataTypeTok{void}\NormalTok{ icaml_alloc(value *root, }\DataTypeTok{size_t}\NormalTok{ size, }\DataTypeTok{int}\NormalTok{ tag);}
-\DataTypeTok{void}\NormalTok{ icaml_copy_string(value *root, }\DataTypeTok{const} \DataTypeTok{char}\NormalTok{ *string);}
-\DataTypeTok{void}\NormalTok{ icaml_alloc_string(value *root, }\DataTypeTok{size_t}\NormalTok{ size);}
-\NormalTok{...}
+\begin{lstlisting}[]
+// Allocating functions with the new API
+void icaml_alloc(value *root, size_t size, int tag);
+void icaml_copy_string(value *root, const char *string);
+void icaml_alloc_string(value *root, size_t size);
+...
     
-\CommentTok{// Non-allocating functions still work direct values}
-\DataTypeTok{long}\NormalTok{ iLong_val(value *x);}
-\NormalTok{value iVal_long(}\DataTypeTok{long}\NormalTok{ x);}
-\DataTypeTok{int}\NormalTok{ iget_tag(value *x);}
-\NormalTok{value iget_field(value *root, }\DataTypeTok{int}\NormalTok{ n);}
-\DataTypeTok{void}\NormalTok{ iset_field(value *root, }\DataTypeTok{int}\NormalTok{ n, value *v);}
-\DataTypeTok{void}\NormalTok{ iset_field_long(value *root, }\DataTypeTok{int}\NormalTok{ n, }\DataTypeTok{long}\NormalTok{ v);}
-\NormalTok{...}
-\end{Highlighting}
-\end{Shaded}
+// Non-allocating functions still work direct values
+long iLong_val(value *x);
+value iVal_long(long x);
+int iget_tag(value *x);
+value iget_field(value *root, int n);
+void iset_field(value *root, int n, value *v);
+void iset_field_long(value *root, int n, long v);
+...
+\end{lstlisting}
 
-\hypertarget{return-values-become-explicit}{%
-\subparagraph{Return values become
-explicit}\label{return-values-become-explicit}}
+\subparagraph{Return values become explicit}
 
 Now that all functions that interact with the garbage collector take
 pointers, most offending code patterns become impossible to write:
 
 \begin{itemize}
-\tightlist
-\item
-  functions returning void simply cannot be nested,
-\item
-  nesting a call to a function returning \texttt{value} where a
-  \texttt{value*} is expected requires taking the address of a temporary
-  (\texttt{\&get\_field(x,\ 0)}), which is rejected by the C compiler.
+\item functions returning void simply cannot be nested,
+\item nesting a call to a function returning \texttt{value} where a
+      \texttt{value*} is expected requires taking the address of a temporary
+      (\texttt{\&get\_field(x,\ 0)}), which is rejected by the C compiler.
 \end{itemize}
 
 To illustrate the benefits of this approach, let's take a look at how
 our \texttt{triplet} would look like:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\DataTypeTok{static} \DataTypeTok{void}\NormalTok{ mk_pair(value *result, value *a, value *b)}
-\NormalTok{\{}
-\NormalTok{  icaml_assert(result != a, result != b);}
-\NormalTok{  icaml_alloc(result, }\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{);}
-\NormalTok{  iset_field(result, }\DecValTok{0}\NormalTok{, a);}
-\NormalTok{  iset_field(result, }\DecValTok{1}\NormalTok{, b);}
-\NormalTok{\}}
+\begin{lstlisting}[]
+static void mk_pair(value *result, value *a, value *b)
+{
+  icaml_assert(result != a, result != b);
+  icaml_alloc(result, 2, 0);
+  iset_field(result, 0, a);
+  iset_field(result, 1, b);
+}
 
-\NormalTok{CAMLprim}
-\NormalTok{value caml_triplet(value x, value y, value z)}
-\NormalTok{\{}
-\NormalTok{  CAMLparam3(x, y, z);}
-\NormalTok{  CAMLlocal2(pair, result);}
-\NormalTok{  mk_pair(&pair, &y, &z);}
-\NormalTok{  mk_pair(&result, &x, &pair);}
-\NormalTok{  CAMLreturn(result);}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+CAMLprim
+value caml_triplet(value x, value y, value z)
+{
+  CAMLparam3(x, y, z);
+  CAMLlocal2(pair, result);
+  mk_pair(&pair, &y, &z);
+  mk_pair(&result, &x, &pair);
+  CAMLreturn(result);
+}
+\end{lstlisting}
 
-\hypertarget{no-need-to-repeat-roots.}{%
-\subparagraph{No need to repeat roots.}\label{no-need-to-repeat-roots.}}
+\subparagraph{No need to repeat roots.}
 
 Another benefit of this approach is that callees no longer have the
 responsibility of registering roots for their arguments.
@@ -588,11 +514,9 @@ With the existing OCaml API, any function receiving an argument of type
 \texttt{value} has to register a corresponding root. There are as many
 roots for a value as sub-routines calls with the value as argument.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{TODO: some example?}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[]
+TODO: some example?
+\end{lstlisting}
 
 With the indirect approach it is the duty of whoever produced a
 \texttt{value*} to register the root. The final consumer also has to be
@@ -600,9 +524,7 @@ careful when dereferencing the value, but this will generally be done by
 a primitive function of the GC interface. On the other hand, the rest of
 the binding code no longer has to be littered with root management.
 
-\hypertarget{dealing-with-immediate-values}{%
-\subparagraph{Dealing with immediate
-values}\label{dealing-with-immediate-values}}
+\subparagraph{Dealing with immediate values}
 
 A reader familiar with OCaml binding code might be worried that working
 with immediate values (an integer directly stored in a \texttt{value})
@@ -623,40 +545,33 @@ Still, the API provide the \texttt{iVal\_long} and
 \texttt{iset\_field\_long} short-hands for cases that are known to be
 safe.
 
-\hypertarget{safety-of-the-indirect-api}{%
-\subsection{Safety of the indirect
-API}\label{safety-of-the-indirect-api}}
+\subsection{Safety of the indirect API}
 
 Moving everything to pointers opened a new opportunity for incorrect
 uses: aliasing. In the \texttt{triplet} case it would mean using the
 \texttt{result} variable both as input and output in the same call:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{CAMLprim}
-\NormalTok{value caml_triplet(value x, value y, value z)}
-\NormalTok{\{}
-\NormalTok{  CAMLparam3(x, y, z);}
-\NormalTok{  CAMLlocal1(result);}
-\NormalTok{  mk_pair(&result, &y, &z);}
-\NormalTok{  mk_pair(&result, &x, &result); }\CommentTok{// result is aliased!}
-\NormalTok{  CAMLreturn(result);}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[]
+CAMLprim
+value caml_triplet(value x, value y, value z)
+{
+  CAMLparam3(x, y, z);
+  CAMLlocal1(result);
+  mk_pair(&result, &y, &z);
+  mk_pair(&result, &x, &result); // result is aliased!
+  CAMLreturn(result);
+}
+\end{lstlisting}
 
 While problematic indeed, this case is actually less worrying. The code
 that dereferences roots can be instrumented to deal with that:
 
 \begin{itemize}
-\tightlist
-\item
-  by properly handling aliasing, for instance by ensuring that all
-  arguments are read before any are written
-\item
-  by checking for this case and emitting a warning or failing, as
-  illustrated by the assertions in the implementation of
-  \texttt{mk\_pair} primitive. 
+\item by properly handling aliasing, for instance by ensuring that all
+      arguments are read before any are written
+\item by checking for this case and emitting a warning or failing, as
+      illustrated by the assertions in the implementation of
+      \texttt{mk\_pair} primitive. 
 \end{itemize}
 
 Actually thanks to the indirection we can go further than that. The
@@ -679,9 +594,7 @@ variant of the FFI where the validity of values is checked dynamically.
 This prevents a large class of misuse of GC API and delayed heap
 corruption bugs.
 
-\hypertarget{discussion-where-to-add-the-indirection}{%
-\subparagraph{Discussion: where to add the
-indirection?}\label{discussion-where-to-add-the-indirection}}
+\subparagraph{Discussion: where to add the indirection?}
 
 Having made explicit the distinction between values (of type
 \texttt{value}) and roots (of type \texttt{value*}) in the API, one
@@ -697,9 +610,7 @@ us prefer the approach favoring root arguments.
 Beside the slight increase in verbosity, we did not find any drawback to
 this approach.
 
-\hypertarget{regions-dynamic-allocation-of-roots}{%
-\section{Regions: dynamic allocation of
-roots}\label{regions-dynamic-allocation-of-roots}}
+\section{Regions: dynamic allocation of roots}
 
 To further simplify the API described above we propose to make
 allocation of roots simpler.
@@ -713,9 +624,7 @@ are not easily covered. As we already saw, returning values is tricky,
 but storing temporary values in code controlled by an external framework
 is even more problematic.
 
-\hypertarget{the-need-for-root-side-channels}{%
-\paragraph{The need for root
-side-channels}\label{the-need-for-root-side-channels}}
+\paragraph{The need for root side-channels}
 
 For the sake of the example, let's imagine that we need to sort some C
 structures containing OCaml values. To achieve this the
@@ -723,29 +632,27 @@ structures containing OCaml values. To achieve this the
 takes an array of user-defined structures and a custom comparison
 operator in the form of a function pointer.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{struct}\NormalTok{ item \{}
-\NormalTok{  my_c_type x;}
-\NormalTok{  value v;}
-\NormalTok{\};}
+\begin{lstlisting}[]
+struct item {
+  my_c_type x;
+  value v;
+\;}
 
-\DataTypeTok{static} \DataTypeTok{int}
-\NormalTok{c_comparator(}\DataTypeTok{const} \DataTypeTok{void}\NormalTok{ *item1, }\DataTypeTok{const} \DataTypeTok{void}\NormalTok{ *item2, }\DataTypeTok{void}\NormalTok{ *comparator)}
-\NormalTok{\{}
-\NormalTok{    value v1 = ((}\DataTypeTok{const} \KeywordTok{struct}\NormalTok{ item *)item1)->v;}
-\NormalTok{    value v2 = ((}\DataTypeTok{const} \KeywordTok{struct}\NormalTok{ item *)item2)->v;}
-\NormalTok{    value ml_comparator = *(value*)comparator;}
-    \ControlFlowTok{return}\NormalTok{ Val_int(caml_callback2(ml_comparator,v1,v2));}
-\NormalTok{\}}
+static int
+c_comparator(const void *item1, const void *item2, void *comparator)
+{
+    value v1 = ((const struct item *)item1)->v;
+    value v2 = ((const struct item *)item2)->v;
+    value ml_comparator = *(value*)comparator;
+    return Val_int(caml_callback2(ml_comparator,v1,v2));
+}
 
-\DataTypeTok{void}\NormalTok{ sort_ocaml_items(}\KeywordTok{struct}\NormalTok{ item *items, }\DataTypeTok{size_t}\NormalTok{ count, value *comparator)}
-\NormalTok{\{}
-\NormalTok{    qsort_r(items, count, }\KeywordTok{sizeof}\NormalTok{(}\KeywordTok{struct}\NormalTok{ item),}
-\NormalTok{            c_comparator, comparator);}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+void sort_ocaml_items(struct item *items, size_t count, value *comparator)
+{
+    qsort_r(items, count, sizeof(struct item),
+            c_comparator, comparator);
+}
+\end{lstlisting}
 
 \texttt{caml\_callback2} is a primitive function of native OCaml FFI
 that allows to invoke an OCaml closure from C code (note: for the sake
@@ -765,32 +672,25 @@ first allocates an array of roots and pass pointers to this array.
 However in other situations, the set of roots might be determined
 dynamically.
 
-\hypertarget{region-based-management}{%
-\subsection{Region-based management}\label{region-based-management}}
+\subsection{Region-based management}
 
 To let the developer dynamically manage the set of roots, we propose a
 simple API that over-approximates the lifetime of local roots:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{typedef} \KeywordTok{struct}\NormalTok{ ... region_t;}
-\DataTypeTok{void}\NormalTok{ rcaml_enter(region_t *region);}
-\DataTypeTok{void}\NormalTok{ rcaml_leave(region_t *region);}
-\NormalTok{value *rcaml_new_root(}\DataTypeTok{void}\NormalTok{);}
-\PreprocessorTok{#define rCAMLregion(...) ...}
-\PreprocessorTok{#define rCAMLreturn(p) ...}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[]
+typedef struct ... region_t;
+void rcaml_enter(region_t *region);
+void rcaml_leave(region_t *region);
+value *rcaml_new_root(void);
+#define rCAMLregion(...) ...
+#define rCAMLreturn(p) ...
+\end{lstlisting}
 
 In this approach, we distinguish between external and helper functions:
 
 \begin{itemize}
-\tightlist
-\item
-  external functions are the ones that can be directly called from
-  OCaml,
-\item
-  helper functions implement useful routines for binding foreign code.
+\item external functions are the ones that can be directly called from OCaml,
+\item helper functions implement useful routines for binding foreign code.
 \end{itemize}
 
 The external functions are responsible for setting up the region while
@@ -798,39 +698,36 @@ helper functions assume that a region has already been setup. Mimicking
 \texttt{CAMLparam...} macros, we provide some sugar for registering
 parameters while setting up the region:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{value *pair_helper(value *a, value *b)}
-\NormalTok{\{}
-\NormalTok{    value *v = rcaml_new_root();}
-\NormalTok{    icaml_alloc(v, }\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{);}
-\NormalTok{    icaml_set_field(v, }\DecValTok{0}\NormalTok{, a);}
-\NormalTok{    icaml_set_field(v, }\DecValTok{0}\NormalTok{, b);}
-    \ControlFlowTok{return}\NormalTok{ v;}
-\NormalTok{\}}
+\begin{lstlisting}[]
+value *pair_helper(value *a, value *b)
+{
+    value *v = rcaml_new_root();
+    icaml_alloc(v, 2, 0);
+    icaml_set_field(v, 0, a);
+    icaml_set_field(v, 0, b);
+    return v;
+}
 
-\NormalTok{CAMLprim}
-\NormalTok{value mk_pair(value a, value b)}
-\NormalTok{\{}
-\NormalTok{    rCAMLregion(&a, &b);}
-\NormalTok{    rCAMLreturn(pair_helper(&a, &b));}
-\NormalTok{\}}
+CAMLprim
+value mk_pair(value a, value b)
+{
+    rCAMLregion(&a, &b);
+    rCAMLreturn(pair_helper(&a, &b));
+}
 
-\NormalTok{CAMLprim}
-\NormalTok{value mk_triplet(value x, value y, value z)}
-\NormalTok{\{}
-\NormalTok{    rCAMLregion(&x, &y, &z);}
-\NormalTok{    rCAMLreturn(pair_helper(&x, pair_helper(&y, &z)));}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+CAMLprim
+value mk_triplet(value x, value y, value z)
+{
+    rCAMLregion(&x, &y, &z);
+    rCAMLreturn(pair_helper(&x, pair_helper(&y, &z)));
+}
+\end{lstlisting}
 
 Setting up a region introduces a new set of local roots that can grow
 dynamically as new roots are requested. Leaving a region releases all
 the roots at once.
 
-\hypertarget{sub-regions}{%
-\subsection{Sub-regions}\label{sub-regions}}
+\subsection{Sub-regions}
 
 Assuming that all roots have the same life-time as the external
 entrypoint works well if a fixed amount of work has to be done. However,
@@ -842,40 +739,34 @@ scope.
 These sub-regions follow a stack discipline: they can be nested and are
 released in the reverse order of their allocation.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\DataTypeTok{void}\NormalTok{ rcaml_subenter(region_t *region);}
-\DataTypeTok{void}\NormalTok{ rcaml_subleave(region_t *region);}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[]
+void rcaml_subenter(region_t *region);
+void rcaml_subleave(region_t *region);
+\end{lstlisting}
 
 For instance, the following code avoids leaking roots while transforming
 all the elements of an array:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\DataTypeTok{void}\NormalTok{ fold_array(value *acc, value *array)}
-\NormalTok{\{}
-\NormalTok{    region_t region;}
-    \DataTypeTok{size_t}\NormalTok{ count = iget_size(array);}
-    \ControlFlowTok{for}\NormalTok{ (}\DataTypeTok{size_t}\NormalTok{ i = }\DecValTok{0}\NormalTok{; i < count; ++i)}
-\NormalTok{    \{}
-\NormalTok{        rcaml_subenter(&region);}
-\NormalTok{        value *item = rcaml_new_root();}
-\NormalTok{        *item = iget_field(array, i);}
-\NormalTok{        process_item(*acc, *item);}
-\NormalTok{        rcaml_subleave(&region);}
-\NormalTok{    \}}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[]
+void fold_array(value *acc, value *array)
+{
+    region_t region;
+    size_t count = iget_size(array);
+    for (size_t i = 0; i < count; ++i)
+    {
+        rcaml_subenter(&region);
+        value *item = rcaml_new_root();
+        *item = iget_field(array, i);
+        process_item(*acc, *item);
+        rcaml_subleave(&region);
+    }
+}
+\end{lstlisting}
 
 Like normal regions, macros can be used to automate some of the
 boilerplate.
 
-\hypertarget{releasing-the-lock-in-a-region}{%
-\subsection{Releasing the lock in a
-region}\label{releasing-the-lock-in-a-region}}
+\subsection{Releasing the lock in a region}
 
 So far we demonstrated the use of region to allocate and manage OCaml
 memory. The concept can also be applied to the converse: preventing
@@ -890,63 +781,53 @@ any given time.
 The C FFI provides an API for releasing the OCaml runtime in a given
 scope of code.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{// Existing API}
-\DataTypeTok{void}\NormalTok{ caml_release_runtime_system(}\DataTypeTok{void}\NormalTok{);}
-\DataTypeTok{void}\NormalTok{ caml_acquire_runtime_system(}\DataTypeTok{void}\NormalTok{);}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[]
+// Existing API
+void caml_release_runtime_system(void);
+void caml_acquire_runtime_system(void);
+\end{lstlisting}
 
 These APIs can be wrapped in corresponding
 \texttt{rcaml\_\{acquire,release\}\_runtime\_system} functions, that
 does additional bookkeeping to ensure proper use of regions:
 
 \begin{itemize}
-\tightlist
-\item
-  new roots cannot be allocated,
-\item
-  setting up normal regions is forbidden, but a special kind of region
-  allow reacquiring the runtime,
-\item
-  while the currnet global region is released, dereferencing a value is
-  forbidden, most helper functions won't work.
+\item new roots cannot be allocated,
+\item setting up normal regions is forbidden, but a special kind of region
+      allow reacquiring the runtime,
+\item while the currnet global region is released, dereferencing a value is
+      forbidden, most helper functions won't work.
 \end{itemize}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{// Wrapper releasing the runtime}
-\DataTypeTok{void}\NormalTok{ rcaml_release_runtime_system(}\DataTypeTok{void}\NormalTok{);}
-\DataTypeTok{void}\NormalTok{ rcaml_acquire_runtime_system(}\DataTypeTok{void}\NormalTok{);}
+\begin{lstlisting}[]
+// Wrapper releasing the runtime
+void rcaml_release_runtime_system(void);
+void rcaml_acquire_runtime_system(void);
 
-\CommentTok{// Wrapper locally reacquiring the runtime}
-\DataTypeTok{void}\NormalTok{ rcaml_reacquire_runtime_system(}\DataTypeTok{void}\NormalTok{);}
-\DataTypeTok{void}\NormalTok{ rcaml_rerelease_runtime_system(}\DataTypeTok{void}\NormalTok{);}
+// Wrapper locally reacquiring the runtime
+void rcaml_reacquire_runtime_system(void);
+void rcaml_rerelease_runtime_system(void);
 
-\CommentTok{// Macros}
-\PreprocessorTok{#define rcaml_without_ocaml...}
-\PreprocessorTok{#define rcaml_with_ocaml...}
-\CommentTok{// Macros that allow writing code such as:}
-\CommentTok{// rcaml_without_ocaml}
-\CommentTok{// \{}
-\CommentTok{//   long_running_c1();}
-\CommentTok{//   rcaml_with_ocaml}
-\CommentTok{//   \{}
-\CommentTok{//     commit_result();}
-\CommentTok{//   \}}
-\CommentTok{//   long_running_c2();}
-\CommentTok{// \}}
-\end{Highlighting}
-\end{Shaded}
+// Macros
+#define rcaml_without_ocaml...
+#define rcaml_with_ocaml...
+// Macros that allow writing code such as:
+// rcaml_without_ocaml
+// {
+//   long_running_c1();
+//   rcaml_with_ocaml
+//   {
+//     commit_result();
+//   }
+//   long_running_c2();
+// }
+\end{lstlisting}
 
 All these restrictions can be tested dynamically. While no checks can be
 done at compile-time, errors can be detected deterministically during
 execution.
 
-\hypertarget{calling-ocaml-from-region-managed-code}{%
-\subsection{Calling OCaml from region-managed
-code}\label{calling-ocaml-from-region-managed-code}}
+\subsection{Calling OCaml from region-managed code}
 
 The last feature that needs some special care from the region API is the
 ability to call OCaml closures from C code. When switching back to OCaml
@@ -956,39 +837,32 @@ still reachable, but no new roots can be added to the region.
 This helps detecting and handling a few unfortunate cases:
 
 \begin{itemize}
-\item
-  When re-entering C code from OCaml deeper in the call stack, an
-  entrypoint that forgot to setup a region could allocate from the outer
-  region by mistake.
-\item
-  If we are unlucky, the OCaml thread scheduler could preempt the
-  current thread and the re-entry would happen from another
-  thread\ldots{} messing with the internal datastructures of the regions
-  library. By intercepting calls, we can rely on the OCaml runtime lock
-  to also protect region sections.
-\item
-  The OCaml closure could raise an exception. The native FFI deals with
-  this situation by simply dropping roots from the local roots linked
-  list: since the nodes allocated by \texttt{CAMLparam/local} macros are
-  stored on the stack, when an exception is raised the local root and
-  stack pointers are simply reset to their value before entering the C
-  code.
+\item When re-entering C code from OCaml deeper in the call stack, an
+      entrypoint that forgot to setup a region could allocate from the outer
+      region by mistake.
+\item If we are unlucky, the OCaml thread scheduler could preempt the
+      current thread and the re-entry would happen from another
+      thread\ldots{} messing with the internal datastructures of the regions
+      library. By intercepting calls, we can rely on the OCaml runtime lock
+      to also protect region sections.
+\item The OCaml closure could raise an exception. The native FFI deals with
+      this situation by simply dropping roots from the local roots linked
+      list: since the nodes allocated by \texttt{CAMLparam/local} macros are
+      stored on the stack, when an exception is raised the local root and
+      stack pointers are simply reset to their value before entering the C
+      code.
 \end{itemize}
 
-\hypertarget{handling-exceptions}{%
-\subsubsection{Handling exceptions}\label{handling-exceptions}}
+\paragraph{Handling exceptions}
 
 The OCaml native FFI provides two means for calling OCaml closures:
 
 \begin{itemize}
-\tightlist
-\item
-  the \texttt{CAMLcallback()} variants, that do not intercept
-  exceptions. The C code will be aborted by directly jumping to the
-  OCaml code that called an external function.
-\item
-  the \texttt{CAMLcallback\_exn()} variants, that tag the return value
-  to distinguish exceptional case.
+\item the \texttt{CAMLcallback()} variants, that do not intercept
+      exceptions. The C code will be aborted by directly jumping to the
+      OCaml code that called an external function.
+\item the \texttt{CAMLcallback\_exn()} variants, that tag the return value
+      to distinguish exceptional case.
 \end{itemize}
 
 The return value of \texttt{CAMLcallback\_exn()} should be tested for
@@ -1007,8 +881,7 @@ requirements (non-local control flow, proper interaction with the
 regions and with OCaml GC), but the bindings themselves did not need
 such feature.
 
-\hypertarget{conclusion}{%
-\section{Conclusion}\label{conclusion}}
+\section{Conclusion}
 
 materializes roots as a different type, here \texttt{value*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
