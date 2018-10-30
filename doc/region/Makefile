@@ -1,2 +1,2 @@
 all:
-	latexmk -pdf CAMLregion2.tex
+	latexmk -pdf CAMLroot.tex
