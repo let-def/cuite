@@ -1,0 +1,17 @@
+(executable
+ (name abook_addresswidget)
+ (modules abook_addresswidget)
+ (libraries cuite)
+ (flags -w -27))
+
+(executable
+ (name syntaxhl)
+ (modules syntaxhl)
+ (libraries cuite)
+ (flags -w -27))
+
+(executable
+ (name syntaxhl2)
+ (modules syntaxhl2)
+ (libraries cuite)
+ (flags -w -27))
