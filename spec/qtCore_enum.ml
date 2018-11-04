@@ -1,4 +1,4 @@
-open Shared
+open Mlspec
 
 let qJsonParseError'ParseError = qenum "QJsonParseError" "ParseError" [
   "NoError";
@@ -1245,7 +1245,7 @@ let qMetaType'TypeFlag = qenum "QMetaType" "TypeFlag" [
   "WasDeclaredAsMetaType";
   "IsGadget";
 ]
-let qMetaType'TypeFlags = qflags "QMetaType" "TypeFlags" qMetaType'TypeFlag
+let qMetaType'TypeFlags = qflags qMetaType'TypeFlag "TypeFlags"
 let qChar'SpecialCharacter = qenum "QChar" "SpecialCharacter" [
   "Null";
   "Tabulation";
@@ -1674,7 +1674,7 @@ let qRegularExpression'PatternOption = qenum "QRegularExpression" "PatternOption
   "OptimizeOnFirstUsageOption";
   "DontAutomaticallyOptimizeOption";
 ]
-let qRegularExpression'PatternOptions = qflags "QRegularExpression" "PatternOptions" qRegularExpression'PatternOption
+let qRegularExpression'PatternOptions = qflags qRegularExpression'PatternOption "PatternOptions"
 let qRegularExpression'MatchType = qenum "QRegularExpression" "MatchType" [
   "NormalMatch";
   "PartialPreferCompleteMatch";
@@ -1686,7 +1686,7 @@ let qRegularExpression'MatchOption = qenum "QRegularExpression" "MatchOption" [
   "AnchoredMatchOption";
   "DontCheckSubjectStringMatchOption";
 ]
-let qRegularExpression'MatchOptions = qflags "QRegularExpression" "MatchOptions" qRegularExpression'MatchOption
+let qRegularExpression'MatchOptions = qflags qRegularExpression'MatchOption "MatchOptions"
 let qString'SectionFlag = qenum "QString" "SectionFlag" [
   "SectionDefault";
   "SectionSkipEmpty";
@@ -1999,7 +1999,7 @@ let qDir'Filter = qenum "QDir" "Filter" [
   "NoDotAndDotDot";
   "NoFilter";
 ]
-let qDir'Filters = qflags "QDir" "Filters" qDir'Filter
+let qDir'Filters = qflags qDir'Filter "Filters"
 let qDir'SortFlag = qenum "QDir" "SortFlag" [
   "Name";
   "Time";
@@ -2014,7 +2014,7 @@ let qDir'SortFlag = qenum "QDir" "SortFlag" [
   "Type";
   "NoSort";
 ]
-let qDir'SortFlags = qflags "QDir" "SortFlags" qDir'SortFlag
+let qDir'SortFlags = qflags qDir'SortFlag "SortFlags"
 let qMutex'RecursionMode = qenum "QMutex" "RecursionMode" [
   "NonRecursive";
   "Recursive";
@@ -2042,7 +2042,7 @@ let qIODevice'OpenModeFlag = qenum "QIODevice" "OpenModeFlag" [
   "Text";
   "Unbuffered";
 ]
-let qIODevice'OpenMode = qflags "QIODevice" "OpenMode" qIODevice'OpenModeFlag
+let qIODevice'OpenMode = qflags qIODevice'OpenModeFlag "OpenMode"
 let qSettings'Status = qenum "QSettings" "Status" [
   "NoError";
   "AccessError";
@@ -2093,7 +2093,7 @@ let qItemSelectionModel'SelectionFlag = qenum "QItemSelectionModel" "SelectionFl
   "ToggleCurrent";
   "ClearAndSelect";
 ]
-let qItemSelectionModel'SelectionFlags = qflags "QItemSelectionModel" "SelectionFlags" qItemSelectionModel'SelectionFlag
+let qItemSelectionModel'SelectionFlags = qflags qItemSelectionModel'SelectionFlag "SelectionFlags"
 (*let qCoreApplication'Encoding = qenum "QCoreApplication" "Encoding" [
   "UnicodeUTF8";
   "Latin1";
@@ -2136,7 +2136,7 @@ let qLibrary'LoadHint = qenum "QLibrary" "LoadHint" [
   "PreventUnloadHint";
   "DeepBindHint";
 ]
-let qLibrary'LoadHints = qflags "QLibrary" "LoadHints" qLibrary'LoadHint
+let qLibrary'LoadHints = qflags qLibrary'LoadHint "LoadHints"
 let qAbstractTransition'TransitionType = qenum "QAbstractTransition" "TransitionType" [
   "ExternalTransition";
   "InternalTransition";
@@ -2211,12 +2211,12 @@ let qFileDevice'Permission = qenum "QFileDevice" "Permission" [
   "WriteOther";
   "ExeOther";
 ]
-let qFileDevice'Permissions = qflags "QFileDevice" "Permissions" qFileDevice'Permission
+let qFileDevice'Permissions = qflags qFileDevice'Permission "Permissions"
 let qFileDevice'FileHandleFlag = qenum "QFileDevice" "FileHandleFlag" [
   "AutoCloseHandle";
   "DontCloseHandle";
 ]
-let qFileDevice'FileHandleFlags = qflags "QFileDevice" "FileHandleFlags" qFileDevice'FileHandleFlag
+let qFileDevice'FileHandleFlags = qflags qFileDevice'FileHandleFlag "FileHandleFlags"
 let qFileDevice'MemoryMapFlags = qenum "QFileDevice" "MemoryMapFlags" [
   "NoOptions";
   "MapPrivateOption";
@@ -2342,12 +2342,12 @@ let qt'MouseButton = qenum "Qt" "MouseButton" [
   (*"MaxMouseButton";*)
   "MouseButtonMask";
 ]
-let qt'MouseButtons = qflags "Qt" "MouseButtons" qt'MouseButton
+let qt'MouseButtons = qflags qt'MouseButton "MouseButtons"
 let qt'Orientation = qenum "Qt" "Orientation" [
   "Horizontal";
   "Vertical";
 ]
-let qt'Orientations = qflags "Qt" "Orientations" qt'Orientation
+let qt'Orientations = qflags qt'Orientation "Orientations"
 let qt'FocusPolicy = qenum "Qt" "FocusPolicy" [
   "NoFocus";
   "TabFocus";
@@ -2386,7 +2386,7 @@ let qt'AlignmentFlag = qenum "Qt" "AlignmentFlag" [
   "AlignVertical_Mask";
   "AlignCenter";
 ]
-let qt'Alignment = qflags "Qt" "Alignment" qt'AlignmentFlag
+let qt'Alignment = qflags qt'AlignmentFlag "Alignment"
 let qt'TextFlag = qenum "Qt" "TextFlag" [
   "TextSingleLine";
   "TextDontClip";
@@ -2459,7 +2459,7 @@ let qt'WindowType = qenum "Qt" "WindowType" [
   "NoDropShadowWindowHint";
   "WindowFullscreenButtonHint";
 ]
-let qt'WindowFlags = qflags "Qt" "WindowFlags" qt'WindowType
+let qt'WindowFlags = qflags qt'WindowType "WindowFlags"
 let qt'WindowState = qenum "Qt" "WindowState" [
   "WindowNoState";
   "WindowMinimized";
@@ -2467,7 +2467,7 @@ let qt'WindowState = qenum "Qt" "WindowState" [
   "WindowFullScreen";
   "WindowActive";
 ]
-let qt'WindowStates = qflags "Qt" "WindowStates" qt'WindowState
+let qt'WindowStates = qflags qt'WindowState "WindowStates"
 let qt'ApplicationState = qenum "Qt" "ApplicationState" [
   "ApplicationSuspended";
   "ApplicationHidden";
@@ -2648,7 +2648,7 @@ let qt'ImageConversionFlag = qenum "Qt" "ImageConversionFlag" [
   "NoOpaqueDetection";
   "NoFormatConversion";
 ]
-let qt'ImageConversionFlags = qflags "Qt" "ImageConversionFlags" qt'ImageConversionFlag
+let qt'ImageConversionFlags = qflags qt'ImageConversionFlag "ImageConversionFlags"
 let qt'BGMode = qenum "Qt" "BGMode" [
   "TransparentMode";
   "OpaqueMode";
@@ -3204,7 +3204,7 @@ let qt'DockWidgetArea = qenum "Qt" "DockWidgetArea" [
   (*"AllDockWidgetAreas";*)
   "NoDockWidgetArea";
 ]
-let qt'DockWidgetAreas = qflags "Qt" "DockWidgetAreas" qt'DockWidgetArea
+let qt'DockWidgetAreas = qflags qt'DockWidgetArea "DockWidgetAreas"
 let qt'ToolBarArea = qenum "Qt" "ToolBarArea" [
   "LeftToolBarArea";
   "RightToolBarArea";
@@ -3214,7 +3214,7 @@ let qt'ToolBarArea = qenum "Qt" "ToolBarArea" [
   (*"AllToolBarAreas";*)
   "NoToolBarArea";
 ]
-let qt'ToolBarAreas = qflags "Qt" "ToolBarAreas" qt'ToolBarArea
+let qt'ToolBarAreas = qflags qt'ToolBarArea "ToolBarAreas"
 let qt'DateFormat = qenum "Qt" "DateFormat" [
   "TextDate";
   "ISODate";
@@ -3264,7 +3264,7 @@ let qt'Edge = qenum "Qt" "Edge" [
   "RightEdge";
   "BottomEdge";
 ]
-let qt'Edges = qflags "Qt" "Edges" qt'Edge
+let qt'Edges = qflags qt'Edge "Edges"
 let qt'ConnectionType = qenum "Qt" "ConnectionType" [
   "AutoConnection";
   "DirectConnection";
@@ -3373,7 +3373,7 @@ let qt'InputMethodHint = qenum "Qt" "InputMethodHint" [
   "ImhLatinOnly";
   "ImhExclusiveInputMask";
 ]
-let qt'InputMethodHints = qflags "Qt" "InputMethodHints" qt'InputMethodHint
+let qt'InputMethodHints = qflags qt'InputMethodHint "InputMethodHints"
 let qt'EnterKeyType = qenum "Qt" "EnterKeyType" [
   "EnterKeyDefault";
   "EnterKeyReturn";
@@ -3408,7 +3408,7 @@ let qt'FindChildOption = qenum "Qt" "FindChildOption" [
   "FindDirectChildrenOnly";
   "FindChildrenRecursively";
 ]
-let qt'FindChildOptions = qflags "Qt" "FindChildOptions" qt'FindChildOption
+let qt'FindChildOptions = qflags qt'FindChildOption "FindChildOptions"
 let qt'DropAction = qenum "Qt" "DropAction" [
   "CopyAction";
   "MoveAction";
@@ -3417,7 +3417,7 @@ let qt'DropAction = qenum "Qt" "DropAction" [
   "TargetMoveAction";
   "IgnoreAction";
 ]
-let qt'DropActions = qflags "Qt" "DropActions" qt'DropAction
+let qt'DropActions = qflags qt'DropAction "DropActions"
 let qt'CheckState = qenum "Qt" "CheckState" [
   "Unchecked";
   "PartiallyChecked";
@@ -3461,7 +3461,7 @@ let qt'ItemFlag = qenum "Qt" "ItemFlag" [
   "ItemNeverHasChildren";
   "ItemIsUserTristate";
 ]
-let qt'ItemFlags = qflags "Qt" "ItemFlags" qt'ItemFlag
+let qt'ItemFlags = qflags qt'ItemFlag "ItemFlags"
 let qt'MatchFlag = qenum "Qt" "MatchFlag" [
   "MatchExactly";
   "MatchContains";
@@ -3474,7 +3474,7 @@ let qt'MatchFlag = qenum "Qt" "MatchFlag" [
   "MatchWrap";
   "MatchRecursive";
 ]
-let qt'MatchFlags = qflags "Qt" "MatchFlags" qt'MatchFlag
+let qt'MatchFlags = qflags qt'MatchFlag "MatchFlags"
 let qt'WindowModality = qenum "Qt" "WindowModality" [
   "NonModal";
   "WindowModal";
@@ -3490,7 +3490,7 @@ let qt'TextInteractionFlag = qenum "Qt" "TextInteractionFlag" [
   "TextEditorInteraction";
   "TextBrowserInteraction";
 ]
-let qt'TextInteractionFlags = qflags "Qt" "TextInteractionFlags" qt'TextInteractionFlag
+let qt'TextInteractionFlags = qflags qt'TextInteractionFlag "TextInteractionFlags"
 let qt'EventPriority = qenum "Qt" "EventPriority" [
   "HighEventPriority";
   "NormalEventPriority";
@@ -3546,7 +3546,7 @@ let qt'GestureFlag = qenum "Qt" "GestureFlag" [
   "ReceivePartialGestures";
   "IgnoredGesturesPropagateToParent";
 ]
-let qt'GestureFlags = qflags "Qt" "GestureFlags" qt'GestureFlag
+let qt'GestureFlags = qflags qt'GestureFlag "GestureFlags"
 let qt'NativeGestureType = qenum "Qt" "NativeGestureType" [
   "BeginNativeGesture";
   "EndNativeGesture";

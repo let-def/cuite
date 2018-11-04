@@ -1,4 +1,4 @@
-open Shared
+open Mlspec
 
 let qTextLength'Type = qenum "QTextLength" "Type" [
   "VariableLength";
@@ -92,7 +92,7 @@ let qTextOption'Flag = qenum "QTextOption" "Flag" [
   "ShowDocumentTerminator";
   "IncludeTrailingSpaces";
 ]
-let qTextOption'Flags = qflags "QTextOption" "Flags" qTextOption'Flag
+let qTextOption'Flags = qflags qTextOption'Flag "Flags"
 let qTextItem'RenderFlag = qenum "QTextItem" "RenderFlag" [
   "RightToLeft";
   "Overline";
@@ -840,7 +840,7 @@ let qPainter'RenderHint = qenum "QPainter" "RenderHint" [
   "NonCosmeticDefaultPen";
   "Qt4CompatiblePainting";
 ]
-let qPainter'RenderHints = qflags "QPainter" "RenderHints" qPainter'RenderHint
+let qPainter'RenderHints = qflags qPainter'RenderHint "RenderHints"
 let qPainter'PixmapFragmentHint = qenum "QPainter" "PixmapFragmentHint" [
   "OpaqueHint";
 ]
@@ -1833,7 +1833,7 @@ let qTextDocument'FindFlag = qenum "QTextDocument" "FindFlag" [
   "FindCaseSensitively";
   "FindWholeWords";
 ]
-let qTextDocument'FindFlags = qflags "QTextDocument" "FindFlags" qTextDocument'FindFlag
+let qTextDocument'FindFlags = qflags qTextDocument'FindFlag "FindFlags"
 let qTextDocument'ResourceType = qenum "QTextDocument" "ResourceType" [
   "HtmlResource";
   "ImageResource";

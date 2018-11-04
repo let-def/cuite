@@ -8,6 +8,7 @@ type qPoint  = { px: int; py: int }
 type qPointF = { pxf: float; pyf: float }
 type qSize   = { sx: int ; sy: int }
 type qSizeF  = { sxf: float ; syf: float }
+type 'a qflags = 'a QFlags.t
 
 val class_name : _ qt_class -> string
 val class_of : ([>`QObject] as 'a) t -> 'a qt_class

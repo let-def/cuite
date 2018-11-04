@@ -1,4 +1,4 @@
-open Shared
+open Mlspec
 open QtCore_classes
 open QtCore_enum
 open QtGui_classes
@@ -22,7 +22,7 @@ let () = with_class qGuiApplication [
     (*static  "primaryScreen" [] ~ret:qScreen;*)
     (*static  "screens" [] ~ret:qList<QScreen *>;*)
     dynamic "devicePixelRatio" [] ~ret:qreal;
-    static  "overrideCursor" [] ~ret:(pointer qCursor);
+    static  "overrideCursor" [] ~ret:qCursor;
     static  "setOverrideCursor" [arg "cursor" qCursor];
     static  "changeOverrideCursor" [arg "cursor" qCursor];
     static  "restoreOverrideCursor" [];
@@ -77,7 +77,7 @@ let () = with_class qGuiApplication [
     signal "fontDatabaseChanged" [];
     signal "lastWindowClosed" [];
     signal "layoutDirectionChanged" [arg "" qt'LayoutDirection];
-    signal "paletteChanged" [arg "" (reference (const qPalette))];
+    signal "paletteChanged" [arg "" qPalette];
     (*signal "primaryScreenChanged" [QScreen *screen];*)
     (*signal "saveStateRequest" [QSessionManager &manager];*)
     (*signal "screenAdded" [QScreen *screen];*)
@@ -114,7 +114,7 @@ let () = with_class qTextDocument [
     dynamic "toRawText" [] ~ret:qString;
     dynamic "toPlainText" [] ~ret:qString;
     dynamic "setPlainText" [arg "text" qString];
-    dynamic "characterAt" [arg "pos" int] ~ret:(reference qChar);
+    dynamic "characterAt" [arg "pos" int] ~ret:qChar;
     dynamic "find" [arg "subString" qString;arg "position" int;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
     dynamic "find" [arg "subString" qString;arg "cursor" qTextCursor;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
     dynamic "find" [arg "expr" qRegExp;arg "from" int;arg "options" qTextDocument'FindFlags] ~ret:qTextCursor;
@@ -159,8 +159,8 @@ let () = with_class qTextDocument [
     dynamic "characterCount" [] ~ret:int;
     dynamic "setDefaultStyleSheet" [arg "sheet" qString];
     dynamic "defaultStyleSheet" [] ~ret:qString;
-    dynamic "undo" [arg "cursor" (pointer qTextCursor)];
-    dynamic "redo" [arg "cursor" (pointer qTextCursor)];
+    dynamic "undo" [arg "cursor" qTextCursor];
+    dynamic "redo" [arg "cursor" qTextCursor];
     (*dynamic "clearUndoRedoStacks" [arg "stacksToClear" stacks];*)
     dynamic "maximumBlockCount" [] ~ret:int;
     dynamic "setMaximumBlockCount" [arg "maximum" int];
@@ -425,7 +425,7 @@ let () = with_class qWindow [
     dynamic "setGeometry" [arg "posx" int;arg "posy" int;arg "w" int;arg "h" int];
     dynamic "setGeometry" [arg "rect" qRect];
     dynamic "geometry" [] ~ret:qRect;
-    dynamic "frameMargins" [] ~ret:(reference qMargins);
+    dynamic "frameMargins" [] ~ret:qMargins;
     dynamic "frameGeometry" [] ~ret:qRect;
     dynamic "framePosition" [] ~ret:qPoint;
     dynamic "setFramePosition" [arg "point" qPoint];
@@ -451,8 +451,8 @@ let () = with_class qWindow [
     dynamic "focusObject" [] ~ret:qObject;
     dynamic "mapToGlobal" [arg "pos" qPoint] ~ret:qPoint;
     dynamic "mapFromGlobal" [arg "pos" qPoint] ~ret:qPoint;
-    dynamic "cursor" [] ~ret:(reference qCursor); (* CHECKME *)
-    dynamic "setCursor" [arg "cursor" (reference qCursor)];
+    dynamic "cursor" [] ~ret:qCursor;
+    dynamic "setCursor" [arg "cursor" qCursor];
     dynamic "unsetCursor" [];
     (*static  "fromWinId" [arg "id" wId] ~ret:qWindow;*)
     dynamic "requestActivate" [];
@@ -876,7 +876,7 @@ let () = with_class qBrush [
     dynamic "color" [] ~ret:qColor;
     dynamic "setColor" [arg "color" qColor];
     dynamic "setColor" [arg "color" qt'GlobalColor];
-    dynamic "gradient" [] ~ret:(pointer qGradient);
+    dynamic "gradient" [] ~ret:qGradient;
     dynamic "isOpaque" [] ~ret:bool;
     (*dynamic "operator=" [arg "brush" qBrush] ~ret:qBrush;
       dynamic "operator=" [arg "other" qBrush] ~ret:qBrush;*)
@@ -1060,11 +1060,11 @@ let () = with_class qBrush [
     dynamic "drawText" [arg "rectangle" qRectF;arg "flags" int;arg "text" qString;arg "boundingRect" qRectF];
     dynamic "drawText" [arg "rectangle" qRect;arg "flags" int;arg "text" qString;arg "boundingRect" qRect];
     dynamic "drawText" [arg "x" int;arg "y" int;arg "width" int;arg "height" int;arg "flags" int;arg "text" qString;arg "boundingRect" qRect];
-    dynamic "drawText" [arg "rectangle" qRectF;arg "text" qString;arg "option" (reference qTextOption)];
+    dynamic "drawText" [arg "rectangle" qRectF;arg "text" qString;arg "option" qTextOption];
     dynamic "boundingRect" [arg "rectangle" qRectF;arg "flags" int;arg "text" qString] ~ret:qRectF;
     dynamic "boundingRect" [arg "rectangle" qRect;arg "flags" int;arg "text" qString] ~ret:qRect;
     dynamic "boundingRect" [arg "x" int;arg "y" int;arg "w" int;arg "h" int;arg "flags" int;arg "text" qString] ~ret:qRect;
-    dynamic "boundingRect" [arg "rectangle" qRectF;arg "text" qString;arg "option" (reference qTextOption)] ~ret:qRectF;
+    dynamic "boundingRect" [arg "rectangle" qRectF;arg "text" qString;arg "option" qTextOption] ~ret:qRectF;
     dynamic "fillRect" [arg "rectangle" qRectF;arg "brush" qBrush];
     dynamic "fillRect" [arg "x" int;arg "y" int;arg "width" int;arg "height" int;arg "brush" qBrush];
     dynamic "fillRect" [arg "rectangle" qRect;arg "brush" qBrush];

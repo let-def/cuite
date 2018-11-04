@@ -1,4 +1,4 @@
-open Shared
+open Mlspec
 open QtCore_enum
 open QtCore_classes
 
@@ -8,7 +8,7 @@ open QtCore_classes
      slot ~cl:qPrintDialog "_q_togglePageSetCombo" [bool];*)
 
 let () = with_class qSignalMapper [
-    constructor "" [arg "parent" (optional qObject)];
+    constructor "" [opt "parent" qObject];
     dynamic "setMapping" [arg "sender" qObject;arg "id" int];
     dynamic "setMapping" [arg "sender" qObject;arg "text" qString];
     dynamic "setMapping" [arg "sender" qObject;arg "object" qObject];
@@ -213,12 +213,12 @@ let () = with_class qItemSelection [
     dynamic "contains" [arg "index" qModelIndex] ~ret:bool;
     dynamic "indexes" [] ~ret:qModelIndexList;
     dynamic "merge" [arg "other" qItemSelection;arg "command" qItemSelectionModel'SelectionFlags];
-    static  "split" [arg "range" (reference qItemSelectionRange); arg "other" (reference qItemSelectionRange); arg "result" (unconst (pointer qItemSelection))];
+    static  "split" [arg "range" qItemSelectionRange; arg "other" qItemSelectionRange; arg "result" qItemSelection];
   ]
 
 let () = with_class qItemSelectionModel [
     constructor "" [arg "model" qAbstractItemModel];
-    constructor "" [arg "model" qAbstractItemModel;arg "parent" (optional qObject)];
+    constructor "" [arg "model" qAbstractItemModel; opt "parent" qObject];
     dynamic "currentIndex" [] ~ret:qModelIndex;
     dynamic "isSelected" [arg "index" qModelIndex] ~ret:bool;
     dynamic "isRowSelected" [arg "row" int;arg "parent" qModelIndex] ~ret:bool;
@@ -276,7 +276,7 @@ let () = with_class qAbstractProxyModel [
   ]
 
 let () = with_class qSortFilterProxyModel [
-    constructor "" [arg "parent" (optional qObject)];
+    constructor "" [opt "parent" qObject];
     dynamic "filterRegExp" [] ~ret:qRegExp;
     dynamic "setFilterRegExp" [arg "regExp" qRegExp];
     dynamic "filterKeyColumn" [] ~ret:int;
@@ -304,28 +304,28 @@ let () = with_class qSortFilterProxyModel [
 
 let () = with_class qItemSelectionRange [
     constructor "" [];
-    constructor "" [arg "other" (reference qItemSelectionRange)];
-    constructor "" [arg "other" (reference qItemSelectionRange)];
+    constructor "" [arg "other" qItemSelectionRange];
+    constructor "" [arg "other" qItemSelectionRange];
     (*dynamic "operator=" [arg "other" qItemSelectionRange] ~ret:qItemSelectionRange;*)
     (*dynamic "operator=" [arg "other" qItemSelectionRange] ~ret:qItemSelectionRange;*)
     constructor "" [arg "topLeft" qModelIndex;arg "bottomRight" qModelIndex];
     constructor "" [arg "index" qModelIndex];
-    dynamic "swap" [arg "other" (reference qItemSelectionRange)];
+    dynamic "swap" [arg "other" qItemSelectionRange];
     dynamic "top" [] ~ret:int;
     dynamic "left" [] ~ret:int;
     dynamic "bottom" [] ~ret:int;
     dynamic "right" [] ~ret:int;
     dynamic "width" [] ~ret:int;
     dynamic "height" [] ~ret:int;
-    dynamic "topLeft" [] ~ret:(reference qPersistentModelIndex);
-    dynamic "bottomRight" [] ~ret:(reference qPersistentModelIndex);
+    dynamic "topLeft" [] ~ret:qPersistentModelIndex;
+    dynamic "bottomRight" [] ~ret:qPersistentModelIndex;
     dynamic "parent" [] ~ret:qModelIndex;
     dynamic "model" [] ~ret:qAbstractItemModel;
     dynamic "contains" [arg "index" qModelIndex] ~ret:bool;
     dynamic "contains" [arg "row" int;arg "column" int;arg "parentIndex" qModelIndex] ~ret:bool;
-    dynamic "intersects" [arg "other" (reference qItemSelectionRange)] ~ret:bool;
-    (*dynamic "intersect" [arg "other" (reference qItemSelectionRange)] ~ret:(reference qItemSelectionRange);*)
-    dynamic "intersected" [arg "other" (reference qItemSelectionRange)] ~ret:(reference qItemSelectionRange);
+    dynamic "intersects" [arg "other" qItemSelectionRange] ~ret:bool;
+    (*dynamic "intersect" [arg "other" qItemSelectionRange] ~ret:qItemSelectionRange;*)
+    dynamic "intersected" [arg "other" qItemSelectionRange] ~ret:qItemSelectionRange;
     (*dynamic "operator==" [arg "other" qItemSelectionRange] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qItemSelectionRange] ~ret:bool;*)
     (*dynamic "operator<" [arg "other" qItemSelectionRange] ~ret:bool;*)
@@ -404,8 +404,8 @@ let () = with_class qObject [
   ]
 
 let () = with_class qFileSystemWatcher [
-    constructor "" [arg "parent" (optional qObject)];
-    constructor "" [arg "paths" qStringList;arg "parent" (optional qObject)];
+    constructor "" [opt "parent" qObject];
+    constructor "" [arg "paths" qStringList; opt "parent" qObject];
     dynamic "addPath" [arg "path" qString] ~ret:bool;
     dynamic "addPaths" [arg "paths" qStringList] ~ret:qStringList;
     dynamic "removePath" [arg "path" qString] ~ret:bool;
@@ -486,8 +486,8 @@ let () = with_class qFileDevice [
 let () = with_class qFile [
     constructor "" [];
     constructor "" [arg "name" qString];
-    constructor "" [arg "parent" (optional qObject)];
-    constructor "" [arg "name" qString;arg "parent" (optional qObject)];
+    constructor "" [opt "parent" qObject];
+    constructor "" [arg "name" qString; opt "parent" qObject];
     dynamic "setFileName" [arg "name" qString];
     static  "encodeName" [arg "fileName" qString] ~ret:qByteArray;
     static  "decodeName" [arg "localFileName" qByteArray] ~ret:qString;
@@ -687,8 +687,8 @@ let () = with_class qByteArray [
 let () = with_class qFileInfo [
     constructor "" [];
     constructor "" [arg "file" qString];
-    constructor "" [arg "file" (reference qFile)];
-    constructor "" [arg "dir" (reference qDir);arg "file" qString];
+    constructor "" [arg "file" qFile];
+    constructor "" [arg "dir" qDir; arg "file" qString];
     (*constructor "" [arg "fileinfo" qFileInfo];*)
     (*dynamic "operator=" [arg "fileinfo" qFileInfo] ~ret:qFileInfo;*)
     (*dynamic "operator=" [arg "other" qFileInfo] ~ret:qFileInfo;*)
@@ -696,8 +696,8 @@ let () = with_class qFileInfo [
     (*dynamic "operator==" [arg "fileinfo" qFileInfo] ~ret:bool;*)
     (*dynamic "operator!=" [arg "fileinfo" qFileInfo] ~ret:bool;*)
     dynamic "setFile" [arg "file" qString];
-    dynamic "setFile" [arg "file" (reference qFile)];
-    dynamic "setFile" [arg "dir" (reference qDir);arg "file" qString];
+    dynamic "setFile" [arg "file" qFile];
+    dynamic "setFile" [arg "dir" qDir; arg "file" qString];
     dynamic "exists" [] ~ret:bool;
     static  "exists" [arg "file" qString] ~ret:bool;
     dynamic "refresh" [];
@@ -1071,7 +1071,7 @@ let () = with_class qWeakPointer [
     constructor "" [arg "other" qSharedPointer<T>];
     (*dynamic "operator=" [arg "other" qWeakPointer<T>] ~ret:qWeakPointer<T>;*)
     (*dynamic "operator=" [arg "other" qSharedPointer<T>] ~ret:qWeakPointer<T>;*)
-    constructor "" [arg "obj" (optional qObject)];
+    constructor "" [opt "obj" qObject];
     (*dynamic "operator=" [arg "obj" qObject] ~ret:qWeakPointer<T>;*)
     dynamic "swap" [arg "other" qWeakPointer<T>];
     (*dynamic "data" [] ~ret:t;*)
@@ -1174,8 +1174,8 @@ let () = with_class qXmlStreamEntityDeclaration [
     (*dynamic "operator!=" [arg "other" qXmlStreamEntityDeclaration] ~ret:bool;*)
   ]
 let () = with_class qSignalBlocker [
-    constructor "" [arg "object" (optional qObject)];
-    constructor "" [arg "object" (optional qObject)];
+    constructor "" [opt "object" qObject];
+    constructor "" [opt "object" qObject];
     constructor "" [arg "other" qSignalBlocker];
     (*dynamic "operator=" [arg "other" qSignalBlocker] ~ret:qSignalBlocker;*)
     dynamic "reblock" [];
@@ -5064,7 +5064,7 @@ let () = with_class qStringList [
     dynamic "lastIndexOf" [arg "re" qRegularExpression;arg "from" int] ~ret:int;
   ]
 let () = with_class qFutureWatcher [
-    constructor "" [arg "parent" (optional qObject)];
+    constructor "" [opt "parent" qObject];
     dynamic "setFuture" [arg "future" qFuture<T>];
     (*dynamic "future" [] ~ret:qFuture<T>;*)
     (*dynamic "result" [] ~ret:t;*)
