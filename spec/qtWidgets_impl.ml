@@ -1,4 +1,4 @@
-open Shared
+open Mlspec
 open QtCore_enum
 open QtCore_classes
 open QtGui_enum
@@ -8,8 +8,10 @@ open QtWidgets_classes
 
 let protected = true
 
+let optional x = x
+
 let () = with_class qApplication [
-    constructor "" [arg "args" (custom_type ~ml_pos:"string array" "string_array")] ~custom:true;
+    constructor "" [arg "args" (custom_type ~cpp_name:"string_array" "string array")] ~custom:true;
     static  "style" [] ~ret:qStyle;
     static  "setStyle" [arg "style" qStyle];
     static  "setStyle" [arg "style" qString] ~ret:qStyle;
@@ -330,7 +332,7 @@ let () = with_class qWidget [
     (*dynamic "inputMethodHints" [] ~ret:qt'InputMethodHints;*)
     (*dynamic "setInputMethodHints" [arg "hints" qt'InputMethodHints];*)
 
-    signal "customContextMenuRequested" [arg "" (const qPoint)];
+    signal "customContextMenuRequested" [arg "" qPoint];
     signal "windowIconChanged" [arg "" qIcon];
     signal "windowIconTextChanged" [arg "" qString];
     signal "windowTitleChanged" [arg "" qString];
@@ -1243,7 +1245,7 @@ let () = with_class qGraphicsScale [
     dynamic "setYScale" [arg "arg0" qreal];
     dynamic "zScale" [] ~ret:qreal;
     dynamic "setZScale" [arg "arg0" qreal];
-    dynamic "applyTo" [arg "matrix" (pointer qMatrix4x4)];
+    dynamic "applyTo" [arg "matrix" qMatrix4x4];
     dynamic "originChanged" [];
     dynamic "xScaleChanged" [];
     dynamic "yScaleChanged" [];
@@ -1259,7 +1261,7 @@ let () = with_class qGraphicsRotation [
     dynamic "axis" [] ~ret:qVector3D;
     dynamic "setAxis" [arg "axis" qVector3D];
     dynamic "setAxis" [arg "axis" qt'Axis];
-    dynamic "applyTo" [arg "matrix" (pointer qMatrix4x4)];
+    dynamic "applyTo" [arg "matrix" qMatrix4x4];
     dynamic "originChanged" [];
     dynamic "angleChanged" [];
     dynamic "axisChanged" [];
@@ -2107,7 +2109,7 @@ let () = with_class qAbstractScrollArea [
     dynamic "setViewport" [arg "widget" qWidget];
 
     dynamic "setViewportMargins" [arg "left" int; arg "top" int; arg "right" int; arg "bottom" int] ~kind:`Protected;
-    dynamic "setViewportMargins" [arg "margins" (reference qMargins)] ~kind:`Protected;
+    dynamic "setViewportMargins" [arg "margins" qMargins] ~kind:`Protected;
     dynamic "viewportMargins" [] ~ret:qMargins ~kind:`Protected;
 
     dynamic "maximumViewportSize" [] ~ret:qSize;
@@ -2558,7 +2560,7 @@ let () = with_class qFileDialog [
     signal "directoryEntered" [arg "" qString];
     signal "directoryUrlEntered" [arg "" qUrl];
     signal "fileSelected" [arg "" qString];
-    signal "filesSelected" [arg "" (const qStringList)];
+    signal "filesSelected" [arg "" qStringList];
     signal "filterSelected" [arg "" qString];
     signal "urlSelected" [arg "" qUrl];
     (*signal "urlsSelected" [qList<QUrl>];*)
@@ -2960,7 +2962,7 @@ let () = with_class qPlainTextEdit [
     signal "selectionChanged" [];
     signal "textChanged" [];
     signal "undoAvailable" [arg "" bool];
-    signal "updateRequest" [arg "" (const qRect);arg "" int];
+    signal "updateRequest" [arg "" qRect;arg "" int];
   ]
 let () = with_class qScrollArea [
     constructor "" [arg "parent" (optional qWidget)];
@@ -3326,7 +3328,7 @@ let () = with_class qListWidgetItem [
     constructor "" [arg "parent" qListWidget;arg "type" int];
     constructor "" [arg "text" qString;arg "parent" qListWidget;arg "type" int];
     constructor "" [arg "icon" qIcon;arg "text" qString;arg "parent" qListWidget;arg "type" int];
-    constructor "" [arg "other" (reference qListWidgetItem)];
+    constructor "" [arg "other" qListWidgetItem];
     dynamic "clone" [] ~ret:qListWidgetItem;
     dynamic "listWidget" [] ~ret:qListWidget;
     dynamic "setSelected" [arg "select" bool];
@@ -3578,7 +3580,7 @@ let () = with_class qTableWidget [
     dynamic "removeCellWidget" [arg "row" int;arg "column" int];
     dynamic "isItemSelected" [arg "item" qTableWidgetItem] ~ret:bool;
     dynamic "setItemSelected" [arg "item" qTableWidgetItem;arg "select" bool];
-    dynamic "setRangeSelected" [arg "range" (reference qTableWidgetSelectionRange);arg "select" bool];
+    dynamic "setRangeSelected" [arg "range" qTableWidgetSelectionRange;arg "select" bool];
     (*dynamic "selectedRanges" [] ~ret:qList<QTableWidgetSelectionRange>;*)
     (*dynamic "selectedItems" [] ~ret:qList<QTableWidgetItem *>;*)
     (*dynamic "findItems" [arg "text" qString;arg "flags" qt'MatchFlags] ~ret:qList<QTableWidgetItem *>;*)
@@ -3741,7 +3743,7 @@ let () = with_class qFileIconProvider [
 let () = with_class qTableWidgetSelectionRange [
     constructor "" [];
     constructor "" [arg "top" int;arg "left" int;arg "bottom" int;arg "right" int];
-    constructor "" [arg "other" (reference qTableWidgetSelectionRange)];
+    constructor "" [arg "other" qTableWidgetSelectionRange];
     dynamic "topRow" [] ~ret:int;
     dynamic "bottomRow" [] ~ret:int;
     dynamic "leftColumn" [] ~ret:int;

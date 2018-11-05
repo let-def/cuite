@@ -1,4 +1,4 @@
-open Shared
+open Mlspec
 open QtCore_classes
 open QtGui_classes
 
@@ -25,11 +25,11 @@ let qColormap                      = qclass "QColormap"
 let qUndoCommand                   = qclass "QUndoCommand"
 let qTextEdit'ExtraSelection = custom_type
     ~decl:"type qTextEdit'ExtraSelection = qTextCursor qt * qTextCharFormat qt"
-    ~ml_pos:"qTextEdit'ExtraSelection"
-    "QTextEdit::ExtraSelection"
+    ~cpp_name:"QTextEdit::ExtraSelection"
+    "qTextEdit'ExtraSelection"
 let qTextEdit'ExtraSelection'List = custom_type
-    ~ml_pos:"qTextEdit'ExtraSelection list"
-    "QList<QTextEdit::ExtraSelection>"
+    ~cpp_name:"QList<QTextEdit::ExtraSelection>"
+    "qTextEdit'ExtraSelection list"
 let qFormLayout'TakeRowResult      = qclass "QFormLayout::TakeRowResult"
 let qStyleHintReturn               = qclass "QStyleHintReturn"
 let qLayoutItem                    = qclass "QLayoutItem"

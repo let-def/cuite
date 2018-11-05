@@ -73,8 +73,8 @@ let mlname_type = function
   | QFlags u -> u.fname
   | Custom u -> u.ml_name
 
-let custom_type ?ml_negname ml_name =
-  let ml_negname = match ml_negname with
+let custom_type ?decl ?ml_neg ?cpp_name ml_name =
+  let ml_negname = match ml_neg with
     | None -> ml_name
     | Some mltype -> mltype
   in

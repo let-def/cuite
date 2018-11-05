@@ -1,4 +1,4 @@
-open Shared
+open Mlspec
 
 let qTreeWidgetItem'ItemType = qenum "QTreeWidgetItem" "ItemType" [
   "Type";
@@ -21,7 +21,7 @@ let qFileIconProvider'IconType = qenum "QFileIconProvider" "IconType" [
 let qFileIconProvider'Option = qenum "QFileIconProvider" "Option" [
   "DontUseCustomDirectoryIcons";
 ]
-let qFileIconProvider'Options = qflags "QFileIconProvider" "Options" qFileIconProvider'Option
+let qFileIconProvider'Options = qflags qFileIconProvider'Option "Options"
 let qGestureRecognizer'ResultFlag = qenum "QGestureRecognizer" "ResultFlag" [
   "Ignore";
   "MayBeGesture";
@@ -246,7 +246,7 @@ let qSizePolicy'ControlType = qenum "QSizePolicy" "ControlType" [
   "TabWidget";
   "ToolButton";
 ]
-let qSizePolicy'ControlTypes = qflags "QSizePolicy" "ControlTypes" qSizePolicy'ControlType
+let qSizePolicy'ControlTypes = qflags qSizePolicy'ControlType "ControlTypes"
 let qApplication'ColorSpec = qenum "QApplication" "ColorSpec" [
   "NormalColor";
   "CustomColor";
@@ -517,7 +517,7 @@ let qGraphicsScene'SceneLayer = qenum "QGraphicsScene" "SceneLayer" [
   "ForegroundLayer";
   "AllLayers";
 ]
-let qGraphicsScene'SceneLayers = qflags "QGraphicsScene" "SceneLayers" qGraphicsScene'SceneLayer
+let qGraphicsScene'SceneLayers = qflags qGraphicsScene'SceneLayer "SceneLayers"
 let qAbstractItemDelegate'EndEditHint = qenum "QAbstractItemDelegate" "EndEditHint" [
   "NoHint";
   "EditNextItem";
@@ -582,7 +582,7 @@ let qStyle'StateFlag = qenum "QStyle" "StateFlag" [
   "State_Small";
   "State_Mini";
 ]
-let qStyle'State = qflags "QStyle" "State" qStyle'StateFlag
+let qStyle'State = qflags qStyle'StateFlag "State"
 let qStyle'PrimitiveElement = qenum "QStyle" "PrimitiveElement" [
   "PE_Frame";
   "PE_FrameDefaultButton";
@@ -1187,7 +1187,7 @@ let qGraphicsBlurEffect'BlurHint = qenum "QGraphicsBlurEffect" "BlurHint" [
   "QualityHint";
   "AnimationHint";
 ]
-let qGraphicsBlurEffect'BlurHints = qflags "QGraphicsBlurEffect" "BlurHints" qGraphicsBlurEffect'BlurHint
+let qGraphicsBlurEffect'BlurHints = qflags qGraphicsBlurEffect'BlurHint "BlurHints"
 let qGraphicsSceneContextMenuEvent'Reason = qenum "QGraphicsSceneContextMenuEvent" "Reason" [
   "Mouse";
   "Keyboard";
@@ -1296,7 +1296,7 @@ let qDialogButtonBox'StandardButton = qenum "QDialogButtonBox" "StandardButton" 
   (*"FirstButton";
   "LastButton";*)
 ]
-let qDialogButtonBox'StandardButtons = qflags "QDialogButtonBox" "StandardButtons" qDialogButtonBox'StandardButton
+let qDialogButtonBox'StandardButtons = qflags qDialogButtonBox'StandardButton "StandardButtons"
 let qDialogButtonBox'ButtonLayout = qenum "QDialogButtonBox" "ButtonLayout" [
   "WinLayout";
   "MacLayout";
@@ -1313,7 +1313,7 @@ let qDockWidget'DockWidgetFeature = qenum "QDockWidget" "DockWidgetFeature" [
   "NoDockWidgetFeatures";
   "Reserved";
 ]
-let qDockWidget'DockWidgetFeatures = qflags "QDockWidget" "DockWidgetFeatures" qDockWidget'DockWidgetFeature
+let qDockWidget'DockWidgetFeatures = qflags qDockWidget'DockWidgetFeature "DockWidgetFeatures"
 let qFrame'Shape = qenum "QFrame" "Shape" [
   "NoFrame";
   "Box";
@@ -1350,7 +1350,7 @@ let qMainWindow'DockOption = qenum "QMainWindow" "DockOption" [
   "VerticalTabs";
   "GroupedDragging";
 ]
-let qMainWindow'DockOptions = qflags "QMainWindow" "DockOptions" qMainWindow'DockOption
+let qMainWindow'DockOptions = qflags qMainWindow'DockOption "DockOptions"
 let qMdiSubWindow'SubWindowOption = qenum "QMdiSubWindow" "SubWindowOption" [
   "AllowOutsideAreaHorizontally";
   "AllowOutsideAreaVertically";
@@ -1494,7 +1494,7 @@ let qFontComboBox'FontFilter = qenum "QFontComboBox" "FontFilter" [
   "MonospacedFonts";
   "ProportionalFonts";
 ]
-let qFontComboBox'FontFilters = qflags "QFontComboBox" "FontFilters" qFontComboBox'FontFilter
+let qFontComboBox'FontFilters = qflags qFontComboBox'FontFilter "FontFilters"
 let qDateTimeEdit'Section = qenum "QDateTimeEdit" "Section" [
   "NoSection";
   "AmPmSection";
@@ -1508,7 +1508,7 @@ let qDateTimeEdit'Section = qenum "QDateTimeEdit" "Section" [
   "TimeSections_Mask";
   "DateSections_Mask";
 ]
-let qDateTimeEdit'Sections = qflags "QDateTimeEdit" "Sections" qDateTimeEdit'Section
+let qDateTimeEdit'Sections = qflags qDateTimeEdit'Section "Sections"
 let qSlider'TickPosition = qenum "QSlider" "TickPosition" [
   "NoTicks";
   "TicksAbove";
@@ -1527,7 +1527,7 @@ let qColorDialog'ColorDialogOption = qenum "QColorDialog" "ColorDialogOption" [
   "NoButtons";
   "DontUseNativeDialog";
 ]
-let qColorDialog'ColorDialogOptions = qflags "QColorDialog" "ColorDialogOptions" qColorDialog'ColorDialogOption
+let qColorDialog'ColorDialogOptions = qflags qColorDialog'ColorDialogOption "ColorDialogOptions"
 let qFileDialog'ViewMode = qenum "QFileDialog" "ViewMode" [
   "Detail";
   "List";
@@ -1560,7 +1560,7 @@ let qFileDialog'Option = qenum "QFileDialog" "Option" [
   "HideNameFilterDetails";
   "DontUseCustomDirectoryIcons";
 ]
-let qFileDialog'Options = qflags "QFileDialog" "Options" qFileDialog'Option
+let qFileDialog'Options = qflags qFileDialog'Option "Options"
 let qFontDialog'FontDialogOption = qenum "QFontDialog" "FontDialogOption" [
   "NoButtons";
   "DontUseNativeDialog";
@@ -1569,13 +1569,13 @@ let qFontDialog'FontDialogOption = qenum "QFontDialog" "FontDialogOption" [
   "MonospacedFonts";
   "ProportionalFonts";
 ]
-let qFontDialog'FontDialogOptions = qflags "QFontDialog" "FontDialogOptions" qFontDialog'FontDialogOption
+let qFontDialog'FontDialogOptions = qflags qFontDialog'FontDialogOption "FontDialogOptions"
 let qInputDialog'InputDialogOption = qenum "QInputDialog" "InputDialogOption" [
   "NoButtons";
   "UseListViewForComboBoxItems";
   "UsePlainTextEditForTextInput";
 ]
-let qInputDialog'InputDialogOptions = qflags "QInputDialog" "InputDialogOptions" qInputDialog'InputDialogOption
+let qInputDialog'InputDialogOptions = qflags qInputDialog'InputDialogOption "InputDialogOptions"
 let qInputDialog'InputMode = qenum "QInputDialog" "InputMode" [
   "TextInput";
   "IntInput";
@@ -1630,7 +1630,7 @@ let qMessageBox'StandardButton = qenum "QMessageBox" "StandardButton" [
   "FlagMask";
   "ButtonMask";
 ]
-let qMessageBox'StandardButtons = qflags "QMessageBox" "StandardButtons" qMessageBox'StandardButton
+let qMessageBox'StandardButtons = qflags qMessageBox'StandardButton "StandardButtons"
 let qWizard'WizardButton = qenum "QWizard" "WizardButton" [
   "BackButton";
   "NextButton";
@@ -1679,7 +1679,7 @@ let qWizard'WizardOption = qenum "QWizard" "WizardOption" [
   "HaveCustomButton3";
   "NoCancelButtonOnLastPage";
 ]
-let qWizard'WizardOptions = qflags "QWizard" "WizardOptions" qWizard'WizardOption
+let qWizard'WizardOptions = qflags qWizard'WizardOption "WizardOptions"
 let qGraphicsView'ViewportAnchor = qenum "QGraphicsView" "ViewportAnchor" [
   "NoAnchor";
   "AnchorViewCenter";
@@ -1689,7 +1689,7 @@ let qGraphicsView'CacheModeFlag = qenum "QGraphicsView" "CacheModeFlag" [
   "CacheNone";
   "CacheBackground";
 ]
-let qGraphicsView'CacheMode = qflags "QGraphicsView" "CacheMode" qGraphicsView'CacheModeFlag
+let qGraphicsView'CacheMode = qflags qGraphicsView'CacheModeFlag "CacheMode"
 let qGraphicsView'DragMode = qenum "QGraphicsView" "DragMode" [
   "NoDrag";
   "ScrollHandDrag";
@@ -1708,7 +1708,7 @@ let qGraphicsView'OptimizationFlag = qenum "QGraphicsView" "OptimizationFlag" [
   "DontAdjustForAntialiasing";
   "IndirectPainting";
 ]
-let qGraphicsView'OptimizationFlags = qflags "QGraphicsView" "OptimizationFlags" qGraphicsView'OptimizationFlag
+let qGraphicsView'OptimizationFlags = qflags qGraphicsView'OptimizationFlag "OptimizationFlags"
 let qAbstractItemView'SelectionMode = qenum "QAbstractItemView" "SelectionMode" [
   "NoSelection";
   "SingleSelection";
@@ -1736,7 +1736,7 @@ let qAbstractItemView'EditTrigger = qenum "QAbstractItemView" "EditTrigger" [
   "AnyKeyPressed";
   "AllEditTriggers";
 ]
-let qAbstractItemView'EditTriggers = qflags "QAbstractItemView" "EditTriggers" qAbstractItemView'EditTrigger
+let qAbstractItemView'EditTriggers = qflags qAbstractItemView'EditTrigger "EditTriggers"
 let qAbstractItemView'ScrollMode = qenum "QAbstractItemView" "ScrollMode" [
   "ScrollPerItem";
   "ScrollPerPixel";
@@ -1802,7 +1802,7 @@ let qTextEdit'AutoFormattingFlag = qenum "QTextEdit" "AutoFormattingFlag" [
   "AutoBulletList";
   "AutoAll";
 ]
-let qTextEdit'AutoFormatting = qflags "QTextEdit" "AutoFormatting" qTextEdit'AutoFormattingFlag
+let qTextEdit'AutoFormatting = qflags qTextEdit'AutoFormattingFlag "AutoFormatting"
 let qHeaderView'ResizeMode = qenum "QHeaderView" "ResizeMode" [
   "Interactive";
   "Stretch";
