@@ -1,5 +1,7 @@
-type 'flag set
 type 'flag t = private int64
+
+type primitive
+type 'a set = 'a t -> primitive
 
 val define : ('flag -> int64) -> 'flag set
 

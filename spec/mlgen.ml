@@ -200,6 +200,14 @@ let args_pos_nested_tuple oc = function
     fprintf oc " * _";
     List.iter (fun _ -> fprintf oc ")") xs
 
+let need_bc_wrapper cf =
+  match cf.desc with
+  | Constructor { args; _ } | Static_method { args; _ }  ->
+    List.length args > 5
+  | Dynamic_method { args; _ } ->
+    List.length args >= 5
+  | _ -> false
+
 let output_field oc cl = function
   | { desc = Constructor x; clss; _ } when clss != cl -> ()
   | cf ->
@@ -231,7 +239,11 @@ let output_field oc cl = function
       | Slot _ | Signal _ -> " [@@noalloc]"
       | _ -> ""
     in
-    fprintf oc " = %S%s\n" (Mangle.cfield cf) noalloc
+    let symbol = Mangle.cfield cf in
+    if need_bc_wrapper cf then
+      fprintf oc " = \"%s_bc\" \"%s\" %s\n" symbol symbol noalloc
+    else
+      fprintf oc " = \"%s\" %s\n" symbol noalloc
 
 let output_fields oc cl =
   let rec aux = function
@@ -258,7 +270,7 @@ let output_type oc = function
       | [] -> assert false
       | x :: xs ->
         fprintf oc "`%s" x;
-        List.iter (fprintf oc "| `%s") xs
+        List.iter (fprintf oc "|`%s") xs
     in
     fprintf oc "type %s = [%a]\n"
       (QEnum.ml_type en) members en.emembers
@@ -274,7 +286,7 @@ let output_impl oc = function
     fprintf oc "end\n"
   | QEnum _ -> ()
   | QFlags fl ->
-    fprintf oc "external %s : %s QFlags.set -> QFlags.opaque = %S\n"
+    fprintf oc "external %s : %s QFlags.t -> QFlags.primitive = %S\n"
       (QFlags.ml_type fl) (QFlags.ml_enum_type fl) (Mangle.qflags_def fl)
   | Custom _ -> ()
 
