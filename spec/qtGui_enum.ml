@@ -1,4 +1,4 @@
-open Mlspec
+open Mlspec.Decl
 
 let qTextLength'Type = qenum "QTextLength" "Type" [
   "VariableLength";

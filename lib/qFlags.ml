@@ -1,7 +1,8 @@
 type 'flag set = 'flag -> int64
 type 'flag t = int64
 
-let define (x : 'flag -> int64) : 'flag set = x
+type 'a primitive = 'a
+type 'a set = 'a primitive -> 'a t
 
 let empty = 0L
 

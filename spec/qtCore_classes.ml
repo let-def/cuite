@@ -1,4 +1,4 @@
-open Mlspec
+open Mlspec.Decl
 
 let qList name t =
   let self = qclass name in

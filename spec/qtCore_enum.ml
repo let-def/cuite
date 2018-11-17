@@ -1,4 +1,4 @@
-open Mlspec
+open Mlspec.Decl
 
 let qJsonParseError'ParseError = qenum "QJsonParseError" "ParseError" [
   "NoError";

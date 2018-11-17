@@ -1,33 +1,23 @@
 (executable
- (name gen_value)
+ (name driver)
  (modes byte)
- (modules gen_value)
+ (modules gen_classes gen_enum driver)
  (flags -w -9-33)
  (link_flags -linkall)
  (libraries spec))
 
 (executable
- (name driver)
+ (name mlgen)
  (modes byte)
- (modules flag_values gen_classes gen_enum driver)
+ (modules mlgen)
  (flags -w -9-33)
  (link_flags -linkall)
  (libraries spec))
 
-(rule
- (targets gen_value_cpp.cpp)
- (action
-   (with-stdout-to %{targets}
-     (run %{exe:gen_value.exe}))))
-
-(rule
- (targets gen_value_cpp.exe)
- (deps gen_value_cpp.cpp)
- (action
-   (run bash -c "g++ -fPIC `pkg-config --cflags --libs Qt5Gui Qt5Widgets` -DQT_KEYPAD_NAVIGATION -DQT_NO_VERSION_TAGGING -o %{targets} %{deps}")))
-
-(rule
- (targets flag_values.ml)
- (action
-   (with-stdout-to %{targets}
-     (run %{exe:gen_value_cpp.exe}))))
+(executable
+ (name cflagsgen)
+ (modes byte)
+ (modules cflagsgen)
+ (flags -w -9-33)
+ (link_flags -linkall)
+ (libraries spec))

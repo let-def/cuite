@@ -1,4 +1,4 @@
-open Mlspec
+open Mlspec.Decl
 
 let qTreeWidgetItem'ItemType = qenum "QTreeWidgetItem" "ItemType" [
   "Type";

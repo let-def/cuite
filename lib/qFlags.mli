@@ -1,9 +1,7 @@
 type 'flag t = private int64
 
-type primitive
-type 'a set = 'a t -> primitive
-
-val define : ('flag -> int64) -> 'flag set
+type 'a primitive
+type 'a set = 'a primitive -> 'a t
 
 val empty : _ t
 val is_empty : _ t -> bool

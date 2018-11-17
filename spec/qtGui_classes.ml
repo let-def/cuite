@@ -1,4 +1,4 @@
-open Mlspec
+open Mlspec.Decl
 open QtCore_classes
 
 let qAccessibleEditableTextInterface = qclass "QAccessibleEditableTextInterface"
