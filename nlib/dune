@@ -1,0 +1,31 @@
+(library
+ (name ncuite)
+ (flags -w -32)
+ (c_library_flags (-lcuite)))
+
+(rule
+ (targets flags.cpp.gen)
+ (action
+  (with-stdout-to flags.cpp.gen
+   (run %{exe:../gen/cflagsgen.exe}))))
+
+(rule
+ (targets cuite.ml)
+ (action
+  (with-stdout-to cuite.ml
+   (run %{exe:../gen/mlgen.exe}))))
+
+(rule
+ (deps 
+   ../cpp/cuite_gc.h
+   ../cpp/cuite_csupport.h  ../cpp/cuite_csupport.c
+   ../cpp/cuite_support.h   ../cpp/cuite_support.cpp
+   ../cpp/cuite_models.cpp  ../cpp/cuite_select.cpp
+   ../cpp/cuite_variant.h   ../cpp/cuite_variant.cpp
+   ../cpp/cuite_wrappers.h  ../cpp/cuite_wrappers.cpp
+   ../cpp/cuite_const.h
+   ../cpp/cuite_stubs.h     ../cpp/cuite_stubs.cpp
+   flags.cpp.gen flags.cpp
+   Makefile.libcuite)
+ (targets libncuite.so)
+ (action (run %{make} -j4 -f Makefile.libcuite %{targets})))

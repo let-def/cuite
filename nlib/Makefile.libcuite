@@ -1,0 +1,29 @@
+OCAMLC=ocamlc.opt -g
+OCAMLOPT=ocamlopt.opt -g
+CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -DQT_NO_VERSION_TAGGING -I ../cpp -I .
+
+all: libcuite.so
+
+## C++ COMPILATION
+
+CPP_SOURCES= flags.cpp
+
+CPP_OBJECTS=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
+
+%.o: ../cpp/%.cpp ../cpp/%.h %.gen.h
+	$(CXX) -c $<
+
+%.o: ../cpp/%.cpp ../cpp/%.h
+	$(CXX) -c $<
+
+%.o: ../cpp/%.cpp
+	$(CXX) -c $<
+
+%.o: ../cpp/%.c ../cpp/%.h
+	$(OCAMLC) -ccopt -fPIC -c $<
+
+%.o: ../cpp/%.c
+	$(OCAMLC) -ccopt -fPIC -c $<
+
+libncuite.so: $(CPP_OBJECTS) #$(patsubst %,../cpp/%,$(CPP_OBJECTS))
+	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $(CPP_OBJECTS)
