@@ -7,10 +7,16 @@ type qtype =
   | QClass of qclass
   | QEnum  of qenum
   | QFlags of qflags
-  | Custom of { ml_decl : string; ml_name : string; ml_negname : string }
+  | Custom of { ml_decl : string; ml_name : string; ml_negname : string;
+                cpp_name : string; cpp_negname : string }
+
 val eq_typ : qtype -> qtype -> bool
 
-type argument_type = Value of qtype | Optional of qtype
+type argument_type =
+  | Value of qtype
+  | Optional of qtype
+  | ConstRef of qtype
+
 type argument = string * argument_type
 val eq_arg : argument -> argument -> bool
 
@@ -24,12 +30,14 @@ type cfield_desc =
 
 module Decl : sig
   val mlname_type : qtype -> string
-  val custom_type : ?decl:string -> ?ml_neg:string -> ?cpp_name:'b -> string -> qtype
+  val custom_type : ?decl:string -> ?ml_neg:string -> ?cpp_neg:string -> ?cpp_name:string -> string -> qtype
   val qtype_name : qtype -> string
   val qclass_of_typ : qtype -> qclass
   val qenum_of_typ : qtype -> qenum
   val qflags_of_typ : qtype -> qflags
-  val qclass : ?extend:qtype -> string -> qtype
+  val qclass : string -> qtype
+  val qstruct : string -> qtype
+  val qextends : string -> qtype -> qtype
   val constructor : ?custom:bool -> string -> argument list -> cl:qtype -> unit
   val dynamic :
     ?kind:[ `Custom | `Normal | `Protected ] ->
@@ -68,6 +76,7 @@ module Decl : sig
 end
 
 module QClass : sig
+  val kind : qclass -> [`By_ref | `By_val]
   val extends : qclass -> qclass option
   val iter_fields : qclass -> (cfield -> unit) -> unit
 
@@ -75,6 +84,7 @@ module QClass : sig
   val ml_shadow_type : qclass -> string
   val ml_shadow_variant : qclass -> string
 
+  val cpp_type : qclass -> string
   val c_base_symbol : qclass -> string
 
   val c_field_base_symbol : cfield -> string
@@ -87,8 +97,9 @@ module QClass : sig
 end
 
 module QEnum : sig
-  val c_type : qenum -> string
   val ml_type : qenum -> string
+  val cpp_type : qenum -> string
+  val c_base_symbol : qenum -> string
 
   type member
   val ml_member_constructor : member -> string
@@ -102,6 +113,7 @@ end
 
 module QFlags : sig
   val enum : qflags -> qenum
+  val cpp_type : qflags -> string
   val ml_type : qflags -> string
   val ml_enum_type : qflags -> string
   val c_symbol : qflags -> string

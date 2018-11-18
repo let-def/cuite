@@ -1,3 +1,4 @@
+open Utils
 type 'a dlist = 'a Dlist.t
 
 let failwithf fmt =
@@ -5,7 +6,7 @@ let failwithf fmt =
 
 type qclass_def = {
   cl_name: string;
-  cl_extend: qclass_def option;
+  cl_kind: [`By_ref | `By_val | `Extends of qclass_def];
   cl_fields: cfield dlist;
 }
 
@@ -27,6 +28,7 @@ and qflags = qflags_def
 and argument_type =
   | Value of qtype
   | Optional of qtype
+  | ConstRef of qtype
 
 and argument = string * argument_type
 
@@ -34,7 +36,8 @@ and qtype =
   | QClass of qclass
   | QEnum  of qenum
   | QFlags of qflags
-  | Custom of { ml_decl : string; ml_name : string; ml_negname : string }
+  | Custom of { ml_decl : string; ml_name : string; ml_negname : string;
+                cpp_name : string; cpp_negname : string }
 
 and cfield = {
   clss: qclass_def;
@@ -75,12 +78,15 @@ module Decl = struct
     | QFlags u -> u.fname
     | Custom u -> u.ml_name
 
-  let custom_type ?(decl="") ?ml_neg ?cpp_name ml_name =
+  let custom_type ?decl ?ml_neg ?cpp_neg ?cpp_name ml_name =
+    let ml_decl =  option_value decl ~default:"" in
     let ml_negname = match ml_neg with
       | None -> ml_name
       | Some mltype -> mltype
     in
-    let t = Custom { ml_decl = decl; ml_name; ml_negname } in
+    let cpp_name = option_value cpp_name ~default:ml_name in
+    let cpp_negname = option_value cpp_neg ~default:cpp_name in
+    let t = Custom { ml_decl; ml_name; ml_negname; cpp_name; cpp_negname } in
     Dlist.append all_types t;
     t
 
@@ -102,15 +108,22 @@ module Decl = struct
     | QFlags x -> x
     | typ -> failwithf "Type %s is not flags" (qtype_name typ)
 
-  let qclass ?extend cl_name =
-    let cl_extend = match extend with
-      | Some t ->
-        let cl' = qclass_of_typ t in
-        Some cl'
-      | None -> None
-    in
+  let qclass cl_name =
     let cl_fields = Dlist.empty () in
-    let cl = QClass { cl_name; cl_extend; cl_fields } in
+    let cl = QClass { cl_name; cl_kind = `By_ref; cl_fields } in
+    Dlist.append all_types cl;
+    cl
+
+  let qstruct cl_name =
+    let cl_fields = Dlist.empty () in
+    let cl = QClass { cl_name; cl_kind = `By_val; cl_fields } in
+    Dlist.append all_types cl;
+    cl
+
+  let qextends cl_name cl =
+    let cl = qclass_of_typ cl in
+    let cl_fields = Dlist.empty () in
+    let cl = QClass { cl_name; cl_kind = `Extends cl; cl_fields } in
     Dlist.append all_types cl;
     cl
 
@@ -134,9 +147,9 @@ module Decl = struct
           | _ -> false
         ) (Dlist.read cl'.cl_fields)
       then prerr_endline ("Duplicate method: {" ^ cl'.cl_name ^ "," ^ cl.cl_name ^ "}::" ^ name)
-      else match cl'.cl_extend with
-        | None -> ()
-        | Some cl' -> is_dup cl'
+      else match cl'.cl_kind with
+        | `By_ref | `By_val -> ()
+        | `Extends cl' -> is_dup cl'
     in
     is_dup cl;
     Dlist.append cl.cl_fields
@@ -190,26 +203,34 @@ module Decl = struct
     Dlist.append all_types t;
     t
 
-  let qString     = custom_type "string"
+  let qString     = custom_type  "string"
+      ~cpp_neg:"const QString&" ~cpp_name:"QString"
   let string      = qString
   let pchar       = custom_type "string"
   let nativeint   = custom_type "nativeint"
   let double      = float
   let qreal       = float
   let qint64      = custom_type "int64"
-  let qRect       = custom_type "qRect"
-  let qRectF      = custom_type "qRectF"
-  let qPoint      = custom_type "qPoint"
-  let qPointF     = custom_type "qPointF"
-  let qSize       = custom_type "qSize"
-  let qSizeF      = custom_type "qSizeF"
+  let qRect       = custom_type ~cpp_name:"QRect"   "qRect"
+  let qRectF      = custom_type ~cpp_name:"QRectF"  "qRectF"
+  let qPoint      = custom_type ~cpp_name:"QPoint"  "qPoint"
+  let qPointF     = custom_type ~cpp_name:"QPointF" "qPointF"
+  let qSize       = custom_type ~cpp_name:"QSize"   "qSize"
+  let qSizeF      = custom_type ~cpp_name:"QSizeF"  "qSizeF"
 end
 
 open Mangle
 
 module QClass = struct
+  let rec kind cl =
+    match cl.cl_kind with
+    | `By_ref | `By_val as x -> x
+    | `Extends cl -> kind cl
+
   let extends cl =
-    cl.cl_extend
+    match cl.cl_kind with
+    | `By_ref | `By_val -> None
+    | `Extends cl -> Some cl
 
   let iter_fields cl f =
     Dlist.iter cl.cl_fields f
@@ -222,6 +243,9 @@ module QClass = struct
 
   let ml_shadow_variant cl =
     "`" ^ ident cl.cl_name
+
+  let cpp_type cl =
+    cl.cl_name
 
   let c_base_symbol cl =
     cident cl.cl_name
@@ -280,7 +304,7 @@ module QClass = struct
 end
 
 module QEnum = struct
-  let c_type qe =
+  let cpp_type qe =
     qe.enamespace ^ "::" ^ qe.ename
 
   let ml_type qe =
@@ -296,10 +320,15 @@ module QEnum = struct
   let cpp_qualified_member (qe, mem) =
     qe.enamespace ^ "::" ^ mem
 
+  let c_base_symbol qe =
+    cident (cpp_type qe)
 end
 
 module QFlags = struct
   let enum qf = qf.fenum
+
+  let cpp_type qf =
+    qf.fenum.enamespace ^ "::" ^ qf.fname
 
   let ml_type qf =
     lident qf.fenum.enamespace ^ "'" ^ ident qf.fname

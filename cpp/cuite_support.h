@@ -6,7 +6,7 @@
 #include "caml/custom.h"
 #include "caml/fail.h"
 
-#define external extern "C"
+#define external extern "C" CAMLprim
 
 int cuite_is_logging(void);
 
@@ -117,24 +117,24 @@ external value cuite_metaobject_cast(value vobj, value vmeta);
     return cuite_QMetaObject_to_ocaml(&name::staticMetaObject);            \
   }
 
-#define CUITE_SLOT(class_name, slot_name, proto)                           \
-  external value cuite_slot_##class_name##_##slot_name(value unit)         \
+#define CUITE_SLOT(symbol, proto)                                          \
+  external value symbol(value unit)                                        \
   {                                                                        \
     static cuiteslot slot = { .name = SLOT(proto) };                       \
     return cuite_slot_to_ocaml(slot);                                      \
   }
 
-#define CUITE_SIGNAL(class_name, mangled_name, signal_name, proto, cb)     \
+#define CUITE_SIGNAL(symbol, class_name, signal_name, proto, cb)           \
   static QMetaObject::Connection                                           \
-  connect_signal_##class_name##_##mangled_name(QObject *obj, intnat *cbid) \
+  connect_##symbol(QObject *obj, intnat *cbid) \
   {                                                                        \
     return QObject::connect((class_name*)obj, signal_name, cb);            \
   }                                                                        \
-  external value cuite_signal_##class_name##_##mangled_name(value unit)    \
+  external value symbol(value unit)    \
   {                                                                        \
     static cuitesignal signal = {                                          \
       .name = SIGNAL(proto),                                               \
-      .connect = connect_signal_##class_name##_##mangled_name,             \
+      .connect = connect_##symbol,                                         \
     };                                                                     \
     return cuite_signal_to_ocaml(signal);                                  \
   }

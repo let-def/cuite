@@ -1,16 +1,11 @@
+open Utils
 open Mlspec
 open Mangle
 
 (* TODO
-   - factor out printing functions
    - replace "Invalid_value"/fallback by some abstraction
    - ...
 *)
-
-let fprintf = Printf.fprintf
-
-let println oc fmt =
-  Printf.kfprintf (fun oc -> output_char oc '\n') oc fmt
 
 let ml_postype oc = function
   | QClass cl -> fprintf oc "%s qt" (QClass.ml_shadow_type cl)
@@ -25,11 +20,11 @@ let ml_negtype oc = function
   | Custom x  -> fprintf oc "%s" x.ml_negname
 
 let ml_argtype oc = function
-  | _, Value typ    -> fprintf oc "%a" ml_negtype typ
+  | _, (Value typ | ConstRef typ) -> fprintf oc "%a" ml_negtype typ
   | _, Optional typ -> fprintf oc "%a option" ml_negtype typ
 
 let ml_argpostype oc = function
-  | _, Value typ    -> fprintf oc "%a" ml_postype typ
+  | _, (Value typ | ConstRef typ) -> fprintf oc "%a" ml_postype typ
   | _, Optional typ -> fprintf oc "%a option" ml_postype typ
 
 let arrow oc (lhs, rhs) =
@@ -70,23 +65,6 @@ let args_pos_nested_tuple oc = function
     fprintf oc " * _";
     List.iter (fun _ -> fprintf oc ")") xs
 
-let gen_bc_wrapper oc symbol arity =
-  assert (arity > 5);
-  println oc "external value %s_bc(value *argv, int argvn)" symbol;
-  println oc "{";
-  println oc "  cuite_assert(argvn == %d);" arity;
-  let args =
-    let rec aux n = if n = arity then [] else n :: aux (n + 1) in aux 0
-  in
-  let args = String.concat "," (List.map (Printf.sprintf "argv[%d]") args) in
-  println oc "  return %s(%s);" symbol args;
-  println oc "}"
-
-let output_bc_wrapper oc cf =
-  match stub_arity cf with
-  | Some n -> gen_bc_wrapper oc (QClass.c_field_base_symbol cf) n
-  | None -> assert false
-
 let output_field oc cl cf =
   match QClass.field_desc cf with
   | Constructor _ when QClass.field_class cf != cl -> ()
@@ -120,7 +98,7 @@ let output_field oc cl cf =
       | _ -> ""
     in
     let symbol = QClass.c_field_base_symbol cf in
-    if need_bc_wrapper cf then
+    if QClass.need_bc_wrapper cf then
       fprintf oc " = \"%s_bc\" \"%s\" %s\n" symbol symbol noalloc
     else
       fprintf oc " = \"%s\" %s\n" symbol noalloc

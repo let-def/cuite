@@ -15,6 +15,14 @@
  (libraries spec))
 
 (executable
+ (name cgen)
+ (modes byte)
+ (modules cgen)
+ (flags -w -9-33)
+ (link_flags -linkall)
+ (libraries spec))
+
+(executable
  (name cflagsgen)
  (modes byte)
  (modules cflagsgen)

@@ -6,7 +6,7 @@ all: libcuite.so
 
 ## C++ COMPILATION
 
-CPP_SOURCES= flags.cpp
+CPP_SOURCES= main.cpp
 
 CPP_OBJECTS=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 

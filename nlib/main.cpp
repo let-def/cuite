@@ -1,10 +1,14 @@
 #include <caml/alloc.h>
+#include <caml/memory.h>
 #include <QtWidgets>
 
 #include "cuite_csupport.h"
+#include "cuite_support.h"
+#include "cuite_wrappers.h"
 
-#define external extern "C" CAMLprim
 #define HASH_Invalid_value -965933879
+
+#define cuite_QFlags_to_ocaml(x) caml_copy_int64((int64_t)x)
 
 static void fallback_enum(value &result, long v)
 {
@@ -19,3 +23,4 @@ static value fallback_flag(value member)
 }
 
 #include "flags.cpp.gen"
+#include "slot.cpp.gen"
