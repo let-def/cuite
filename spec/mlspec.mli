@@ -12,12 +12,12 @@ type qtype =
 
 val eq_typ : qtype -> qtype -> bool
 
-type argument_type =
-  | Value of qtype
-  | Optional of qtype
-  | ConstRef of qtype
+type argument_modifier =
+  | Value
+  | Optional
+  | ConstRef
 
-type argument = string * argument_type
+type argument = string * argument_modifier * qtype
 val eq_arg : argument -> argument -> bool
 
 type cfield_desc =
@@ -49,8 +49,9 @@ module Decl : sig
     ?protected:bool -> string -> argument list -> cl:qtype -> unit
   val signal : ?private_:bool -> string -> argument list -> cl:qtype -> unit
   val with_class : 'a -> (cl:'a -> unit) list -> unit
-  val arg : 'a -> qtype -> 'a * argument_type
-  val opt : 'a -> qtype -> 'a * argument_type
+  val arg : string -> qtype -> argument
+  val opt : string -> qtype -> argument
+  val const_ref : string -> qtype -> argument
 
   val qenum : string -> string -> string list -> qtype
   val qflags : qtype -> string -> qtype

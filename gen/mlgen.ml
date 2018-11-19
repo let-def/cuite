@@ -19,13 +19,15 @@ let ml_negtype oc = function
   | QFlags fl -> fprintf oc "%s" (QFlags.ml_type fl)
   | Custom x  -> fprintf oc "%s" x.ml_negname
 
-let ml_argtype oc = function
-  | _, (Value typ | ConstRef typ) -> fprintf oc "%a" ml_negtype typ
-  | _, Optional typ -> fprintf oc "%a option" ml_negtype typ
+let ml_argtype oc (_, md, typ) =
+  match md with
+  | Value | ConstRef -> fprintf oc "%a" ml_negtype typ
+  | Optional -> fprintf oc "%a option" ml_negtype typ
 
-let ml_argpostype oc = function
-  | _, (Value typ | ConstRef typ) -> fprintf oc "%a" ml_postype typ
-  | _, Optional typ -> fprintf oc "%a option" ml_postype typ
+let ml_argpostype oc (_, md, typ) =
+  match md with
+  | Value | ConstRef -> fprintf oc "%a" ml_postype typ
+  | Optional -> fprintf oc "%a option" ml_postype typ
 
 let arrow oc (lhs, rhs) =
   begin match lhs with
@@ -77,7 +79,7 @@ let output_field oc cl cf =
           arrow (x.args, Some (QClass cl))
       | Dynamic_method x ->
         fprintf oc "  external %s : %a"
-          (lident name) arrow (("self", Value (QClass cl)) :: x.args, x.ret)
+          (lident name) arrow (Decl.arg "self" (QClass cl) :: x.args, x.ret)
       | Static_method x ->
         fprintf oc "  external %s : %a"
           (lident name) arrow (x.args, x.ret)

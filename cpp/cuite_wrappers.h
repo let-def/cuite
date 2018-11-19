@@ -57,6 +57,7 @@ CUITE_PTR_CONVERTER(QItemSelection);
 CUITE_PTR_CONVERTER(QModelIndexList);
 CUITE_PTR_CONVERTER(QModelIndex);
 value& cuite_QModelIndex_to_ocaml(const QModelIndex& v);
+value& cuite_QUrl_to_ocaml(const QUrl& v);
 CUITE_PTR_CONVERTER(QPainterPath);
 CUITE_PTR_CONVERTER(QPalette);
 CUITE_PTR_CONVERTER(QRegExp);

@@ -2587,7 +2587,7 @@ let () = with_class qFontDialog [
     slot "_q_updateSample" [];
     slot "_q_writingSystemHighlighted" [arg "" int];
     signal "currentFontChanged" [arg "" qFont];
-    signal "fontSelected" [arg "" qFont];
+    signal "fontSelected" [const_ref "" qFont];
   ]
 let () = with_class qInputDialog [
     constructor "" [opt "parent" qWidget;arg "flags" qt'WindowFlags];
@@ -2931,7 +2931,7 @@ let () = with_class qPlainTextEdit [
     dynamic "copyAvailable" [arg "yes" bool];
     dynamic "selectionChanged" [];
     dynamic "cursorPositionChanged" [];
-    dynamic "updateRequest" [arg "rect" qRect;arg "dy" int];
+    dynamic "updateRequest" [const_ref "rect" qRect;arg "dy" int];
     dynamic "blockCountChanged" [arg "newBlockCount" int];
     dynamic "modificationChanged" [arg "changed" bool];
     slot "appendHtml" [arg "" qString];
@@ -2962,7 +2962,7 @@ let () = with_class qPlainTextEdit [
     signal "selectionChanged" [];
     signal "textChanged" [];
     signal "undoAvailable" [arg "" bool];
-    signal "updateRequest" [arg "" qRect;arg "" int];
+    signal "updateRequest" [const_ref "" qRect;arg "" int];
   ]
 let () = with_class qScrollArea [
     constructor "" [opt "parent" qWidget];
@@ -3002,7 +3002,7 @@ let () = with_class qTextBrowser [
     dynamic "forwardAvailable" [arg "available" bool];
     dynamic "historyChanged" [];
     dynamic "sourceChanged" [arg "src" qUrl];
-    dynamic "highlighted" [arg "link" qUrl];
+    dynamic "highlighted" [opt "link" qUrl];
     dynamic "highlighted" [arg "link" qString];
     dynamic "anchorClicked" [arg "link" qUrl];
     slot "backward" [];
@@ -5577,7 +5577,7 @@ let () = with_class qAbstractItemView [
     signal "clicked" [arg "" qModelIndex];
     signal "doubleClicked" [arg "" qModelIndex];
     signal "entered" [arg "" qModelIndex];
-    signal "iconSizeChanged" [arg "" qSize];
+    signal "iconSizeChanged" [const_ref "" qSize];
     signal "pressed" [arg "" qModelIndex];
     signal "viewportEntered" [];
   ]

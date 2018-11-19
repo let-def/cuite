@@ -25,12 +25,12 @@ and qclass = qclass_def
 and qenum  = qenum_def
 and qflags = qflags_def
 
-and argument_type =
-  | Value of qtype
-  | Optional of qtype
-  | ConstRef of qtype
+and argument_modifier =
+  | Value
+  | Optional
+  | ConstRef
 
-and argument = string * argument_type
+and argument = string * argument_modifier * qtype
 
 and qtype =
   | QClass of qclass
@@ -62,11 +62,8 @@ let eq_typ (typ : qtype) (typ' : qtype) =
   | Custom u , Custom v -> u.ml_name = v.ml_name && u.ml_negname = v.ml_negname
   | _ -> false
 
-let eq_arg (_,t : argument) (_,u : argument) =
-  match t, u with
-  | Value t, Value u -> eq_typ t u
-  | Optional t, Optional u -> eq_typ t u
-  | _ -> false
+let eq_arg (_,m,t : argument) (_,n,u : argument) =
+  if m = n then eq_typ t u else false
 
 module Decl = struct
   let all_types = Dlist.empty ()
@@ -186,12 +183,13 @@ module Decl = struct
   let with_class cl fields =
     List.iter (fun f -> f ~cl) fields
 
-  let arg name typ = (name, Value typ)
-  let opt name typ = (name, Optional typ)
+  let arg name typ = (name, Value, typ)
+  let opt name typ = (name, Optional, typ)
+  let const_ref name typ = (name, ConstRef, typ)
 
   let int = custom_type "int"
   let bool = custom_type "bool"
-  let float = custom_type "float"
+  let float = custom_type "float" ~cpp_name:"double"
 
   let qenum enamespace ename emembers =
     let t = QEnum {enamespace; ename; emembers} in
