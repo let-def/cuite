@@ -2,77 +2,94 @@ open Utils
 open Mlspec
 open Mangle
 
+let cpp_rawtype ?(polarity : [`neg|`pos] = `neg) = function
+  | QClass cl -> QClass.cpp_type cl
+  | QEnum en  -> QEnum.cpp_type en
+  | QFlags fl -> QFlags.cpp_type fl
+  | Custom x  ->
+    begin match polarity with
+      | `neg -> x.cpp_negname
+      | `pos -> x.cpp_name
+    end
+
+let cpp_argtype ?polarity arg =
+  let raw = cpp_rawtype ?polarity arg.arg_typ in
+  match arg.arg_mod with
+  | `Optional -> raw ^ "*"
+  | `Direct -> raw
+  | `Const -> "const " ^ raw
+  | `Ref -> raw ^ "&"
+  | `Pointer -> raw ^ "*"
+  | `Const_ref -> "const " ^ raw ^ "&"
+
 let rec root_class cl =
   match QClass.extends cl with
   | None -> cl
   | Some cl' -> root_class cl'
 
-let cpp_to_ocaml_fun = function
-  | QClass cl -> Printf.sprintf "cuite_%s_to_ocaml"
-                   (QClass.cpp_type (root_class cl))
-  | QEnum  en -> "cuite_" ^ QEnum.c_base_symbol en ^ "_to_ocaml"
-  | QFlags fl -> "cuite_flag_to_ocaml"
-  | Custom x  -> "cuite_" ^ x.cpp_name ^ "_to_ocaml"
+let modifier_kind = function
+  | `Optional  -> `By_ref
+  | `Direct    -> `By_val
+  | `Const     -> `By_val
+  | `Ref       -> `By_val
+  | `Pointer   -> `By_ref
+  | `Const_ref -> `By_val
 
-let cpp_postype = function
-  | QClass cl ->
-    let typ = QClass.cpp_type cl in
-    begin match QClass.kind cl with
-      | `By_ref -> typ ^ "*"
-      | `By_val -> typ
-    end
-  | QEnum  en -> QEnum.cpp_type en
-  | QFlags fl -> QFlags.cpp_type fl
-  | Custom x  -> x.cpp_name
+let cpp_to_ocaml md typ expr =
+  let base_fn = match typ with
+    | QClass cl -> Printf.sprintf "cuite_%s_to_ocaml"
+                     (QClass.cpp_type (root_class cl))
+    | QEnum  en -> "cuite_" ^ QEnum.c_base_symbol en ^ "_to_ocaml"
+    | QFlags fl -> "cuite_flag_to_ocaml"
+    | Custom x  -> "cuite_" ^ Mangle.cident x.cpp_name ^ "_to_ocaml"
+  in
+  let pre =
+    match Decl.qtype_kind typ, modifier_kind md with
+    | `By_ref, `By_ref -> ""
+    | `By_val, `By_val -> ""
+    | `By_ref, `By_val -> "&"
+    | `By_val, `By_ref -> "*"
+  in
+  Printf.sprintf "%s(%s(%s))" base_fn pre expr
 
-type neg_modifier =
-  | Direct
-  | ConstRef
-  | Pointer
+let cpp_arg_to_ocaml_fun arg expr =
+  cpp_to_ocaml arg.arg_mod arg.arg_typ expr
 
-let cpp_default_neg_modifier = function
-  | QClass cl -> (match QClass.kind cl with
-      | `By_ref -> Pointer
-      | `By_val -> ConstRef)
-  | QEnum  _ -> Direct
-  | QFlags _ -> Direct
-  | Custom _ -> Direct
+let cpp_from_ocaml md typ expr =
+  let base_fn = match typ with
+    | QClass cl ->
+      let root = root_class cl in
+      if cl != root then
+        match QClass.kind cl with
+        | `By_ref ->
+          Printf.sprintf "(%s*)cuite_%s_from_ocaml"
+            (QClass.cpp_type cl) (QClass.cpp_type root)
+        | `By_val ->
+          Printf.sprintf "*(%s*)&cuite_%s_from_ocaml"
+            (QClass.cpp_type cl) (QClass.cpp_type root)
+      else
+        Printf.sprintf "cuite_%s_from_ocaml" (QClass.cpp_type cl)
+    | QEnum  en -> "cuite_" ^ QEnum.c_base_symbol en ^ "_from_ocaml"
+    | QFlags fl -> "cuite_flag_from_ocaml"
+    | Custom x  -> "cuite_" ^ Mangle.cident x.cpp_name ^ "_from_ocaml"
+  in
+  let pre =
+    match Decl.qtype_kind typ, modifier_kind md with
+    | `By_ref, `By_ref -> ""
+    | `By_val, `By_val -> ""
+    | `By_ref, `By_val -> "*"
+    | `By_val, `By_ref -> "&"
+  in
+  Printf.sprintf "(%s(%s(%s)))"
+    pre base_fn expr
 
-let apply_modifier md typ =
-  match md with
-  | Mlspec.Value -> cpp_default_neg_modifier typ
-  | Mlspec.ConstRef -> ConstRef
-  | Mlspec.Optional -> Pointer
+let cpp_arg_from_ocaml_fun arg expr =
+  cpp_from_ocaml arg.arg_mod arg.arg_typ expr
 
-let cpp_rawtype = function
-  | QClass cl -> QClass.cpp_type cl
-  | QEnum en  -> QEnum.cpp_type en
-  | QFlags fl -> QFlags.cpp_type fl
-  | Custom x  -> x.cpp_negname
-
-let cpp_arg_to_ocaml_fun (_,_,typ) =
-  cpp_to_ocaml_fun typ
-
-let cpp_from_ocaml_fun deref = function
-  | QClass cl ->
-    let deref = deref || QClass.kind cl = `By_val in
-    Printf.sprintf "%s(%s*)cuite_%s_from_ocaml"
-      (if deref then "*" else "")
-      (QClass.cpp_type cl)
-      (QClass.cpp_type (root_class cl))
-  | QEnum  en -> "cuite_" ^ QEnum.c_base_symbol en ^ "_from_ocaml"
-  | QFlags fl -> "cuite_flag_from_ocaml"
-  | Custom x  -> "cuite_" ^ x.cpp_name ^ "_from_ocaml"
-
-let cpp_arg_from_ocaml_fun (_,md,typ : argument) =
-  cpp_from_ocaml_fun (md = ConstRef) typ
-
-let cpp_argtype (_, md, typ) =
-  let raw = cpp_rawtype typ in
-  match apply_modifier md typ with
-  | Direct   -> raw
-  | ConstRef -> "const " ^ raw ^ "&"
-  | Pointer  -> raw ^ "*"
+(*let cpp_argtype arg =
+  match modifier_kind arg.arg_mod with
+  | `By_ref -> cpp_rawtype ~polarity:`pos arg.arg_typ ^ "*"
+  | `By_val -> cpp_rawtype ~polarity:`pos arg.arg_typ*)
 
 let gen_args fmt n =
   let rec aux i = if i = n then [] else Printf.sprintf fmt i :: aux (i + 1) in
@@ -111,14 +128,24 @@ let gen_stub oc cf =
       (println oc "  value& %s = cuite_region_register(%s);") mlvals mlargs;
     let cvals = gen_args "cval%d" arity in
     List.iter2 (fun (cval,mlval) arg ->
-        println oc "  %s %s(%s(%s));"
+        println oc "  %s %s(%s);"
           (cpp_argtype arg) cval
-          (cpp_arg_from_ocaml_fun arg) mlval
+          (cpp_arg_from_ocaml_fun arg mlval)
       ) (List.combine cvals mlvals) args;
-    println oc "  return %s(new %s(%s));"
-      (cpp_to_ocaml_fun (QClass cl))
-      (QClass.cpp_type cl)
-      (String.concat "," cvals);
+    begin match QClass.kind cl with
+      | `By_val ->
+        println oc "  return %s;"
+          (cpp_to_ocaml `Direct (QClass cl)
+             (Printf.sprintf "%s(%s)"
+                (QClass.cpp_type cl)
+                (String.concat "," cvals)))
+      | `By_ref ->
+        println oc "  return %s;"
+          (cpp_to_ocaml `Pointer (QClass cl)
+             (Printf.sprintf "new %s(%s)"
+                (QClass.cpp_type cl)
+                (String.concat "," cvals)))
+    end;
     println oc "}\n"
   | Dynamic_method _ -> () (* TODO *)
   | Static_method  _ -> () (* TODO *)
@@ -137,12 +164,12 @@ let gen_stub oc cf =
     begin match args, cargs with
       | [], [] -> println oc "  arg = Val_unit;";
       | [argtyp0], [arg0] ->
-        println oc "  arg = %s(%s);" (cpp_arg_to_ocaml_fun argtyp0) arg0;
+        println oc "  arg = %s;" (cpp_arg_to_ocaml_fun argtyp0 arg0);
       | _ ->
         println oc "  arg = caml_alloc_tuple(%d);" (List.length args);
         List.iteri (fun i (argtyp, carg) ->
-            println oc "Store_field(arg, %d, %s(%s));"
-              i (cpp_arg_to_ocaml_fun argtyp) carg
+            println oc "Store_field(arg, %d, %s);"
+              i (cpp_arg_to_ocaml_fun argtyp carg)
           ) (List.combine args cargs);
     end;
     println oc "  cuitecb_call(cbid, arg);";

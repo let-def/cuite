@@ -4,10 +4,22 @@ type 'a dlist = 'a Dlist.t
 let failwithf fmt =
   Printf.ksprintf failwith fmt
 
+type type_kind = [ `By_ref | `By_val ]
+
+type argument_modifier =
+  [ `Direct
+  | `Pointer
+  | `Const
+  | `Const_ref
+  | `Ref
+  | `Optional
+  ]
+
 type qclass_def = {
   cl_name: string;
-  cl_kind: [`By_ref | `By_val | `Extends of qclass_def];
+  cl_kind: [type_kind | `Extends of qclass_def];
   cl_fields: cfield dlist;
+  cl_default_mod: argument_modifier;
 }
 
 and qenum_def = {
@@ -25,19 +37,20 @@ and qclass = qclass_def
 and qenum  = qenum_def
 and qflags = qflags_def
 
-and argument_modifier =
-  | Value
-  | Optional
-  | ConstRef
-
-and argument = string * argument_modifier * qtype
+and argument = {
+  arg_name : string;
+  arg_mod : argument_modifier;
+  arg_typ : qtype;
+}
 
 and qtype =
   | QClass of qclass
   | QEnum  of qenum
   | QFlags of qflags
   | Custom of { ml_decl : string; ml_name : string; ml_negname : string;
-                cpp_name : string; cpp_negname : string }
+                cpp_name : string; cpp_negname : string;
+                cpp_kind : type_kind; cpp_default_mod : argument_modifier;
+              }
 
 and cfield = {
   clss: qclass_def;
@@ -62,8 +75,8 @@ let eq_typ (typ : qtype) (typ' : qtype) =
   | Custom u , Custom v -> u.ml_name = v.ml_name && u.ml_negname = v.ml_negname
   | _ -> false
 
-let eq_arg (_,m,t : argument) (_,n,u : argument) =
-  if m = n then eq_typ t u else false
+let eq_arg a1 a2 =
+  (a1.arg_mod = a2.arg_mod) && (eq_typ a1.arg_typ a2.arg_typ)
 
 module Decl = struct
   let all_types = Dlist.empty ()
@@ -75,17 +88,41 @@ module Decl = struct
     | QFlags u -> u.fname
     | Custom u -> u.ml_name
 
-  let custom_type ?decl ?ml_neg ?cpp_neg ?cpp_name ml_name =
-    let ml_decl =  option_value decl ~default:"" in
-    let ml_negname = match ml_neg with
-      | None -> ml_name
-      | Some mltype -> mltype
-    in
-    let cpp_name = option_value cpp_name ~default:ml_name in
+  let kind_default_modifier = function
+    | `By_val -> `Direct
+    | `By_ref -> `Pointer
+
+  let custom_type
+      ?(kind=`By_val) ?(modifier=kind_default_modifier kind)
+      ?(ml_decl="") ?ml_neg ?ml_name
+      ?cpp_neg cpp_name
+    =
+    let ml_name = option_value ml_name ~default:(Mangle.lident cpp_name) in
+    let ml_negname = option_value ml_neg ~default:ml_name in
     let cpp_negname = option_value cpp_neg ~default:cpp_name in
-    let t = Custom { ml_decl; ml_name; ml_negname; cpp_name; cpp_negname } in
+    let t = Custom { ml_decl; ml_name; ml_negname;
+                     cpp_name; cpp_negname;
+                     cpp_kind = kind; cpp_default_mod = modifier
+                   } in
     Dlist.append all_types t;
     t
+
+  let rec class_kind cl =
+    match cl.cl_kind with
+    | `By_ref | `By_val as x -> x
+    | `Extends cl -> class_kind cl
+
+  let qtype_kind qt = match qt with
+    | QClass u -> class_kind u
+    | QEnum  _ -> `By_val
+    | QFlags _ -> `By_val
+    | Custom u -> u.cpp_kind
+
+  let qtype_modifier qt = match qt with
+    | QClass u -> u.cl_default_mod
+    | QEnum  _ -> `Direct
+    | QFlags _ -> `Direct
+    | Custom u -> u.cpp_default_mod
 
   let qtype_name = function
     | QClass cl -> cl.cl_name
@@ -105,22 +142,27 @@ module Decl = struct
     | QFlags x -> x
     | typ -> failwithf "Type %s is not flags" (qtype_name typ)
 
-  let qclass cl_name =
+  let qclass ?(kind=`By_ref) ?(modifier=kind_default_modifier kind) cl_name =
     let cl_fields = Dlist.empty () in
-    let cl = QClass { cl_name; cl_kind = `By_ref; cl_fields } in
+    let cl = QClass {
+        cl_name; cl_fields;
+        cl_kind = (kind :> [type_kind | `Extends of qclass_def]);
+        cl_default_mod = modifier;
+      } in
     Dlist.append all_types cl;
     cl
 
-  let qstruct cl_name =
-    let cl_fields = Dlist.empty () in
-    let cl = QClass { cl_name; cl_kind = `By_val; cl_fields } in
-    Dlist.append all_types cl;
-    cl
+  let qstruct ?modifier cl_name =
+    qclass ~kind:`By_val ?modifier cl_name
 
-  let qextends cl_name cl =
+  let qextends cl_name ?modifier cl =
     let cl = qclass_of_typ cl in
     let cl_fields = Dlist.empty () in
-    let cl = QClass { cl_name; cl_kind = `Extends cl; cl_fields } in
+    let cl = QClass {
+        cl_name; cl_fields;
+        cl_kind = `Extends cl;
+        cl_default_mod = option_value modifier ~default:(cl.cl_default_mod)
+      } in
     Dlist.append all_types cl;
     cl
 
@@ -183,13 +225,20 @@ module Decl = struct
   let with_class cl fields =
     List.iter (fun f -> f ~cl) fields
 
-  let arg name typ = (name, Value, typ)
-  let opt name typ = (name, Optional, typ)
-  let const_ref name typ = (name, ConstRef, typ)
+  let arg ?modifier name typ =
+    { arg_name = name;
+      arg_mod = option_value modifier ~default:(qtype_modifier typ);
+      arg_typ = typ }
+
+  let arg' modifier name typ =
+    arg ~modifier name typ
+
+  let opt name typ =
+    arg ~modifier:`Optional name typ
 
   let int = custom_type "int"
   let bool = custom_type "bool"
-  let float = custom_type "float" ~cpp_name:"double"
+  let float = custom_type ~ml_name:"float" "double"
 
   let qenum enamespace ename emembers =
     let t = QEnum {enamespace; ename; emembers} in
@@ -201,29 +250,26 @@ module Decl = struct
     Dlist.append all_types t;
     t
 
-  let qString     = custom_type  "string"
-      ~cpp_neg:"const QString&" ~cpp_name:"QString"
+  let qString     = custom_type ~ml_name:"string"
+      ~modifier:`Const_ref "QString"
   let string      = qString
   let pchar       = custom_type "string"
   let nativeint   = custom_type "nativeint"
   let double      = float
   let qreal       = float
   let qint64      = custom_type "int64"
-  let qRect       = custom_type ~cpp_name:"QRect"   "qRect"
-  let qRectF      = custom_type ~cpp_name:"QRectF"  "qRectF"
-  let qPoint      = custom_type ~cpp_name:"QPoint"  "qPoint"
-  let qPointF     = custom_type ~cpp_name:"QPointF" "qPointF"
-  let qSize       = custom_type ~cpp_name:"QSize"   "qSize"
-  let qSizeF      = custom_type ~cpp_name:"QSizeF"  "qSizeF"
+  let qRect       = custom_type "QRect"   ~ml_name:"qRect"
+  let qRectF      = custom_type "QRectF"  ~ml_name:"qRectF"
+  let qPoint      = custom_type "QPoint"  ~ml_name:"qPoint"
+  let qPointF     = custom_type "QPointF" ~ml_name:"qPointF"
+  let qSize       = custom_type "QSize"   ~ml_name:"qSize"
+  let qSizeF      = custom_type "QSizeF"  ~ml_name:"qSizeF"
 end
 
 open Mangle
 
 module QClass = struct
-  let rec kind cl =
-    match cl.cl_kind with
-    | `By_ref | `By_val as x -> x
-    | `Extends cl -> kind cl
+  let kind = Decl.class_kind
 
   let extends cl =
     match cl.cl_kind with

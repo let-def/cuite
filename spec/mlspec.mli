@@ -3,21 +3,33 @@ type cfield
 type qenum
 type qflags
 
+type type_kind = [ `By_ref | `By_val ]
+
+type argument_modifier =
+  [ `Direct
+  | `Pointer
+  | `Const
+  | `Const_ref
+  | `Ref
+  | `Optional
+  ]
+
 type qtype =
   | QClass of qclass
   | QEnum  of qenum
   | QFlags of qflags
   | Custom of { ml_decl : string; ml_name : string; ml_negname : string;
-                cpp_name : string; cpp_negname : string }
+                cpp_name : string; cpp_negname : string;
+                cpp_kind : type_kind; cpp_default_mod : argument_modifier;
+              }
 
 val eq_typ : qtype -> qtype -> bool
 
-type argument_modifier =
-  | Value
-  | Optional
-  | ConstRef
-
-type argument = string * argument_modifier * qtype
+type argument = {
+  arg_name : string;
+  arg_mod : argument_modifier;
+  arg_typ : qtype;
+}
 val eq_arg : argument -> argument -> bool
 
 type cfield_desc =
@@ -30,14 +42,15 @@ type cfield_desc =
 
 module Decl : sig
   val mlname_type : qtype -> string
-  val custom_type : ?decl:string -> ?ml_neg:string -> ?cpp_neg:string -> ?cpp_name:string -> string -> qtype
-  val qtype_name : qtype -> string
-  val qclass_of_typ : qtype -> qclass
-  val qenum_of_typ : qtype -> qenum
-  val qflags_of_typ : qtype -> qflags
-  val qclass : string -> qtype
-  val qstruct : string -> qtype
-  val qextends : string -> qtype -> qtype
+  val custom_type : ?kind:type_kind -> ?modifier:argument_modifier ->
+                    ?ml_decl:string -> ?ml_neg:string -> ?ml_name:string ->
+                    ?cpp_neg:string -> string -> qtype
+  val qtype_kind : qtype -> type_kind
+  val qclass : ?kind:type_kind -> ?modifier:argument_modifier ->
+               string -> qtype
+  val qstruct : ?modifier:argument_modifier ->
+               string -> qtype
+  val qextends : string -> ?modifier:argument_modifier -> qtype -> qtype
   val constructor : ?custom:bool -> string -> argument list -> cl:qtype -> unit
   val dynamic :
     ?kind:[ `Custom | `Normal | `Protected ] ->
@@ -49,12 +62,13 @@ module Decl : sig
     ?protected:bool -> string -> argument list -> cl:qtype -> unit
   val signal : ?private_:bool -> string -> argument list -> cl:qtype -> unit
   val with_class : 'a -> (cl:'a -> unit) list -> unit
-  val arg : string -> qtype -> argument
-  val opt : string -> qtype -> argument
-  val const_ref : string -> qtype -> argument
 
   val qenum : string -> string -> string list -> qtype
   val qflags : qtype -> string -> qtype
+
+  val arg' : argument_modifier -> string -> qtype -> argument
+  val arg : ?modifier:argument_modifier -> string -> qtype -> argument
+  val opt : string -> qtype -> argument
 
   val int : qtype
   val bool : qtype
