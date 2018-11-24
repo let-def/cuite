@@ -253,16 +253,16 @@ module Decl = struct
   let qString     = custom_type ~ml_name:"string"
       ~modifier:`Const_ref "QString"
   let string      = qString
-  let pchar       = custom_type "string"
+  let pchar       = custom_type ~ml_name:"string" "pchar"
   let nativeint   = custom_type "nativeint"
   let double      = float
   let qreal       = float
   let qint64      = custom_type "int64"
   let qRect       = custom_type "QRect"   ~ml_name:"qRect"
   let qRectF      = custom_type "QRectF"  ~ml_name:"qRectF"
-  let qPoint      = custom_type "QPoint"  ~ml_name:"qPoint"
+  let qPoint      = custom_type "QPoint"  ~ml_name:"qPoint" ~modifier:`Const_ref
   let qPointF     = custom_type "QPointF" ~ml_name:"qPointF"
-  let qSize       = custom_type "QSize"   ~ml_name:"qSize"
+  let qSize       = custom_type "QSize"   ~ml_name:"qSize" ~modifier:`Const_ref
   let qSizeF      = custom_type "QSizeF"  ~ml_name:"qSizeF"
 end
 

@@ -3328,7 +3328,7 @@ let () = with_class qListWidgetItem [
     constructor "" [arg "parent" qListWidget;arg "type" int];
     constructor "" [arg "text" qString;arg "parent" qListWidget;arg "type" int];
     constructor "" [arg "icon" qIcon;arg "text" qString;arg "parent" qListWidget;arg "type" int];
-    constructor "" [arg "other" qListWidgetItem];
+    constructor "" [arg' `Const_ref "other" qListWidgetItem];
     dynamic "clone" [] ~ret:qListWidgetItem;
     dynamic "listWidget" [] ~ret:qListWidget;
     dynamic "setSelected" [arg "select" bool];
@@ -3743,7 +3743,7 @@ let () = with_class qFileIconProvider [
 let () = with_class qTableWidgetSelectionRange [
     constructor "" [];
     constructor "" [arg "top" int;arg "left" int;arg "bottom" int;arg "right" int];
-    constructor "" [arg "other" qTableWidgetSelectionRange];
+    constructor "" [arg' `Const_ref "other" qTableWidgetSelectionRange];
     dynamic "topRow" [] ~ret:int;
     dynamic "bottomRow" [] ~ret:int;
     dynamic "leftColumn" [] ~ret:int;

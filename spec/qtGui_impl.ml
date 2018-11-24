@@ -366,7 +366,6 @@ let () = with_class qColor [
     dynamic "darker" [arg "factor" int] ~ret:qColor;
     (*dynamic "operator==" [arg "color" qColor] ~ret:bool;*)
     (*dynamic "operator!=" [arg "color" qColor] ~ret:bool;*)
-    constructor "" [];
     (*static  "isValidColor" [arg "name" qString] ~ret:bool;*)
     (*static  "isValidColor" [arg "name" qLatin1String] ~ret:bool;*)
   ]
@@ -540,14 +539,12 @@ let () = with_class qWindow [
 
 let () = with_class qIcon [
     constructor "" [];
-    constructor "" [arg "pixmap" qPixmap];
-    constructor "" [arg "other" qIcon];
+    constructor "" [arg' `Const_ref "pixmap" qPixmap];
     constructor "" [arg "other" qIcon];
     constructor "" [arg "fileName" qString];
     (*constructor "" [arg "engine" qIconEngine];*)
     (*dynamic "operator=" [arg "other" qIcon] ~ret:qIcon;*)
     (*dynamic "swap" [arg "other" qIcon];*)
-    constructor "" [];
     dynamic "pixmap" [arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qPixmap;
     dynamic "pixmap" [arg "w" int;arg "h" int;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qPixmap;
     dynamic "pixmap" [arg "extent" int;arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qPixmap;
@@ -840,7 +837,6 @@ let () =
     dynamic "toTableCellFormat" [] ~ret:qTextTableCellFormat;
     (*dynamic "operator==" [arg "other" qTextFormat] ~ret:bool;
     dynamic "operator!=" [arg "other" qTextFormat] ~ret:bool;*)
-    constructor "" [];
     dynamic "setLayoutDirection" [arg "direction" qt'LayoutDirection];
     dynamic "layoutDirection" [] ~ret:qt'LayoutDirection;
     dynamic "setBackground" [arg "brush" qBrush];
@@ -856,10 +852,10 @@ let () = with_class qBrush [
     constructor "" [arg "style" qt'BrushStyle];
     constructor "" [arg "color" qColor;arg "style" qt'BrushStyle];
     constructor "" [arg "color" qt'GlobalColor;arg "style" qt'BrushStyle];
-    constructor "" [arg "color" qColor;arg "pixmap" qPixmap];
-    constructor "" [arg "color" qt'GlobalColor;arg "pixmap" qPixmap];
-    constructor "" [arg "pixmap" qPixmap];
-    constructor "" [arg "image" qImage];
+    constructor "" [arg "color" qColor;arg' `Const_ref "pixmap" qPixmap];
+    constructor "" [arg "color" qt'GlobalColor;arg' `Const_ref "pixmap" qPixmap];
+    constructor "" [arg' `Const_ref "pixmap" qPixmap];
+    constructor "" [arg' `Const_ref "image" qImage];
     constructor "" [arg "other" qBrush];
     constructor "" [arg "gradient" qGradient];
     dynamic "swap" [arg "other" qBrush];

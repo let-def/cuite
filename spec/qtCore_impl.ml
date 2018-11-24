@@ -305,7 +305,6 @@ let () = with_class qSortFilterProxyModel [
 let () = with_class qItemSelectionRange [
     constructor "" [];
     constructor "" [arg "other" qItemSelectionRange];
-    constructor "" [arg "other" qItemSelectionRange];
     (*dynamic "operator=" [arg "other" qItemSelectionRange] ~ret:qItemSelectionRange;*)
     (*dynamic "operator=" [arg "other" qItemSelectionRange] ~ret:qItemSelectionRange;*)
     constructor "" [arg "topLeft" qModelIndex;arg "bottomRight" qModelIndex];
@@ -687,7 +686,7 @@ let () = with_class qByteArray [
 let () = with_class qFileInfo [
     constructor "" [];
     constructor "" [arg "file" qString];
-    constructor "" [arg "file" qFile];
+    constructor "" [arg' `Const_ref "file" qFile];
     constructor "" [arg "dir" qDir; arg "file" qString];
     (*constructor "" [arg "fileinfo" qFileInfo];*)
     (*dynamic "operator=" [arg "fileinfo" qFileInfo] ~ret:qFileInfo;*)

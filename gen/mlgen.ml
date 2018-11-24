@@ -19,15 +19,21 @@ let ml_negtype oc = function
   | QFlags fl -> fprintf oc "%s" (QFlags.ml_type fl)
   | Custom x  -> fprintf oc "%s" x.ml_negname
 
-let ml_argtype oc (_, md, typ) =
-  match md with
-  | Value | ConstRef -> fprintf oc "%a" ml_negtype typ
-  | Optional -> fprintf oc "%a option" ml_negtype typ
+let ml_argtype oc arg =
+  match arg.arg_mod with
+  | `Optional ->
+    fprintf oc "%a option" ml_negtype arg.arg_typ
+  | `Direct | `Const_ref | `Const | `Pointer ->
+    fprintf oc "%a" ml_negtype arg.arg_typ
+  | `Ref -> failwith "ml_argtype: TODO"
 
-let ml_argpostype oc (_, md, typ) =
-  match md with
-  | Value | ConstRef -> fprintf oc "%a" ml_postype typ
-  | Optional -> fprintf oc "%a option" ml_postype typ
+let ml_argpostype oc arg =
+  match arg.arg_mod with
+  | `Optional ->
+    fprintf oc "%a option" ml_postype arg.arg_typ
+  | `Direct | `Const_ref | `Const | `Pointer ->
+    fprintf oc "%a" ml_postype arg.arg_typ
+  | `Ref -> failwith "ml_argpostype: TODO"
 
 let arrow oc (lhs, rhs) =
   begin match lhs with
