@@ -118,14 +118,14 @@ let gen_stub oc cf =
   | Constructor { custom = false; args } ->
     let arity = List.length args in
     let mlargs = gen_args "mlarg%d" arity in
-    let mlvals = gen_args "mlval%d" arity in
     println oc "external value %s(%s)" symbol
       (String.concat ","
          (List.map ((^) "value ") (if mlargs = [] then ["_unit"] else mlargs)));
     println oc "{";
     println oc "  CUITE_GC_REGION;";
-    List.iter2
-      (println oc "  value& %s = cuite_region_register(%s);") mlvals mlargs;
+    let mlvals = gen_args "mlval%d" arity in
+    List.iter2 (println oc "  value& %s = cuite_region_register(%s);")
+      mlvals mlargs;
     let cvals = gen_args "cval%d" arity in
     List.iter2 (fun (cval,mlval) arg ->
         println oc "  %s %s(%s);"
@@ -147,8 +147,90 @@ let gen_stub oc cf =
                 (String.concat "," cvals)))
     end;
     println oc "}\n"
-  | Dynamic_method _ -> () (* TODO *)
-  | Static_method  _ -> () (* TODO *)
+
+  | Dynamic_method m ->
+    let args = Decl.arg' `Pointer "self" (QClass cl) :: m.args in
+    let arity = List.length args in
+    let mlargs = gen_args "mlarg%d" arity in
+    let custom = m.kind = `Custom in
+    println oc "external value %s(%s)%s" symbol
+      (String.concat "," (List.map ((^) "value ") mlargs))
+      (if custom then ";" else "");
+    if not custom then (
+      println oc "{";
+      println oc "  CUITE_GC_REGION;";
+      let mlvals = gen_args "mlval%d" arity in
+      List.iter2 (println oc "  value& %s = cuite_region_register(%s);")
+        mlvals mlargs;
+      let cvals = gen_args "cval%d" arity in
+      List.iter2 (fun (cval,mlval) arg ->
+          println oc "  %s %s(%s);"
+            (cpp_argtype arg) cval
+            (cpp_arg_from_ocaml_fun arg mlval)
+        ) (List.combine cvals mlvals) args;
+      begin match m.ret with
+        | None ->
+          println oc "  %s->%s(%s);"
+            (List.hd cvals) name
+            (String.concat "," (List.tl cvals));
+          println oc "  return Val_unit;"
+        | Some ret ->
+          println oc "  %s result(%s->%s(%s));"
+            (cpp_argtype ~polarity:`pos (Decl.arg "" ret))
+            (List.hd cvals) name
+            (String.concat "," (List.tl cvals));
+          match Decl.qtype_kind ret with
+          | `By_val ->
+            println oc "  return %s;"
+              (cpp_to_ocaml `Direct ret "result")
+          | `By_ref ->
+            println oc "  return %s;"
+              (cpp_to_ocaml `Pointer ret "result")
+      end;
+      println oc "}\n"
+    )
+
+  | Static_method m ->
+    let args = m.args in
+    let arity = List.length args in
+    let mlargs = gen_args "mlarg%d" arity in
+    println oc "external value %s(%s)%s" symbol
+      (String.concat "," (List.map ((^) "value ") mlargs))
+      (if m.custom then ";" else "");
+    if not m.custom then (
+      println oc "{";
+      println oc "  CUITE_GC_REGION;";
+      let mlvals = gen_args "mlval%d" arity in
+      List.iter2 (println oc "  value& %s = cuite_region_register(%s);")
+        mlvals mlargs;
+      let cvals = gen_args "cval%d" arity in
+      List.iter2 (fun (cval,mlval) arg ->
+          println oc "  %s %s(%s);"
+            (cpp_argtype arg) cval
+            (cpp_arg_from_ocaml_fun arg mlval)
+        ) (List.combine cvals mlvals) args;
+      begin match m.ret with
+        | None ->
+          println oc "  %s::%s(%s);"
+            (QClass.cpp_type cl) name
+            (String.concat "," cvals);
+          println oc "  return Val_unit;"
+        | Some ret ->
+          println oc "  %s result(%s::%s(%s));"
+            (cpp_argtype ~polarity:`pos (Decl.arg "" ret))
+            (QClass.cpp_type cl) name
+            (String.concat "," cvals);
+          match Decl.qtype_kind ret with
+          | `By_val ->
+            println oc "  return %s;"
+              (cpp_to_ocaml `Direct ret "result")
+          | `By_ref ->
+            println oc "  return %s;"
+              (cpp_to_ocaml `Pointer ret "result")
+      end;
+      println oc "}\n"
+    )
+
   | Signal { args; private_ } ->
     let arity = List.length args in
     let cargs = gen_args "carg%d" arity in
