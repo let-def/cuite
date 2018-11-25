@@ -2,7 +2,7 @@
 
 external value cuite_QApplication_new_0(value args)
 {
-  CUITE_Region region;
+  CUITE_GC_REGION(&args);
 
   static int argc;
   static char **argv = NULL;
@@ -23,7 +23,7 @@ external value cuite_QApplication_new_0(value args)
   return cuite_QObject_to_ocaml(app);
 }
 
-external value cuite_QApplication_exec0(value unit)
+external value cuite_QApplication_sta_exec0(value unit)
 {
   CUITE_WITHOUT_OCAML;
   return Val_long(QApplication::exec());

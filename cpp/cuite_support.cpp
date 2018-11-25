@@ -209,14 +209,14 @@ static void do_delete(value& obj)
 
 external value cuite_delete(value vobj)
 {
-  CUITE_GC_REGION;
+  CUITE_GC_REGION(&vobj);
   do_delete(cuite_region_register(vobj));
   return Val_unit;
 }
 
 external value cuite_weak_delete(value vobj)
 {
-  CUITE_GC_REGION;
+  CUITE_GC_REGION(&vobj);
   if (cuite_check_deleted(vobj))
     return Val_bool(1);
 
@@ -462,13 +462,13 @@ QObject *cuite_QObject_option_from_ocaml(value v)
 
 void cuite_QObject_register_root(QObject *obj, bool is_explicit)
 {
-  CUITE_OCAML_REGION;
+  CUITE_OCAML_REGION();
   QObject_proxy(obj)->register_root(is_explicit);
 }
 
 void cuite_QObject_unregister_root(QObject *obj, bool is_explicit)
 {
-  CUITE_OCAML_REGION;
+  CUITE_OCAML_REGION();
   QObject_proxy(obj)->unregister_root(is_explicit);
 }
 
@@ -531,7 +531,7 @@ static void connect_parent(value vobj)
 
 static void update_parent(const QObject *obj)
 {
-  CUITE_GC_REGION;
+  CUITE_GC_REGION();
   value& vobj = cuite_QObject_to_ocaml(obj);
   QObject *parent = obj->parent();
   value& vparent = parent ? cuite_QObject_to_ocaml(parent) : val_unit;
@@ -767,7 +767,7 @@ const cuiteslot& cuite_slot_from_ocaml(value v)
 }
 
 static QMetaObject::Connection
-cuite_connect_slot_gen(value vsource, value vsig, value vtarget, value vslot)
+cuite_connect_slot_gen(value& vsource, value& vsig, value& vtarget, value& vslot)
 {
   CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vsource));
   const cuitesignal& signal = cuite_signal_from_ocaml(vsig);
@@ -779,20 +779,21 @@ cuite_connect_slot_gen(value vsource, value vsig, value vtarget, value vslot)
 
 external value cuite_connect_slot0(value vsource, value vsig, value vtarget, value vslot)
 {
+  CUITE_GC_REGION(&vsource,&vsig,&vtarget,&vslot);
   (void)cuite_connect_slot_gen(vsource, vsig, vtarget, vslot);
   return Val_unit;
 }
 
 external value cuite_connect_slot1(value vsource, value vsig, value vtarget, value vslot)
 {
-  CUITE_GC_REGION;
+  CUITE_GC_REGION(&vsource,&vsig,&vtarget,&vslot);
   return cuite_Connection_to_ocaml(cuite_connect_slot_gen(vsource, vsig, vtarget, vslot), NULL);
 }
 
 static value cuite_connect_gen(value vsource, value vsig, value vfn, bool witness)
 {
   CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vsource));
-  CUITE_GC_REGION;
+  CUITE_GC_REGION(&vsource, &vsig, &vfn);
 
   value& vobj = cuite_region_register(vsource);
   value& vclosure = cuite_region_register(vfn);

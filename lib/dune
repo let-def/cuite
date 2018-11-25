@@ -4,8 +4,7 @@
  (c_library_flags (-lcuite)))
 
 (rule
- (targets qtLib.ml cuite_stubs.gen.h cuite_const.gen.cpp 
-          cuite_const.gen.h cuite_stubs.gen.cpp)
+ (targets qtLib.ml cuite_stubs.gen.h  cuite_stubs.gen.cpp)
  (action
    (run %{exe:../gen/driver.exe})))
 
@@ -17,9 +16,7 @@
    ../cpp/cuite_models.cpp  ../cpp/cuite_select.cpp
    ../cpp/cuite_variant.h   ../cpp/cuite_variant.cpp
    ../cpp/cuite_wrappers.h  ../cpp/cuite_wrappers.cpp
-   ../cpp/cuite_const.h
    ../cpp/cuite_stubs.h     ../cpp/cuite_stubs.cpp
-   cuite_const.gen.h cuite_const.gen.cpp
    cuite_stubs.gen.h cuite_stubs.gen.cpp
    Makefile.libcuite)
  (targets libcuite.so)

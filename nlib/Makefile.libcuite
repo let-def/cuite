@@ -6,7 +6,9 @@ all: libncuite.so
 
 ## C++ COMPILATION
 
-CPP_SOURCES= main.cpp
+CPP_SOURCES= \
+  cuite_models.cpp cuite_support.cpp cuite_csupport.c cuite_stubs.cpp \
+  cuite_wrappers.cpp cuite_variant.cpp cuite_select.cpp main.cpp 
 
 CPP_OBJECTS=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 

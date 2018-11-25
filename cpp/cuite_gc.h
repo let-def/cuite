@@ -8,14 +8,15 @@ struct CUITE_Region
 {
   cuite_region_t region;
 
-  CUITE_Region(value **arguments, size_t count) : region(cuite_region_enter())
+  CUITE_Region(value **arguments, size_t count)
   {
+    cuite_region_enter(&region, arguments, count);
     cuite_assert(!cuite_ocaml_released);
   }
 
   ~CUITE_Region()
   {
-    cuite_region_leave(region);
+    cuite_region_leave(&region);
   }
 };
 
@@ -24,15 +25,16 @@ struct CUITE_AcquireRegion
   cuite_region_t region;
   bool acquired;
 
-  CUITE_AcquireRegion(bool _acquired, value **arguments, size_t count) :
-    acquired(_acquired), region(cuite_region_enter())
+  CUITE_AcquireRegion(bool _acquired, value **arguments, size_t count)
+    : acquired(_acquired)
   {
+    cuite_region_enter(&region, arguments, count);
     cuite_assert(!cuite_ocaml_released);
   }
 
   ~CUITE_AcquireRegion()
   {
-    cuite_region_leave(region);
+    cuite_region_leave(&region);
     if (acquired) cuite_release_ocaml();
   }
 };

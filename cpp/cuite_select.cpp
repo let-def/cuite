@@ -160,15 +160,13 @@ struct QSelect : QObject
 
 };
 
-external value cuite_select(value _vrfds, value _vwfds, value timeout)
+external value cuite_select(value vrfds, value vwfds, value timeout)
 {
   static QSelect *instance = NULL;
   if (instance == NULL)
     instance = new QSelect();
 
-  CUITE_Region region;
-  value& vrfds = cuite_region_register(_vrfds);
-  value& vwfds = cuite_region_register(_vwfds);
+  CUITE_GC_REGION(&vrfds, &vwfds);
   int nrfds = Wosize_val(vrfds);
   int nwfds = Wosize_val(vwfds);
 

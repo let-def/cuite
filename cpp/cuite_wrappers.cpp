@@ -192,8 +192,8 @@ cuite_QTextEdit_ExtraSelection_from_ocaml(const value& v)
   value &v1 = cuite_region_register(Field(v, 1));
 
   QTextEdit::ExtraSelection result;
-  result.cursor = *cuite_QTextCursor_from_ocaml(v0);
-  result.format = *cuite_QTextCharFormat_from_ocaml(v1);
+  result.cursor = cuite_QTextCursor_from_ocaml(v0);
+  result.format = cuite_QTextCharFormat_from_ocaml(v1);
 
   return result;
 }
@@ -201,8 +201,8 @@ cuite_QTextEdit_ExtraSelection_from_ocaml(const value& v)
 value&
 cuite_QTextEdit_ExtraSelection_to_ocaml(const QTextEdit::ExtraSelection& v)
 {
-  value& v0 = cuite_QTextCursor_to_ocaml(&v.cursor);
-  value& v1 = cuite_QTextCharFormat_to_ocaml(&v.format);
+  value& v0 = cuite_QTextCursor_to_ocaml(v.cursor);
+  value& v1 = cuite_QTextCharFormat_to_ocaml(v.format);
   value u = caml_alloc_small(2, 0);
   Field(u, 0) = v0;
   Field(u, 1) = v1;
@@ -278,10 +278,10 @@ cuite_QList_QTextEdit_ExtraSelection__from_ocaml(const value& v)
 
 #define CUITE_RELOCATABLE_CONVERTER(T)              \
   CUITE_RELOCATABLE_DEFINE(T);                      \
-  T* cuite_##T##_from_ocaml(const value& v)         \
-  { return &cuite_##T##_val(v); };                  \
-  value& cuite_##T##_to_ocaml(const T *v)           \
-  { return cuite_region_register(cuite_val_##T(*v)); }
+  T& cuite_##T##_from_ocaml(const value& v)         \
+  { return cuite_##T##_val(v); };                   \
+  value& cuite_##T##_to_ocaml(const T& v)           \
+  { return cuite_region_register(cuite_val_##T(v)); }
 
 CUITE_RELOCATABLE_CONVERTER(QByteArray);
 CUITE_RELOCATABLE_CONVERTER(QBrush);

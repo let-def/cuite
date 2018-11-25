@@ -2,6 +2,7 @@
 #define CUITE_CSUPPORT
 
 #include "caml/mlvalues.h"
+#include "caml/memory.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,12 +11,13 @@ extern "C" {
 #define cuite_assert(x) if (!(x)) abort()
 
 typedef struct {
+  ;
   void *block;
   int fill;
 } cuite_region_t;
 
-cuite_region_t cuite_region_enter(void);
-void cuite_region_leave(cuite_region_t region);
+void cuite_region_enter(cuite_region_t *region, struct caml__roots_block *locals);
+void cuite_region_leave(cuite_region_t *region);
 value *cuite_region_alloc(void);
 value *cuite_region_allocn(int count);
 

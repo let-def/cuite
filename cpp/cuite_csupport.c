@@ -1,9 +1,8 @@
-#include "cuite_csupport.h"
 #include "caml/alloc.h"
-#include "caml/memory.h"
 #include "caml/callback.h"
 #include "caml/custom.h"
 #include "caml/threads.h"
+#include "cuite_csupport.h"
 
 int cuite_ocaml_released = 0;
 
@@ -64,7 +63,7 @@ static void region_release(region_t *region)
     spare_region = region;
 }
 
-cuite_region_t cuite_region_enter(void)
+void cuite_region_enter(cuite_region_t *region, struct caml__roots_block *locals)
 {
   cuite_assert (!cuite_ocaml_released);
   if (region_root == NULL)
@@ -74,22 +73,26 @@ cuite_region_t cuite_region_enter(void)
 
     root_sentinel.next = &region_root->desc;
     caml_local_roots = &root_sentinel;
-    return (cuite_region_t){ .block = region_root, .fill = -1 };
+    region->block = region_root;
+    region->fill = -1;
   }
   else
-    return (cuite_region_t){ .block = region_root, .fill = region_root->desc.nitems };
+  {
+    region->block = region_root;
+    region->fill = region_root->desc.nitems;
+  }
 }
 
-void cuite_region_leave(cuite_region_t region)
+void cuite_region_leave(cuite_region_t *region)
 {
   cuite_assert (region_root && !cuite_ocaml_released);
-  while (region.block != root_sentinel.next)
+  while (region->block != root_sentinel.next)
   {
     region_t *current = (region_t*)root_sentinel.next;
     root_sentinel.next = current->desc.next;
     region_release(current);
   }
-  if (region.fill == -1)
+  if (region->fill == -1)
   {
     cuite_assert (caml_local_roots == &root_sentinel);
     caml_local_roots = region_root->desc.next;
@@ -97,7 +100,7 @@ void cuite_region_leave(cuite_region_t region)
     region_root = NULL;
   }
   else
-    root_sentinel.next->nitems = region.fill;
+    root_sentinel.next->nitems = region->fill;
 }
 
 value *cuite_region_alloc(void)

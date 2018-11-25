@@ -4,9 +4,14 @@ type name = string
 
 let fallback = "Invalid_value"
 
+let gen_enum_decl oc qe =
+  let typ = QEnum.cpp_type qe in
+  println oc "%s cuite_%s_from_ocaml(const value& v);" typ (Mangle.cident typ);
+  println oc "value &cuite_%s_to_ocaml(const %s& v);" (Mangle.cident typ) typ
+
 let gen_enum_conv oc qe =
-  println oc "%s cuite_%s_from_ocaml(const value& v)"
-    (QEnum.cpp_type qe) (Mangle.cident (QEnum.cpp_type qe));
+  let typ = QEnum.cpp_type qe in
+  println oc "%s cuite_%s_from_ocaml(const value& v)" typ (Mangle.cident typ);
   println oc "{";
   println oc "  switch(Long_val(v)) {";
   List.iter (fun member ->
@@ -17,12 +22,11 @@ let gen_enum_conv oc qe =
   println oc "  default:";
   println oc "    cuite_assert(Is_block(v) && Field(v, 0) == %d);"
     (hash_variant fallback);
-  println oc "    return (%s)Long_val(Field(v, 1));" (QEnum.cpp_type qe);
+  println oc "    return (%s)Long_val(Field(v, 1));" typ;
   println oc "  }";
   println oc "}";
   println oc "";
-  println oc "value &cuite_%s_to_ocaml(const %s& v)"
-    (Mangle.cident (QEnum.cpp_type qe)) (QEnum.cpp_type qe);
+  println oc "value &cuite_%s_to_ocaml(const %s& v)" (Mangle.cident typ) typ;
   println oc "{";
   println oc "  value &result = *cuite_region_alloc();";
   println oc "  switch(v) {";
@@ -59,11 +63,22 @@ let gen_flag_def oc flags =
   println oc "}"
 
 let () =
-  Decl.iter_types (function
-      | QEnum e -> gen_enum_conv stdout e
-      | _ -> ()
-    );
-  Decl.iter_types (function
-      | QFlags f -> gen_flag_def stdout f
-      | _ -> ()
-    )
+  let mode = if Array.length Sys.argv = 1 then "" else Sys.argv.(1) in
+  match mode with
+  | "declaration" ->
+    Decl.iter_types (function
+        | QEnum e -> gen_enum_decl stdout e
+        | _ -> ()
+      )
+  | "definition" ->
+    Decl.iter_types (function
+        | QEnum e -> gen_enum_conv stdout e
+        | _ -> ()
+      );
+    Decl.iter_types (function
+        | QFlags f -> gen_flag_def stdout f
+        | _ -> ()
+      )
+  | _ ->
+    Printf.eprintf "Usage: %s [declaration|definition]\n%!" Sys.argv.(0);
+    exit 1

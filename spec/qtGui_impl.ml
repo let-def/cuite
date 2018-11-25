@@ -670,7 +670,7 @@ let () = with_class qTextCursor [
     dynamic "selectionStart" [] ~ret:int;
     dynamic "selectionEnd" [] ~ret:int;
     dynamic "selectedText" [] ~ret:qString;
-    dynamic "selection" [] ~ret:qTextDocumentFragment;
+    dynamic "selection" [] ~ret:qTextDocumentFragment ~ret_mod:`Const_ref;
     (*dynamic "selectedTableCells" [arg "firstRow" int;arg "numRows" int;arg "firstColumn" int;arg "numColumns" int];*)
     dynamic "block" [] ~ret:qTextBlock;
     dynamic "charFormat" [] ~ret:qTextCharFormat;
@@ -699,7 +699,7 @@ let () = with_class qTextCursor [
     dynamic "currentTable" [] ~ret:qTextTable;
     dynamic "insertFrame" [arg "format" qTextFrameFormat] ~ret:qTextFrame;
     dynamic "currentFrame" [] ~ret:qTextFrame;
-    dynamic "insertFragment" [arg "fragment" qTextDocumentFragment];
+    dynamic "insertFragment" [arg' `Const_ref "fragment" qTextDocumentFragment];
     dynamic "insertHtml" [arg "html" qString];
     dynamic "insertImage" [arg "format" qTextImageFormat;arg "alignment" qTextFrameFormat'Position];
     dynamic "insertImage" [arg "format" qTextImageFormat];
@@ -857,7 +857,7 @@ let () = with_class qBrush [
     constructor "" [arg' `Const_ref "pixmap" qPixmap];
     constructor "" [arg' `Const_ref "image" qImage];
     constructor "" [arg "other" qBrush];
-    constructor "" [arg "gradient" qGradient];
+    constructor "" [arg' `Const_ref "gradient" qGradient];
     (*dynamic "swap" [arg' `Ref "other" qBrush];*)
     dynamic "style" [] ~ret:qt'BrushStyle;
     dynamic "setStyle" [arg "style" qt'BrushStyle];
@@ -872,7 +872,7 @@ let () = with_class qBrush [
     dynamic "color" [] ~ret:qColor;
     dynamic "setColor" [arg "color" qColor];
     dynamic "setColor" [arg "color" qt'GlobalColor];
-    dynamic "gradient" [] ~ret:qGradient ~ret_mod:`Pointer;
+    dynamic "gradient" [] ~ret:qGradient;
     dynamic "isOpaque" [] ~ret:bool;
     (*dynamic "operator=" [arg "brush" qBrush] ~ret:qBrush;
       dynamic "operator=" [arg "other" qBrush] ~ret:qBrush;*)

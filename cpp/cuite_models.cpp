@@ -6,7 +6,7 @@
 #include "cuite_support.h"
 #include "cuite_wrappers.h"
 #include "cuite_variant.h"
-#include "cuite_const.h"
+#include "flags.hpp.gen"
 
 #define model_payload(v) Field(v, QObject_fields_count + 0)
 #define model_callback(v, n) Field(Field(v, QObject_fields_count + 1), n)
@@ -17,7 +17,7 @@
 
 #define PREPARE_CALL(n)                            \
   {                                                \
-    CUITE_OCAML_REGION;                            \
+    CUITE_OCAML_REGION();                          \
     value *_call_args = cuite_region_allocn((n)+1); \
     value *_call_top = _call_args
 
@@ -74,11 +74,9 @@ QOCamlTableModel::QOCamlTableModel()
 {
 }
 
-external value cuite_new_QOCamlTableModel(value _callbacks, value _payload)
+external value cuite_new_QOCamlTableModel(value callbacks, value payload)
 {
-  CUITE_Region region;
-  value& callbacks = cuite_region_register(_callbacks);
-  value& payload = cuite_region_register(_payload);
+  CUITE_GC_REGION(&callbacks, &payload);
 
   QOCamlTableModel *model = new QOCamlTableModel();
   value& v(cuite_QObject_allocate_value(model, 2));
@@ -92,7 +90,7 @@ int QOCamlTableModel::rowCount(const QModelIndex& parent) const
 {
   int result = 0;
   PREPARE_METHOD(1, this);
-    PUSH_ARG(cuite_QModelIndex_to_ocaml(&parent));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(parent));
   CALL_METHOD(result, Long_val, meth_row_count);
   return result;
 }
@@ -101,7 +99,7 @@ int QOCamlTableModel::columnCount(const QModelIndex& parent) const
 {
   int result = 0;
   PREPARE_METHOD(1, this);
-    PUSH_ARG(cuite_QModelIndex_to_ocaml(&parent));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(parent));
   CALL_METHOD(result, Long_val, meth_column_count);
   return result;
 }
@@ -110,7 +108,7 @@ QVariant QOCamlTableModel::data(const QModelIndex& index, int role) const
 {
   QVariant result;
   PREPARE_METHOD(2, this);
-    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(index));
     PUSH_ARG(cuite_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
   CALL_METHOD(result, cuite_QVariant_from_ocaml, meth_data);
   return result;
@@ -127,11 +125,17 @@ QVariant QOCamlTableModel::headerData(int section, Qt::Orientation orientation, 
   return result;
 }
 
+static Qt::ItemFlags cuite_Qt_ItemFlags_from_ocaml(const value& v)
+{
+  int64_t x = cuite_flag_from_ocaml(v);
+  return Qt::ItemFlags((int)x);
+}
+
 Qt::ItemFlags QOCamlTableModel::flags(const QModelIndex &index) const
 {
   Qt::ItemFlags result = 0;
   PREPARE_METHOD(1, this);
-    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(index));
   CALL_METHOD(result, cuite_Qt_ItemFlags_from_ocaml, meth_flags);
   return result;
 }
@@ -140,7 +144,7 @@ bool QOCamlTableModel::setData(const QModelIndex &index, const QVariant &v, int 
 {
   bool result = false;
   PREPARE_METHOD(3, this);
-    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(index));
     PUSH_ARG(cuite_QVariant_to_ocaml(&v));
     PUSH_ARG(cuite_Qt_ItemDataRole_to_ocaml((Qt::ItemDataRole)role));
   CALL_METHOD(result, Val_bool, meth_set_data);
@@ -155,7 +159,7 @@ bool QOCamlTableModel::insertRows(int position, int rows, const QModelIndex &ind
   PREPARE_METHOD(3, this);
     PUSH_ARG(Val_long(position));
     PUSH_ARG(Val_long(rows));
-    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(index));
   CALL_METHOD(result, ID, meth_insert_rows);
 
   if (result == Val_unit)
@@ -176,7 +180,7 @@ bool QOCamlTableModel::removeRows(int position, int rows, const QModelIndex &ind
   PREPARE_METHOD(3, this);
     PUSH_ARG(Val_long(position));
     PUSH_ARG(Val_long(rows));
-    PUSH_ARG(cuite_QModelIndex_to_ocaml(&index));
+    PUSH_ARG(cuite_QModelIndex_to_ocaml(index));
   CALL_METHOD(result, ID, meth_remove_rows);
 
   if (result == Val_unit)
@@ -276,12 +280,9 @@ QOCamlSyntaxHighlighter::QOCamlSyntaxHighlighter(QObject *parent)
 //QOCamlSyntaxHighlighter::QOCamlSyntaxHighlighter(QTextDocument *parent)
 //  : QSyntaxHighlighter(parent) {}
 
-external value cuite_new_QOCamlSyntaxHighlighter(value _callbacks, value _payload, value _parent)
+external value cuite_new_QOCamlSyntaxHighlighter(value callbacks, value payload, value parent)
 {
-  CUITE_GC_REGION;
-  value& callbacks = cuite_region_register(_callbacks);
-  value& payload = cuite_region_register(_payload);
-  value& parent = cuite_region_register(_parent);
+  CUITE_GC_REGION(&callbacks, &payload, &parent);
 
   QOCamlSyntaxHighlighter *model = new QOCamlSyntaxHighlighter(cuite_QObject_option_from_ocaml(parent));
   value& v(cuite_QObject_allocate_value(model, 2));
@@ -299,94 +300,88 @@ void QOCamlSyntaxHighlighter::highlightBlock(const QString &text)
   CALL_METHOD(result, ID, meth_highlight_block);
 }
 
-external value cuite_QOCamlSyntaxHighlighter_currentBlock(value _self)
+external value cuite_QOCamlSyntaxHighlighter_currentBlock(value vself)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vself));
+  CUITE_GC_REGION(&vself);
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(vself);
   QTextBlock block(self->call_currentBlock());
-  return cuite_QTextBlock_to_ocaml(&block);
+  return cuite_QTextBlock_to_ocaml(block);
 }
 
-external value cuite_QOCamlSyntaxHighlighter_currentBlockState(value _self)
+external value cuite_QOCamlSyntaxHighlighter_currentBlockState(value vself)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vself));
+  CUITE_GC_REGION(&vself);
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(vself);
   return Val_long(self->call_currentBlockState());
 }
 
-external value cuite_QOCamlSyntaxHighlighter_format(value _self, value position)
+external value cuite_QOCamlSyntaxHighlighter_format(value vself, value position)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vself));
+  CUITE_GC_REGION(&vself);
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(vself);
   QTextCharFormat result(self->call_format(Long_val(position)));
-  return cuite_QTextCharFormat_to_ocaml(&result);
+  return cuite_QTextCharFormat_to_ocaml(result);
 }
 
-external value cuite_QOCamlSyntaxHighlighter_previousBlockState(value _self)
+external value cuite_QOCamlSyntaxHighlighter_previousBlockState(value vself)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vself));
+  CUITE_GC_REGION(&vself);
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(vself);
   return Val_long(self->call_previousBlockState());
 }
 
-external value cuite_QOCamlSyntaxHighlighter_setCurrentBlockState(value _self, value newState)
+external value cuite_QOCamlSyntaxHighlighter_setCurrentBlockState(value vself, value newState)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vself));
+  CUITE_GC_REGION(&vself);
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(vself);
   self->call_setCurrentBlockState(Long_val(newState));
   return Val_unit;
 }
 
-external value cuite_QOCamlSyntaxHighlighter_setCurrentBlockStateAndNotifyRelease(value _self, value newState)
+external value cuite_QOCamlSyntaxHighlighter_setCurrentBlockStateAndNotifyRelease(value vself, value newState)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(cuite_region_register(_self));
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(vself));
+  CUITE_GC_REGION(&vself);
+  QOCamlSyntaxHighlighter *self = (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(vself);
   self->call_setCurrentBlockStateAndNotifyRelease(Long_val(newState));
   return Val_unit;
 }
 
-external value cuite_QOCamlSyntaxHighlighter_setFormat(value _self, value start, value count, value _format)
+external value cuite_QOCamlSyntaxHighlighter_setFormat(value mlself, value start, value count, value mlformat)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  value& mlself = cuite_region_register(_self);
-  value& mlformat = cuite_region_register(_format);
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(mlself));
+  CUITE_GC_REGION(&mlself, &mlformat);
   QOCamlSyntaxHighlighter *self =
     (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(mlself);
-  QTextCharFormat *format = cuite_QTextCharFormat_from_ocaml(mlformat);
-  self->call_setFormat(Long_val(start), Long_val(count), *format);
+  const QTextCharFormat& format = cuite_QTextCharFormat_from_ocaml(mlformat);
+  self->call_setFormat(Long_val(start), Long_val(count), format);
   return Val_unit;
 }
 
-external value cuite_QOCamlSyntaxHighlighter_setFormatColor(value _self, value start, value count, value _color)
+external value cuite_QOCamlSyntaxHighlighter_setFormatColor(value mlself, value start, value count, value mlcolor)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  value& mlself = cuite_region_register(_self);
-  value& mlcolor = cuite_region_register(_color);
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(mlself));
+  CUITE_GC_REGION(&mlself, &mlcolor);
   QOCamlSyntaxHighlighter *self =
     (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(mlself);
-  QColor *color = cuite_QColor_from_ocaml(mlcolor);
-  self->call_setFormat(Long_val(start), Long_val(count), *color);
+  const QColor& color = cuite_QColor_from_ocaml(mlcolor);
+  self->call_setFormat(Long_val(start), Long_val(count), color);
   return Val_unit;
 }
 
-external value cuite_QOCamlSyntaxHighlighter_setFormatFont(value _self, value start, value count, value _font)
+external value cuite_QOCamlSyntaxHighlighter_setFormatFont(value mlself, value start, value count, value mlfont)
 {
-  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(_self));
-  CUITE_GC_REGION;
-  value& mlself = cuite_region_register(_self);
-  value& mlfont = cuite_region_register(_font);
+  CHECK_USE_AFTER_FREE(cuite_QObject_check_use(mlself));
+  CUITE_GC_REGION(&mlself, &mlfont);
   QOCamlSyntaxHighlighter *self =
     (QOCamlSyntaxHighlighter *)cuite_QObject_from_ocaml(mlself);
-  QFont *font = cuite_QFont_from_ocaml(mlfont);
-  self->call_setFormat(Long_val(start), Long_val(count), *font);
+  const QFont& font = cuite_QFont_from_ocaml(mlfont);
+  self->call_setFormat(Long_val(start), Long_val(count), font);
   return Val_unit;
 }
 
@@ -402,11 +397,9 @@ class QOCamlEventFilter : public QObject
 
 #define meth_filter    0
 
-external value cuite_new_QOCamlEventFilter(value _callbacks, value _payload)
+external value cuite_new_QOCamlEventFilter(value callbacks, value payload)
 {
-  CUITE_Region region;
-  value& callbacks = cuite_region_register(_callbacks);
-  value& payload = cuite_region_register(_payload);
+  CUITE_GC_REGION(&callbacks, &payload);
 
   QOCamlEventFilter *filter = new QOCamlEventFilter();
   value& v(cuite_QObject_allocate_value(filter, 2));

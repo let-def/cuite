@@ -1,3 +1,4 @@
+#define CAML_NAME_SPACE
 #include <caml/alloc.h>
 #include <caml/memory.h>
 #include <QtWidgets>

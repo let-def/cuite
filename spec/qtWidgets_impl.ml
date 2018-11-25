@@ -11,7 +11,7 @@ let protected = true
 let optional x = x
 
 let () = with_class qApplication [
-    constructor "" [arg "args" (custom_type ~ml_name:"string_array" "string array")] ~custom:true;
+    constructor "" [arg "args" (custom_type "string_array" ~ml_name:"string array")] ~custom:true;
     static  "style" [] ~ret:qStyle;
     static  "setStyle" [arg "style" qStyle];
     static  "setStyle" [arg "style" qString] ~ret:qStyle;
