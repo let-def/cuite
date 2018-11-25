@@ -58,7 +58,9 @@ module Decl : sig
     ?custom:bool ->
     ?ret:qtype_def -> ?ret_mod:type_mod ->
     string -> argument list -> cl:qtype_def -> unit
-  val slot : ?protected:bool -> string -> argument list -> cl:qtype_def -> unit
+  val slot :
+    ?ret:qtype_def -> ?ret_mod:type_mod ->
+    ?protected:bool -> string -> argument list -> cl:qtype_def -> unit
   (*?ret:qtype_def ->*)
   val signal : ?private_:bool -> string -> argument list -> cl:qtype_def -> unit
   val with_class : 'a -> (cl:'a -> unit) list -> unit

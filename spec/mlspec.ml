@@ -206,25 +206,32 @@ module Decl = struct
     Dlist.append cl.cl_fields
       {clss = cl; name; desc = Static_method {ret; args; custom}}
 
-  let slot (*?ret*) ?(protected=false) name args ~cl =
+  let slot ?ret ?ret_mod ?(protected=false) name args ~cl =
+    let option_eq cmp a b = match a, b with
+      | Some a, Some b -> cmp a b
+      | None, None -> true
+      | _ -> false
+    in
     let cl = qclass_of_typ cl in
     Dlist.append cl.cl_fields
-      {clss = cl; name; desc = Slot {args}}
-    (*
-      if not (protected ||
-              (String.length name >= 3 &&
-               name.[0] = '_' && name.[1] = 'q' && name.[2] = '_') ||
-              List.exists (function
-                  | {name = name'; desc = Dynamic_method meth} ->
-                    name = name' &&
-                    List.length args = List.length meth.args &&
-                    List.for_all2 compatible_arg args meth.args
-                  | _ -> false
-                ) (Dlist.read cl.cl_fields))
-      then
-        Dlist.append cl.cl_fields
-          {clss = cl; name; desc = Dynamic_method {ret; args; kind = `Normal}}
-    *)
+      {clss = cl; name; desc = Slot {args}};
+    let ret = match ret with
+      | None -> None | Some x -> Some (typ ?modifier:ret_mod x)
+    in
+    if not (protected ||
+            (String.length name >= 3 &&
+             name.[0] = '_' && name.[1] = 'q' && name.[2] = '_') ||
+            List.exists (function
+                | {name = name'; desc = Dynamic_method meth} ->
+                  name = name' &&
+                  List.length args = List.length meth.args &&
+                  List.for_all2 compatible_arg args meth.args &&
+                  option_eq eq_typ ret meth.ret
+                | _ -> false
+              ) (Dlist.read cl.cl_fields))
+    then
+      Dlist.append cl.cl_fields
+        {clss = cl; name; desc = Dynamic_method {ret; args; kind = `Normal}}
 
   let signal ?(private_=false) name args ~cl =
     let cl = qclass_of_typ cl in

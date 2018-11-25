@@ -3,6 +3,11 @@
  (modules example_1)
  (libraries ncuite))
 
+(executable
+ (name syntaxhl2)
+ (modules syntaxhl2)
+ (libraries ncuite))
+
 (library
  (name ncuite)
  (wrapped false)
