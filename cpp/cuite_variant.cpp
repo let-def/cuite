@@ -462,7 +462,7 @@ value& cuite_QVariant_to_ocaml(const QVariant& x)
 
 external value cuite_QVariant_null(value vunit)
 {
-  CUITE_Region region(NULL, 0);
+  CUITE_GC_REGION();
   QVariant x;
   return cuite_QVariantOther_to_ocaml(x);
 }

@@ -52,7 +52,7 @@ let cpp_to_ocaml typ expr =
   in
   Printf.sprintf "%s(%s(%s))" base_fn pre expr
 
-let cpp_from_ocaml typ expr =
+let cpp_from_ocaml typ =
   let base_fn = match typ.typ_def with
     | QEnum  en -> "cuite_" ^ QEnum.c_base_symbol en ^ "_from_ocaml"
     | QFlags fl -> "cuite_flag_from_ocaml"
@@ -79,7 +79,13 @@ let cpp_from_ocaml typ expr =
     | `By_ref -> "*"
     | `By_val -> ""
   in
-  Printf.sprintf "(%s(%s(%s)))" pre base_fn expr
+  fun expr ->
+  match typ.typ_mod with
+  | `Optional ->
+    Printf.sprintf "(((%s) == Val_unit) ? NULL : (%s(%s(Field(%s,0)))))"
+      expr pre base_fn expr
+  | _ ->
+    Printf.sprintf "(%s(%s(%s)))" pre base_fn expr
 
 let gen_bc_wrapper oc symbol arity =
   assert (arity > 5);

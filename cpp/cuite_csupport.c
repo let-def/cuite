@@ -63,9 +63,17 @@ static void region_release(region_t *region)
     spare_region = region;
 }
 
-void cuite_region_enter(cuite_region_t *region, struct caml__roots_block *locals)
+void cuite_region_enter(cuite_region_t *region, void *locals)
 {
   cuite_assert (!cuite_ocaml_released);
+
+  if (locals)
+  {
+    struct caml__roots_block *tlocals = locals;
+    tlocals->next = caml_local_roots;
+    caml_local_roots = tlocals;
+  }
+
   if (region_root == NULL)
   {
     region_root = region_alloc();
@@ -83,8 +91,9 @@ void cuite_region_enter(cuite_region_t *region, struct caml__roots_block *locals
   }
 }
 
-void cuite_region_leave(cuite_region_t *region)
+void cuite_region_leave(cuite_region_t *region, void *locals)
 {
+
   cuite_assert (region_root && !cuite_ocaml_released);
   while (region->block != root_sentinel.next)
   {
@@ -101,6 +110,12 @@ void cuite_region_leave(cuite_region_t *region)
   }
   else
     root_sentinel.next->nitems = region->fill;
+
+  if (locals)
+  {
+    struct caml__roots_block *tlocals = locals;
+    caml_local_roots = tlocals->next;
+  }
 }
 
 value *cuite_region_alloc(void)
