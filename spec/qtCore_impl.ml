@@ -32,7 +32,7 @@ let () = with_class qRegExp [
     constructor "" [arg "rx" qRegExp];
     (*dynamic "operator=" [arg "rx" qRegExp] ~ret:qRegExp;*)
     (*dynamic "operator=" [arg "other" qRegExp] ~ret:qRegExp;*)
-    (*dynamic "swap" [arg "other" qRegExp];*)
+    (*dynamic "swap" [arg' `Ref "other" qRegExp];*)
     (*dynamic "operator==" [arg "rx" qRegExp] ~ret:bool;*)
     (*dynamic "operator!=" [arg "rx" qRegExp] ~ret:bool;*)
     dynamic "isEmpty" [] ~ret:bool;
@@ -62,7 +62,7 @@ let () = with_class qRegularExpressionMatch [
     constructor "" [arg "match" qRegularExpressionMatch];
     (*dynamic "operator=" [arg "match" qRegularExpressionMatch] ~ret:qRegularExpressionMatch;*)
     (*dynamic "operator=" [arg "match" qRegularExpressionMatch] ~ret:qRegularExpressionMatch;*)
-    dynamic "swap" [arg "other" qRegularExpressionMatch];
+    (*dynamic "swap" [arg' `Ref "other" qRegularExpressionMatch];*)
     dynamic "regularExpression" [] ~ret:qRegularExpression;
     dynamic "matchType" [] ~ret:qRegularExpression'MatchType;
     dynamic "matchOptions" [] ~ret:qRegularExpression'MatchOptions;
@@ -91,7 +91,7 @@ let () = with_class qRegularExpression [
     constructor "" [arg "re" qRegularExpression];
     (*dynamic "operator=" [arg "re" qRegularExpression] ~ret:qRegularExpression;*)
     (*dynamic "operator=" [arg "re" qRegularExpression] ~ret:qRegularExpression;*)
-    dynamic "swap" [arg "other" qRegularExpression];
+    (*dynamic "swap" [arg' `Ref "other" qRegularExpression];*)
     dynamic "pattern" [] ~ret:qString;
     dynamic "setPattern" [arg "pattern" qString];
     dynamic "isValid" [] ~ret:bool;
@@ -114,7 +114,7 @@ let () = with_class qRegularExpressionMatchIterator [
     constructor "" [arg "iterator" qRegularExpressionMatchIterator];
     (*dynamic "operator=" [arg "iterator" qRegularExpressionMatchIterator] ~ret:qRegularExpressionMatchIterator;*)
     (*dynamic "operator=" [arg "iterator" qRegularExpressionMatchIterator] ~ret:qRegularExpressionMatchIterator;*)
-    dynamic "swap" [arg "other" qRegularExpressionMatchIterator];
+    (*dynamic "swap" [arg' `Ref "other" qRegularExpressionMatchIterator];*)
     dynamic "isValid" [] ~ret:bool;
     dynamic "hasNext" [] ~ret:bool;
     dynamic "next" [] ~ret:qRegularExpressionMatch;
@@ -309,7 +309,7 @@ let () = with_class qItemSelectionRange [
     (*dynamic "operator=" [arg "other" qItemSelectionRange] ~ret:qItemSelectionRange;*)
     constructor "" [arg "topLeft" qModelIndex;arg "bottomRight" qModelIndex];
     constructor "" [arg "index" qModelIndex];
-    dynamic "swap" [arg "other" qItemSelectionRange];
+    (*dynamic "swap" [arg' `Ref "other" qItemSelectionRange];*)
     dynamic "top" [] ~ret:int;
     dynamic "left" [] ~ret:int;
     dynamic "bottom" [] ~ret:int;
@@ -522,7 +522,7 @@ let () = with_class qByteArray [
     (*dynamic "operator=" [arg "str" pchar] ~ret:qByteArray;*)
     (*constructor "" [arg "other" qByteArray];*)
     (*dynamic "operator=" [arg "other" qByteArray] ~ret:qByteArray;*)
-    (*dynamic "swap" [arg "other" qByteArray];
+    (*dynamic "swap" [arg' `Ref "other" qByteArray];
     dynamic "size" [] ~ret:int;
     dynamic "isEmpty" [] ~ret:bool;
     dynamic "resize" [arg "size" int];
@@ -691,11 +691,11 @@ let () = with_class qFileInfo [
     (*constructor "" [arg "fileinfo" qFileInfo];*)
     (*dynamic "operator=" [arg "fileinfo" qFileInfo] ~ret:qFileInfo;*)
     (*dynamic "operator=" [arg "other" qFileInfo] ~ret:qFileInfo;*)
-    (*dynamic "swap" [arg "other" qFileInfo];*)
+    (*dynamic "swap" [arg' `Ref "other" qFileInfo];*)
     (*dynamic "operator==" [arg "fileinfo" qFileInfo] ~ret:bool;*)
     (*dynamic "operator!=" [arg "fileinfo" qFileInfo] ~ret:bool;*)
     dynamic "setFile" [arg "file" qString];
-    dynamic "setFile" [arg "file" qFile];
+    (*dynamic "setFile" [arg' `Ref "file" qFile];*)
     dynamic "setFile" [arg "dir" qDir; arg "file" qString];
     dynamic "exists" [] ~ret:bool;
     static  "exists" [arg "file" qString] ~ret:bool;
@@ -824,7 +824,7 @@ let () = with_class qUrlQuery [
     (*dynamic "operator=" [arg "other" qUrlQuery] ~ret:qUrlQuery;*)
     (*dynamic "operator==" [arg "other" qUrlQuery] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qUrlQuery] ~ret:bool;*)
-    dynamic "swap" [arg "other" qUrlQuery];
+    (*dynamic "swap" [arg' `Ref "other" qUrlQuery];*)
     dynamic "isEmpty" [] ~ret:bool;
     dynamic "clear" [];
     dynamic "query" [arg "encoding" qUrl'ComponentFormattingOptions] ~ret:qString;
@@ -984,7 +984,7 @@ let () = with_class qEasingCurve [
     (*dynamic "operator=" [arg "other" qEasingCurve] ~ret:qEasingCurve;*)
     constructor "" [arg "other" qEasingCurve];
     (*dynamic "operator=" [arg "other" qEasingCurve] ~ret:qEasingCurve;*)
-    dynamic "swap" [arg "other" qEasingCurve];
+    (*dynamic "swap" [arg' `Ref "other" qEasingCurve];*)
     (*dynamic "operator==" [arg "other" qEasingCurve] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qEasingCurve] ~ret:bool;*)
     dynamic "amplitude" [] ~ret:qreal;
@@ -1024,7 +1024,7 @@ let () = with_class qTimeZone [
     constructor "" [arg "other" qTimeZone];
     (*dynamic "operator=" [arg "other" qTimeZone] ~ret:qTimeZone;*)
     (*dynamic "operator=" [arg "other" qTimeZone] ~ret:qTimeZone;*)
-    dynamic "swap" [arg "other" qTimeZone];
+    (*dynamic "swap" [arg' `Ref "other" qTimeZone];*)
     (*dynamic "operator==" [arg "other" qTimeZone] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qTimeZone] ~ret:bool;*)
     dynamic "isValid" [] ~ret:bool;
@@ -1072,7 +1072,7 @@ let () = with_class qWeakPointer [
     (*dynamic "operator=" [arg "other" qSharedPointer<T>] ~ret:qWeakPointer<T>;*)
     constructor "" [opt "obj" qObject];
     (*dynamic "operator=" [arg "obj" qObject] ~ret:qWeakPointer<T>;*)
-    dynamic "swap" [arg "other" qWeakPointer<T>];
+    (*dynamic "swap" [arg' `Ref "other" qWeakPointer<T>];*)
     (*dynamic "data" [] ~ret:t;*)
     dynamic "clear" [];
     (*dynamic "toStrongRef" [] ~ret:qSharedPointer<T>;*)
@@ -1123,7 +1123,7 @@ let () = with_class qPair [
     (*dynamic "operator=" [arg "p" qPair<TT1,TT2>] ~ret:qPair;*)
     constructor "" [arg "p" qPair<TT1, TT2>];
     (*dynamic "operator=" [arg "p" qPair<TT1,TT2>] ~ret:qPair;*)
-    dynamic "swap" [arg "other" qPair];
+    (*dynamic "swap" [arg' `Ref "other" qPair];*)
   ]
 let () = with_class qMimeDatabase [
     constructor "" [];
@@ -1200,7 +1200,7 @@ let () = with_class qCollator [
     (*dynamic "operator=" [arg "other" qCollator] ~ret:qCollator;*)
     constructor "" [arg "other" qCollator];
     (*dynamic "operator=" [arg "other" qCollator] ~ret:qCollator;*)
-    dynamic "swap" [arg "other" qCollator];
+    (*dynamic "swap" [arg' `Ref "other" qCollator];*)
     dynamic "setLocale" [arg "locale" qLocale];
     dynamic "locale" [] ~ret:qLocale;
     dynamic "caseSensitivity" [] ~ret:qt'CaseSensitivity;
@@ -1329,7 +1329,7 @@ let () = with_class qXmlStreamEntityResolver [
 let () = with_class qPointer [
     constructor "" [];
     constructor "" [arg "p" t];
-    dynamic "swap" [arg "other" qPointer];
+    (*dynamic "swap" [arg' `Ref "other" qPointer];*)
     (*dynamic "operator=" [arg "p" t] ~ret:qPointer<T>;*)
     (*dynamic "data" [] ~ret:t;*)
     (*dynamic "operator->" [] ~ret:t;*)
@@ -1353,7 +1353,7 @@ let () = with_class qScopedPointer [
     dynamic "isNull" [] ~ret:bool;
     dynamic "reset" [arg "other" t];
     (*dynamic "take" [] ~ret:t;*)
-    dynamic "swap" [arg "other" qScopedPointer<T,Cleanup>];
+    (*dynamic "swap" [arg' `Ref "other" qScopedPointer<T,Cleanup>];*)
   ]
 let () = with_class qDebug [
     constructor "" [arg "device" qIODevice];
@@ -1361,7 +1361,7 @@ let () = with_class qDebug [
     constructor "" [arg "type" qtMsgType];
     constructor "" [arg "other" qDebug];
     (*dynamic "operator=" [arg "other" qDebug] ~ret:qDebug;*)
-    dynamic "swap" [arg "other" qDebug];
+    (*dynamic "swap" [arg' `Ref "other" qDebug];*)
     dynamic "resetFormat" [] ~ret:qDebug;
     dynamic "space" [] ~ret:qDebug;
     dynamic "nospace" [] ~ret:qDebug;
@@ -1441,7 +1441,7 @@ let () = with_class qHash [
     (*dynamic "operator=" [arg "other" qHash] ~ret:qHash;*)
     constructor "" [arg "other" qHash];
     (*dynamic "operator=" [arg "other" qHash] ~ret:qHash;*)
-    dynamic "swap" [arg "other" qHash];
+    (*dynamic "swap" [arg' `Ref "other" qHash];*)
     (*dynamic "operator==" [arg "other" qHash] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qHash] ~ret:bool;*)
     dynamic "size" [] ~ret:int;
@@ -1496,7 +1496,7 @@ let () = with_class qLocale [
     constructor "" [arg "other" qLocale];
     (*dynamic "operator=" [arg "other" qLocale] ~ret:qLocale;*)
     (*dynamic "operator=" [arg "other" qLocale] ~ret:qLocale;*)
-    dynamic "swap" [arg "other" qLocale];
+    (*dynamic "swap" [arg' `Ref "other" qLocale];*)
     dynamic "language" [] ~ret:language;
     dynamic "script" [] ~ret:script;
     dynamic "country" [] ~ret:country;
@@ -1657,7 +1657,7 @@ let () = with_class qBitArray [
     (*dynamic "operator=" [arg "other" qBitArray] ~ret:qBitArray;*)
     constructor "" [arg "other" qBitArray];
     (*dynamic "operator=" [arg "other" qBitArray] ~ret:qBitArray;*)
-    dynamic "swap" [arg "other" qBitArray];
+    (*dynamic "swap" [arg' `Ref "other" qBitArray];*)
     dynamic "size" [] ~ret:int;
     dynamic "count" [] ~ret:int;
     dynamic "count" [arg "on" bool] ~ret:int;
@@ -1981,7 +1981,7 @@ let () = with_class qDateTime [
     constructor "" [arg "other" qDateTime];
     (*dynamic "operator=" [arg "other" qDateTime] ~ret:qDateTime;*)
     (*dynamic "operator=" [arg "other" qDateTime] ~ret:qDateTime;*)
-    dynamic "swap" [arg "other" qDateTime];
+    (*dynamic "swap" [arg' `Ref "other" qDateTime];*)
     dynamic "isNull" [] ~ret:bool;
     dynamic "isValid" [] ~ret:bool;
     dynamic "date" [] ~ret:qDate;
@@ -2377,7 +2377,7 @@ let () = with_class qVector [
     (*dynamic "operator=" [arg "other" qVector<T>] ~ret:qVector<T>;*)
     constructor "" [arg "other" qVector<T>];
     (*dynamic "operator=" [arg "other" qVector<T>] ~ret:qVector<T>;*)
-    dynamic "swap" [arg "other" qVector<T>];
+    (*dynamic "swap" [arg' `Ref "other" qVector<T>];*)
     constructor "" [arg "args" std'initializer_list<T>];
     (*dynamic "operator==" [arg "other" qVector<T>] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qVector<T>] ~ret:bool;*)
@@ -2500,7 +2500,7 @@ let () = with_class qStorageInfo [
     constructor "" [arg "other" qStorageInfo];
     (*dynamic "operator=" [arg "other" qStorageInfo] ~ret:qStorageInfo;*)
     (*dynamic "operator=" [arg "other" qStorageInfo] ~ret:qStorageInfo;*)
-    dynamic "swap" [arg "other" qStorageInfo];
+    (*dynamic "swap" [arg' `Ref "other" qStorageInfo];*)
     dynamic "setPath" [arg "path" qString];
     dynamic "rootPath" [] ~ret:qString;
     dynamic "device" [] ~ret:qByteArray;
@@ -2792,7 +2792,7 @@ let () = with_class qUrl [
     (*dynamic "operator=" [arg "url" qString] ~ret:qUrl;*)
     constructor "" [arg "other" qUrl];
     (*dynamic "operator=" [arg "other" qUrl] ~ret:qUrl;*)
-    dynamic "swap" [arg "other" qUrl];
+    (*dynamic "swap" [arg' `Ref "other" qUrl];*)
     dynamic "setUrl" [arg "url" qString;arg "parsingMode" parsingMode];
     dynamic "url" [arg "options" formattingOptions] ~ret:qString;
     dynamic "toString" [arg "options" formattingOptions] ~ret:qString;
@@ -3026,7 +3026,7 @@ let () = with_class qContiguousCache [
     constructor "" [arg "other" qContiguousCache<T>];
     (*dynamic "operator=" [arg "other" qContiguousCache<T>] ~ret:qContiguousCache<T>;*)
     (*dynamic "operator=" [arg "other" qContiguousCache<T>] ~ret:qContiguousCache<T>;*)
-    dynamic "swap" [arg "other" qContiguousCache<T>];
+    (*dynamic "swap" [arg' `Ref "other" qContiguousCache<T>];*)
     (*dynamic "operator==" [arg "other" qContiguousCache<T>] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qContiguousCache<T>] ~ret:bool;*)
     dynamic "capacity" [] ~ret:int;
@@ -3099,7 +3099,7 @@ let () = with_class qCommandLineOption [
     constructor "" [arg "other" qCommandLineOption];
     (*dynamic "operator=" [arg "other" qCommandLineOption] ~ret:qCommandLineOption;*)
     (*dynamic "operator=" [arg "other" qCommandLineOption] ~ret:qCommandLineOption;*)
-    dynamic "swap" [arg "other" qCommandLineOption];
+    (*dynamic "swap" [arg' `Ref "other" qCommandLineOption];*)
     dynamic "names" [] ~ret:qStringList;
     dynamic "setValueName" [arg "valueName" qString];
     dynamic "valueName" [] ~ret:qString;
@@ -3198,7 +3198,7 @@ let () = with_class qString [
     (*dynamic "operator=" [arg "str" qLatin1String] ~ret:qString;*)
     constructor "" [arg "other" qString];
     (*dynamic "operator=" [arg "other" qString] ~ret:qString;*)
-    dynamic "swap" [arg "other" qString];
+    (*dynamic "swap" [arg' `Ref "other" qString];*)
     dynamic "size" [] ~ret:int;
     dynamic "count" [] ~ret:int;
     dynamic "length" [] ~ret:int;
@@ -3532,7 +3532,7 @@ let () = with_class qExplicitlySharedDataPointer [
     constructor "" [arg "o" qExplicitlySharedDataPointer];
     (*dynamic "operator=" [arg "other" qExplicitlySharedDataPointer<T>] ~ret:qExplicitlySharedDataPointer<T>;*)
     (*dynamic "operator!" [] ~ret:bool;*)
-    dynamic "swap" [arg "other" qExplicitlySharedDataPointer];
+    (*dynamic "swap" [arg' `Ref "other" qExplicitlySharedDataPointer];*)
   ]
 let () = with_class qWaitCondition [
     constructor "" [];
@@ -3583,7 +3583,7 @@ let () = with_class qMimeType [
     constructor "" [arg "other" qMimeType];
     (*dynamic "operator=" [arg "other" qMimeType] ~ret:qMimeType;*)
     (*dynamic "operator=" [arg "other" qMimeType] ~ret:qMimeType;*)
-    dynamic "swap" [arg "other" qMimeType];
+    (*dynamic "swap" [arg' `Ref "other" qMimeType];*)
     (*dynamic "operator==" [arg "other" qMimeType] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qMimeType] ~ret:bool;*)
     dynamic "isValid" [] ~ret:bool;
@@ -3605,7 +3605,7 @@ let () = with_class qCollatorSortKey [
     constructor "" [arg "other" qCollatorSortKey];
     (*dynamic "operator=" [arg "other" qCollatorSortKey] ~ret:qCollatorSortKey;*)
     (*dynamic "operator=" [arg "other" qCollatorSortKey] ~ret:qCollatorSortKey;*)
-    dynamic "swap" [arg "other" qCollatorSortKey];
+    (*dynamic "swap" [arg' `Ref "other" qCollatorSortKey];*)
     dynamic "compare" [arg "otherKey" qCollatorSortKey] ~ret:int;
   ]
 let () = with_class qDataStream [
@@ -3973,7 +3973,7 @@ let () = with_class qTextStream [
 let () = with_class qSet [
     constructor "" [];
     constructor "" [arg "list" std'initializer_list<T>];
-    dynamic "swap" [arg "other" qSet<T>];
+    (*dynamic "swap" [arg' `Ref "other" qSet<T>];*)
     (*dynamic "operator==" [arg "other" qSet<T>] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qSet<T>] ~ret:bool;*)
     dynamic "size" [] ~ret:int;
@@ -4083,7 +4083,7 @@ let () = with_class qDeadlineTimer [
     constructor "" [arg "timerType" qt'TimerType];
     constructor "" [arg "forever" foreverConstant;arg "timerType" qt'TimerType];
     constructor "" [arg "msecs" qint64;arg "type" qt'TimerType];
-    dynamic "swap" [arg "other" qDeadlineTimer];
+    (*dynamic "swap" [arg' `Ref "other" qDeadlineTimer];*)
     dynamic "isForever" [] ~ret:bool;
     dynamic "hasExpired" [] ~ret:bool;
     dynamic "timerType" [] ~ret:qt'TimerType;
@@ -4115,7 +4115,7 @@ let () = with_class qList [
     (*dynamic "operator=" [arg "other" qList<T>] ~ret:qList<T>;*)
     constructor "" [arg "other" qList<T>];
     (*dynamic "operator=" [arg "other" qList<T>] ~ret:qList;*)
-    dynamic "swap" [arg "other" qList<T>];
+    (*dynamic "swap" [arg' `Ref "other" qList<T>];*)
     constructor "" [arg "args" std'initializer_list<T>];
     (*dynamic "operator==" [arg "other" qList<T>] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qList<T>] ~ret:bool;*)
@@ -4138,7 +4138,7 @@ let () = with_class qList [
     (*dynamic "takeFirst" [] ~ret:t;*)
     (*dynamic "takeLast" [] ~ret:t;*)
     dynamic "move" [arg "from" int;arg "to" int];
-    dynamic "swap" [arg "i" int;arg "j" int];
+    (*dynamic "swap" [arg' `Ref "i" int;arg "j" int];*)
     dynamic "indexOf" [arg "value" t;arg "from" int] ~ret:int;
     dynamic "lastIndexOf" [arg "value" t;arg "from" int] ~ret:int;
     dynamic "contains" [arg "value" t] ~ret:bool;
@@ -4421,7 +4421,7 @@ let () = with_class qSharedDataPointer [
     constructor "" [arg "o" qSharedDataPointer];
     (*dynamic "operator=" [arg "other" qSharedDataPointer<T>] ~ret:qSharedDataPointer<T>;*)
     (*dynamic "operator!" [] ~ret:bool;*)
-    dynamic "swap" [arg "other" qSharedDataPointer];
+    (*dynamic "swap" [arg' `Ref "other" qSharedDataPointer];*)
   ]
 let () = with_class qSysInfo [
     static  "windowsVersion" [] ~ret:winVersion;
@@ -4531,7 +4531,7 @@ let () = with_class qVariant [
     (*dynamic "operator=" [arg "variant" qVariant] ~ret:qVariant;*)
     constructor "" [arg "other" qVariant];
     (*dynamic "operator=" [arg "other" qVariant] ~ret:qVariant;*)
-    dynamic "swap" [arg "other" qVariant];
+    (*dynamic "swap" [arg' `Ref "other" qVariant];*)
     (*dynamic "type" [] ~ret:type;*)
     dynamic "userType" [] ~ret:int;
     dynamic "typeName" [] ~ret:pchar;
@@ -4599,7 +4599,7 @@ let () = with_class qMap [
     (*dynamic "operator=" [arg "other" qMap<Key,T>] ~ret:qMap<Key, T>;*)
     constructor "" [arg "other" qMap<Key,T>];
     (*dynamic "operator=" [arg "other" qMap<Key,T>] ~ret:qMap<Key, T>;*)
-    dynamic "swap" [arg "other" qMap<KeyT>];
+    (*dynamic "swap" [arg' `Ref "other" qMap<KeyT>];*)
     constructor "" [arg "other" std'map<Key,T>];
     (*dynamic "toStdMap" [] ~ret:std'map<Key, T>;*)
     (*dynamic "operator==" [arg "other" qMap<Key,T>] ~ret:bool;*)
@@ -4755,7 +4755,7 @@ let () = with_class qSharedPointer [
     constructor "" [arg "other" qWeakPointer<T>];
     (*dynamic "operator=" [arg "other" qSharedPointer<T>] ~ret:qSharedPointer<T>;*)
     (*dynamic "operator=" [arg "other" qWeakPointer<T>] ~ret:qSharedPointer<T>;*)
-    dynamic "swap" [arg "other" qSharedPointer<T>];
+    (*dynamic "swap" [arg' `Ref "other" qSharedPointer<T>];*)
     (*dynamic "toWeakRef" [] ~ret:qWeakPointer<T>;*)
     dynamic "clear" [];
     dynamic "reset" [];
@@ -4773,7 +4773,7 @@ let () = with_class qProcessEnvironment [
     constructor "" [arg "other" qProcessEnvironment];
     (*dynamic "operator=" [arg "other" qProcessEnvironment] ~ret:qProcessEnvironment;*)
     (*dynamic "operator=" [arg "other" qProcessEnvironment] ~ret:qProcessEnvironment;*)
-    dynamic "swap" [arg "other" qProcessEnvironment];
+    (*dynamic "swap" [arg' `Ref "other" qProcessEnvironment];*)
     (*dynamic "operator==" [arg "other" qProcessEnvironment] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qProcessEnvironment] ~ret:bool;*)
     dynamic "isEmpty" [] ~ret:bool;
@@ -4826,7 +4826,7 @@ let () = with_class qPersistentModelIndex [
     (*dynamic "operator=" [arg "other" qPersistentModelIndex] ~ret:qPersistentModelIndex;*)
     constructor "" [arg "other" qPersistentModelIndex];
     (*dynamic "operator=" [arg "other" qPersistentModelIndex] ~ret:qPersistentModelIndex;*)
-    dynamic "swap" [arg "other" qPersistentModelIndex];
+    (*dynamic "swap" [arg' `Ref "other" qPersistentModelIndex];*)
     (*dynamic "operator==" [arg "other" qModelIndex] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qModelIndex] ~ret:bool;*)
     (*dynamic "operator=" [arg "other" qModelIndex] ~ret:qPersistentModelIndex;*)
@@ -4865,7 +4865,7 @@ let () = with_class qLinkedList [
     (*dynamic "operator=" [arg "other" qLinkedList<T>] ~ret:qLinkedList<T>;*)
     constructor "" [arg "other" qLinkedList<T>];
     (*dynamic "operator=" [arg "other" qLinkedList<T>] ~ret:qLinkedList<T>;*)
-    dynamic "swap" [arg "other" qLinkedList<T>];
+    (*dynamic "swap" [arg' `Ref "other" qLinkedList<T>];*)
     (*dynamic "operator==" [arg "other" qLinkedList<T>] ~ret:bool;*)
     (*dynamic "operator!=" [arg "other" qLinkedList<T>] ~ret:bool;*)
     dynamic "size" [] ~ret:int;
@@ -4934,7 +4934,7 @@ let () = with_class qDir [
     (*dynamic "operator=" [arg "dir" qDir] ~ret:qDir;*)
     (*dynamic "operator=" [arg "path" qString] ~ret:qDir;*)
     (*dynamic "operator=" [arg "other" qDir] ~ret:qDir;*)
-    dynamic "swap" [arg "other" qDir];
+    (*dynamic "swap" [arg' `Ref "other" qDir];*)
     dynamic "setPath" [arg "path" qString];
     dynamic "path" [] ~ret:qString;
     dynamic "absolutePath" [] ~ret:qString;
@@ -5004,7 +5004,7 @@ let () = with_class qMultiMap [
     constructor "" [arg "list" std'initializer_list<std'pair<Key,T> >];
     constructor "" [arg "other" qMap<Key,T>];
     constructor "" [arg "other" qMap<Key,T>];
-    dynamic "swap" [arg "other" qMultiMap<Key,T>];
+    (*dynamic "swap" [arg' `Ref "other" qMultiMap<Key,T>];*)
     dynamic "replace" [arg "key" key;arg "value" t] ~ret:qMap<Key, T>'iterator;
     dynamic "insert" [arg "key" key;arg "value" t] ~ret:qMap<Key, T>'iterator;
     dynamic "insert" [arg "pos" qMap<Key,T>'const_iterator;arg "key" key;arg "value" t] ~ret:qMap<Key, T>'iterator;
@@ -5025,7 +5025,7 @@ let () = with_class qByteArrayList [
     dynamic "join" [arg "separator" pchar] ~ret:qByteArray;
   ]
 let () = with_class qQueue [
-    dynamic "swap" [arg "other" qQueue<T>];
+    (*dynamic "swap" [arg' `Ref "other" qQueue<T>];*)
     dynamic "enqueue" [arg "t" t];
     (*dynamic "dequeue" [] ~ret:t;*)
     (*dynamic "head" [] ~ret:t;*)
@@ -5096,7 +5096,7 @@ let () = with_class qFutureWatcher [
     dynamic "togglePaused" [];
   ]
 let () = with_class qStack [
-    dynamic "swap" [arg "other" qStack<T>];
+    (*dynamic "swap" [arg' `Ref "other" qStack<T>];*)
     dynamic "push" [arg "t" t];
     (*dynamic "pop" [] ~ret:t;*)
     (*dynamic "top" [] ~ret:t;*)
@@ -5123,7 +5123,7 @@ let () = with_class qMultiHash [
     constructor "" [arg "list" std'initializer_list<std'pair<Key,T> >];
     constructor "" [arg "other" qHash<Key,T>];
     constructor "" [arg "other" qHash<Key,T>];
-    dynamic "swap" [arg "other" qMultiHash];
+    (*dynamic "swap" [arg' `Ref "other" qMultiHash];*)
     dynamic "replace" [arg "key" key;arg "value" t] ~ret:qHash<Key, T>'iterator;
     dynamic "insert" [arg "key" key;arg "value" t] ~ret:qHash<Key, T>'iterator;
     (*dynamic "operator+=" [arg "other" qMultiHash] ~ret:qMultiHash;*)
@@ -5139,7 +5139,7 @@ let () = with_class qScopedArrayPointer [
     constructor "" [];
     (*dynamic "operator[]" [arg "i" int] ~ret:t;*)
     (*dynamic "operator[]" [arg "i" int] ~ret:t;*)
-    dynamic "swap" [arg "other" qScopedArrayPointer];
+    (*dynamic "swap" [arg' `Ref "other" qScopedArrayPointer];*)
   ]
 let () = with_class qTimerEvent [
     constructor "" [arg "timerId" int];

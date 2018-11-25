@@ -1,11 +1,11 @@
 open Mlspec.Decl
 
 let qList name t =
-  let self = qstruct name ~modifier:`Const_ref in
+  let self = qstruct name in
   with_class self [
     constructor "" [];
     constructor "" [arg "other" self];
-    dynamic "swap" [arg "other" self];
+    (*dynamic "swap" [arg' `Ref "other" self];*)
     dynamic "size" [] ~ret:int;
     dynamic "isEmpty" [] ~ret:bool;
     dynamic "clear" [];
@@ -50,7 +50,7 @@ let qList name t =
 let qObject = qclass "QObject"
 let qEvent = qclass "QEvent"
 let qCoreApplication = qextends "QCoreApplication" qObject
-let qModelIndex = qstruct "QModelIndex" ~modifier:`Const_ref
+let qModelIndex = qstruct "QModelIndex"
 let qModelIndexList = qList "QModelIndexList" qModelIndex
 let qMessageLogContext = qclass "QMessageLogContext"
 let qAbstractEventDispatcher'TimerInfo =
@@ -59,7 +59,7 @@ let qVectorIterator = qclass "QVectorIterator"
 let qUrlQuery = qclass "QUrlQuery"
 let qMap'const_iterator = qclass "QMap::const_iterator"
 (*let qPoint = qclass ~immediate:true "QPoint"*)
-let qFileInfo = qstruct "QFileInfo" ~modifier:`Const_ref
+let qFileInfo = qstruct "QFileInfo"
 let qSet'const_iterator = qclass "QSet::const_iterator"
 let qJsonObject'iterator = qclass "QJsonObject::iterator"
 let qXmlStreamNotationDeclaration = qclass "QXmlStreamNotationDeclaration"
@@ -129,7 +129,7 @@ let qVector = qclass "QVector"
 let qTextCodec'ConverterState = qclass "QTextCodec::ConverterState"
 let qStandardPaths = qclass "QStandardPaths"
 let qDirIterator = qclass "QDirIterator"
-let qItemSelectionRange = qstruct "QItemSelectionRange" ~modifier:`Const_ref
+let qItemSelectionRange = qstruct "QItemSelectionRange"
 let qStorageInfo = qclass "QStorageInfo"
 let qLinkedList'iterator = qclass "QLinkedList::iterator"
 let qRegularExpressionMatch = qstruct "QRegularExpressionMatch"
@@ -144,7 +144,7 @@ let qStringRef = qstruct "QStringRef"
 let qTextCodec = qclass "QTextCodec"
 let qJsonArray'const_iterator = qclass "QJsonArray::const_iterator"
 let qSystemSemaphore = qclass "QSystemSemaphore"
-let qUrl = qstruct "QUrl" ~modifier:`Const_ref
+let qUrl = qstruct "QUrl"
 let qReadLocker = qclass "QReadLocker"
 let qHash'key_iterator = qclass "QHash::key_iterator"
 let qFuture = qclass "QFuture"
@@ -162,7 +162,7 @@ let qProcess'CreateProcessArguments = qclass "QProcess::CreateProcessArguments"
 let qCommandLineOption = qclass "QCommandLineOption"
 (*let qList'const_iterator = qclass "QList::const_iterator"*)
 let qMutableVectorIterator = qclass "QMutableVectorIterator"
-let qRegularExpression = qstruct "QRegularExpression" ~modifier:`Const_ref
+let qRegularExpression = qstruct "QRegularExpression"
 let qMetaProperty = qclass "QMetaProperty"
 (*let qString = const (qclass ~immediate:true "QString")*)
 let qLine = qclass "QLine"
@@ -191,7 +191,7 @@ let qSemaphore = qclass "QSemaphore"
 let qXmlStreamAttribute = qclass "QXmlStreamAttribute"
 (*let qSize = const (qclass ~immediate:true "QSize"*)
 let qDeadlineTimer = qclass "QDeadlineTimer"
-let qDate = qstruct "QDate" ~modifier:`Const_ref
+let qDate = qstruct "QDate"
 let qMutableLinkedListIterator = qclass "QMutableLinkedListIterator"
 let qHash'const_iterator = qclass "QHash::const_iterator"
 (*let qFlags = qclass "QFlags"*)
@@ -220,7 +220,7 @@ let qScopedValueRollback = qclass "QScopedValueRollback"
 let qDir = qstruct "QDir"
 let qMultiMap = qextends "QMultiMap" qMap
 let qUnhandledException = qextends "QUnhandledException" qException
-let qItemSelection = qstruct "QItemSelection" ~modifier:`Const_ref
+let qItemSelection = qstruct "QItemSelection"
 let qByteArrayList = qstruct "QByteArrayList" (*~extend:qList*)
 (*let qQueue = qextends "QQueue" qList*)
 let qStringList = qList "QStringList" string

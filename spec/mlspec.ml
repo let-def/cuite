@@ -259,18 +259,18 @@ module Decl = struct
   let qreal = float
   let double = float
 
-  let qString     = custom_type ~ml_name:"string" "QString"
-  let string      = qString
-  let pchar       = custom_type ~ml_name:"string" "pchar"
+  let qString   = custom_type ~ml_name:"string" "QString"
+  let string    = qString
+  let pchar     = custom_type ~ml_name:"string" "pchar"
 
-  let nativeint   = custom_type "nativeint"
-  let qint64      = custom_type "qint64"  ~ml_name:"int64"
-  let qRect       = custom_type "QRect"   ~ml_name:"qRect"
-  let qRectF      = custom_type "QRectF"  ~ml_name:"qRectF"
-  let qPoint      = custom_type "QPoint"  ~ml_name:"qPoint"
-  let qPointF     = custom_type "QPointF" ~ml_name:"qPointF"
-  let qSize       = custom_type "QSize"   ~ml_name:"qSize"
-  let qSizeF      = custom_type "QSizeF"  ~ml_name:"qSizeF"
+  let nativeint = custom_type "intnat"  ~ml_name:"nativeint"
+  let qint64    = custom_type "qint64"  ~ml_name:"int64"
+  let qRect     = custom_type "QRect"   ~ml_name:"qRect"
+  let qRectF    = custom_type "QRectF"  ~ml_name:"qRectF"
+  let qPoint    = custom_type "QPoint"  ~ml_name:"qPoint"
+  let qPointF   = custom_type "QPointF" ~ml_name:"qPointF"
+  let qSize     = custom_type "QSize"   ~ml_name:"qSize"
+  let qSizeF    = custom_type "QSizeF"  ~ml_name:"qSizeF"
 end
 
 open Mangle

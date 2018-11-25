@@ -159,8 +159,8 @@ let () = with_class qTextDocument [
     dynamic "characterCount" [] ~ret:int;
     dynamic "setDefaultStyleSheet" [arg "sheet" qString];
     dynamic "defaultStyleSheet" [] ~ret:qString;
-    dynamic "undo" [arg "cursor" qTextCursor];
-    dynamic "redo" [arg "cursor" qTextCursor];
+    (*dynamic "undo" [arg "cursor" qTextCursor];*)
+    (*dynamic "redo" [arg "cursor" qTextCursor];*)
     (*dynamic "clearUndoRedoStacks" [arg "stacksToClear" stacks];*)
     dynamic "maximumBlockCount" [] ~ret:int;
     dynamic "setMaximumBlockCount" [arg "maximum" int];
@@ -387,9 +387,9 @@ let () = with_class qWindow [
     dynamic "isModal" [] ~ret:bool;
     dynamic "modality" [] ~ret:qt'WindowModality;
     dynamic "setModality" [arg "modality" qt'WindowModality];
-    dynamic "setFormat" [arg "format" qSurfaceFormat];
-    dynamic "format" [] ~ret:qSurfaceFormat;
-    dynamic "requestedFormat" [] ~ret:qSurfaceFormat;
+    dynamic "setFormat" [arg' `Const_ref "format" qSurfaceFormat];
+    dynamic "format" [] ~ret:qSurfaceFormat ~ret_mod:`Const_ref;
+    dynamic "requestedFormat" [] ~ret:qSurfaceFormat ~ret_mod:`Const_ref;
     dynamic "setFlags" [arg "flags" qt'WindowFlags];
     dynamic "flags" [] ~ret:qt'WindowFlags;
     dynamic "setFlag" [arg "flag" qt'WindowType;arg "on" bool];
@@ -858,7 +858,7 @@ let () = with_class qBrush [
     constructor "" [arg' `Const_ref "image" qImage];
     constructor "" [arg "other" qBrush];
     constructor "" [arg "gradient" qGradient];
-    dynamic "swap" [arg "other" qBrush];
+    (*dynamic "swap" [arg' `Ref "other" qBrush];*)
     dynamic "style" [] ~ret:qt'BrushStyle;
     dynamic "setStyle" [arg "style" qt'BrushStyle];
     dynamic "matrix" [] ~ret:qMatrix;
@@ -872,7 +872,7 @@ let () = with_class qBrush [
     dynamic "color" [] ~ret:qColor;
     dynamic "setColor" [arg "color" qColor];
     dynamic "setColor" [arg "color" qt'GlobalColor];
-    dynamic "gradient" [] ~ret:qGradient;
+    dynamic "gradient" [] ~ret:qGradient ~ret_mod:`Pointer;
     dynamic "isOpaque" [] ~ret:bool;
     (*dynamic "operator=" [arg "brush" qBrush] ~ret:qBrush;
       dynamic "operator=" [arg "other" qBrush] ~ret:qBrush;*)
@@ -1394,8 +1394,8 @@ let () = with_class qBrush [
   let () = with_class qSurfaceFormat [
     constructor "" [];
     constructor "" [arg "options" formatOptions];
-    constructor "" [arg "other" qSurfaceFormat];
-    dynamic "operator=" [arg "other" qSurfaceFormat] ~ret:qSurfaceFormat;
+    constructor "" [arg' `Const_ref "other" qSurfaceFormat];
+    (*dynamic "operator=" [arg "other" qSurfaceFormat] ~ret:qSurfaceFormat;*)
     dynamic "setDepthBufferSize" [arg "size" int];
     dynamic "depthBufferSize" [] ~ret:int;
     dynamic "setStencilBufferSize" [arg "size" int];
@@ -2822,8 +2822,8 @@ let () = with_class qBrush [
     dynamic "addFile" [arg "fileName" qString;arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State];
     dynamic "key" [] ~ret:qString;
     dynamic "clone" [] ~ret:qIconEngine;
-    dynamic "read" [arg "in" qDataStream] ~ret:bool;
-    dynamic "write" [arg "out" qDataStream] ~ret:bool;
+    (*dynamic "read" [arg' `Ref "in" qDataStream] ~ret:bool;*)
+    (*dynamic "write" [arg' `Ref "out" qDataStream] ~ret:bool;*)
     dynamic "availableSizes" [arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qList<QSize>;
     dynamic "iconName" [] ~ret:qString;
     dynamic "isNull" [] ~ret:bool;

@@ -95,39 +95,6 @@ let output_bc_wrapper oc cf =
   | Some n -> gen_bc_wrapper oc (QClass.c_field_base_symbol cf) n
   | None -> assert false
 
-let gen_method oc kind cf args ret =
-  let cl = QClass.field_class cf in
-  let name = QClass.field_name cf in
-  let symbol = QClass.c_field_base_symbol cf in
-  let custom = kind = `Custom in
-  let args = Decl.typ ~modifier:`Pointer (QClass cl) :: List.map snd args in
-  let arity = List.length args in
-  println oc "external value %s(%a)%s" symbol
-    arg_list (if arity = 0
-              then ["value _unit"]
-              else enum_strings "value mlarg%d" 0 arity)
-    (if custom then ";" else "");
-  if not custom then (
-    println oc "{";
-    println oc "  CUITE_GC_REGION(%a);"
-      arg_list (enum_strings "&mlarg%d" 0 arity);
-    List.iteri (fun i arg ->
-        println oc "  %s cval%d(%s);"
-          (cpp_argtype arg) i (cpp_from_ocaml arg (sprintf "mlarg%d" i))
-      ) args;
-    let cvals = enum_strings "cval%d" 0 arity in
-    begin match ret with
-      | None ->
-        println oc "  %s::%s(%a);" (QClass.cpp_type cl) name arg_list cvals;
-        println oc "  return Val_unit;"
-      | Some ret ->
-        println oc "  %s result(%s::%s(%a));"
-          (cpp_argtype ret) (QClass.cpp_type cl) name arg_list cvals;
-        println oc "  return %s;" (cpp_to_ocaml ret "result")
-    end;
-    println oc "}\n"
-  )
-
 let gen_stub oc cf =
   let cl = QClass.field_class cf in
   let name = QClass.field_name cf in
@@ -179,15 +146,14 @@ let gen_stub oc cf =
           println oc "  %s cval%d(%s);"
             (cpp_argtype arg) i (cpp_from_ocaml arg (sprintf "mlarg%d" i))
         ) args;
-      let cvals = enum_strings "cval%d" 0 arity in
+      let cvals = enum_strings "cval%d" 1 arity in
       begin match m.ret with
         | None ->
-          println oc "  %s::%s(%a);" (QClass.cpp_type cl) name arg_list cvals;
+          println oc "  cval0->%s(%a);" name arg_list cvals;
           println oc "  return Val_unit;"
         | Some ret ->
-          println oc "  %s result(%s::%s(%a));"
-            (cpp_argtype ret) (QClass.cpp_type cl) name arg_list cvals;
-          println oc "  return %s;" (cpp_to_ocaml ret "result")
+          println oc "  auto result = cval0->%s(%a);" name arg_list cvals;
+          println oc "  return %s;" (cpp_to_ocaml ret "result");
       end;
       println oc "}\n"
     )

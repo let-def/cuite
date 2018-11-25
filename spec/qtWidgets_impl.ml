@@ -1245,7 +1245,7 @@ let () = with_class qGraphicsScale [
     dynamic "setYScale" [arg "arg0" qreal];
     dynamic "zScale" [] ~ret:qreal;
     dynamic "setZScale" [arg "arg0" qreal];
-    dynamic "applyTo" [arg "matrix" qMatrix4x4];
+    (*dynamic "applyTo" [arg' `Ref "matrix" qMatrix4x4];*)
     dynamic "originChanged" [];
     dynamic "xScaleChanged" [];
     dynamic "yScaleChanged" [];
@@ -1261,7 +1261,7 @@ let () = with_class qGraphicsRotation [
     dynamic "axis" [] ~ret:qVector3D;
     dynamic "setAxis" [arg "axis" qVector3D];
     dynamic "setAxis" [arg "axis" qt'Axis];
-    dynamic "applyTo" [arg "matrix" qMatrix4x4];
+    (*dynamic "applyTo" [arg' `Ref "matrix" qMatrix4x4];*)
     dynamic "originChanged" [];
     dynamic "angleChanged" [];
     dynamic "axisChanged" [];
@@ -2108,9 +2108,9 @@ let () = with_class qAbstractScrollArea [
     dynamic "viewport" [] ~ret:(optional qWidget);
     dynamic "setViewport" [arg "widget" qWidget];
 
-    dynamic "setViewportMargins" [arg "left" int; arg "top" int; arg "right" int; arg "bottom" int] ~kind:`Protected;
-    dynamic "setViewportMargins" [arg "margins" qMargins] ~kind:`Protected;
-    dynamic "viewportMargins" [] ~ret:qMargins ~kind:`Protected;
+    (*dynamic "setViewportMargins" [arg "left" int; arg "top" int; arg "right" int; arg "bottom" int] ~kind:`Protected;*)
+    (*dynamic "setViewportMargins" [arg "margins" qMargins] ~kind:`Protected;*)
+    (*dynamic "viewportMargins" [] ~ret:qMargins ~kind:`Protected;*)
 
     dynamic "maximumViewportSize" [] ~ret:qSize;
     dynamic "setupViewport" [arg "viewport" qWidget];
@@ -3002,8 +3002,6 @@ let () = with_class qTextBrowser [
     dynamic "forwardAvailable" [arg "available" bool];
     dynamic "historyChanged" [];
     dynamic "sourceChanged" [arg "src" qUrl];
-    dynamic "highlighted" [opt "link" qUrl];
-    dynamic "highlighted" [arg "link" qString];
     dynamic "anchorClicked" [arg "link" qUrl];
     slot "backward" [];
     slot "forward" [];
@@ -3366,8 +3364,8 @@ let () = with_class qListWidgetItem [
     dynamic "data" [arg "role" int] ~ret:qVariant;
     dynamic "setData" [arg "role" int;arg "value" qVariant];
     (*dynamic "operator<" [arg "other" qListWidgetItem] ~ret:bool;*)
-    dynamic "read" [arg "in" qDataStream];
-    dynamic "write" [arg "out" qDataStream];
+    (*dynamic "read" [arg' `Ref "in" qDataStream];*)
+    (*dynamic "write" [arg' `Ref "out" qDataStream];*)
     (*dynamic "operator=" [arg "other" qListWidgetItem] ~ret:qListWidgetItem;*)
     dynamic "type" [] ~ret:int;
   ]
@@ -3580,7 +3578,7 @@ let () = with_class qTableWidget [
     dynamic "removeCellWidget" [arg "row" int;arg "column" int];
     dynamic "isItemSelected" [arg "item" qTableWidgetItem] ~ret:bool;
     dynamic "setItemSelected" [arg "item" qTableWidgetItem;arg "select" bool];
-    dynamic "setRangeSelected" [arg "range" qTableWidgetSelectionRange;arg "select" bool];
+    dynamic "setRangeSelected" [arg' `Const_ref "range" qTableWidgetSelectionRange; arg "select" bool];
     (*dynamic "selectedRanges" [] ~ret:qList<QTableWidgetSelectionRange>;*)
     (*dynamic "selectedItems" [] ~ret:qList<QTableWidgetItem *>;*)
     (*dynamic "findItems" [arg "text" qString;arg "flags" qt'MatchFlags] ~ret:qList<QTableWidgetItem *>;*)
@@ -3701,8 +3699,8 @@ let () = with_class qTreeWidgetItem [
     dynamic "data" [arg "column" int;arg "role" int] ~ret:qVariant;
     dynamic "setData" [arg "column" int;arg "role" int;arg "value" qVariant];
     (*dynamic "operator<" [arg "other" qTreeWidgetItem] ~ret:bool;*)
-    dynamic "read" [arg "in" qDataStream];
-    dynamic "write" [arg "out" qDataStream];
+    (*dynamic "read" [arg' `Ref "in" qDataStream];*)
+    (*dynamic "write" [arg' `Ref "out" qDataStream];*)
     (*dynamic "operator=" [arg "other" qTreeWidgetItem] ~ret:qTreeWidgetItem;*)
     dynamic "parent" [] ~ret:qTreeWidgetItem;
     dynamic "child" [arg "index" int] ~ret:qTreeWidgetItem;
@@ -4671,7 +4669,7 @@ let () = with_class qTileRules [
   ]
   let () = with_class qGraphicsTransform [
     constructor "" [opt "parent" qObject];
-    dynamic "applyTo" [arg "matrix" (pointer qMatrix4x4)];
+    (*dynamic "applyTo" [arg' `Ref "matrix" qMatrix4x4];*)
   ]
   let () = with_class qAbstractItemDelegate [
     constructor "" [opt "parent" qObject];

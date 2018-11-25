@@ -5,6 +5,7 @@
 #include "cuite_csupport.h"
 #include "cuite_support.h"
 #include "cuite_wrappers.h"
+#include "cuite_variant.h"
 
 #define HASH_Invalid_value -965933879
 

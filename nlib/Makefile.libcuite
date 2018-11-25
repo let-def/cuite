@@ -2,7 +2,7 @@ OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
 CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -DQT_NO_VERSION_TAGGING -I ../cpp -I .
 
-all: libcuite.so
+all: libncuite.so
 
 ## C++ COMPILATION
 
