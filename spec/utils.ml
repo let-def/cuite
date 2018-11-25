@@ -15,6 +15,7 @@ let hash_variant s =
   if !accu > 0x3FFFFFFF then !accu - (1 lsl 31) else !accu
 
 let fprintf = Printf.fprintf
+let sprintf = Printf.sprintf
 
 let println oc fmt =
   Printf.kfprintf (fun oc -> output_char oc '\n') oc fmt
@@ -22,3 +23,21 @@ let println oc fmt =
 let option_value ~default = function
   | None -> default
   | Some x -> x
+
+let arg_list oc = function
+  | [] -> ()
+  | x :: xs ->
+    output_string oc x;
+    List.iter
+      (fun x' -> output_char oc ','; output_string oc x')
+      xs
+
+let sarg_list () = String.concat ","
+
+let enum_strings fmt i j =
+  let rec aux i =
+    if i >= j
+    then []
+    else Printf.sprintf fmt i :: aux (i + 1)
+  in
+  aux i

@@ -22,7 +22,7 @@ let () = with_class qGuiApplication [
     (*static  "primaryScreen" [] ~ret:qScreen;*)
     (*static  "screens" [] ~ret:qList<QScreen *>;*)
     dynamic "devicePixelRatio" [] ~ret:qreal;
-    static  "overrideCursor" [] ~ret:qCursor;
+    (*static  "overrideCursor" [] ~ret:qCursor ~ret_mod:`Optional;*)
     static  "setOverrideCursor" [arg "cursor" qCursor];
     static  "changeOverrideCursor" [arg "cursor" qCursor];
     static  "restoreOverrideCursor" [];

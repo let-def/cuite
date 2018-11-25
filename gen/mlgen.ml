@@ -19,20 +19,20 @@ let ml_negtype oc = function
   | QFlags fl -> fprintf oc "%s" (QFlags.ml_type fl)
   | Custom x  -> fprintf oc "%s" x.ml_negname
 
-let ml_argtype oc arg =
-  match arg.arg_mod with
+let ml_argtype oc (_,typ) =
+  match typ.typ_mod with
   | `Optional ->
-    fprintf oc "%a option" ml_negtype arg.arg_typ
+    fprintf oc "%a option" ml_negtype typ.typ_def
   | `Direct | `Const_ref | `Const | `Pointer ->
-    fprintf oc "%a" ml_negtype arg.arg_typ
+    fprintf oc "%a" ml_negtype typ.typ_def
   | `Ref -> failwith "ml_argtype: TODO"
 
-let ml_argpostype oc arg =
-  match arg.arg_mod with
+let ml_argpostype oc (_,typ) =
+  match typ.typ_mod with
   | `Optional ->
-    fprintf oc "%a option" ml_postype arg.arg_typ
+    fprintf oc "%a option" ml_postype typ.typ_def
   | `Direct | `Const_ref | `Const | `Pointer ->
-    fprintf oc "%a" ml_postype arg.arg_typ
+    fprintf oc "%a" ml_postype typ.typ_def
   | `Ref -> failwith "ml_argpostype: TODO"
 
 let arrow oc (lhs, rhs) =
@@ -42,7 +42,7 @@ let arrow oc (lhs, rhs) =
   end;
   begin match rhs with
     | None -> fprintf oc "unit"
-    | Some x -> ml_postype oc x
+    | Some x -> ml_argpostype oc ("",x)
   end
 
 let args_neg_tuple oc = function
@@ -82,7 +82,7 @@ let output_field oc cl cf =
       | Constructor x ->
         fprintf oc "  external new'%s : %a"
           (if name = "" then "" else ident name)
-          arrow (x.args, Some (QClass cl))
+          arrow (x.args, Some (Decl.typ (QClass cl)))
       | Dynamic_method x ->
         fprintf oc "  external %s : %a"
           (lident name) arrow (Decl.arg "self" (QClass cl) :: x.args, x.ret)

@@ -6,7 +6,7 @@ let failwithf fmt =
 
 type type_kind = [ `By_ref | `By_val ]
 
-type argument_modifier =
+type type_mod =
   [ `Direct
   | `Pointer
   | `Const
@@ -15,45 +15,40 @@ type argument_modifier =
   | `Optional
   ]
 
-type qclass_def = {
+type qclass = {
   cl_name: string;
-  cl_kind: [type_kind | `Extends of qclass_def];
+  cl_kind: [type_kind | `Extends of qclass];
   cl_fields: cfield dlist;
-  cl_default_mod: argument_modifier;
+  cl_default_mod: type_mod;
 }
 
-and qenum_def = {
+and qenum = {
   enamespace: string;
   ename: string;
   emembers: string list;
 }
 
-and qflags_def = {
+and qflags = {
   fname: string;
   fenum: qenum;
 }
 
-and qclass = qclass_def
-and qenum  = qenum_def
-and qflags = qflags_def
-
-and argument = {
-  arg_name : string;
-  arg_mod : argument_modifier;
-  arg_typ : qtype;
-}
-
-and qtype =
+and qtype_def =
   | QClass of qclass
   | QEnum  of qenum
   | QFlags of qflags
   | Custom of { ml_decl : string; ml_name : string; ml_negname : string;
-                cpp_name : string; cpp_negname : string;
-                cpp_kind : type_kind; cpp_default_mod : argument_modifier;
+                cpp_name : string; cpp_kind : type_kind;
+                cpp_default_mod : type_mod;
               }
 
+and qtype = {
+  typ_mod : type_mod;
+  typ_def : qtype_def;
+}
+
 and cfield = {
-  clss: qclass_def;
+  clss: qclass;
   name: string;
   desc: cfield_desc;
 }
@@ -66,7 +61,9 @@ and cfield_desc =
   | Signal of { args: argument list; private_: bool }
   | Slot of { args: argument list }
 
-let eq_typ (typ : qtype) (typ' : qtype) =
+and argument = string * qtype
+
+let eq_typdef (typ : qtype_def) (typ' : qtype_def) =
   typ == typ' ||
   match typ, typ' with
   | QClass u , QClass v -> u == v
@@ -75,8 +72,10 @@ let eq_typ (typ : qtype) (typ' : qtype) =
   | Custom u , Custom v -> u.ml_name = v.ml_name && u.ml_negname = v.ml_negname
   | _ -> false
 
-let eq_arg a1 a2 =
-  (a1.arg_mod = a2.arg_mod) && (eq_typ a1.arg_typ a2.arg_typ)
+let eq_typ t1 t2 =
+  (t1.typ_mod = t2.typ_mod) && (eq_typdef t1.typ_def t2.typ_def)
+
+let compatible_arg (_,t1) (_,t2) = eq_typ t1 t2
 
 module Decl = struct
   let all_types = Dlist.empty ()
@@ -89,19 +88,17 @@ module Decl = struct
     | Custom u -> u.ml_name
 
   let kind_default_modifier = function
-    | `By_val -> `Direct
+    | `By_val -> `Const_ref
     | `By_ref -> `Pointer
 
   let custom_type
       ?(kind=`By_val) ?(modifier=kind_default_modifier kind)
       ?(ml_decl="") ?ml_neg ?ml_name
-      ?cpp_neg cpp_name
+      cpp_name
     =
     let ml_name = option_value ml_name ~default:(Mangle.lident cpp_name) in
     let ml_negname = option_value ml_neg ~default:ml_name in
-    let cpp_negname = option_value cpp_neg ~default:cpp_name in
-    let t = Custom { ml_decl; ml_name; ml_negname;
-                     cpp_name; cpp_negname;
+    let t = Custom { ml_decl; ml_name; ml_negname; cpp_name;
                      cpp_kind = kind; cpp_default_mod = modifier
                    } in
     Dlist.append all_types t;
@@ -112,23 +109,27 @@ module Decl = struct
     | `By_ref | `By_val as x -> x
     | `Extends cl -> class_kind cl
 
+  let qtype_name = function
+    | QClass cl -> cl.cl_name
+    | QEnum  en -> en.enamespace ^ "::" ^ en.ename
+    | QFlags fl -> fl.fenum.enamespace ^ "::" ^ fl.fname
+    | Custom c  -> c.ml_name
+
   let qtype_kind qt = match qt with
     | QClass u -> class_kind u
     | QEnum  _ -> `By_val
     | QFlags _ -> `By_val
     | Custom u -> u.cpp_kind
 
-  let qtype_modifier qt = match qt with
+  let qtype_mod qt = match qt with
     | QClass u -> u.cl_default_mod
     | QEnum  _ -> `Direct
     | QFlags _ -> `Direct
     | Custom u -> u.cpp_default_mod
 
-  let qtype_name = function
-    | QClass cl -> cl.cl_name
-    | QEnum  en -> en.enamespace ^ "::" ^ en.ename
-    | QFlags fl -> fl.fenum.enamespace ^ "::" ^ fl.fname
-    | Custom c  -> c.ml_name
+  let typ ?modifier typ_def =
+    let typ_mod = option_value modifier ~default:(qtype_mod typ_def) in
+    { typ_def; typ_mod }
 
   let qclass_of_typ = function
     | QClass cl -> cl
@@ -146,7 +147,7 @@ module Decl = struct
     let cl_fields = Dlist.empty () in
     let cl = QClass {
         cl_name; cl_fields;
-        cl_kind = (kind :> [type_kind | `Extends of qclass_def]);
+        cl_kind = (kind :> [type_kind | `Extends of qclass]);
         cl_default_mod = modifier;
       } in
     Dlist.append all_types cl;
@@ -171,8 +172,11 @@ module Decl = struct
     Dlist.append cl.cl_fields
       {clss = cl; name; desc = Constructor {args; custom}}
 
-  let dynamic ?(kind=`Normal) ?ret name args ~cl =
+  let dynamic ?(kind=`Normal) ?ret ?ret_mod name args ~cl =
     let cl = qclass_of_typ cl in
+    let ret = match ret with
+      | None -> None | Some x -> Some (typ ?modifier:ret_mod x)
+    in
     let rec is_dup cl' =
       if List.exists (function
           | { name = name'; desc = Dynamic_method meth} ->
@@ -182,7 +186,7 @@ module Decl = struct
              | Some t, Some t' -> eq_typ t t'
              | _ -> false) &&
             List.length args = List.length meth.args &&
-            List.for_all2 eq_arg args meth.args
+            List.for_all2 compatible_arg args meth.args
           | _ -> false
         ) (Dlist.read cl'.cl_fields)
       then prerr_endline ("Duplicate method: {" ^ cl'.cl_name ^ "," ^ cl.cl_name ^ "}::" ^ name)
@@ -194,28 +198,33 @@ module Decl = struct
     Dlist.append cl.cl_fields
       {clss = cl; name; desc = Dynamic_method {ret; args; kind}}
 
-  let static ?(custom=false) ?ret name args ~cl =
+  let static ?(custom=false) ?ret ?ret_mod name args ~cl =
+    let ret = match ret with
+      | None -> None | Some x -> Some (typ ?modifier:ret_mod x)
+    in
     let cl = qclass_of_typ cl in
     Dlist.append cl.cl_fields
       {clss = cl; name; desc = Static_method {ret; args; custom}}
 
-  let slot ?ret ?(protected=false) name args ~cl =
+  let slot (*?ret*) ?(protected=false) name args ~cl =
     let cl = qclass_of_typ cl in
     Dlist.append cl.cl_fields
-      {clss = cl; name; desc = Slot {args}};
-    if not (protected ||
-            (String.length name >= 3 &&
-             name.[0] = '_' && name.[1] = 'q' && name.[2] = '_') ||
-            List.exists (function
-                | {name = name'; desc = Dynamic_method meth} ->
-                  name = name' &&
-                  List.length args = List.length meth.args &&
-                  List.for_all2 eq_arg args meth.args
-                | _ -> false
-              ) (Dlist.read cl.cl_fields))
-    then
-      Dlist.append cl.cl_fields
-        {clss = cl; name; desc = Dynamic_method {ret; args; kind = `Normal}}
+      {clss = cl; name; desc = Slot {args}}
+    (*
+      if not (protected ||
+              (String.length name >= 3 &&
+               name.[0] = '_' && name.[1] = 'q' && name.[2] = '_') ||
+              List.exists (function
+                  | {name = name'; desc = Dynamic_method meth} ->
+                    name = name' &&
+                    List.length args = List.length meth.args &&
+                    List.for_all2 compatible_arg args meth.args
+                  | _ -> false
+                ) (Dlist.read cl.cl_fields))
+      then
+        Dlist.append cl.cl_fields
+          {clss = cl; name; desc = Dynamic_method {ret; args; kind = `Normal}}
+    *)
 
   let signal ?(private_=false) name args ~cl =
     let cl = qclass_of_typ cl in
@@ -225,20 +234,14 @@ module Decl = struct
   let with_class cl fields =
     List.iter (fun f -> f ~cl) fields
 
-  let arg ?modifier name typ =
-    { arg_name = name;
-      arg_mod = option_value modifier ~default:(qtype_modifier typ);
-      arg_typ = typ }
+  let arg ?modifier name typ_def =
+    (name, typ ?modifier typ_def)
 
   let arg' modifier name typ =
     arg ~modifier name typ
 
   let opt name typ =
     arg ~modifier:`Optional name typ
-
-  let int = custom_type "int"
-  let bool = custom_type "bool"
-  let float = custom_type ~ml_name:"float" "double"
 
   let qenum enamespace ename emembers =
     let t = QEnum {enamespace; ename; emembers} in
@@ -250,19 +253,23 @@ module Decl = struct
     Dlist.append all_types t;
     t
 
-  let qString     = custom_type ~ml_name:"string"
-      ~modifier:`Const_ref "QString"
+  let int = custom_type "int" ~modifier:`Direct
+  let bool = custom_type "bool" ~modifier:`Direct
+  let float = custom_type "double" ~ml_name:"float" ~modifier:`Direct
+  let qreal = float
+  let double = float
+
+  let qString     = custom_type ~ml_name:"string" "QString"
   let string      = qString
   let pchar       = custom_type ~ml_name:"string" "pchar"
+
   let nativeint   = custom_type "nativeint"
-  let double      = float
-  let qreal       = float
-  let qint64      = custom_type "int64"
+  let qint64      = custom_type "qint64"  ~ml_name:"int64"
   let qRect       = custom_type "QRect"   ~ml_name:"qRect"
   let qRectF      = custom_type "QRectF"  ~ml_name:"qRectF"
-  let qPoint      = custom_type "QPoint"  ~ml_name:"qPoint" ~modifier:`Const_ref
+  let qPoint      = custom_type "QPoint"  ~ml_name:"qPoint"
   let qPointF     = custom_type "QPointF" ~ml_name:"qPointF"
-  let qSize       = custom_type "QSize"   ~ml_name:"qSize" ~modifier:`Const_ref
+  let qSize       = custom_type "QSize"   ~ml_name:"qSize"
   let qSizeF      = custom_type "QSizeF"  ~ml_name:"qSizeF"
 end
 

@@ -213,7 +213,7 @@ let () = with_class qItemSelection [
     dynamic "contains" [arg "index" qModelIndex] ~ret:bool;
     dynamic "indexes" [] ~ret:qModelIndexList;
     dynamic "merge" [arg "other" qItemSelection;arg "command" qItemSelectionModel'SelectionFlags];
-    static  "split" [arg "range" qItemSelectionRange; arg "other" qItemSelectionRange; arg "result" qItemSelection];
+    (*static  "split" [arg "range" qItemSelectionRange; arg "other" qItemSelectionRange; arg "result" qItemSelection];*)
   ]
 
 let () = with_class qItemSelectionModel [

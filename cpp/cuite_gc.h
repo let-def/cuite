@@ -8,7 +8,7 @@ struct CUITE_Region
 {
   cuite_region_t region;
 
-  CUITE_Region() : region(cuite_region_enter())
+  CUITE_Region(value **arguments, size_t count) : region(cuite_region_enter())
   {
     cuite_assert(!cuite_ocaml_released);
   }
@@ -24,7 +24,7 @@ struct CUITE_AcquireRegion
   cuite_region_t region;
   bool acquired;
 
-  CUITE_AcquireRegion(bool _acquired) :
+  CUITE_AcquireRegion(bool _acquired, value **arguments, size_t count) :
     acquired(_acquired), region(cuite_region_enter())
   {
     cuite_assert(!cuite_ocaml_released);
@@ -52,10 +52,15 @@ struct CUITE_ReleaseRegion
 };
 
 /* Setup a cuite region just for allocating. Abort if the OCaml runtime was released. */
-#define CUITE_GC_REGION CUITE_Region _region
+#define CUITE_GC_REGION(...) \
+   value *_region_roots[] = {__VA_ARGS__}; \
+   CUITE_Region _region(_region_roots, sizeof(_region_roots)/sizeof(value*))
 
 /* Setup a cuite region that reacquire the OCaml runtime if necessary. */
-#define CUITE_OCAML_REGION CUITE_AcquireRegion _region(cuite_acquire_ocaml())
+#define CUITE_OCAML_REGION(...) \
+   value *_region_roots[] = {__VA_ARGS__}; \
+   CUITE_AcquireRegion _region(cuite_acquire_ocaml(), _region_roots, \
+                               sizeof(_region_roots)/sizeof(value*))
 
 /* Release the OCaml runtime in a lexical scope. */
 #define CUITE_WITHOUT_OCAML CUITE_ReleaseRegion _release
