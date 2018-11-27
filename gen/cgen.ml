@@ -33,7 +33,7 @@ let modifier_returns_pointer = function
   | `Optional | `Pointer -> true
   | `Direct | `Const | `Ref | `Const_ref -> false
 
-let cpp_to_ocaml typ expr =
+let cpp_to_ocaml oc typ mlvar cvar =
   let base_fn = match typ.typ_def with
     | QClass cl -> Printf.sprintf "cuite_%s_to_ocaml"
                      (QClass.cpp_type (root_class cl))
@@ -50,7 +50,12 @@ let cpp_to_ocaml typ expr =
       | `By_ref -> "&"
       | `By_val -> ""
   in
-  Printf.sprintf "%s(%s(%s))" base_fn pre expr
+  let mlexpr = Printf.sprintf "%s(%s(%s))" base_fn pre cvar in
+  match typ.typ_mod with
+  | `Optional ->
+    println oc "  %s = (%s) == NULL ? Val_none : Val_some(%s);"
+      mlvar cvar mlexpr
+  | _ -> println oc "  %s = %s;" mlvar mlexpr
 
 let cpp_from_ocaml typ =
   let base_fn = match typ.typ_def with
@@ -116,23 +121,28 @@ let gen_stub oc cf =
        else enum_strings "value mlarg%d" 0 arity);
     let mlargs = enum_strings "mlarg%d" 0 arity in
     println oc "{";
+    println oc "  value mlresult = Val_unit;";
     println oc "  CUITE_GC_REGION(%a);"
-      arg_list (enum_strings "&mlarg%d" 0 arity);
+      arg_list ("&mlresult" :: enum_strings "&mlarg%d" 0 arity);
     let cvals = enum_strings "cval%d" 0 arity in
     List.iter2 (fun (cval,mlval) arg ->
         println oc "  %s %s(%s);"
           (cpp_argtype arg) cval
           (cpp_from_ocaml arg mlval)
       ) (List.combine cvals mlargs) args;
-    let result = match QClass.kind cl with
+    begin match QClass.kind cl with
       | `By_val ->
-        cpp_to_ocaml (Decl.typ ~modifier:`Direct (QClass cl))
-          (Printf.sprintf "%s(%a)" (QClass.cpp_type cl) sarg_list cvals)
+        println oc "  auto cresult = %s(%a);"
+          (QClass.cpp_type cl) arg_list cvals;
+        cpp_to_ocaml oc
+          (Decl.typ ~modifier:`Direct (QClass cl)) "mlresult" "cresult";
       | `By_ref ->
-        cpp_to_ocaml (Decl.typ ~modifier:`Pointer (QClass cl))
-          (Printf.sprintf "new %s(%a)" (QClass.cpp_type cl) sarg_list cvals)
-    in
-    println oc "  return %s;" result;
+        println oc "  auto cresult = new %s(%a);"
+          (QClass.cpp_type cl) arg_list cvals;
+        cpp_to_ocaml oc
+          (Decl.typ ~modifier:`Pointer (QClass cl)) "mlresult" "cresult";
+    end;
+    println oc "  return mlresult;";
     println oc "}\n"
 
   | Dynamic_method m ->
@@ -146,8 +156,9 @@ let gen_stub oc cf =
       (if custom then ";" else "");
     if not custom then (
       println oc "{";
+      println oc "  value mlresult = Val_unit;";
       println oc "  CUITE_GC_REGION(%a);"
-        arg_list (enum_strings "&mlarg%d" 0 arity);
+        arg_list ("&mlresult" :: enum_strings "&mlarg%d" 0 arity);
       List.iteri (fun i arg ->
           println oc "  %s cval%d(%s);"
             (cpp_argtype arg) i (cpp_from_ocaml arg (sprintf "mlarg%d" i))
@@ -156,11 +167,11 @@ let gen_stub oc cf =
       begin match m.ret with
         | None ->
           println oc "  cval0->%s(%a);" name arg_list cvals;
-          println oc "  return Val_unit;"
         | Some ret ->
-          println oc "  auto result = cval0->%s(%a);" name arg_list cvals;
-          println oc "  return %s;" (cpp_to_ocaml ret "result");
+          println oc "  auto cresult = cval0->%s(%a);" name arg_list cvals;
+          cpp_to_ocaml oc ret "mlresult" "cresult";
       end;
+      println oc "  return mlresult;";
       println oc "}\n"
     )
 
@@ -174,8 +185,9 @@ let gen_stub oc cf =
       (if m.custom then ";" else "");
     if not m.custom then (
       println oc "{";
+      println oc "  value mlresult = Val_unit;";
       println oc "  CUITE_GC_REGION(%a);"
-        arg_list (enum_strings "&mlarg%d" 0 arity);
+        arg_list ("&mlresult" :: enum_strings "&mlarg%d" 0 arity);
       List.iteri (fun i arg ->
           println oc "  %s cval%d(%s);"
             (cpp_argtype arg) i (cpp_from_ocaml arg (sprintf "mlarg%d" i))
@@ -184,12 +196,12 @@ let gen_stub oc cf =
       begin match m.ret with
         | None ->
           println oc "  %s::%s(%a);" (QClass.cpp_type cl) name arg_list cvals;
-          println oc "  return Val_unit;"
         | Some ret ->
-          println oc "  %s result(%s::%s(%a));"
-            (cpp_argtype ret) (QClass.cpp_type cl) name arg_list cvals;
-          println oc "  return %s;" (cpp_to_ocaml ret "result")
+          println oc "  auto cresult(%s::%s(%a));"
+            (QClass.cpp_type cl) name arg_list cvals;
+          cpp_to_ocaml oc ret "mlresult" "cresult";
       end;
+      println oc "  return mlresult;";
       println oc "}\n"
     )
 
@@ -202,20 +214,20 @@ let gen_stub oc cf =
       arg_list ("intnat *cbid" :: List.map2 (Printf.sprintf "%s %s") typs cargs)
     ;
     println oc "{";
-    println oc "  value arg;";
-    println oc "  CUITE_OCAML_REGION(%a);" arg_list ["&arg"];
+    println oc "  value mlreg0 = Val_unit, mlreg1 = Val_unit;";
+    println oc "  CUITE_OCAML_REGION(%a);" arg_list ["&mlreg0";"&mlreg1"];
     begin match args, cargs with
-      | [], [] -> println oc "  arg = Val_unit;";
+      | [], [] -> ()
       | [argtyp0], [arg0] ->
-        println oc "  arg = %s;" (cpp_to_ocaml argtyp0 arg0);
+        cpp_to_ocaml oc argtyp0 "mlreg0" arg0
       | _ ->
-        println oc "  arg = caml_alloc_tuple(%d);" (List.length args);
+        println oc "  mlreg0 = caml_alloc_tuple(%d);" (List.length args);
         List.iteri (fun i (argtyp, carg) ->
-            println oc "Store_field(arg, %d, %s);"
-              i (cpp_to_ocaml argtyp carg)
+            cpp_to_ocaml oc argtyp "mlreg1" carg;
+            println oc "Store_field(mlreg0, %d, mlreg1);" i
           ) (List.combine args cargs);
     end;
-    println oc "  cuitecb_call(cbid, arg);";
+    println oc "  cuitecb_call(cbid, mlreg0);";
     println oc "}";
     println oc "CUITE_SIGNAL(%s, %s, (q%sOverload<%a>(&%s::%s)), %s(%a), std::bind(&invoke_%s, %a))"
       symbol (QClass.cpp_type cl)

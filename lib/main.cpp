@@ -12,6 +12,15 @@
 
 #define cuite_QFlags_to_ocaml(x) caml_copy_int64((int64_t)x)
 
+#define Val_none Val_unit
+
+static value Val_some(value& v)
+{
+  value r = caml_alloc_small(1, 0);
+  Field(r, 0) = v;
+  return r;
+}
+
 static void fallback_enum(value &result, long v)
 {
   result = caml_alloc_small(2, 0);
