@@ -73,30 +73,33 @@ let args_pos_nested_tuple oc = function
     fprintf oc " * _";
     List.iter (fun _ -> fprintf oc ")") xs
 
-let output_field oc cl cf =
+let output_field oc uniq cl cf =
   match QClass.field_desc cf with
   | Constructor _ when QClass.field_class cf != cl -> ()
   | desc ->
     let name = QClass.field_name cf in
     begin match desc with
       | Constructor x ->
-        fprintf oc "  external new'%s : %a"
-          (if name = "" then "" else ident name)
+        fprintf oc "  external %s : %a"
+          (uniq "new'" (if name = "" then "" else ident name) x.args)
           arrow (x.args, Some (Decl.typ (QClass cl)))
       | Dynamic_method x ->
         fprintf oc "  external %s : %a"
-          (lident name) arrow (Decl.arg "self" (QClass cl) :: x.args, x.ret)
+          (uniq "" (lident name) x.args)
+          arrow (Decl.arg "self" (QClass cl) :: x.args, x.ret)
       | Static_method x ->
         fprintf oc "  external %s : %a"
-          (lident name) arrow (x.args, x.ret)
+          (uniq "" (lident name) x.args)
+          arrow (x.args, x.ret)
       | Slot x ->
-        fprintf oc "  external slot'%s : unit -> ([> %s], %a, %a) slot"
-          (ident name) (QClass.ml_shadow_type (QClass.field_class cf))
+        fprintf oc "  external %s : unit -> ([> %s], %a, %a) slot"
+          (uniq "slot'" (ident name) x.args)
+          (QClass.ml_shadow_type (QClass.field_class cf))
           args_pos_tuple x.args
           args_pos_nested_tuple x.args
       | Signal x ->
-        fprintf oc "  external signal'%s : unit -> ([> %s], %a, %a) signal"
-          (ident name)
+        fprintf oc "  external %s : unit -> ([> %s], %a, %a) signal"
+          (uniq "signal'" (ident name) x.args)
           (QClass.ml_shadow_type (QClass.field_class cf))
           args_neg_tuple x.args
           args_neg_nested_tuple x.args
@@ -112,11 +115,24 @@ let output_field oc cl cf =
       fprintf oc " = \"%s\" %s\n" symbol noalloc
 
 let output_fields oc cl =
+  let table = Hashtbl.create 7 in
+  let uniq pre name args =
+    let base = pre ^ name in
+    if Hashtbl.mem table base then
+      String.concat "'"
+        (base :: "from" ::
+         List.map
+           (fun (_,typ) -> Mangle.ident (Decl.mlname_type typ.typ_def))  args)
+    else (
+      Hashtbl.add table base ();
+      base
+    )
+  in
   let rec aux = function
     | None -> ()
     | Some cl' ->
       aux (QClass.extends cl');
-      QClass.iter_fields cl' (output_field oc cl)
+      QClass.iter_fields cl' (output_field oc uniq cl)
   in
   aux (Some cl)
 
