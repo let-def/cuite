@@ -73,69 +73,76 @@ let args_pos_nested_tuple oc = function
     fprintf oc " * _";
     List.iter (fun _ -> fprintf oc ")") xs
 
-let output_field oc uniq cl cf =
+let output_field oc mlnames cl cf =
   match QClass.field_desc cf with
   | Constructor _ when QClass.field_class cf != cl -> ()
   | desc ->
     let name = QClass.field_name cf in
+    let suffix =
+      let noalloc = match desc with
+        | Slot _ | Signal _ -> " [@@noalloc]"
+        | _ -> ""
+      in
+      let symbol = QClass.c_field_base_symbol cf in
+      if QClass.need_bc_wrapper cf then
+        sprintf "= \"%s_bc\" \"%s\" %s\n" symbol symbol noalloc
+      else
+        sprintf "= \"%s\" %s\n" symbol noalloc
+    in
     begin match desc with
       | Constructor x ->
         let name = if name = "" then "" else ident name in
-        uniq "new'" name x.args @@ fun name ->
-        fprintf oc "  external %s : %a"
-          name arrow (x.args, Some (Decl.typ (QClass cl)))
+        mlnames ["new"; name] x.args @@ fun mlname ->
+        println oc "  external %s : %a %s"
+          mlname arrow (x.args, Some (Decl.typ (QClass cl))) suffix
       | Dynamic_method x ->
-        uniq "" (lident name) x.args @@ fun name ->
-        fprintf oc "  external %s : %a"
-          name arrow (Decl.arg "self" (QClass cl) :: x.args, x.ret)
+        mlnames [lident name] x.args @@ fun mlname ->
+        println oc "  external %s : %a %s"
+          mlname arrow (Decl.arg "self" (QClass cl) :: x.args, x.ret) suffix
       | Static_method x ->
-        uniq "" (lident name) x.args @@ fun name ->
-        fprintf oc "  external %s : %a"
-          name arrow (x.args, x.ret)
+        mlnames [lident name] x.args @@ fun mlname ->
+        println oc "  external %s : %a %s"
+          mlname arrow (x.args, x.ret) suffix
       | Slot x ->
-        uniq "slot'" (ident name) x.args @@ fun name ->
-        fprintf oc "  external %s : unit -> ([> %s], %a, %a) slot"
-          name
+        mlnames ["slot"; ident name] x.args @@ fun mlname ->
+        println oc "  external %s : unit -> ([> %s], %a, %a) slot %s"
+          mlname
           (QClass.ml_shadow_type (QClass.field_class cf))
           args_pos_tuple x.args
           args_pos_nested_tuple x.args
+          suffix
       | Signal x ->
-        uniq "signal'" (ident name) x.args @@ fun name ->
-        fprintf oc "  external %s : unit -> ([> %s], %a, %a) signal"
-          name
+        mlnames ["signal"; ident name] x.args @@ fun mlname ->
+        println oc "  external %s : unit -> ([> %s], %a, %a) signal %s"
+          mlname
           (QClass.ml_shadow_type (QClass.field_class cf))
           args_neg_tuple x.args
           args_neg_nested_tuple x.args
-    end;
-    let noalloc = match desc with
-      | Slot _ | Signal _ -> " [@@noalloc]"
-      | _ -> ""
-    in
-    let symbol = QClass.c_field_base_symbol cf in
-    if QClass.need_bc_wrapper cf then
-      fprintf oc " = \"%s_bc\" \"%s\" %s\n" symbol symbol noalloc
-    else
-      fprintf oc " = \"%s\" %s\n" symbol noalloc
+          suffix
+    end
 
 let output_fields oc cl =
   let table = Hashtbl.create 7 in
-  let uniq pre name args f =
-    let base = pre ^ name in
-    let rich =
-      String.concat "'"
-        (base :: "from" ::
-         List.map
-           (fun (_,typ) -> Mangle.ident (Decl.mlname_type typ.typ_def))  args)
+  let generate_mlnames path args f =
+    let arg_name (_,typ) = Mangle.ident (Decl.mlname_type typ.typ_def) in
+    let args = List.map arg_name args in
+    let escape_keyword = function
+      | "new" -> "new'"
+      | x -> x
     in
-    let names = [base; rich] in
-    let names = List.filter (fun x -> not (Hashtbl.mem table x)) names in
+    let names =
+      [path; path @ ("from" :: args)]
+      |> List.map (String.concat "'")
+      |> List.map escape_keyword
+      |> List.filter (fun x -> not (Hashtbl.mem table x))
+    in
     List.iter (fun x -> Hashtbl.add table x ()) names;
     List.iter f names
   in
   let rec aux = function
     | None -> ()
     | Some cl' ->
-      QClass.iter_fields cl' (output_field oc uniq cl);
+      QClass.iter_fields cl' (output_field oc generate_mlnames cl);
       aux (QClass.extends cl')
   in
   aux (Some cl)
@@ -147,35 +154,36 @@ let output_type oc = function
       | Some cl ->
         fprintf oc " | %s" (QClass.ml_shadow_type cl)
     in
-    fprintf oc "type %s = [%s%a]\n"
+    println oc "type %s = [%s%a]"
       (QClass.ml_shadow_type cl)
       (QClass.ml_shadow_variant cl)
       super (QClass.extends cl)
   | QEnum en ->
     let members = List.map QEnum.ml_member_constructor (QEnum.members en) in
-    fprintf oc "type %s = [%s]\n"
+    println oc "type %s = [%s]"
       (QEnum.ml_type en)
       (String.concat "|" ("`Invalid_value of int" :: members))
   | QFlags fl ->
-    fprintf oc "type %s = %s qflags\n"
+    println oc "type %s = %s qflags"
       (QFlags.ml_type fl) (QFlags.ml_enum_type fl)
   | Custom c ->
     if c.ml_decl <> "" then
-      fprintf oc "%s\n" c.ml_decl
+      println oc "%s" c.ml_decl
 
 let output_impl oc = function
   | QClass cl ->
-    fprintf oc "module %s = struct\n" (QClass.ml_module cl);
+    println oc "module %s = struct" (QClass.ml_module cl);
     output_fields oc cl;
-    fprintf oc "end\n"
+    println oc "end"
   | QEnum _ -> ()
   | QFlags fl ->
     let typ = QFlags.ml_enum_type fl in
-    fprintf oc "external %s : %s QFlags.primitive -> %s qflags = %S\n"
+    println oc "external %s : %s QFlags.primitive -> %s qflags = %S"
       (QFlags.ml_type fl) typ typ (QFlags.c_symbol fl)
   | Custom _ -> ()
 
 let () =
-  fprintf stdout "open Qt\n\n";
+  println stdout "open Qt";
+  println stdout "";
   Decl.iter_types (output_type stdout);
   Decl.iter_types (output_impl stdout);
