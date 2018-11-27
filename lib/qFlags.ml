@@ -1,4 +1,3 @@
-type 'flag set = 'flag -> int64
 type 'flag t = int64
 
 type 'a primitive = 'a

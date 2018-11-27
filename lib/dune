@@ -1,12 +1,29 @@
 (library
  (name cuite)
+ (wrapped false)
+ (modules Cuite__alloc QFlags QModels Qt QVariant Cuite)
  (flags -w -32)
  (c_library_flags (-lcuite)))
 
 (rule
- (targets qtLib.ml cuite_stubs.gen.h  cuite_stubs.gen.cpp)
- (action
-   (run %{exe:../gen/driver.exe})))
+ (targets flags.hpp.gen)
+ (action (with-stdout-to %{targets}
+          (run %{exe:../gen/cflagsgen.bc} declaration))))
+
+(rule
+ (targets flags.cpp.gen)
+ (action (with-stdout-to %{targets}
+          (run %{exe:../gen/cflagsgen.bc} definition))))
+
+(rule
+ (targets slot.cpp.gen)
+ (action (with-stdout-to %{targets}
+          (run %{exe:../gen/cgen.bc}))))
+
+(rule
+ (targets cuite.ml)
+ (action (with-stdout-to cuite.ml
+          (run %{exe:../gen/mlgen.bc}))))
 
 (rule
  (deps 
@@ -17,7 +34,7 @@
    ../cpp/cuite_variant.h   ../cpp/cuite_variant.cpp
    ../cpp/cuite_wrappers.h  ../cpp/cuite_wrappers.cpp
    ../cpp/cuite_stubs.h     ../cpp/cuite_stubs.cpp
-   cuite_stubs.gen.h cuite_stubs.gen.cpp
+   flags.hpp.gen flags.cpp.gen slot.cpp.gen main.cpp
    Makefile.libcuite)
  (targets libcuite.so)
  (action (run %{make} -j4 -f Makefile.libcuite %{targets})))

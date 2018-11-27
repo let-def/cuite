@@ -7,9 +7,8 @@ all: libcuite.so
 ## C++ COMPILATION
 
 CPP_SOURCES= \
-						cuite_models.cpp cuite_stubs.cpp cuite_support.cpp \
-						cuite_wrappers.cpp cuite_variant.cpp cuite_csupport.c \
-						cuite_select.cpp cuite_const.gen.cpp cuite_stubs.gen.cpp
+  cuite_models.cpp cuite_support.cpp cuite_csupport.c cuite_stubs.cpp \
+  cuite_wrappers.cpp cuite_variant.cpp cuite_select.cpp main.cpp 
 
 CPP_OBJECTS=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 

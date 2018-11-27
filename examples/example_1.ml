@@ -3,12 +3,12 @@ open Cuite
 (*let root = ref []*)
 
 let () =
-  let _app = new'QApplication Sys.argv in
-  let widget = new'QWidget None in
+  let _app = QApplication.new' Sys.argv in
+  let widget = QWidget.new' None in
   QWidget.show widget;
-  let button = new'QPushButton None in
+  let button = QPushButton.new''from'string'QWidget "Push me" None in
   QAbstractButton.setText button "Push me";
-  QWidget.setParent button (Some widget);
+  QWidget.setParent'from'QWidget button (Some widget);
   QWidget.show button;
   let click_then_close connection () =
     Qt.disconnect connection;

@@ -1,4 +1,5 @@
-open QtLib
+open Qt
+open Cuite
 
 external get_payload
   : [>`Payload of 'a qt] -> 'a
