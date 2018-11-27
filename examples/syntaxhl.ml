@@ -1,5 +1,5 @@
 open Cuite
-open QtLib
+open Qt
 
 let simple_highlighter =
   let color = (QColor.fromRgb 128 128 128 128) in
@@ -26,7 +26,7 @@ let load_file editor path =
   | exception _ -> ()
 
 let mainwindow_setup_editor state =
-  let font = new'QFont () in
+  let font = QFont.new' () in
   QFont.(
     setFamily font "Courier";
     setFixedPitch font true;
@@ -60,7 +60,7 @@ let mainwindow_openfile state path =
   if path <> "" then load_file state.editor path
 
 let mainwindow_setup_menu state =
-  let menu = QMenuBar.addMenu'from'QString (QMainWindow.menuBar state.self) "&File" in
+  let menu = QMenuBar.addMenu'from'string (QMainWindow.menuBar state.self) "&File" in
   Qt.connect
     (QMenu.addAction menu "&New") QAction.signal'triggered
     (fun _ -> mainwindow_newfile state);
@@ -69,7 +69,7 @@ let mainwindow_setup_menu state =
     (fun _ -> mainwindow_openfile state "");
   Qt.connect_slot (QMenu.addAction menu "E&xit") QAction.signal'triggered
     state.app QApplication.slot'quit;
-  let help = QMenuBar.addMenu'from'QString (QMainWindow.menuBar state.self) "&Help" in
+  let help = QMenuBar.addMenu'from'string (QMainWindow.menuBar state.self) "&Help" in
   Qt.connect
     (QMenu.addAction help "&About") QAction.signal'triggered
     (fun _ -> mainwindow_about state);
@@ -79,8 +79,8 @@ let mainwindow_setup_menu state =
 
 let mainwindow app parent =
   let state =
-    let self = new'QMainWindow parent QFlags.empty in
-    let editor = new'QTextEdit (Some self) in
+    let self = QMainWindow.new' parent QFlags.empty in
+    let editor = QTextEdit.new' (Some self) in
     { self; editor; app }
   in
   mainwindow_setup_menu state;
@@ -88,7 +88,7 @@ let mainwindow app parent =
   state
 
 let () =
-  let app = new'QApplication Sys.argv in
+  let app = QApplication.new' Sys.argv in
   let mainwindow = mainwindow app None in
   QWidget.(
     resize mainwindow.self 640 512;

@@ -1,15 +1,14 @@
 open Cuite
-open QtLib
 
 let add_dialog ?edit parent =
-  let dialog = new'QDialog parent QFlags.empty in
-  let name_label = new'QLabel'from'QString'QWidget'WindowFlags "Name" None QFlags.empty in
-  let address_label = new'QLabel'from'QString'QWidget'WindowFlags "Address" None QFlags.empty in
-  let ok_button = new'QPushButton'from'QString'QWidget "OK" None in
-  let cancel_button = new'QPushButton'from'QString'QWidget "Cancel" None in
-  let name_text = new'QLineEdit None in
-  let address_text = new'QTextEdit None in
-  let grid_layout = new'QGridLayout'from'QWidget None in
+  let dialog = QDialog.new' parent QFlags.empty in
+  let name_label = QLabel.new'from'string'QWidget'WindowFlags "Name" None QFlags.empty in
+  let address_label = QLabel.new'from'string'QWidget'WindowFlags "Address" None QFlags.empty in
+  let ok_button = QPushButton.new'from'string'QWidget "OK" None in
+  let cancel_button = QPushButton.new'from'string'QWidget "Cancel" None in
+  let name_text = QLineEdit.new' None in
+  let address_text = QTextEdit.new' None in
+  let grid_layout = QGridLayout.new'from'QWidget None in
   QGridLayout.setColumnStretch grid_layout 1 2;
   QGridLayout.addWidget grid_layout name_label 0 0 QFlags.empty;
   QGridLayout.addWidget grid_layout name_text 0 1 QFlags.empty;
@@ -17,12 +16,12 @@ let add_dialog ?edit parent =
     (QFlags.of_list qt'Alignment [`AlignLeft; `AlignTop]);
   QGridLayout.addWidget grid_layout address_text 1 1
     (QFlags.singleton qt'Alignment `AlignLeft);
-  let button_layout = new'QHBoxLayout () in
+  let button_layout = QHBoxLayout.new' () in
   QHBoxLayout.addWidget button_layout ok_button 0 QFlags.empty;
   QHBoxLayout.addWidget button_layout cancel_button 0 QFlags.empty;
   QGridLayout.addLayout grid_layout button_layout 2 1
     (QFlags.singleton qt'Alignment `AlignRight);
-  let main_layout = new'QVBoxLayout () in
+  let main_layout = QVBoxLayout.new' () in
   QVBoxLayout.addLayout main_layout grid_layout 0;
   QDialog.setLayout dialog (Some main_layout);
   Qt.connect_slot
@@ -49,33 +48,33 @@ let add_dialog ?edit parent =
   result
 
 let new_address_tab ~send_details parent =
-  let tab = new'QWidget parent in
-  let description_label = new'QLabel'from'QString'QWidget'WindowFlags
+  let tab = QWidget.new' parent in
+  let description_label = QLabel.new'from'string'QWidget'WindowFlags
       "There are currently no contacts in your address book.\n\
        Click Add to add new contacts." None QFlags.empty
   in
-  let add_button = new'QPushButton'from'QString'QWidget "Add" None in
+  let add_button = QPushButton.new'from'string'QWidget "Add" None in
   Qt.connect add_button QPushButton.signal'clicked (fun _ ->
       match add_dialog None with
       | Some (name, address) -> send_details name address
       | None -> ()
     );
-  let main_layout = new'QVBoxLayout () in
+  let main_layout = QVBoxLayout.new' () in
   QVBoxLayout.addWidget main_layout description_label 0 QFlags.empty;
   QVBoxLayout.addWidget main_layout add_button 0 (QFlags.singleton qt'Alignment `AlignCenter);
   QWidget.setLayout tab (Some main_layout);
   tab
 
 let setup_tab self table group ~selection_changed =
-  let proxy = new'QSortFilterProxyModel (Some self) in
+  let proxy = QSortFilterProxyModel.new' (Some self) in
   QSortFilterProxyModel.(
     setSourceModel proxy table;
     setFilterRegExp proxy
-      (new'QRegExp'from'QString'CaseSensitivity'PatternSyntax
+      (QRegExp.new'from'string'CaseSensitivity'PatternSyntax
          ("^[" ^ group ^ "].*") `CaseInsensitive `RegExp);
     setFilterKeyColumn proxy 0;
   );
-  let tableview = new'QTableView None in
+  let tableview = QTableView.new' None in
   QTableView.(
     setModel tableview proxy;
     setSelectionBehavior tableview `SelectRows;
@@ -110,15 +109,15 @@ let address_widget_write_to_file addr_widget filename =
 
 let address_widget_edit_entry table addr_widget _ =
   prerr_endline "editing entry";
-  let tableview = cast (QTabWidget.currentWidget addr_widget) (QTableView.class'()) in
+  let tableview = cast (Some (QTabWidget.currentWidget addr_widget)) (QTableView.class'()) in
   let proxy = cast (Some (QTableView.model tableview)) (QSortFilterProxyModel.class'()) in
   let selection = QTableView.selectionModel tableview in
   let indexes = QItemSelectionModel.selectedRows selection 0 in
-  if QModelIndexList.count indexes > 0 then (
+  if QModelIndexList.count'from indexes > 0 then (
     let index = QModelIndexList.at indexes 0 in
     let row = QModelIndex.row (QSortFilterProxyModel.mapToSource proxy index) in
     let index col =
-      QAbstractTableModel.index table row col (new'QModelIndex ())
+      QAbstractTableModel.index table row col (QModelIndex.new' ())
     in
     match QAbstractTableModel.data table (index 0) `DisplayRole,
           QAbstractTableModel.data table (index 1) `DisplayRole
@@ -142,12 +141,12 @@ let address_widget_edit_entry table addr_widget _ =
 
 
 let address_widget_remove_entry new_addr_tab table addr_widget _ =
-  let tableview = cast (QTabWidget.currentWidget addr_widget) (QTableView.class'()) in
+  let tableview = cast (Some (QTabWidget.currentWidget addr_widget)) (QTableView.class'()) in
   let proxy = cast (Some (QTableView.model tableview)) (QSortFilterProxyModel.class'()) in
   let selection = QTableView.selectionModel tableview in
   let indexes = QItemSelectionModel.selectedRows selection 0 in
-  let dummy = new'QModelIndex() in
-  for i = 0 to QModelIndexList.count indexes - 1 do
+  let dummy = QModelIndex.new' () in
+  for i = 0 to QModelIndexList.count'from indexes - 1 do
     let index = QModelIndexList.at indexes i in
     let row = QModelIndex.row (QSortFilterProxyModel.mapToSource proxy index) in
     ignore (QAbstractTableModel.removeRow table row dummy : bool);
@@ -237,14 +236,14 @@ let address_widget parent ~send_details ~selection_changed =
     "V" , "C";
   ] in
   let table = QModels.new'QOCamlTableModel list_model (ref default_content) in
-  let self = new'QTabWidget parent in
+  let self = QTabWidget.new' parent in
   let new_address_tab = new_address_tab ~send_details (Some self) in
   ignore (QTabWidget.addTab self new_address_tab "Address Book" : int);
   setup_tabs self table ~selection_changed;
   (new_address_tab, table, self)
 
 let main_window () =
-  let self = new'QMainWindow None QFlags.empty in
+  let self = QMainWindow.new' None QFlags.empty in
   let update_actions = ref ignore in
   let selection_changed x = !update_actions x in
   let new_address_tab, table, address_widget =
@@ -265,7 +264,7 @@ let main_window () =
   QMainWindow.setCentralWidget self address_widget;
   begin
     let menu_bar = QMainWindow.menuBar self in
-    let file_menu = QMenuBar.addMenu'from'QString menu_bar "&File" in
+    let file_menu = QMenuBar.addMenu'from'string menu_bar "&File" in
     let open_act = QMenu.addAction file_menu "&Open" in
     ignore open_act;
     Qt.connect open_act QAction.signal'triggered open_file;
@@ -278,7 +277,7 @@ let main_window () =
     Qt.connect_slot
       exit_act QAction.signal'triggered
       self QWidget.slot'close;
-    let tool_menu = QMenuBar.addMenu'from'QString menu_bar "&Tools" in
+    let tool_menu = QMenuBar.addMenu'from'string menu_bar "&Tools" in
     let add_act = QMenu.addAction tool_menu "&Add Entry..." in
     Qt.connect add_act QAction.signal'triggered
       (address_widget_show_add_entry_dialog address_widget);
@@ -306,7 +305,7 @@ let main_window () =
 (*let () = Statmemprof_emacs.start 1E-4 30 5*)
 
 let () = (
-  let _app = new'QApplication Sys.argv in
+  let _app = QApplication.new' Sys.argv in
   let mw = main_window () in
   QWidget.show mw;
   exit (QApplication.exec ())

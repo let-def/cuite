@@ -237,6 +237,10 @@ let gen_stub oc cf =
 
 let () =
   Decl.iter_types (function
-      | QClass cl -> QClass.iter_fields cl (gen_stub stdout)
+      | QClass cl ->
+        if QClass.is_QObject cl then
+          println stdout "CUITE_CLASS(%s, %s)"
+            (QClass.c_base_symbol cl) (QClass.cpp_type cl);
+        QClass.iter_fields cl (gen_stub stdout)
       | _ -> ()
     )

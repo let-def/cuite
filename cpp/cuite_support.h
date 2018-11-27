@@ -111,10 +111,10 @@ external value cuite_metaobject_name(value vmeta);
 external value cuite_metaobject_get(value vobj);
 external value cuite_metaobject_cast(value vobj, value vmeta);
 
-#define CUITE_CLASS(name)                                                  \
+#define CUITE_CLASS(name, cpptype)                                         \
   external value cuite_class_##name(value unit)                            \
   {                                                                        \
-    return cuite_QMetaObject_to_ocaml(&name::staticMetaObject);            \
+    return cuite_QMetaObject_to_ocaml(&cpptype::staticMetaObject);         \
   }
 
 #define CUITE_SLOT(symbol, proto)                                          \

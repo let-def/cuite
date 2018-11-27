@@ -16,7 +16,7 @@ let gen_enum_conv oc qe =
   println oc "  switch(Long_val(v)) {";
   List.iter (fun member ->
       println oc "    case %d: return %s;"
-        (hash_variant (QEnum.ml_member_constructor member))
+        (QEnum.ml_member_hash member)
         (QEnum.cpp_qualified_member member)
     ) (QEnum.members qe);
   println oc "  default:";
@@ -33,7 +33,7 @@ let gen_enum_conv oc qe =
   List.iter (fun member ->
       println oc "    case %s: result = Val_long(%d); break;"
         (QEnum.cpp_qualified_member member)
-        (hash_variant (QEnum.ml_member_constructor member))
+        (QEnum.ml_member_hash member)
     ) (QEnum.members qe);
   println oc "  default:";
   println oc "    fallback_enum(result, v);";
@@ -50,8 +50,8 @@ let gen_flag_def oc flags =
   println oc "    switch (Long_val(member))";
   println oc "    {";
   let render_member member =
-    println oc "      case %d: v = (int64_t)%s;"
-      (hash_variant (QEnum.ml_member_constructor member))
+    println oc "      case %d: v = (int64_t)%s; break;"
+      (QEnum.ml_member_hash member)
       (QEnum.cpp_qualified_member member)
   in
   List.iter render_member (QEnum.members (QFlags.enum flags));

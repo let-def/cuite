@@ -1,6 +1,6 @@
 all:
-	dune build nlib/cuite.ml
-	dune build nlib/libncuite.so
+	dune build lib/cuite.ml
+	dune build lib/libcuite.so
 
 clean:
 	dune clean

@@ -359,6 +359,11 @@ module QClass = struct
     match stub_arity cf with
     | Some n -> n > 5
     | None -> false
+
+  let rec is_QObject cl =
+    match extends cl with
+    | Some cl' -> is_QObject cl'
+    | None -> cpp_type cl = "QObject"
 end
 
 module QEnum = struct
@@ -374,6 +379,7 @@ module QEnum = struct
     List.map (fun mem -> (qe, mem)) qe.emembers
 
   let ml_member_constructor (_,x) = "`" ^ ident x
+  let ml_member_hash (_,x) = Utils.hash_variant (ident x)
 
   let cpp_qualified_member (qe, mem) =
     qe.enamespace ^ "::" ^ mem

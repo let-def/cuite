@@ -132,6 +132,7 @@ let output_fields oc cl =
     in
     let names =
       [path; path @ ("from" :: args)]
+      |> List.map (List.filter ((<>) ""))
       |> List.map (String.concat "'")
       |> List.map escape_keyword
       |> List.filter (fun x -> not (Hashtbl.mem table x))
@@ -173,6 +174,10 @@ let output_type oc = function
 let output_impl oc = function
   | QClass cl ->
     println oc "module %s = struct" (QClass.ml_module cl);
+    if QClass.is_QObject cl then
+      println oc "  external class' : unit -> %s Qt.qt_class = \
+                  \"cuite_class_%s\" [@@noalloc]"
+        (QClass.ml_shadow_type cl) (QClass.c_base_symbol cl);
     output_fields oc cl;
     println oc "end"
   | QEnum _ -> ()

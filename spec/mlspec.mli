@@ -111,6 +111,7 @@ module QClass : sig
 
   val stub_arity : cfield -> int option
   val need_bc_wrapper : cfield -> bool
+  val is_QObject : qclass -> bool
 end
 
 module QEnum : sig
@@ -120,6 +121,7 @@ module QEnum : sig
 
   type member
   val ml_member_constructor : member -> string
+  val ml_member_hash : member -> int
 
   val members : qenum -> member list
 
