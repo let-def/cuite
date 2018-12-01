@@ -1,9 +1,10 @@
 (library
  (name cuite)
+ (public_name cuite)
  (wrapped false)
  (modules Cuite__alloc QFlags QModels Qt QVariant Cuite)
  (flags -w -32)
- (c_library_flags (-lcuite)))
+ (c_library_flags (-lcuite -Wl,-rpath,%{env:CUITE_LIBDIR=})))
 
 (rule
  (targets flags.hpp.gen)
@@ -38,3 +39,7 @@
    Makefile.libcuite)
  (targets libcuite.so)
  (action (run %{make} -j4 -f Makefile.libcuite %{targets})))
+
+(install
+ (section lib)
+ (files libcuite.so))

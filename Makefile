@@ -5,6 +5,12 @@ all:
 clean:
 	dune clean
 
+export CUITE_LIBDIR
+
+build:
+	dune build lib/libcuite.so
+	dune build -j $(JOBS)
+
 #LIB_PREFIX ?= $(shell pwd)
 #
 #default:
