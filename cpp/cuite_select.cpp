@@ -7,6 +7,8 @@
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
 #include <caml/signals.h>
+#include <sys/select.h>
+#include <cerrno>
 #include "cuite_support.h"
 
 #include <QApplication>

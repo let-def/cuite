@@ -16,13 +16,15 @@ typedef struct {
 } cuite_region_t;
 
 #define CUITE_LOCAL_ROOTS(name, ...) \
+  value *name##_tmp_table[] = {__VA_ARGS__}; \
+  (void)name##_tmp_table; \
   struct { \
     struct caml__roots_block *next; \
     intnat ntables; \
     intnat nitems; \
-    value *tables[(sizeof((value*[]){__VA_ARGS__})/sizeof(value*))]; \
+    value *tables[(sizeof(name##_tmp_table)/sizeof(value*))]; \
   } name = {  \
-    .ntables = (sizeof((value*[]){__VA_ARGS__})/sizeof(value*)), \
+    .ntables = (sizeof(name##_tmp_table)/sizeof(value*)), \
     .nitems = 1, \
     .tables = {__VA_ARGS__}, \
   }

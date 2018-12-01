@@ -4,7 +4,7 @@
  (wrapped false)
  (modules Cuite__alloc QFlags QModels Qt QVariant Cuite)
  (flags -w -32)
- (c_library_flags (-lcuite -Wl,-rpath,%{env:CUITE_LIBDIR=})))
+ (c_library_flags (-lcuite)))
 
 (rule
  (targets flags.hpp.gen)
@@ -42,4 +42,5 @@
 
 (install
  (section lib)
- (files libcuite.so))
+ (files libcuite.so)
+ (package cuite))

@@ -4,6 +4,7 @@
 #include "caml/callback.h"
 #include "caml/custom.h"
 #include "caml/printexc.h"
+#include <pthread.h>
 #include <QEvent>
 #include <QDebug>
 #include <QCoreApplication>
@@ -78,12 +79,12 @@ void cuite_debug_aborted_callback(const char *context, value exn)
 }
 
 static struct custom_operations cuite_manual_custom_ops = {
-    identifier:  (char*)"CUITE Manual object",
-    finalize:    custom_finalize_default,
-    compare:     custom_compare_default,
-    hash:        custom_hash_default,
-    serialize:   custom_serialize_default,
-    deserialize: custom_deserialize_default,
+  .identifier  = (char*)"CUITE Manual object",
+  .finalize    = custom_finalize_default,
+  .compare     = custom_compare_default,
+  .hash        = custom_hash_default,
+  .serialize   = custom_serialize_default,
+  .deserialize = custom_deserialize_default,
 };
 
 typedef struct {
@@ -112,12 +113,12 @@ void *cuite_manual_from_ocaml(value obj)
 #define untag_ptr(ptr) ((void*)(((intnat)ptr)&~1))
 
 static struct custom_operations cuite_deleted_custom_ops = {
-    identifier:  (char*)"CUITE Deleted object",
-    finalize:    custom_finalize_default,
-    compare:     custom_compare_default,
-    hash:        custom_hash_default,
-    serialize:   custom_serialize_default,
-    deserialize: custom_deserialize_default,
+  .identifier  = (char*)"CUITE Deleted object",
+  .finalize    = custom_finalize_default,
+  .compare     = custom_compare_default,
+  .hash        = custom_hash_default,
+  .serialize   = custom_serialize_default,
+  .deserialize = custom_deserialize_default,
 };
 
 static void cuite_do_delete(value v)
@@ -570,6 +571,8 @@ bool GraphTracker::eventFilter(QObject *target, QEvent *event)
     case QEvent::Hide:
       cuite_QObject_unregister_root(target, false);
       break;
+    default:
+      break;
   }
   return QObject::eventFilter(target, event);
 }
@@ -615,12 +618,12 @@ static void ccuiteconn_finalize(value handle)
 }
 
 static struct custom_operations cuiteconn_custom_ops = {
-    identifier:  (char*)"CUITE QMetaObject::Connection",
-    finalize:    ccuiteconn_finalize,
-    compare:     custom_compare_default,
-    hash:        custom_hash_default,
-    serialize:   custom_serialize_default,
-    deserialize: custom_deserialize_default
+  .identifier  = (char*)"CUITE QMetaObject::Connection",
+  .finalize    = ccuiteconn_finalize,
+  .compare     = custom_compare_default,
+  .hash        = custom_hash_default,
+  .serialize   = custom_serialize_default,
+  .deserialize = custom_deserialize_default
 };
 
 value& cuite_Connection_to_ocaml(const QMetaObject::Connection& sg, intnat *cbid)

@@ -9,7 +9,7 @@ export CUITE_LIBDIR
 
 build:
 	dune build lib/libcuite.so
-	dune build -j $(JOBS)
+	dune build -j $(JOBS) -p cuite
 
 #LIB_PREFIX ?= $(shell pwd)
 #

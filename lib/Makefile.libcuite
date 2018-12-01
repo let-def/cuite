@@ -1,6 +1,10 @@
+PKG_CONFIG_PATH?=$(word 1, $(wildcard /usr/local/Cellar/qt/*/lib/pkgconfig)):
+export PKG_CONFIG_PATH
+
 OCAMLC=ocamlc.opt -g
 OCAMLOPT=ocamlopt.opt -g
-CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -DQT_NO_VERSION_TAGGING -I ../cpp -I .
+CXX=g++ -flat_namespace -std=c++14 -g -fPIC $(shell pkg-config --cflags Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -DQT_NO_VERSION_TAGGING -I ../cpp -I .
+CXXLD=$(CXX) $(shell pkg-config --libs Qt5Gui Qt5Widgets) -undefined suppress
 
 all: libcuite.so
 
@@ -28,4 +32,5 @@ CPP_OBJECTS=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
 	$(OCAMLC) -ccopt -fPIC -c $<
 
 libcuite.so: $(CPP_OBJECTS) #$(patsubst %,../cpp/%,$(CPP_OBJECTS))
-	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $(CPP_OBJECTS)
+	$(CXXLD) -install_name $(CUITE_LIBDIR)/libcuite.so -shared -o $@ $(CPP_OBJECTS)
+ 

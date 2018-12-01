@@ -50,10 +50,10 @@ class QOCamlTableModel : public QAbstractTableModel
   public:
     QOCamlTableModel();
 
-    int rowCount(const QModelIndex& parent) const;
-    int columnCount(const QModelIndex& parent) const;
-    QVariant data(const QModelIndex& index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    int rowCount(const QModelIndex& parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     bool setData(const QModelIndex &index, const QVariant &v, int role = Qt::EditRole) override;
     bool insertRows(int position, int rows, const QModelIndex &index = QModelIndex()) override;
@@ -82,7 +82,7 @@ external value cuite_new_QOCamlTableModel(value callbacks, value payload)
   value& v(cuite_QObject_allocate_value(model, 2));
   Store_field(v, QObject_fields_count + 0, payload);
   Store_field(v, QObject_fields_count + 1, callbacks);
-  CUITE_LOG("new QOCamlTableModel(callbacks = %08x) = %08x\n", callbacks, v);
+  CUITE_LOG("new QOCamlTableModel(callbacks = %08lx) = %08lx\n", callbacks, v);
   return v;
 }
 
@@ -288,7 +288,7 @@ external value cuite_new_QOCamlSyntaxHighlighter(value callbacks, value payload,
   value& v(cuite_QObject_allocate_value(model, 2));
   Store_field(v, QObject_fields_count + 0, payload);
   Store_field(v, QObject_fields_count + 1, callbacks);
-  CUITE_LOG("new QOCamlSyntaxHighlighter(callbacks = %08x) = %08x\n", callbacks, v);
+  CUITE_LOG("new QOCamlSyntaxHighlighter(callbacks = %08lx) = %08lx\n", callbacks, v);
   return v;
 }
 
@@ -405,7 +405,7 @@ external value cuite_new_QOCamlEventFilter(value callbacks, value payload)
   value& v(cuite_QObject_allocate_value(filter, 2));
   Store_field(v, QObject_fields_count + 0, payload);
   Store_field(v, QObject_fields_count + 1, callbacks);
-  CUITE_LOG("new QOCamlEventFilter(callbacks = %08x) = %08x\n", callbacks, v);
+  CUITE_LOG("new QOCamlEventFilter(callbacks = %08lx) = %08lx\n", callbacks, v);
   return v;
 }
 

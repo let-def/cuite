@@ -252,28 +252,28 @@ cuite_QList_QTextEdit_ExtraSelection__from_ocaml(const value& v)
 
 #define CUITE_RELOCATABLE_DEFINE(T)                                 \
   static inline T& cuite_##T##_val(value v)                         \
-  {                                                                \
-    return *(T*)Data_custom_val(v);                                \
-  }                                                                \
+  {                                                                 \
+    return *(T*)Data_custom_val(v);                                 \
+  }                                                                 \
   static void cuite_##T##_finalize(value v)                         \
-  {                                                                \
+  {                                                                 \
     T& t = cuite_##T##_val(v);                                      \
-    t.~T();                                                        \
-  }                                                                \
+    t.~T();                                                         \
+  }                                                                 \
   static struct custom_operations cuite_##T##_ops = {               \
-    identifier:  (char*)("CUITE relocatable " #T),                  \
-    finalize:    cuite_##T##_finalize,                              \
-    compare:     custom_compare_default,                           \
-    hash:        custom_hash_default,                              \
-    serialize:   custom_serialize_default,                         \
-    deserialize: custom_deserialize_default                        \
-  };                                                               \
+    .identifier  = (char*)("CUITE relocatable " #T),                \
+    .finalize    = cuite_##T##_finalize,                            \
+    .compare     = custom_compare_default,                          \
+    .hash        = custom_hash_default,                             \
+    .serialize   = custom_serialize_default,                        \
+    .deserialize = custom_deserialize_default                       \
+  };                                                                \
   static inline value cuite_val_##T(const T& t)                     \
-  {                                                                \
+  {                                                                 \
     static_assert(QTypeInfoQuery<T>::isRelocatable, #T " should be relocatable"); \
     value v = caml_alloc_custom(&cuite_##T##_ops, sizeof(T), 0, 1); \
-    new(Data_custom_val(v)) T(t);                                  \
-    return v;                                                      \
+    new(Data_custom_val(v)) T(t);                                   \
+    return v;                                                       \
   }
 
 #define CUITE_RELOCATABLE_CONVERTER(T)              \
