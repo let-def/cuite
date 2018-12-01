@@ -1,4 +1,9 @@
-(library
+(* -*- tuareg -*- *)
+
+let () = 
+  Jbuild_plugin.V1.send @@
+  String.concat "\n" [
+"(library
  (name cuite)
  (public_name cuite)
  (wrapped false)
@@ -44,11 +49,20 @@
    ../cpp/cuite_wrappers.h  ../cpp/cuite_wrappers.cpp
    ../cpp/cuite_stubs.h     ../cpp/cuite_stubs.cpp
    flags.hpp.gen flags.cpp.gen slot.cpp.gen main.cpp
-   Makefile.libcuite)
- (targets libcuite.so)
- (action (run %{make} -j4 -f Makefile.libcuite %{targets})))
-
-(install
+   Makefile.libcuite Makefile.libcuite.gen Makefile.libcuite.macos)
+ (targets libcuite.so)"
+;
+begin
+  match List.assoc "system" Jbuild_plugin.V1.ocamlc_config with
+  | "macosx" -> 
+    "(action (run %{make} -j4 -f Makefile.libcuite.macos %{targets}))"
+  | _ -> "(action (run %{make} -j4 -f Makefile.libcuite %{targets}))"
+end
+;
+")"
+;
+"(install
  (section lib)
  (files libcuite.so)
- (package cuite))
+ (package cuite))"
+]

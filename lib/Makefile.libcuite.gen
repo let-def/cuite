@@ -1,0 +1,27 @@
+OCAMLC=ocamlc.opt -g
+OCAMLOPT=ocamlopt.opt -g
+
+all: libcuite.so
+
+## C++ COMPILATION
+
+CPP_SOURCES= \
+  cuite_models.cpp cuite_support.cpp cuite_csupport.c cuite_stubs.cpp \
+  cuite_wrappers.cpp cuite_variant.cpp cuite_select.cpp main.cpp 
+
+CPP_OBJECTS=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(CPP_SOURCES)))
+
+%.o: ../cpp/%.cpp ../cpp/%.h %.gen.h
+	$(CXX) -c $<
+
+%.o: ../cpp/%.cpp ../cpp/%.h
+	$(CXX) -c $<
+
+%.o: ../cpp/%.cpp
+	$(CXX) -c $<
+
+%.o: ../cpp/%.c ../cpp/%.h
+	$(OCAMLC) -ccopt -fPIC -c $<
+
+%.o: ../cpp/%.c
+	$(OCAMLC) -ccopt -fPIC -c $<
