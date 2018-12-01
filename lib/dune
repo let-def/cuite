@@ -4,7 +4,15 @@
  (wrapped false)
  (modules Cuite__alloc QFlags QModels Qt QVariant Cuite)
  (flags -w -32)
+ (ocamlc_flags (-dllib libcuite))
  (c_library_flags (-lcuite)))
+
+(library
+ (name cuite_lwt)
+ (public_name cuite-lwt)
+ (wrapped false)
+ (modules Cuite_lwt)
+ (libraries cuite lwt.unix))
 
 (rule
  (targets flags.hpp.gen)

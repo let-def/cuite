@@ -1,0 +1,18 @@
+opam-version: "1.2"
+name: "cuite-lwt"
+version: "~unknown"
+synopsis: "Bindings to Qt library"
+maintainer: "Frederic Bour <frederic.bour@lakaban.net>"
+authors: "Frederic Bour <frederic.bour@lakaban.net>"
+homepage: "https://github.com/let-def/cuite"
+bug-reports: "https://github.com/let-def/cuite/issues"
+license: "MIT"
+dev-repo: "git@github.com:let-def/cuite.git"
+build: [
+  # ["dune" "subst"] {pinned}
+  ["dune" "build" "-j" jobs "-p" "cuite-lwt"]
+]
+depends: [
+  "dune" {build}
+  "cuite" "lwt"
+]
