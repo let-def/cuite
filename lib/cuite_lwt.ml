@@ -3,4 +3,5 @@ let engine = object
   method select = Qt.qselect
 end
 
-let () = Lwt_engine.set engine
+let set_engine () =
+  Lwt_engine.set engine

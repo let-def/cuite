@@ -19,6 +19,13 @@ let () =
  (modules Cuite_lwt)
  (libraries cuite lwt.unix))
 
+(library
+ (name cuite_lwt_top)
+ (public_name cuite-lwt.top)
+ (wrapped false)
+ (modules Cuite_lwt_top)
+ (libraries cuite cuite-lwt))
+
 (rule
  (targets flags.hpp.gen)
  (action (with-stdout-to %{targets}
