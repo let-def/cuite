@@ -1,4 +1,4 @@
-CXX=g++ -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -DQT_NO_VERSION_TAGGING -I ../cpp -I .
+CXX=g++ -std=c++14 -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -DQT_NO_VERSION_TAGGING -I ../cpp -I .
 
 include Makefile.libcuite.gen
 
