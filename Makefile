@@ -8,8 +8,8 @@ clean:
 export CUITE_LIBDIR
 
 build:
-	dune build lib/libcuite.so
-	dune build -j $(JOBS) -p cuite
+	dune build -p cuite lib/libcuite.so
+	dune build -p cuite -j $(JOBS)
 
 #LIB_PREFIX ?= $(shell pwd)
 #
