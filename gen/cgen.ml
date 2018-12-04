@@ -229,10 +229,10 @@ let gen_stub oc cf =
     end;
     println oc "  cuitecb_call(cbid, mlreg0);";
     println oc "}";
-    println oc "CUITE_SIGNAL(%s, %s, (q%sOverload<%a>(&%s::%s)), %s(%a), std::bind(&invoke_%s, %a))"
+    println oc "CUITE_SIGNAL(%s, %s, (static_cast<void (%s::*)(%a)>(&%s::%s)), %s(%a), std::bind(&invoke_%s, %a))"
       symbol (QClass.cpp_type cl)
-      (if private_ then "Private" else "")
-      arg_list typs (QClass.cpp_type cl) name
+      (*(if private_ then "Private" else "")*)
+      (QClass.cpp_type cl) arg_list typs (QClass.cpp_type cl) name
       name arg_list typs
       symbol
       arg_list ("cbid" :: enum_strings "std::placeholders::_%d" 1 (arity+1))
