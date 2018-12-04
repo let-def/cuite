@@ -26,8 +26,8 @@ typedef struct {
   } name = {  \
     .ntables = (sizeof(name##_tmp_table)/sizeof(value*)), \
     .nitems = 1, \
-    .tables = {__VA_ARGS__}, \
-  }
+  }; \
+  memcpy(name.tables, name##_tmp_table, sizeof(name##_tmp_table))
 
 void cuite_region_enter(cuite_region_t *region, void *locals);
 void cuite_region_leave(cuite_region_t *region, void *locals);
