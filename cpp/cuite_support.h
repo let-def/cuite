@@ -50,7 +50,7 @@ external value cuite_children(value obj);
 
 bool cuite_qt_check_use(value v);
 #define cuite_QObject_check_use cuite_qt_check_use
-bool cuite_QObject_option_check_use(value v);
+bool cuite_option_check_use(bool (*fn)(value v), value v);
 #define CHECK_USE_AFTER_FREE(v) \
   if (!(v)) caml_invalid_argument(__FUNCTION__)
 

@@ -33,6 +33,19 @@ let modifier_returns_pointer = function
   | `Optional | `Pointer -> true
   | `Direct | `Const | `Ref | `Const_ref -> false
 
+let cpp_check oc typ mlvar =
+  match typ.typ_def with
+  | QEnum  _ | QFlags _ | Custom _ -> ()
+  | QClass cl ->
+    let base = QClass.cpp_type (root_class cl) in
+    match typ.typ_mod with
+    | `Direct | `Const | `Const_ref | `Pointer ->
+      println oc "CHECK_USE_AFTER_FREE(cuite_%s_check_use(%s));"
+        base mlvar
+    | `Ref | `Optional ->
+      println oc "CHECK_USE_AFTER_FREE(cuite_option_check_use(&cuite_%s_check_use,%s));"
+        base mlvar
+
 let cpp_to_ocaml oc typ mlvar cvar =
   let base_fn = match typ.typ_def with
     | QClass cl -> Printf.sprintf "cuite_%s_to_ocaml"
@@ -122,6 +135,7 @@ let gen_stub oc cf =
     let mlargs = enum_strings "mlarg%d" 0 arity in
     println oc "{";
     println oc "  value mlresult = Val_unit;";
+    List.iter2 (cpp_check oc) args mlargs;
     println oc "  CUITE_GC_REGION(%a);"
       arg_list ("&mlresult" :: enum_strings "&mlarg%d" 0 arity);
     let cvals = enum_strings "cval%d" 0 arity in
@@ -157,6 +171,7 @@ let gen_stub oc cf =
     if not custom then (
       println oc "{";
       println oc "  value mlresult = Val_unit;";
+      List.iter2 (cpp_check oc) args (enum_strings "mlarg%d" 0 arity);
       println oc "  CUITE_GC_REGION(%a);"
         arg_list ("&mlresult" :: enum_strings "&mlarg%d" 0 arity);
       List.iteri (fun i arg ->
@@ -186,6 +201,7 @@ let gen_stub oc cf =
     if not m.custom then (
       println oc "{";
       println oc "  value mlresult = Val_unit;";
+      List.iter2 (cpp_check oc) args (enum_strings "mlarg%d" 0 arity);
       println oc "  CUITE_GC_REGION(%a);"
         arg_list ("&mlresult" :: enum_strings "&mlarg%d" 0 arity);
       List.iteri (fun i arg ->

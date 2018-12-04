@@ -157,9 +157,9 @@ bool cuite_qt_check_use(value v)
   return !cuite_check_deleted(v);
 }
 
-bool cuite_QObject_option_check_use(value v)
+bool cuite_option_check_use(bool (*fn)(value v), value v)
 {
-  return (v == Val_unit) || cuite_QObject_check_use(Field(v,0));
+  return (v == Val_unit) || fn(Field(v,0));
 }
 
 external value cuite_is_deleted(value v)
