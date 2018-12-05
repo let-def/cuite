@@ -270,7 +270,6 @@ cuite_QList_QTextEdit_ExtraSelection__from_ocaml(const value& v)
   };                                                                \
   static inline value cuite_val_##T(const T& t)                     \
   {                                                                 \
-    static_assert(QTypeInfoQuery<T>::isRelocatable, #T " should be relocatable"); \
     value v = caml_alloc_custom(&cuite_##T##_ops, sizeof(T), 0, 1); \
     new(Data_custom_val(v)) T(t);                                   \
     return v;                                                       \
