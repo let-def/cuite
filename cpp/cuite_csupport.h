@@ -23,10 +23,9 @@ typedef struct {
     intnat ntables; \
     intnat nitems; \
     value *tables[(sizeof(name##_tmp_table)/sizeof(value*))]; \
-  } name = {  \
-    .ntables = (sizeof(name##_tmp_table)/sizeof(value*)), \
-    .nitems = 1, \
-  }; \
+  } name;  \
+  name.ntables = (sizeof(name##_tmp_table)/sizeof(value*)); \
+  name.nitems = 1; \
   memcpy(name.tables, name##_tmp_table, sizeof(name##_tmp_table))
 
 void cuite_region_enter(cuite_region_t *region, void *locals);
