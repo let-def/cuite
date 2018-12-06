@@ -91,18 +91,26 @@ module Decl = struct
     | `By_val -> `Const_ref
     | `By_ref -> `Pointer
 
+  let append ?version list x =
+    begin match version with
+      | Some _ -> () (* FIXME versioning *)
+      | None -> Dlist.append list x
+    end
+
+  let register ?version t = append ?version all_types t; t
+
   let custom_type
+      ?version
       ?(kind=`By_val) ?(modifier=kind_default_modifier kind)
       ?(ml_decl="") ?ml_neg ?ml_name
       cpp_name
     =
     let ml_name = option_value ml_name ~default:(Mangle.lident cpp_name) in
     let ml_negname = option_value ml_neg ~default:ml_name in
-    let t = Custom { ml_decl; ml_name; ml_negname; cpp_name;
-                     cpp_kind = kind; cpp_default_mod = modifier
-                   } in
-    Dlist.append all_types t;
-    t
+    register ?version
+      (Custom { ml_decl; ml_name; ml_negname; cpp_name;
+                cpp_kind = kind; cpp_default_mod = modifier
+              })
 
   let rec class_kind cl =
     match cl.cl_kind with
@@ -143,36 +151,32 @@ module Decl = struct
     | QFlags x -> x
     | typ -> failwithf "Type %s is not flags" (qtype_name typ)
 
-  let qclass ?(kind=`By_ref) ?(modifier=kind_default_modifier kind) cl_name =
+  let qclass ?version ?(kind=`By_ref) ?(modifier=kind_default_modifier kind) cl_name =
     let cl_fields = Dlist.empty () in
-    let cl = QClass {
+    register ?version (QClass {
         cl_name; cl_fields;
         cl_kind = (kind :> [type_kind | `Extends of qclass]);
         cl_default_mod = modifier;
-      } in
-    Dlist.append all_types cl;
-    cl
+      })
 
-  let qstruct ?modifier cl_name =
-    qclass ~kind:`By_val ?modifier cl_name
+  let qstruct ?version ?modifier cl_name =
+    qclass ?version ~kind:`By_val ?modifier cl_name
 
-  let qextends cl_name ?modifier cl =
+  let qextends ?version cl_name ?modifier cl =
     let cl = qclass_of_typ cl in
     let cl_fields = Dlist.empty () in
-    let cl = QClass {
+    register ?version (QClass {
         cl_name; cl_fields;
         cl_kind = `Extends cl;
         cl_default_mod = option_value modifier ~default:(cl.cl_default_mod)
-      } in
-    Dlist.append all_types cl;
-    cl
+      })
 
-  let constructor ?(custom=false) name args ~cl =
+  let constructor ?version ?(custom=false) name args ~cl =
     let cl = qclass_of_typ cl in
-    Dlist.append cl.cl_fields
+    append ?version cl.cl_fields
       {clss = cl; name; desc = Constructor {args; custom}}
 
-  let dynamic ?(kind=`Normal) ?ret ?ret_mod name args ~cl =
+  let dynamic ?version ?(kind=`Normal) ?ret ?ret_mod name args ~cl =
     let cl = qclass_of_typ cl in
     let ret = match ret with
       | None -> None | Some x -> Some (typ ?modifier:ret_mod x)
@@ -195,25 +199,25 @@ module Decl = struct
         | `Extends cl' -> is_dup cl'
     in
     is_dup cl;
-    Dlist.append cl.cl_fields
+    append ?version cl.cl_fields
       {clss = cl; name; desc = Dynamic_method {ret; args; kind}}
 
-  let static ?(custom=false) ?ret ?ret_mod name args ~cl =
+  let static ?version ?(custom=false) ?ret ?ret_mod name args ~cl =
     let ret = match ret with
       | None -> None | Some x -> Some (typ ?modifier:ret_mod x)
     in
     let cl = qclass_of_typ cl in
-    Dlist.append cl.cl_fields
+    append ?version cl.cl_fields
       {clss = cl; name; desc = Static_method {ret; args; custom}}
 
-  let slot ?ret ?ret_mod ?(protected=false) name args ~cl =
+  let slot ?version ?ret ?ret_mod ?(protected=false) name args ~cl =
     let option_eq cmp a b = match a, b with
       | Some a, Some b -> cmp a b
       | None, None -> true
       | _ -> false
     in
     let cl = qclass_of_typ cl in
-    Dlist.append cl.cl_fields
+    append ?version cl.cl_fields
       {clss = cl; name; desc = Slot {args}};
     let ret = match ret with
       | None -> None | Some x -> Some (typ ?modifier:ret_mod x)
@@ -230,12 +234,12 @@ module Decl = struct
                 | _ -> false
               ) (Dlist.read cl.cl_fields))
     then
-      Dlist.append cl.cl_fields
+      append ?version cl.cl_fields
         {clss = cl; name; desc = Dynamic_method {ret; args; kind = `Normal}}
 
-  let signal ?(private_=false) name args ~cl =
+  let signal ?version ?(private_=false) name args ~cl =
     let cl = qclass_of_typ cl in
-    Dlist.append cl.cl_fields
+    append ?version cl.cl_fields
       {clss = cl; name; desc = Signal {args; private_}}
 
   let with_class cl fields =
@@ -250,15 +254,11 @@ module Decl = struct
   let opt name typ =
     arg ~modifier:`Optional name typ
 
-  let qenum enamespace ename emembers =
-    let t = QEnum {enamespace; ename; emembers} in
-    Dlist.append all_types t;
-    t
+  let qenum ?version enamespace ename emembers =
+    register ?version (QEnum {enamespace; ename; emembers})
 
-  let qflags qenum fname =
-    let t = QFlags { fname; fenum = qenum_of_typ qenum } in
-    Dlist.append all_types t;
-    t
+  let qflags ?version qenum fname =
+    register ?version (QFlags { fname; fenum = qenum_of_typ qenum })
 
   let int = custom_type "int" ~modifier:`Direct
   let bool = custom_type "bool" ~modifier:`Direct

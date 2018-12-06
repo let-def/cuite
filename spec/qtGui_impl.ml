@@ -2109,7 +2109,7 @@ let () = with_class qBrush [
     static  "bindDefault" [] ~ret:bool;
     static  "hasOpenGLFramebufferObjects" [] ~ret:bool;
     static  "hasOpenGLFramebufferBlit" [] ~ret:bool;
-    static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "targetRect" qRect;arg "source" qOpenGLFramebufferObject;arg "sourceRect" qRect;arg "buffers" gLbitfield;arg "filter" gLenum;arg "readColorAttachmentIndex" int;arg "drawColorAttachmentIndex" int;arg "restorePolicy" framebufferRestorePolicy];
+    static  ~version:9999 "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "targetRect" qRect;arg "source" qOpenGLFramebufferObject;arg "sourceRect" qRect;arg "buffers" gLbitfield;arg "filter" gLenum;arg "readColorAttachmentIndex" int;arg "drawColorAttachmentIndex" int;arg "restorePolicy" framebufferRestorePolicy];
     static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "targetRect" qRect;arg "source" qOpenGLFramebufferObject;arg "sourceRect" qRect;arg "buffers" gLbitfield;arg "filter" gLenum;arg "readColorAttachmentIndex" int;arg "drawColorAttachmentIndex" int];
     static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "targetRect" qRect;arg "source" qOpenGLFramebufferObject;arg "sourceRect" qRect;arg "buffers" gLbitfield;arg "filter" gLenum];
     static  "blitFramebuffer" [arg "target" qOpenGLFramebufferObject;arg "source" qOpenGLFramebufferObject;arg "buffers" gLbitfield;arg "filter" gLenum];

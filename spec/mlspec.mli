@@ -42,31 +42,38 @@ type cfield_desc =
 module Decl : sig
   val typ : ?modifier:type_mod -> qtype_def -> qtype
   val mlname_type : qtype_def -> string
-  val custom_type : ?kind:type_kind -> ?modifier:type_mod ->
+  val custom_type : ?version:int -> ?kind:type_kind -> ?modifier:type_mod ->
     ?ml_decl:string -> ?ml_neg:string -> ?ml_name:string ->
     string -> qtype_def
   val qtype_kind : qtype_def -> type_kind
-  val qclass : ?kind:type_kind -> ?modifier:type_mod -> string -> qtype_def
-  val qstruct : ?modifier:type_mod -> string -> qtype_def
-  val qextends : string -> ?modifier:type_mod -> qtype_def -> qtype_def
-  val constructor : ?custom:bool -> string -> argument list -> cl:qtype_def -> unit
+  val qclass : ?version:int -> ?kind:type_kind -> ?modifier:type_mod ->
+               string -> qtype_def
+  val qstruct : ?version:int -> ?modifier:type_mod ->
+                string -> qtype_def
+  val qextends : ?version:int -> string -> ?modifier:type_mod ->
+                  qtype_def -> qtype_def
+  val constructor : ?version:int -> ?custom:bool ->
+                    string -> argument list -> cl:qtype_def -> unit
   val dynamic :
+    ?version:int ->
     ?kind:[ `Custom | `Normal | `Protected ] ->
     ?ret:qtype_def -> ?ret_mod:type_mod ->
     string -> argument list -> cl:qtype_def -> unit
   val static :
-    ?custom:bool ->
-    ?ret:qtype_def -> ?ret_mod:type_mod ->
+    ?version:int -> ?custom:bool -> ?ret:qtype_def -> ?ret_mod:type_mod ->
     string -> argument list -> cl:qtype_def -> unit
   val slot :
-    ?ret:qtype_def -> ?ret_mod:type_mod ->
+    ?version:int -> ?ret:qtype_def -> ?ret_mod:type_mod ->
     ?protected:bool -> string -> argument list -> cl:qtype_def -> unit
   (*?ret:qtype_def ->*)
-  val signal : ?private_:bool -> string -> argument list -> cl:qtype_def -> unit
+  val signal :
+    ?version:int ->
+    ?private_:bool -> string -> argument list -> cl:qtype_def -> unit
+
   val with_class : 'a -> (cl:'a -> unit) list -> unit
 
-  val qenum : string -> string -> string list -> qtype_def
-  val qflags : qtype_def -> string -> qtype_def
+  val qenum : ?version:int -> string -> string -> string list -> qtype_def
+  val qflags : ?version:int -> qtype_def -> string -> qtype_def
 
   val arg' : type_mod -> string -> qtype_def -> argument
   val arg : ?modifier:type_mod -> string -> qtype_def -> argument
