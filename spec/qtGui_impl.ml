@@ -8,8 +8,8 @@ let () = with_class qGuiApplication [
     (*constructor "" [(*arg "argc" int;arg "argv" char*)];*)
     static  "setApplicationDisplayName" [arg "name" qString];
     static  "applicationDisplayName" [] ~ret:qString;
-    static  "setDesktopFileName" [arg "name" qString];
-    static  "desktopFileName" [] ~ret:qString;
+    static  "setDesktopFileName" [arg "name" qString] ~version:(9,9,9);
+    static  "desktopFileName" [] ~ret:qString ~version:(9,9,9);
     (*static  "allWindows" [] ~ret:qWindowList;
       static  "topLevelWindows" [] ~ret:qWindowList;*)
     static  "topLevelAt" [arg "pos" qPoint] ~ret:qWindow;
@@ -52,8 +52,8 @@ let () = with_class qGuiApplication [
     dynamic "sessionId" [] ~ret:qString;
     dynamic "sessionKey" [] ~ret:qString;
     dynamic "isSavingSession" [] ~ret:bool;
-    static  "isFallbackSessionManagementEnabled" [] ~ret:bool;
-    static  "setFallbackSessionManagementEnabled" [arg "enabled" bool];
+    static  "isFallbackSessionManagementEnabled" [] ~ret:bool ~version:(9,9,9);
+    static  "setFallbackSessionManagementEnabled" [arg "enabled" bool] ~version:(9,9,9);
     static  "sync" [];
     dynamic "fontDatabaseChanged" [];
     (*dynamic "screenAdded" [arg "screen" qScreen];*)
@@ -67,9 +67,9 @@ let () = with_class qGuiApplication [
     (*dynamic "commitDataRequest" [arg "manager" qSessionManager];*)
     (*dynamic "saveStateRequest" [arg "manager" qSessionManager];*)
     (*dynamic "paletteChanged" [arg "palette" qPalette];*)
-    dynamic "applicationDisplayNameChanged" [];
+    dynamic "applicationDisplayNameChanged" [] ~version:(9,9,9);
 
-    signal  "applicationDisplayNameChanged" [];
+    signal  "applicationDisplayNameChanged" [] ~version:(9,9,9);
     signal  "applicationStateChanged" [arg "" qt'ApplicationState];
     (*signal "commitDataRequest" [QSessionManager &manager];*)
     signal "focusObjectChanged" [arg "" qObject];
@@ -111,7 +111,7 @@ let () = with_class qTextDocument [
     dynamic "metaInformation" [arg "info" qTextDocument'MetaInformation] ~ret:qString;
     dynamic "toHtml" [arg "encoding" qByteArray] ~ret:qString;
     dynamic "setHtml" [arg "html" qString];
-    dynamic "toRawText" [] ~ret:qString;
+    dynamic "toRawText" [] ~ret:qString ~version:(9,9,9);
     dynamic "toPlainText" [] ~ret:qString;
     dynamic "setPlainText" [arg "text" qString];
     dynamic "characterAt" [arg "pos" int] ~ret:qChar;
@@ -381,7 +381,7 @@ let () = with_class qWindow [
     dynamic "create" [];
     (*dynamic "winId" [] ~ret:wId;*)
     dynamic "parent" [arg "mode" qWindow'AncestorMode] ~ret:qWindow;
-    dynamic "parent" [] ~ret:qWindow;
+    dynamic "parent" [] ~ret:qWindow ~version:(9,9,9);
     dynamic "setParent" [arg "parent" qWindow];
     dynamic "isTopLevel" [] ~ret:bool;
     dynamic "isModal" [] ~ret:bool;
@@ -392,7 +392,7 @@ let () = with_class qWindow [
     dynamic "requestedFormat" [] ~ret:qSurfaceFormat ~ret_mod:`Const_ref;
     dynamic "setFlags" [arg "flags" qt'WindowFlags];
     dynamic "flags" [] ~ret:qt'WindowFlags;
-    dynamic "setFlag" [arg "flag" qt'WindowType;arg "on" bool];
+    dynamic "setFlag" [arg "flag" qt'WindowType;arg "on" bool] ~version:(9,9,9);
     dynamic "type" [] ~ret:qt'WindowType;
     dynamic "title" [] ~ret:qString;
     dynamic "setOpacity" [arg "level" qreal];
@@ -560,8 +560,8 @@ let () = with_class qIcon [
     dynamic "addPixmap" [arg "pixmap" qPixmap;arg "mode" qIcon'Mode;arg "state" qIcon'State];
     dynamic "addFile" [arg "fileName" qString;arg "size" qSize;arg "mode" qIcon'Mode;arg "state" qIcon'State];
     (*dynamic "availableSizes" [arg "mode" qIcon'Mode;arg "state" qIcon'State] ~ret:qList<QSize>;*)
-    dynamic "setIsMask" [arg "isMask" bool];
-    dynamic "isMask" [] ~ret:bool;
+    dynamic "setIsMask" [arg "isMask" bool] ~version:(9,9,9);
+    dynamic "isMask" [] ~ret:bool ~version:(9,9,9);
     static  "fromTheme" [arg "name" qString] ~ret:qIcon;
     static  "fromTheme" [arg "name" qString;arg "fallback" qIcon] ~ret:qIcon;
     static  "hasThemeIcon" [arg "name" qString] ~ret:bool;
@@ -579,7 +579,7 @@ let () = with_class qFontMetrics [
     dynamic "operator=" [arg "other" qFontMetrics] ~ret:qFontMetrics;*)
     (*dynamic "swap" [arg "other" qFontMetrics];*)
     dynamic "ascent" [] ~ret:int;
-    dynamic "capHeight" [] ~ret:int;
+    dynamic "capHeight" [] ~ret:int ~version:(9,9,9);
     dynamic "descent" [] ~ret:int;
     dynamic "height" [] ~ret:int;
     dynamic "leading" [] ~ret:int;

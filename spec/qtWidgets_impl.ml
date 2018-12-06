@@ -162,8 +162,8 @@ let () = with_class qWidget [
     dynamic "setMouseTracking" [arg "enable" bool];
     dynamic "hasMouseTracking" [] ~ret:bool;
     dynamic "underMouse" [] ~ret:bool;
-    dynamic "setTabletTracking" [arg "enable" bool];
-    dynamic "hasTabletTracking" [] ~ret:bool;
+    dynamic "setTabletTracking" [arg "enable" bool] ~version:(9,9,9);
+    dynamic "hasTabletTracking" [] ~ret:bool ~version:(9,9,9);
     dynamic "setMask" [arg "bitmap" qBitmap];
     dynamic "setMask" [arg "region" qRegion];
     dynamic "mask" [] ~ret:qRegion;
@@ -470,8 +470,8 @@ let () = with_class qMenu [
     dynamic "setTearOffEnabled" [arg "arg0" bool];
     dynamic "isTearOffEnabled" [] ~ret:bool;
     dynamic "isTearOffMenuVisible" [] ~ret:bool;
-    dynamic "showTearOffMenu" [];
-    dynamic "showTearOffMenu" [arg "pos" qPoint];
+    dynamic "showTearOffMenu" [] ~version:(9,9,9);
+    dynamic "showTearOffMenu" [arg "pos" qPoint] ~version:(9,9,9);
     dynamic "hideTearOffMenu" [];
     dynamic "setDefaultAction" [arg "act" qAction];
     dynamic "defaultAction" [] ~ret:qAction;
@@ -612,9 +612,9 @@ let () = with_class qFormLayout [
     dynamic "insertRow" [arg "row" int;arg "labelText" qString;arg "field" qLayout];
     dynamic "insertRow" [arg "row" int;arg "widget" qWidget];
     dynamic "insertRow" [arg "row" int;arg "layout" qLayout];
-    dynamic "removeRow" [arg "row" int];
-    dynamic "removeRow" [arg "widget" qWidget];
-    dynamic "removeRow" [arg "layout" qLayout];
+    dynamic "removeRow" [arg "row" int] ~version:(9,9,9);
+    dynamic "removeRow" [arg "widget" qWidget] ~version:(9,9,9);
+    dynamic "removeRow" [arg "layout" qLayout] ~version:(9,9,9);
     (*dynamic "takeRow" [arg "row" int] ~ret:qFormLayout'TakeRowResult;*)
     (*dynamic "takeRow" [arg "widget" qWidget] ~ret:qFormLayout'TakeRowResult;*)
     (*dynamic "takeRow" [arg "layout" qLayout] ~ret:qFormLayout'TakeRowResult;*)
@@ -1194,7 +1194,7 @@ let () = with_class qSystemTrayIcon [
     dynamic "setVisible" [arg "visible" bool];
     dynamic "show" [];
     dynamic "hide" [];
-    dynamic "showMessage" [arg "title" qString;arg "message" qString;arg "icon" qIcon;arg "millisecondsTimeoutHint" int];
+    dynamic "showMessage" [arg "title" qString;arg "message" qString;arg "icon" qIcon;arg "millisecondsTimeoutHint" int] ~version:(9,9,9);
     dynamic "showMessage" [arg "title" qString;arg "message" qString;arg "icon" qSystemTrayIcon'MessageIcon;arg "millisecondsTimeoutHint" int];
     dynamic "activated" [arg "reason" qSystemTrayIcon'ActivationReason];
     dynamic "messageClicked" [];
@@ -1778,12 +1778,12 @@ let () = with_class qMainWindow [
     dynamic "setUnifiedTitleAndToolBarOnMac" [arg "set" bool];
     dynamic "iconSizeChanged" [arg "iconSize" qSize];
     dynamic "toolButtonStyleChanged" [arg "toolButtonStyle" qt'ToolButtonStyle];
-    dynamic "tabifiedDockWidgetActivated" [arg "dockWidget" qDockWidget];
+    dynamic "tabifiedDockWidgetActivated" [arg "dockWidget" qDockWidget] ~version:(9,9,9);
     slot "setAnimated" [arg "" bool];
     slot "setDockNestingEnabled" [arg "" bool];
     slot "setUnifiedTitleAndToolBarOnMac" [arg "" bool];
     signal "iconSizeChanged" [arg "" qSize];
-    signal "tabifiedDockWidgetActivated" [arg "" qDockWidget];
+    signal "tabifiedDockWidgetActivated" [arg "" qDockWidget] ~version:(9,9,9);
     signal "toolButtonStyleChanged" [arg "" qt'ToolButtonStyle];
   ]
 let () = with_class qMdiSubWindow [
@@ -1934,8 +1934,8 @@ let () = with_class qTabBar [
     dynamic "setAutoHide" [arg "hide" bool];
     dynamic "changeCurrentOnDrag" [] ~ret:bool;
     dynamic "setChangeCurrentOnDrag" [arg "change" bool];
-    dynamic "accessibleTabName" [arg "index" int] ~ret:qString;
-    dynamic "setAccessibleTabName" [arg "index" int;arg "name" qString];
+    dynamic "accessibleTabName" [arg "index" int] ~ret:qString ~version:(9,9,9);
+    dynamic "setAccessibleTabName" [arg "index" int;arg "name" qString] ~version:(9,9,9);
     dynamic "setCurrentIndex" [arg "index" int];
     dynamic "currentChanged" [arg "index" int];
     dynamic "tabCloseRequested" [arg "index" int];
@@ -2158,7 +2158,7 @@ let () = with_class qSplitter [
     constructor "" [arg "orientation" qt'Orientation;opt "parent" qWidget];
     dynamic "addWidget" [arg "widget" qWidget];
     dynamic "insertWidget" [arg "index" int;arg "widget" qWidget];
-    dynamic "replaceWidget" [arg "index" int;arg "widget" qWidget] ~ret:(optional qWidget);
+    dynamic "replaceWidget" [arg "index" int;arg "widget" qWidget] ~ret:(optional qWidget) ~version:(9,9,9);
     dynamic "setOrientation" [arg "arg0" qt'Orientation];
     dynamic "orientation" [] ~ret:qt'Orientation;
     dynamic "setChildrenCollapsible" [arg "arg0" bool];
@@ -2469,7 +2469,7 @@ let () = with_class qFileDialog [
     dynamic "setNameFilters" [arg "filters" qStringList];
     dynamic "nameFilters" [] ~ret:qStringList;
     dynamic "selectNameFilter" [arg "filter" qString];
-    dynamic "selectedMimeTypeFilter" [] ~ret:qString;
+    dynamic "selectedMimeTypeFilter" [] ~ret:qString ~version:(9,9,9);
     dynamic "selectedNameFilter" [] ~ret:qString;
     dynamic "setMimeTypeFilters" [arg "filters" qStringList];
     dynamic "mimeTypeFilters" [] ~ret:qStringList;
@@ -2502,8 +2502,8 @@ let () = with_class qFileDialog [
     (*dynamic "iconProvider" [] ~ret:qFileIconProvider;*)
     dynamic "setLabelText" [arg "label" qFileDialog'DialogLabel;arg "text" qString];
     dynamic "labelText" [arg "label" qFileDialog'DialogLabel] ~ret:qString;
-    dynamic "setSupportedSchemes" [arg "schemes" qStringList];
-    dynamic "supportedSchemes" [] ~ret:qStringList;
+    dynamic "setSupportedSchemes" [arg "schemes" qStringList] ~version:(9,9,9);
+    dynamic "supportedSchemes" [] ~ret:qStringList ~version:(9,9,9);
     dynamic "setProxyModel" [arg "proxyModel" qAbstractProxyModel];
     dynamic "proxyModel" [] ~ret:qAbstractProxyModel;
     dynamic "setOption" [arg "option" qFileDialog'Option;arg "on" bool];
@@ -5475,10 +5475,10 @@ let () = with_class qAbstractItemView [
     dynamic "editTriggers" [] ~ret:qAbstractItemView'EditTriggers;
     dynamic "setVerticalScrollMode" [arg "mode" qAbstractItemView'ScrollMode];
     dynamic "verticalScrollMode" [] ~ret:qAbstractItemView'ScrollMode;
-    dynamic "resetVerticalScrollMode" [];
+    dynamic "resetVerticalScrollMode" [] ~version:(9,9,9);
     dynamic "setHorizontalScrollMode" [arg "mode" qAbstractItemView'ScrollMode];
     dynamic "horizontalScrollMode" [] ~ret:qAbstractItemView'ScrollMode;
-    dynamic "resetHorizontalScrollMode" [];
+    dynamic "resetHorizontalScrollMode" [] ~version:(9,9,9);
     dynamic "setAutoScroll" [arg "enable" bool];
     dynamic "hasAutoScroll" [] ~ret:bool;
     dynamic "setAutoScrollMargin" [arg "margin" int];

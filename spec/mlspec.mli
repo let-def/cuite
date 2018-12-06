@@ -74,7 +74,7 @@ module Decl : sig
 
   val with_class : 'a -> (cl:'a -> unit) list -> unit
 
-  val qenum : ?version:version -> string -> string -> string list -> qtype_def
+  val qenum : ?version:version -> string -> string -> ?versioned:(version * string list) list -> string list -> qtype_def
   val qflags : ?version:version -> qtype_def -> string -> qtype_def
 
   val arg' : type_mod -> string -> qtype_def -> argument

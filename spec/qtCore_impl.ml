@@ -425,12 +425,12 @@ let () = with_class qIODevice [
     dynamic "isReadable" [] ~ret:bool;
     dynamic "isWritable" [] ~ret:bool;
     dynamic "isSequential" [] ~ret:bool;
-    dynamic "readChannelCount" [] ~ret:int;
-    dynamic "writeChannelCount" [] ~ret:int;
-    dynamic "currentReadChannel" [] ~ret:int;
-    dynamic "setCurrentReadChannel" [arg "channel" int];
-    dynamic "currentWriteChannel" [] ~ret:int;
-    dynamic "setCurrentWriteChannel" [arg "channel" int];
+    dynamic "readChannelCount" [] ~ret:int ~version:(9,9,9);
+    dynamic "writeChannelCount" [] ~ret:int ~version:(9,9,9);
+    dynamic "currentReadChannel" [] ~ret:int ~version:(9,9,9);
+    dynamic "setCurrentReadChannel" [arg "channel" int] ~version:(9,9,9);
+    dynamic "currentWriteChannel" [] ~ret:int ~version:(9,9,9);
+    dynamic "setCurrentWriteChannel" [arg "channel" int] ~version:(9,9,9);
     dynamic "open" [arg "mode" qIODevice'OpenMode] ~ret:bool;
     dynamic "close" [];
     dynamic "pos" [] ~ret:qint64;
@@ -446,10 +446,10 @@ let () = with_class qIODevice [
     dynamic "readLine" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
     dynamic "readLine" [arg "maxSize" qint64] ~ret:qByteArray;
     dynamic "canReadLine" [] ~ret:bool;
-    dynamic "startTransaction" [];
-    dynamic "commitTransaction" [];
-    dynamic "rollbackTransaction" [];
-    dynamic "isTransactionStarted" [] ~ret:bool;
+    dynamic "startTransaction" [] ~version:(9,9,9);
+    dynamic "commitTransaction" [] ~version:(9,9,9);
+    dynamic "rollbackTransaction" [] ~version:(9,9,9);
+    dynamic "isTransactionStarted" [] ~ret:bool ~version:(9,9,9);
     dynamic "write" [arg "data" pchar;arg "maxSize" qint64] ~ret:qint64;
     dynamic "write" [arg "data" pchar] ~ret:qint64;
     dynamic "write" [arg "byteArray" qByteArray] ~ret:qint64;
@@ -462,9 +462,9 @@ let () = with_class qIODevice [
     dynamic "getChar" [arg "c" pchar] ~ret:bool;*)
     dynamic "errorString" [] ~ret:qString;
     dynamic "readyRead" [];
-    dynamic "channelReadyRead" [arg "channel" int];
+    dynamic "channelReadyRead" [arg "channel" int] ~version:(9,9,9);
     dynamic "bytesWritten" [arg "bytes" qint64];
-    dynamic "channelBytesWritten" [arg "channel" int;arg "bytes" qint64];
+    dynamic "channelBytesWritten" [arg "channel" int;arg "bytes" qint64] ~version:(9,9,9);
     dynamic "aboutToClose" [];
     dynamic "readChannelFinished" [];
   ]

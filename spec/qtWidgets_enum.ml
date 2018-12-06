@@ -636,9 +636,13 @@ let qStyle'PrimitiveElement = qenum "QStyle" "PrimitiveElement" [
   "PE_PanelStatusBar";
   "PE_IndicatorTabClose";
   "PE_PanelMenu";
-  "PE_IndicatorTabTearRight";
   "PE_CustomBase";
-]
+] ~versioned:[
+    (9,9,9), [
+      "PE_IndicatorTabTearRight";
+    ]
+  ]
+
 let qStyle'ControlElement = qenum "QStyle" "ControlElement" [
   "CE_PushButton";
   "CE_PushButtonBevel";
@@ -746,11 +750,14 @@ let qStyle'SubElement = qenum "QStyle" "SubElement" [
   "SE_TabBarTabText";
   "SE_ShapedFrameContents";
   "SE_ToolBarHandle";
-  "SE_TabBarScrollLeftButton";
-  "SE_TabBarScrollRightButton";
-  "SE_TabBarTearIndicatorRight";
   "SE_CustomBase";
-]
+] ~versioned:[
+    (9,9,9), [
+      "SE_TabBarScrollLeftButton";
+      "SE_TabBarScrollRightButton";
+      "SE_TabBarTearIndicatorRight";
+    ]
+  ]
 let qStyle'ComplexControl = qenum "QStyle" "ComplexControl" [
   "CC_SpinBox";
   "CC_ComboBox";
@@ -905,10 +912,13 @@ let qStyle'PixelMetric = qenum "QStyle" "PixelMetric" [
   "PM_TreeViewIndentation";
   "PM_HeaderDefaultSectionSizeHorizontal";
   "PM_HeaderDefaultSectionSizeVertical";
-  "PM_TitleBarButtonIconSize";
-  "PM_TitleBarButtonSize";
   "PM_CustomBase";
-]
+] ~versioned:[
+    (9,9,9), [
+      "PM_TitleBarButtonIconSize";
+      "PM_TitleBarButtonSize";
+    ]
+  ]
 let qStyle'ContentsType = qenum "QStyle" "ContentsType" [
   "CT_PushButton";
   "CT_CheckBox";
@@ -1053,9 +1063,12 @@ let qStyle'StyleHint = qenum "QStyle" "StyleHint" [
   "SH_Menu_SubMenuSloppyCloseTimeout";
   "SH_Menu_SubMenuResetWhenReenteringParent";
   "SH_Menu_SubMenuDontStartSloppyOnLeave";
-  "SH_ItemView_ScrollMode";
   "SH_CustomBase";
-]
+] ~versioned:[
+    (9,9,9), [
+      "SH_ItemView_ScrollMode";
+    ]
+  ]
 let qStyle'StandardPixmap = qenum "QStyle" "StandardPixmap" [
   "SP_TitleBarMenuButton";
   "SP_TitleBarMinButton";
@@ -1348,8 +1361,11 @@ let qMainWindow'DockOption = qenum "QMainWindow" "DockOption" [
   "AllowTabbedDocks";
   "ForceTabbedDocks";
   "VerticalTabs";
-  "GroupedDragging";
-]
+] ~versioned:[
+    (9,9,9), [
+      "GroupedDragging";
+    ]
+  ]
 let qMainWindow'DockOptions = qflags qMainWindow'DockOption "DockOptions"
 let qMdiSubWindow'SubWindowOption = qenum "QMdiSubWindow" "SubWindowOption" [
   "AllowOutsideAreaHorizontally";

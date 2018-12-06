@@ -89,9 +89,11 @@ let qTextOption'Flag = qenum "QTextOption" "Flag" [
   "ShowLineAndParagraphSeparators";
   "AddSpaceForLineAndParagraphSeparators";
   "SuppressColors";
-  "ShowDocumentTerminator";
   "IncludeTrailingSpaces";
-]
+] ~versioned:[
+    (9,9,9), ["ShowDocumentTerminator"];
+  ]
+
 let qTextOption'Flags = qflags qTextOption'Flag "Flags"
 let qTextItem'RenderFlag = qenum "QTextItem" "RenderFlag" [
   "RightToLeft";
@@ -383,35 +385,6 @@ let qOpenGLTexture'TextureFormat = qenum "QOpenGLTexture" "TextureFormat" [
   "SRGB8_PunchThrough_Alpha1_ETC2";
   "RGBA8_ETC2_EAC";
   "SRGB8_Alpha8_ETC2_EAC";
-  "RGB8_ETC1";
-  "RGBA_ASTC_4x4";
-  "RGBA_ASTC_5x4";
-  "RGBA_ASTC_5x5";
-  "RGBA_ASTC_6x5";
-  "RGBA_ASTC_6x6";
-  "RGBA_ASTC_8x5";
-  "RGBA_ASTC_8x6";
-  "RGBA_ASTC_8x8";
-  "RGBA_ASTC_10x5";
-  "RGBA_ASTC_10x6";
-  "RGBA_ASTC_10x8";
-  "RGBA_ASTC_10x10";
-  "RGBA_ASTC_12x10";
-  "RGBA_ASTC_12x12";
-  "SRGB8_Alpha8_ASTC_4x4";
-  "SRGB8_Alpha8_ASTC_5x4";
-  "SRGB8_Alpha8_ASTC_5x5";
-  "SRGB8_Alpha8_ASTC_6x5";
-  "SRGB8_Alpha8_ASTC_6x6";
-  "SRGB8_Alpha8_ASTC_8x5";
-  "SRGB8_Alpha8_ASTC_8x6";
-  "SRGB8_Alpha8_ASTC_8x8";
-  "SRGB8_Alpha8_ASTC_10x5";
-  "SRGB8_Alpha8_ASTC_10x6";
-  "SRGB8_Alpha8_ASTC_10x8";
-  "SRGB8_Alpha8_ASTC_10x10";
-  "SRGB8_Alpha8_ASTC_12x10";
-  "SRGB8_Alpha8_ASTC_12x12";
   "SRGB8";
   "SRGB8_Alpha8";
   "SRGB_DXT1";
@@ -425,7 +398,40 @@ let qOpenGLTexture'TextureFormat = qenum "QOpenGLTexture" "TextureFormat" [
   "RGBAFormat";
   "LuminanceFormat";
   "LuminanceAlphaFormat";
-]
+] ~versioned:[
+    (9,9,9), [
+      "RGB8_ETC1";
+      "RGBA_ASTC_4x4";
+      "RGBA_ASTC_5x4";
+      "RGBA_ASTC_5x5";
+      "RGBA_ASTC_6x5";
+      "RGBA_ASTC_6x6";
+      "RGBA_ASTC_8x5";
+      "RGBA_ASTC_8x6";
+      "RGBA_ASTC_8x8";
+      "RGBA_ASTC_10x5";
+      "RGBA_ASTC_10x6";
+      "RGBA_ASTC_10x8";
+      "RGBA_ASTC_10x10";
+      "RGBA_ASTC_12x10";
+      "RGBA_ASTC_12x12";
+      "SRGB8_Alpha8_ASTC_4x4";
+      "SRGB8_Alpha8_ASTC_5x4";
+      "SRGB8_Alpha8_ASTC_5x5";
+      "SRGB8_Alpha8_ASTC_6x5";
+      "SRGB8_Alpha8_ASTC_6x6";
+      "SRGB8_Alpha8_ASTC_8x5";
+      "SRGB8_Alpha8_ASTC_8x6";
+      "SRGB8_Alpha8_ASTC_8x8";
+      "SRGB8_Alpha8_ASTC_10x5";
+      "SRGB8_Alpha8_ASTC_10x6";
+      "SRGB8_Alpha8_ASTC_10x8";
+      "SRGB8_Alpha8_ASTC_10x10";
+      "SRGB8_Alpha8_ASTC_12x10";
+      "SRGB8_Alpha8_ASTC_12x12";
+    ]
+  ]
+
 let qOpenGLTexture'CubeMapFace = qenum "QOpenGLTexture" "CubeMapFace" [
   "CubeMapPositiveX";
   "CubeMapNegativeX";
@@ -696,8 +702,10 @@ let qPageSize'SizeMatchPolicy = qenum "QPageSize" "SizeMatchPolicy" [
 ]
 let qTouchEvent'TouchPoint'InfoFlag = qenum "QTouchEvent::TouchPoint" "InfoFlag" [
   "Pen";
-  "Token";
-]
+] ~versioned:[
+    (9,9,9), ["Token"]
+  ]
+
 let qTouchDevice'DeviceType = qenum "QTouchDevice" "DeviceType" [
   "TouchScreen";
   "TouchPad";
@@ -753,8 +761,10 @@ let qPaintDevice'PaintDeviceMetric = qenum "QPaintDevice" "PaintDeviceMetric" [
   "PdmPhysicalDpiX";
   "PdmPhysicalDpiY";
   "PdmDevicePixelRatio";
-  "PdmDevicePixelRatioScaled";
-]
+] ~versioned:[
+    (9,9,9), ["PdmDevicePixelRatioScaled"]
+  ]
+
 let qPalette'ColorGroup = qenum "QPalette" "ColorGroup" [
   "Active";
   "Disabled";
@@ -901,8 +911,10 @@ let qOpenGLFunctions'OpenGLFeature = qenum "QOpenGLFunctions" "OpenGLFeature" [
   "NPOTTextureRepeat";
   "FixedFunctionPipeline";
   "TextureRGFormats";
-  "MultipleRenderTargets";
-]
+] ~versioned:[
+    (9,9,9), ["MultipleRenderTargets"]
+  ]
+
 let qTextFormat'FormatType = qenum "QTextFormat" "FormatType" [
   "InvalidFormat";
   "BlockFormat";
@@ -1283,9 +1295,13 @@ let qFontDatabase'SystemFont = qenum "QFontDatabase" "SystemFont" [
 let qIconEngine'IconEngineHook = qenum "QIconEngine" "IconEngineHook" [
   "AvailableSizesHook";
   "IconNameHook";
-  "IsNullHook";
-  "ScaledPixmapHook";
-]
+] ~versioned:[
+    (9,9,9), [
+      "IsNullHook";
+      "ScaledPixmapHook";
+    ]
+  ]
+
 let qImageWriter'ImageWriterError = qenum "QImageWriter" "ImageWriterError" [
   "UnknownError";
   "DeviceError";
@@ -1409,7 +1425,6 @@ let qFont'Style = qenum "QFont" "Style" [
   "StyleOblique";
 ]
 let qFont'Stretch = qenum "QFont" "Stretch" [
-  "AnyStretch";
   "UltraCondensed";
   "ExtraCondensed";
   "Condensed";
@@ -1419,7 +1434,12 @@ let qFont'Stretch = qenum "QFont" "Stretch" [
   "Expanded";
   "ExtraExpanded";
   "UltraExpanded";
-]
+] ~versioned:[
+    (9,9,9), [
+      "AnyStretch";
+    ]
+  ]
+
 let qFont'Capitalization = qenum "QFont" "Capitalization" [
   "MixedCase";
   "AllUppercase";
@@ -1502,8 +1522,12 @@ let qKeySequence'StandardKey = qenum "QKeySequence" "StandardKey" [
   "Deselect";
   "DeleteCompleteLine";
   "Backspace";
-  "Cancel";
-]
+] ~versioned:[
+    (9,9,9), [
+      "Cancel";
+    ]
+  ]
+
 let qKeySequence'SequenceFormat = qenum "QKeySequence" "SequenceFormat" [
   "NativeText";
   "PortableText";
@@ -1521,8 +1545,11 @@ let qSurface'SurfaceType = qenum "QSurface" "SurfaceType" [
   "RasterSurface";
   "OpenGLSurface";
   "RasterGLSurface";
-  "OpenVGSurface";
-]
+] ~versioned:[
+    (9,9,9), [
+      "OpenVGSurface";
+    ]
+  ]
 let qWindow'Visibility = qenum "QWindow" "Visibility" [
   "Hidden";
   "AutomaticVisibility";

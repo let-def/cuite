@@ -256,7 +256,7 @@ module Decl = struct
   let opt name typ =
     arg ~modifier:`Optional name typ
 
-  let qenum ?version enamespace ename emembers =
+  let qenum ?version enamespace ename ?versioned emembers =
     register ?version (QEnum {enamespace; ename; emembers})
 
   let qflags ?version qenum fname =

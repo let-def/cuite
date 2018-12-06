@@ -255,11 +255,15 @@ let qEvent'Type = qenum "QEvent" "Type" [
   "WindowChangeInternal";
   "ScreenChangeInternal";
   "PlatformSurface";
-  "Pointer";
-  "TabletTrackingChange";
   "User";
   "MaxUser";
-]
+] ~versioned:[
+    (9,9,9), [
+      "Pointer";
+      "TabletTrackingChange";
+    ]
+  ]
+
 let qMimeDatabase'MatchMode = qenum "QMimeDatabase" "MatchMode" [
   "MatchDefault";
   "MatchExtension";
@@ -620,26 +624,6 @@ let qLocale'Language = qenum "QLocale" "Language" [
   "Mono";
   "TedimChin";
   "Maithili";
-  "Ahom";
-  "AmericanSignLanguage";
-  "ArdhamagadhiPrakrit";
-  "Bhojpuri";
-  "HieroglyphicLuwian";
-  "LiteraryChinese";
-  "Mazanderani";
-  "Mru";
-  "Newari";
-  "NorthernLuri";
-  "Palauan";
-  "Papiamento";
-  "Saraiki";
-  "TokelauLanguage";
-  "TokPisin";
-  "TuvaluLanguage";
-  "UncodedLanguages";
-  "Cantonese";
-  "Osage";
-  "Tangut";
   (*"Norwegian";
   "Moldavian";
   "SerboCroatian";
@@ -655,7 +639,31 @@ let qLocale'Language = qenum "QLocale" "Language" [
   "Frisian";
   "Uigur";
   "LastLanguage";*)
-]
+] ~versioned:[
+    (9,9,9), [
+      "Ahom";
+      "AmericanSignLanguage";
+      "ArdhamagadhiPrakrit";
+      "Bhojpuri";
+      "HieroglyphicLuwian";
+      "LiteraryChinese";
+      "Mazanderani";
+      "Mru";
+      "Newari";
+      "NorthernLuri";
+      "Palauan";
+      "Papiamento";
+      "Saraiki";
+      "TokelauLanguage";
+      "TokPisin";
+      "TuvaluLanguage";
+      "UncodedLanguages";
+      "Cantonese";
+      "Osage";
+      "Tangut";
+    ]
+  ]
+
 let qLocale'Script = qenum "QLocale" "Script" [
   "AnyScript";
   "ArabicScript";
@@ -785,24 +793,28 @@ let qLocale'Script = qenum "QLocale" "Script" [
   "KhudawadiScript";
   "TirhutaScript";
   "VarangKshitiScript";
-  "AhomScript";
-  "AnatolianHieroglyphsScript";
-  "HatranScript";
-  "MultaniScript";
-  "OldHungarianScript";
-  "SignWritingScript";
-  "AdlamScript";
-  "BhaiksukiScript";
-  "MarchenScript";
-  "NewaScript";
-  "OsageScript";
-  "TangutScript";
-  "HanWithBopomofoScript";
-  "JamoScript";
   (*"SimplifiedChineseScript";
   "TraditionalChineseScript";
   "LastScript";*)
-]
+] ~versioned:[
+    (9,9,9), [
+      "AhomScript";
+      "AnatolianHieroglyphsScript";
+      "HatranScript";
+      "MultaniScript";
+      "OldHungarianScript";
+      "SignWritingScript";
+      "AdlamScript";
+      "BhaiksukiScript";
+      "MarchenScript";
+      "NewaScript";
+      "OsageScript";
+      "TangutScript";
+      "HanWithBopomofoScript";
+      "JamoScript";
+    ]
+  ]
+
 let qLocale'Country = qenum "QLocale" "Country" [
   "AnyCountry";
   "Afghanistan";
@@ -1017,14 +1029,12 @@ let qLocale'Country = qenum "QLocale" "Country" [
   "Tanzania";
   "Thailand";
   "Togo";
-  "TokelauCountry";
   "Tonga";
   "TrinidadAndTobago";
   "Tunisia";
   "Turkey";
   "Turkmenistan";
   "TurksAndCaicosIslands";
-  "TuvaluCountry";
   "Uganda";
   "Ukraine";
   "UnitedArabEmirates";
@@ -1062,8 +1072,6 @@ let qLocale'Country = qenum "QLocale" "Country" [
   "Bonaire";
   "SintMaarten";
   "Kosovo";
-  "EuropeanUnion";
-  "OutlyingOceania";
   (*"Tokelau";
   "Tuvalu";
   "DemocraticRepublicOfCongo";
@@ -1073,7 +1081,15 @@ let qLocale'Country = qenum "QLocale" "Country" [
   "RussianFederation";
   "SyrianArabRepublic";
   "LastCountry";*)
-]
+] ~versioned:[
+    (9,9,9), [
+      "TokelauCountry";
+      "TuvaluCountry";
+      "EuropeanUnion";
+      "OutlyingOceania";
+    ]
+  ]
+
 let qLocale'MeasurementSystem = qenum "QLocale" "MeasurementSystem" [
   "MetricSystem";
   "ImperialUSSystem";
@@ -1086,14 +1102,18 @@ let qLocale'FormatType = qenum "QLocale" "FormatType" [
   "NarrowFormat";
 ]
 let qLocale'NumberOption = qenum "QLocale" "NumberOption" [
-  "DefaultNumberOptions";
   "OmitGroupSeparator";
   "RejectGroupSeparator";
-  "OmitLeadingZeroInExponent";
-  "RejectLeadingZeroInExponent";
-  "IncludeTrailingZeroesAfterDot";
-  "RejectTrailingZeroesAfterDot";
-]
+] ~versioned:[
+    (9,9,9), [
+      "DefaultNumberOptions";
+      "OmitLeadingZeroInExponent";
+      "RejectLeadingZeroInExponent";
+      "IncludeTrailingZeroesAfterDot";
+      "RejectTrailingZeroesAfterDot";
+    ]
+  ]
+
 let qLocale'FloatingPointPrecisionOption = qenum ~version:(9,9,9) "QLocale" "FloatingPointPrecisionOption" [
   "FloatingPointShortest";
 ]
@@ -1422,14 +1442,18 @@ let qChar'Script = qenum "QChar" "Script" [
   "Script_Khudawadi";
   "Script_Tirhuta";
   "Script_WarangCiti";
-  "Script_Ahom";
-  "Script_AnatolianHieroglyphs";
-  "Script_Hatran";
-  "Script_Multani";
-  "Script_OldHungarian";
-  "Script_SignWriting";
-  "ScriptCount";
-]
+  (*"ScriptCount";*)
+] ~versioned:[
+    (9,9,9), [
+      "Script_Ahom";
+      "Script_AnatolianHieroglyphs";
+      "Script_Hatran";
+      "Script_Multani";
+      "Script_OldHungarian";
+      "Script_SignWriting";
+    ]
+  ]
+
 let qChar'Direction = qenum "QChar" "Direction" [
   "DirL";
   "DirR";
@@ -1507,8 +1531,10 @@ let qChar'UnicodeVersion = qenum "QChar" "UnicodeVersion" [
   "Unicode_6_2";
   "Unicode_6_3";
   "Unicode_7_0";
-  "Unicode_8_0";
-]
+] ~versioned:[
+    (9,9,9), ["Unicode_8_0"];
+  ]
+
 let qElapsedTimer'ClockType = qenum "QElapsedTimer" "ClockType" [
   "SystemTime";
   "MonotonicClock";
@@ -1937,7 +1963,7 @@ let qVariant'Type = qenum "QVariant" "Type" [
   "Uuid";
   "ModelIndex";
   "PersistentModelIndex";
-  "LastCoreType";
+  (*"LastCoreType";*)
   "Font";
   "Pixmap";
   "Brush";
@@ -2596,17 +2622,17 @@ let qt'WidgetAttribute = qenum "Qt" "WidgetAttribute" [
   "WA_X11DoNotAcceptFocus";
   "WA_MacNoShadow";
   "WA_AlwaysStackOnTop";
-  "WA_TabletTracking";
-  "WA_AttributeCount";
-]
+  (*"WA_AttributeCount";*)
+] ~versioned:[
+    (9,9,9), ["WA_TabletTracking"];
+  ]
+
 let qt'ApplicationAttribute = qenum "Qt" "ApplicationAttribute" [
   "AA_ImmediateWidgetCreation";
   "AA_MSWindowsUseDirect3DByDefault";
   "AA_DontShowIconsInMenus";
   "AA_NativeWindows";
   "AA_DontCreateNativeWidgetSiblings";
-  "AA_PluginApplication";
-  (*"AA_MacPluginApplication";*)
   "AA_DontUseNativeMenuBar";
   "AA_MacDontSwapCtrlAndMeta";
   "AA_Use96Dpi";
@@ -2620,16 +2646,21 @@ let qt'ApplicationAttribute = qenum "Qt" "ApplicationAttribute" [
   "AA_UseSoftwareOpenGL";
   "AA_ShareOpenGLContexts";
   "AA_SetPalette";
-  "AA_EnableHighDpiScaling";
-  "AA_DisableHighDpiScaling";
-  "AA_UseStyleSheetPropagationInWidgetStyles";
-  "AA_DontUseNativeDialogs";
-  "AA_SynthesizeMouseForUnhandledTabletEvents";
-  "AA_CompressHighFrequencyEvents";
-  "AA_DontCheckOpenGLContextThreadAffinity";
-  "AA_DisableShaderDiskCache";
-  "AA_AttributeCount";
-]
+  (*"AA_AttributeCount";*)
+] ~versioned:[
+    (9,9,9), [
+      "AA_PluginApplication";
+      "AA_EnableHighDpiScaling";
+      "AA_DisableHighDpiScaling";
+      "AA_UseStyleSheetPropagationInWidgetStyles";
+      "AA_DontUseNativeDialogs";
+      "AA_SynthesizeMouseForUnhandledTabletEvents";
+      "AA_CompressHighFrequencyEvents";
+      "AA_DontCheckOpenGLContextThreadAffinity";
+      "AA_DisableShaderDiskCache";
+    ]
+  ]
+
 let qt'ImageConversionFlag = qenum "Qt" "ImageConversionFlag" [
   "ColorMode_Mask";
   (*"AutoColor";*)
@@ -3229,8 +3260,10 @@ let qt'DateFormat = qenum "Qt" "DateFormat" [
   "DefaultLocaleShortDate";
   "DefaultLocaleLongDate";
   "RFC2822Date";
-  "ISODateWithMs";
-]
+] ~versioned:[
+    (9,9,9), ["ISODateWithMs"]
+  ]
+
 let qt'TimeSpec = qenum "Qt" "TimeSpec" [
   "LocalTime";
   "UTC";
@@ -3346,13 +3379,17 @@ let qt'InputMethodQuery = qenum "Qt" "InputMethodQuery" [
   "ImAbsolutePosition";
   "ImTextBeforeCursor";
   "ImTextAfterCursor";
-  "ImEnterKeyType";
-  "ImAnchorRectangle";
-  "ImInputItemClipRectangle";
   "ImPlatformData";
   "ImQueryInput";
   "ImQueryAll";
-]
+] ~versioned:[
+    (9,9,9), [
+      "ImEnterKeyType";
+      "ImAnchorRectangle";
+      "ImInputItemClipRectangle";
+    ]
+  ]
+
 let qt'InputMethodHint = qenum "Qt" "InputMethodHint" [
   "ImhNone";
   "ImhHiddenText";
@@ -3459,11 +3496,13 @@ let qt'ItemFlag = qenum "Qt" "ItemFlag" [
   "ItemIsDropEnabled";
   "ItemIsUserCheckable";
   "ItemIsEnabled";
-  "ItemIsAutoTristate";
-  (*"ItemIsTristate";*)
   "ItemNeverHasChildren";
   "ItemIsUserTristate";
-]
+  (*"ItemIsTristate";*)
+] ~versioned:[
+    (9,9,9), ["ItemIsAutoTristate"]
+  ]
+
 let qt'ItemFlags = qflags qt'ItemFlag "ItemFlags"
 let qt'MatchFlag = qenum "Qt" "MatchFlag" [
   "MatchExactly";
@@ -3576,17 +3615,21 @@ let qt'TimerType = qenum "Qt" "TimerType" [
   "VeryCoarseTimer";
 ]
 let qt'ScrollPhase = qenum "Qt" "ScrollPhase" [
-  "NoScrollPhase";
   "ScrollBegin";
   "ScrollUpdate";
   "ScrollEnd";
-]
+] ~versioned:[
+    (9,9,9), ["NoScrollPhase"]
+  ]
+
 let qt'MouseEventSource = qenum "Qt" "MouseEventSource" [
   "MouseEventNotSynthesized";
   "MouseEventSynthesizedBySystem";
   "MouseEventSynthesizedByQt";
-  "MouseEventSynthesizedByApplication";
-]
+] ~versioned:[
+    (9,9,9), ["MouseEventSynthesizedByApplication"]
+  ]
+
 let qt'MouseEventFlag = qenum "Qt" "MouseEventFlag" [
   "MouseEventCreatedDoubleClick";
   "MouseEventFlagMask";
