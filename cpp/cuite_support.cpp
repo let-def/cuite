@@ -5,10 +5,30 @@
 #include "caml/custom.h"
 #include "caml/printexc.h"
 #include <pthread.h>
+#include <QtGlobal>
 #include <QEvent>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QWidget>
+
+#ifndef QT_VERSION
+#error QT_VERSION is not defined
+#endif
+
+static bool qmetaobject_inherits(const QMetaObject *self,
+                                 const QMetaObject *ancestor)
+{
+#if 0 && QT_VERSION >= 0x050700
+  return self->inherits(ancestor);
+#else
+  while (ancestor != NULL)
+  {
+    if (self == ancestor) return true;
+    ancestor = ancestor->superClass();
+  }
+  return false;
+#endif
+}
 
 int cuite_is_logging(void)
 {
@@ -430,7 +450,7 @@ value& cuite_QObject_to_ocaml(const QObject *obj)
     deref = caml_named_value("cuite_deref");
 
   value block = caml_callback_exn(*deref, proxy->id);
-  CUITE_LOG("accessing id %ld = 0x%016x from thread 0x%016x\n", Long_val(proxy->id), block, pthread_self());
+  CUITE_LOG("accessing id %ld = 0x%016lx from thread 0x%016lx\n", Long_val(proxy->id), (unsigned long)block, (unsigned long)pthread_self());
   if (Is_exception_result(block))
   {
     cuite_debug_aborted_callback("cuite_QObject_to_ocaml(deref)", Extract_exception(block));
@@ -537,8 +557,9 @@ static void update_parent(const QObject *obj)
   QObject *parent = obj->parent();
   value& vparent = parent ? cuite_QObject_to_ocaml(parent) : val_unit;
 
-  CUITE_LOG("%s child of %s(%x)\n", obj->metaObject()->className(),
-      parent ? parent->metaObject()->className() : "NULL", vparent);
+  CUITE_LOG("%s child of %s(%lx)\n", obj->metaObject()->className(),
+      parent ? parent->metaObject()->className() : "NULL",
+      (unsigned long)vparent);
 
   if (Field(vobj, QObject_field_parent) == vparent)
   {
@@ -588,7 +609,8 @@ bool GraphTracker::eventFilter(QObject *target, QEvent *event)
 static void GraphTracker_register(const QObject *obj)
 {
   CUITE_LOG("registering %s\n", obj->metaObject()->className());
-  if (!obj->metaObject()->inherits(&QCoreApplication::staticMetaObject))
+  if (!qmetaobject_inherits(obj->metaObject(),
+                            &QCoreApplication::staticMetaObject))
     const_cast<QObject*>(obj)->installEventFilter(&graphTracker);
   update_parent(obj);
   //QObject::connect(obj, &QObject::destroyed, &graphTracker, &GraphTracker::trackDestroyed);
@@ -874,7 +896,7 @@ external value cuite_metaobject_cast(value vobj, value vmeta)
   QObject *obj = cuite_QObject_from_ocaml(vobj);
   const QMetaObject *meta = obj->metaObject();
   const QMetaObject *target_meta = cuite_QMetaObject_from_ocaml(vmeta);
-  if (meta->inherits(target_meta))
+  if (qmetaobject_inherits(meta, target_meta))
   {
     result = caml_alloc_small(1, 0);
     Field(result, 0) = vobj;
