@@ -39,41 +39,43 @@ type cfield_desc =
   | Signal of { args: argument list; private_: bool }
   | Slot of { args: argument list }
 
+type version = int * int * int
+
 module Decl : sig
   val typ : ?modifier:type_mod -> qtype_def -> qtype
   val mlname_type : qtype_def -> string
-  val custom_type : ?version:int -> ?kind:type_kind -> ?modifier:type_mod ->
+  val custom_type : ?version:version -> ?kind:type_kind -> ?modifier:type_mod ->
     ?ml_decl:string -> ?ml_neg:string -> ?ml_name:string ->
     string -> qtype_def
   val qtype_kind : qtype_def -> type_kind
-  val qclass : ?version:int -> ?kind:type_kind -> ?modifier:type_mod ->
+  val qclass : ?version:version -> ?kind:type_kind -> ?modifier:type_mod ->
                string -> qtype_def
-  val qstruct : ?version:int -> ?modifier:type_mod ->
+  val qstruct : ?version:version -> ?modifier:type_mod ->
                 string -> qtype_def
-  val qextends : ?version:int -> string -> ?modifier:type_mod ->
+  val qextends : ?version:version -> string -> ?modifier:type_mod ->
                   qtype_def -> qtype_def
-  val constructor : ?version:int -> ?custom:bool ->
+  val constructor : ?version:version -> ?custom:bool ->
                     string -> argument list -> cl:qtype_def -> unit
   val dynamic :
-    ?version:int ->
+    ?version:version ->
     ?kind:[ `Custom | `Normal | `Protected ] ->
     ?ret:qtype_def -> ?ret_mod:type_mod ->
     string -> argument list -> cl:qtype_def -> unit
   val static :
-    ?version:int -> ?custom:bool -> ?ret:qtype_def -> ?ret_mod:type_mod ->
+    ?version:version -> ?custom:bool -> ?ret:qtype_def -> ?ret_mod:type_mod ->
     string -> argument list -> cl:qtype_def -> unit
   val slot :
-    ?version:int -> ?ret:qtype_def -> ?ret_mod:type_mod ->
+    ?version:version -> ?ret:qtype_def -> ?ret_mod:type_mod ->
     ?protected:bool -> string -> argument list -> cl:qtype_def -> unit
   (*?ret:qtype_def ->*)
   val signal :
-    ?version:int ->
+    ?version:version ->
     ?private_:bool -> string -> argument list -> cl:qtype_def -> unit
 
   val with_class : 'a -> (cl:'a -> unit) list -> unit
 
-  val qenum : ?version:int -> string -> string -> string list -> qtype_def
-  val qflags : ?version:int -> qtype_def -> string -> qtype_def
+  val qenum : ?version:version -> string -> string -> string list -> qtype_def
+  val qflags : ?version:version -> qtype_def -> string -> qtype_def
 
   val arg' : type_mod -> string -> qtype_def -> argument
   val arg : ?modifier:type_mod -> string -> qtype_def -> argument

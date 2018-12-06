@@ -1094,7 +1094,7 @@ let qLocale'NumberOption = qenum "QLocale" "NumberOption" [
   "IncludeTrailingZeroesAfterDot";
   "RejectTrailingZeroesAfterDot";
 ]
-let qLocale'FloatingPointPrecisionOption = qenum ~version:9999 "QLocale" "FloatingPointPrecisionOption" [
+let qLocale'FloatingPointPrecisionOption = qenum ~version:(9,9,9) "QLocale" "FloatingPointPrecisionOption" [
   "FloatingPointShortest";
 ]
 let qLocale'CurrencySymbolFormat = qenum "QLocale" "CurrencySymbolFormat" [
@@ -1146,7 +1146,7 @@ let qMetaMethod'MethodType = qenum "QMetaMethod" "MethodType" [
   "Slot";
   "Constructor";
 ]
-let qOperatingSystemVersion'OSType = qenum ~version:59
+let qOperatingSystemVersion'OSType = qenum ~version:(5,9,0)
     "QOperatingSystemVersion" "OSType" [
     "Unknown";
     "Windows";
@@ -1659,7 +1659,7 @@ let qLibraryInfo'LibraryLocation = qenum "QLibraryInfo" "LibraryLocation" [
   "TestsPath";
   "SettingsPath";
 ]
-let qCommandLineOption'Flag = qenum ~version:9999
+let qCommandLineOption'Flag = qenum ~version:(9,9,9)
     "QCommandLineOption" "Flag" [
     "HiddenFromHelp";
     "ShortOptionStyle";
@@ -1762,7 +1762,7 @@ let qCommandLineParser'SingleDashWordOptionMode = qenum "QCommandLineParser" "Si
   "ParseAsCompactedShortOptions";
   "ParseAsLongOptions";
 ]
-let qCommandLineParser'OptionsAfterPositionalArgumentsMode = qenum ~version:9999
+let qCommandLineParser'OptionsAfterPositionalArgumentsMode = qenum ~version:(9,9,9)
     "QCommandLineParser" "OptionsAfterPositionalArgumentsMode" [
     "ParseAsOptions";
     "ParseAsPositionalArguments";
@@ -1791,7 +1791,7 @@ let qTextStream'NumberFlag = qenum "QTextStream" "NumberFlag" [
   "UppercaseBase";
   "UppercaseDigits";
 ]
-let qDeadlineTimer'ForeverConstant = qenum ~version:9999 "QDeadlineTimer" "ForeverConstant" [
+let qDeadlineTimer'ForeverConstant = qenum ~version:(9,9,9) "QDeadlineTimer" "ForeverConstant" [
   "Forever";
 ]
 let qDate'MonthNameType = qenum "QDate" "MonthNameType" [
@@ -3377,7 +3377,7 @@ let qt'InputMethodHint = qenum "Qt" "InputMethodHint" [
   "ImhExclusiveInputMask";
 ]
 let qt'InputMethodHints = qflags qt'InputMethodHint "InputMethodHints"
-let qt'EnterKeyType = qenum ~version:9999 "Qt" "EnterKeyType" [
+let qt'EnterKeyType = qenum ~version:(9,9,9) "Qt" "EnterKeyType" [
   "EnterKeyDefault";
   "EnterKeyReturn";
   "EnterKeyDone";
@@ -3591,7 +3591,7 @@ let qt'MouseEventFlag = qenum "Qt" "MouseEventFlag" [
   "MouseEventCreatedDoubleClick";
   "MouseEventFlagMask";
 ]
-let qt'ChecksumType = qenum ~version:9999 "Qt" "ChecksumType" [
+let qt'ChecksumType = qenum ~version:(9,9,9) "Qt" "ChecksumType" [
   "ChecksumIso3309";
   "ChecksumItuV41";
 ]

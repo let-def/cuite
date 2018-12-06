@@ -77,6 +77,8 @@ let eq_typ t1 t2 =
 
 let compatible_arg (_,t1) (_,t2) = eq_typ t1 t2
 
+type version = int * int * int
+
 module Decl = struct
   let all_types = Dlist.empty ()
   let iter_types f = Dlist.iter all_types f

@@ -210,7 +210,7 @@ let qPixelFormat'ByteOrder = qenum "QPixelFormat" "ByteOrder" [
   "BigEndian";
   "CurrentSystemEndian";
 ]
-let qOpenGLTextureBlitter'Origin = qenum ~version:9999 "QOpenGLTextureBlitter" "Origin" [
+let qOpenGLTextureBlitter'Origin = qenum ~version:(9,9,9) "QOpenGLTextureBlitter" "Origin" [
   "OriginBottomLeft";
   "OriginTopLeft";
 ]
@@ -726,7 +726,7 @@ let qOpenGLFramebufferObject'Attachment = qenum "QOpenGLFramebufferObject" "Atta
   "CombinedDepthStencil";
   "Depth";
 ]
-let qOpenGLFramebufferObject'FramebufferRestorePolicy = qenum ~version:9999 "QOpenGLFramebufferObject" "FramebufferRestorePolicy" [
+let qOpenGLFramebufferObject'FramebufferRestorePolicy = qenum ~version:(9,9,9) "QOpenGLFramebufferObject" "FramebufferRestorePolicy" [
   "DontRestoreFramebufferBinding";
   "RestoreFramebufferBindingToDefault";
   "RestoreFrameBufferBinding";

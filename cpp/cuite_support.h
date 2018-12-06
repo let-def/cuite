@@ -1,6 +1,7 @@
 #ifndef CUITE_SUPPORT
 #define CUITE_SUPPORT
 
+#include <functional>
 #include "cuite_gc.h"
 #include <QObject>
 #include "caml/custom.h"
