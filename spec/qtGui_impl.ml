@@ -380,8 +380,8 @@ let () = with_class qWindow [
     dynamic "setVisibility" [arg "v" qWindow'Visibility];
     dynamic "create" [];
     (*dynamic "winId" [] ~ret:wId;*)
-    dynamic "parent" [arg "mode" qWindow'AncestorMode] ~ret:qWindow;
-    dynamic "parent" [] ~ret:qWindow ~version:(9,9,9);
+    dynamic "parent" [arg "mode" qWindow'AncestorMode] ~ret:qWindow ~version:(9,9,9);
+    dynamic "parent" [] ~ret:qWindow;
     dynamic "setParent" [arg "parent" qWindow];
     dynamic "isTopLevel" [] ~ret:bool;
     dynamic "isModal" [] ~ret:bool;
