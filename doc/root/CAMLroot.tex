@@ -12,10 +12,10 @@
 \usepackage{hyperref}
 %\usepackage{enumitem}
 
-% Boxed figures
+% Figures
 \usepackage{float}
-\floatstyle{boxed}
-\restylefloat{figure}
+% \floatstyle{boxed}
+% \restylefloat{figure}
 \usepackage[nomath,nosf]{kpfonts}
 
 \definecolor{bg}{rgb}{0.95,0.95,0.95}
@@ -47,6 +47,10 @@
 
 \newcommand{\builtin}[1]{\mathtt{#1}}
 
+\newcommand\fnurl[2]{%
+\href{#2}{#1}\footnote{\url{#2}}%
+}
+
 \usepackage{natbib}
 \bibliographystyle{plainnat}
 \citestyle{authoryear}
@@ -69,6 +73,8 @@
   basicstyle=\ttfamily,breaklines=true,
   language=[Objective]Caml,
   morekeywords={external},
+  frame=single,
+  framerule=0.2pt,
   commentstyle=\em\color{blue(pigment)},
   stringstyle=\color{britishracinggreen},
 }
@@ -101,7 +107,7 @@ In this work, we explore two complementary approaches to mitigate these issues. 
 \section{Introduction}
 
 Writing code bridging C libraries to OCaml code is a difficult task.
-While writing \href{https://github.com/let-def/cuite}{Cuite}, an OCaml
+While writing \fnurl{Cuite}{https://github.com/let-def/cuite}, an OCaml
 library that interfaces the Qt tool-kit, we discovered a few idioms that
 help to keep this plumbing simple to reason about.
 
@@ -114,12 +120,12 @@ and library code, different tasks can run concurrently, etc.
 Interfacing with OCaml means exporting all these features while abiding
 by OCaml \& Qt rules about memory management. By revisiting a few
 assumptions of the OCaml GC interface, we believe that the CAMLroot 
-approach makes this work more tractable and easier to debug.
+approach makes interface work more tractable and easier to debug.
 
 \subsection{Our approach: roots before values}
 
-We observed that the less natural part of OCaml interaction from C code
-was the manipulation of roots and the lifetime of OCaml values. The C
+In our opinion, the less natural part of OCaml interaction from C code
+is the manipulation of roots and the lifetime of OCaml values. The C
 programmer is accustomed to manual memory management: by explicitly
 creating and destroying pieces of memory or by tying the variable
 lifetime to the scope. While syntactically the management of OCaml
@@ -158,8 +164,9 @@ We claim the following three contributions:
 \item an alternative interface for managing local roots that trades some
       performance for ease of use and safety by batching roots them in
       {\em regions}
-\item a reusable and open-source library that implements both of those via the
-      \cpp{mlroot.h} and \cpp{mlregion.h} files.
+\item \fnurl{camlroot}{https://github.com/let-def/camlroot} a reusable and
+      open-source library that implements both of those via the \cpp{mlroot.h}
+      and \cpp{mlregion.h} files.
 \end{itemize}
 
 While these were developed in the context of Cuite, the Qt binding, this
@@ -200,7 +207,7 @@ Most of the time the GC will not do any work, preferring to wait for a
 batch of work that is big enough to amortize its overhead. As such an
 improper use of the OCaml API can go unnoticed for a long time. But even
 once harm has been done, it might just lead to a corruption of the OCaml
-heap that will affect an unrelated piece of code and fail much later in the
+heap that will affect an unrelated piece of code and fails much later in the
 program.  GC bugs combine two nasty properties: they cannot be studied in
 isolation and they trigger depending on a complex set of conditions that
 cannot be inferred by solely looking at the buggy code.
@@ -236,8 +243,9 @@ heap:
       \caml{int} OCaml type, or as a unique pattern of bits for constant
       variants and polymorphic variant constructors
 \item if it is not set, the value is interpreted as a pointer to a
-      ``block'', a piece of memory provided by the runtime that is guaranteed
-      to be aligned.
+      ``block''; it is a piece of memory provided by the runtime that is
+      guaranteed to be aligned to a word-boundary and as such to have its two
+      or three lower bits set to 0
 \end{itemize}
 
 Blocks are preceded by a header that determines their ``tag'' and their
@@ -264,7 +272,7 @@ referenced from C code, it also needs to be able to update them. The C compiler
 needs to be aware that all OCaml values have to be reloaded when such an
 operation can happen, as previous values might have been invalidated.
 
-\subsection{The memory management macros.}
+\subsection{The memory management macros}
 
 A few C macros are provided by the OCaml runtime to implement foreign
 features. As a guiding example, here is a simple function that takes two
@@ -273,7 +281,6 @@ values and makes a pair out of them:
 \begin{lstlisting}[]
 (* The OCaml version *)
 let mk_pair_ocaml x y = (x,y)
-
 (* An external function, that we will implement in C *)
 external mk_pair_c : 'a -> 'b -> 'a * 'b = "mk_pair_c_impl"
 \end{lstlisting}
@@ -294,7 +301,7 @@ value mk_pair_c_impl(value a, value b)
 }
 \end{lstlisting}
 
-The first macro \cpp{CAMLprim} ensures that the symbol visible from OCaml
+The first macro \cpp{CAMLprim} ensures that the symbol is visible from OCaml
 code.
 
 \paragraph{CAMLparam}
@@ -380,20 +387,15 @@ value mk_pair_c_impl(value a, value b)
 }
 \end{lstlisting}
 
-The three fundamental operations of root managements are:
-%
-\begin{itemize}
-\item saving local roots,
-\item registering new roots,
-\item restoring local roots.
-\end{itemize}
+The three fundamental operations of root managements are saving local roots,
+registering new ones, and restoring the saved ones when leaving a scope.
+
+The OCaml FFI provides macros to automate most of this work but has no way to enforce their proper use. \cpp{mlroot.h} API can detect large classes of possible misuses while \cpp{mlregion.h} introduces an alternative approach to the management of roots. 
 
 \subsubsection{Carefully dealing with intermediate results}
 
 Here is an example that shows how easy it is to misuse this API, taken from
-\citep[caml-oxide]{camloxide}.
-
-Lets imagine one wants to make a triplet as two nested pairs:
+\citep[caml-oxide]{camloxide}.  Lets imagine one wants to make a triplet as two nested pairs:
 %
 \begin{lstlisting}[]
 let triplet x y z = (x,(y,z))
@@ -454,7 +456,7 @@ of uniformity we offer alternatives in this style for most GC functions.
 Figure~\ref{fig:mlroot} show what this style of API looks like.
 This minor change brings many benefits.
 
-\paragraph{No risk of unexpected copy}
+\paragraph{No risk of unexpected copy.}
 
 A tricky source of bug that we highlighted in the previous section was
 that OCaml values get unexpectedly copied while being manipulated. With
@@ -493,7 +495,7 @@ void mlroot_set_field_long(value *root, int n, long v);
   \label{fig:mlroot}
 \end{figure}
 
-\paragraph{Return values become explicit}
+\paragraph{Return values become explicit.}
 
 Now that all functions that interact with the garbage collector take
 pointers, most offending code patterns become impossible to write:
@@ -541,7 +543,7 @@ address taken need to be registered as root. Since this operation is explicit, w
 Dereferencing should also be done with care, but this will generally
 be done by a primitive function of the GC interface and not by the user code anymore.
 
-\paragraph{Dealing with immediate values}
+\paragraph{Dealing with immediate values.}
 
 A reader familiar with OCaml binding code might be worried that working
 with immediate values (an integer directly stored in a \cpp{value})
@@ -553,10 +555,9 @@ blocks, they cannot be moved -- the rules for dealing with them are relaxed:
 they don't have to be put in roots, they can be created without triggering a
 garbage collection, etc.
 
-However we argue these properties should not be exploited. That some
-values can be represented without interacting with the GC is an
-implementation detail. Being prepared for the ``worst case'' allow to
-present an uniform interface without special-casing.
+We argue these properties should not be exploited. That some values can be
+represented without interacting with the GC is an implementation detail. Being
+prepared for the ``worst case'' allow to present an uniform interface.
 
 Still, the library provides the \cpp{mlroot\_val\_long} and
 \cpp{mlroot\_set\_field\_long} short-hands for cases that are known to be
@@ -591,7 +592,7 @@ that dereferences roots can be instrumented to deal with that:
       \cpp{mk\_pair} primitive. 
 \end{itemize}
 
-\paragraph{A debugging workflow} Actually thanks to the indirection we can go
+\paragraph{A debugging workflow.} Actually thanks to the indirection we can go
 further than that. The observation is that any well-formed argument of type
 \cpp{value*} should point to a root. 
 
@@ -604,8 +605,6 @@ OCaml FFI, we can access it at any time with the indirect API. Plugging
 into GC infrastructure we can introspect the roots and provide a debug
 variant of the FFI where all roots received by FFI functions are checked for
 proper registration.
-% This prevents a large class of misuse of GC API and delayed heap
-% corruption bugs.
 
 \paragraph{Where to add the indirection?}
 
@@ -637,7 +636,7 @@ are not easily covered. As we already saw, returning values is tricky,
 but storing temporary values in code controlled by an external framework
 is even more problematic.
 
-\paragraph{The need for side-channels allocation}
+\paragraph{The need for side-channels allocation.}
 
 For the sake of the example, let's imagine that we need to sort some C
 structures containing OCaml values. To achieve this the
@@ -740,7 +739,7 @@ Setting up a region introduces a new set of local roots that can grow
 dynamically as new roots are requested. Leaving a region releases all
 the roots at once.
 
-\paragraph{Dynamic scoping of regions} A point that might surprise users of
+\paragraph{Dynamic scoping of regions.} A point that might surprise users of
 this API is that the current region is not explicitly passed to functions,
 instead it is accessed by some external means.
 
@@ -788,7 +787,7 @@ void fold_array(value *acc, value *array)
 }
 \end{lstlisting}
 
-Like normal regions, macros can be used to automate some of the
+Like for normal regions, macros can be used to automate some of the
 boilerplate.
 
 \subsection{Releasing the lock in a region}
@@ -820,11 +819,11 @@ released:
 \item new roots cannot be allocated,
 \item dereferencing a value is forbidden, most helper functions won't work,
 \item setting up normal regions is forbidden, but a special kind of region
-      allow reacquiring the runtime.
+      allows reacquiring the runtime.
 \end{itemize}
 
-All these restrictions can be tested dynamically at a moderate cost. While no
-checks are done at compile-time, errors can be detected deterministically
+All these restrictions can be tested at a moderate cost. While no
+checks are done at compile-time, misuse of the API can be reliably detected
 during execution.
 %
 \begin{lstlisting}[style=C++]
@@ -852,9 +851,9 @@ This helps detecting and handling a few unfortunate cases:
       region by mistake.
 \item If we are unlucky, the OCaml thread scheduler could preempt the
       current thread and the re-entry would happen from another
-      thread\ldots{} messing with the internal datastructures of the regions
-      library. By wrapping calls with custom code, we can rely on the OCaml
-      runtime lock to also protect region sections.
+      thread, damaging the internal datastructures of the regions library. By
+      wrapping calls with custom code, we can rely on the OCaml runtime lock to
+      also protect region sections.
 \item The OCaml closure could raise an exception. The native FFI deals with
       this situation by simply dropping roots from the local roots linked
       list: since the nodes allocated by \cpp{CAMLparam/local} macros are
@@ -863,7 +862,7 @@ This helps detecting and handling a few unfortunate cases:
       code. A workaround for regions is discussed below.
 \end{itemize}
 
-\paragraph{Handling exceptions}
+\paragraph{Handling exceptions.}
 
 The OCaml native FFI provides two means for calling OCaml closures:
 %
@@ -902,16 +901,18 @@ useful beyond Cuite is on our roadmap. Thanks to the transparent integration
 with the original FFI, this would help to debug existing bindings.
 
 As Cuite is developped in C++, we have already developped a C++ layer on top of
-the C API to make it more idiomatic and remove some boilerplate -- references
-for dealing roots, RAII for dealing with regions, etc. Extracting and
-generalizing this part would extend the usefulness of our library to other C++
-bindings.
+the C API to make it more idiomatic and remove some of the boilerplate --
+using references instead of pointers for dealing roots, using
+RAII-idiom~\citep{Stroustrup:1995:DEC:193198} to ensure well-bracketed nesting
+of regions, etc.
+Extracting and generalizing this part would extend the usefulness of our
+library to other C++ bindings.
 
 Finally, the only part of the OCaml runtime that we rely on and that is not
-already in the public interface is the representation of local roots. Since it
-has not changed for a long time and is already used by the public macros,
-we are quite confident that it will be possible to agree on a stable interface
-with the upstream OCaml distribution. 
+already in the public interface is the representation of local roots. 
+This part has already been stable for years. We are quite confident that it
+will be possible to get guarantees that this API will not break in future
+releases of OCaml.
 
 \section{Related Work}
 
