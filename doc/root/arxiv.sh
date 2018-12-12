@@ -1,6 +1,6 @@
 #!/bin/bash
 MAIN=CAMLroot
-BIB=biblio
+BIB=CAMLroot
 
 mkdir arxiv || { echo "error, you need to (rmdir arxiv)"; exit 1; }
 rm -f arxiv.zip

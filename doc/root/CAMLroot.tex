@@ -600,11 +600,12 @@ Native OCaml FFI is \texttt{value}-centric: functions directly take and produce
 values. Our rewriting make it \texttt{root}-centric: functions receive roots
 and manipulate values though them.
 
-While the connection between a root and its value is lost with native
-OCaml FFI, we can access it at any time with the indirect API. Plugging
-into GC infrastructure we can introspect the roots and provide a debug
-variant of the FFI where all roots received by FFI functions are checked for
-proper registration.
+With native OCaml FFI the connection between a root and its value is lost: when
+a value argument is passed, a copy is made and it is not possible to know which
+root it got copied from.  However \cpp{mlroot} functions check that these roots
+have been properly registered by plugging into the GC infrastructure. This
+comes at a moderate speed cost in the form of a "defensive" mode that can be
+switched on during development.
 
 \paragraph{Where to add the indirection?}
 
@@ -612,15 +613,14 @@ Having made explicit the distinction between values (of type
 \cpp{value}) and roots (of type \cpp{value*}) in the API, one
 could wonder why our API makes use of roots in places where values would
 be fine: the arguments to \cpp{mlroot\_get\_field}, \cpp{mlroot\_long\_val},
-etc.
-
-We are not totally decided on this issue and might revisit this design
+etc.  We are not totally decided on this issue and might revisit this design
 in the future. However the ability to dynamically check for correct use
 and the more explicit, safer-looking nature of the resulting code makes
 us favor the root arguments.
 
 Beside the slight increase in verbosity, we did not find any drawback to
-this approach.
+this approach.  The indirection does not increase memory use because the root
+has to be registered in the GC anyway. The impact on execution time is not significant either: the only change is that the pointer dereferencement (a memory load) is done eagerly with the value-centric API while it is delayed with the root-centric approach.
 
 \section{mlregion: dynamic allocation of roots}
 
@@ -944,7 +944,7 @@ GC roots can be tracked by Rust type system.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \label{sect:bib}
-\bibliography{biblio}
+\bibliography{CAMLroot}
 
 \end{document}
 
