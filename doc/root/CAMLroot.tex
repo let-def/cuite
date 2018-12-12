@@ -743,11 +743,13 @@ the roots at once.
 this API is that the current region is not explicitly passed to functions,
 instead it is accessed by some external means.
 
-This choice of design was made to simplify integration with Qt code: sometimes
-OCaml code might get called from some method deep in the object hierarchy,
-which interface is imposed by the framework.  As there was no easy way to
-thread a region handle to that point, dynamic scoping came naturally as a
-solution. We might revisit this decision.
+This choice of design was made to simplify integration with Qt code: OCaml code
+can get called from a method deep in the object hierarchy, which interface is
+imposed by the framework. As there is no easy way to thread a region handle to
+that point, dynamic scoping came naturally as a solution. We might revisit this
+decision later. For instance regions could be threaded explicitly by default,
+and auxiliary functions could allow to set and retrieve the current region for
+situations where threading is not possible.
 
 \subsection{Sub-regions}
 
