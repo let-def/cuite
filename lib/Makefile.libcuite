@@ -1,6 +1,6 @@
-CXX=g++ -std=c++14 -g -fPIC $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -DQT_NO_VERSION_TAGGING -I ../cpp -I .
+CXX=g++ -std=c++14 -g -fPIC $(shell pkg-config --cflags Qt5Gui Qt5Widgets) -I $(shell ocamlfind printconf stdlib) -DQT_NO_VERSION_TAGGING -I ../cpp -I .
 
 include Makefile.libcuite.gen
 
 libcuite.so: $(CPP_OBJECTS) #$(patsubst %,../cpp/%,$(CPP_OBJECTS))
-	$(CXX) -shared -o $@ -lQt5Widgets -lQt5Gui -lQt5Core -lQt5PrintSupport -lQt5Network $(CPP_OBJECTS)
+	$(CXX) -shared -o $@ $(CPP_OBJECTS) $(shell pkg-config --libs Qt5Gui Qt5Widgets)
