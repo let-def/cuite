@@ -124,8 +124,8 @@ approach makes interface work more tractable and easier to debug.
 
 \subsection{Our approach: roots before values}
 
-In our opinion, the less natural part of OCaml interaction from C code
-is the manipulation of roots and the lifetime of OCaml values. The C
+The less natural part of OCaml interaction from C code, in our opinion,
+is the management of roots and the lifetime of OCaml values. The C
 programmer is accustomed to manual memory management: by explicitly
 creating and destroying pieces of memory or by tying the variable
 lifetime to the scope. While syntactically the management of OCaml
@@ -138,16 +138,18 @@ but not registered as a root can be collected.
 If (1) happens in the middle of a sequence point %
 %reference the definition of C sequence point?
 where the same value has been read, this results in an undefined behavior of
-the C language. In practice, the lifetime of the value gets disconnected from
-the lifetime of the variable that holds it.  This behavior completely
-contradicts the intuition of the C developer who is not used to distinguishing
-a variable from its contents.  Fortunately that can be addressed by a slight,
-almost mechanical, change to the C API of the garbage collector. By making most
-FFI functions take roots (in the form of pointer to values) rather than direct
-values as arguments, this class of error can be ruled-out.
+the C language. Referencing a variable is an effectful operation: the value
+is copied and its lifetime is disconnected from the lifetime of the variable
+that holds it: referencing a variable is an effectful operation.  This behavior
+completely contradicts the intuition of the C developer who is not used to
+distinguishing a variable from its contents.  Fortunately that can be addressed
+by a slight, almost mechanical, change to the C API of the garbage collector.
+By making most FFI functions take roots (in the form of pointer to values)
+rather than direct values as arguments, this class of error can be ruled-out.
 
-Furthermore, both approaches are amenable to dynamic checks that can detect even
-more erroneous situations.
+We also propose an alternative root management strategy that results in simpler
+code.  Both changes are amenable to dynamic checks that can detect incorrect
+uses.
 
 \subsection{Contributions}
 
@@ -190,7 +192,7 @@ This library helps accomplish two main tasks:
 \end{enumerate}
 
 Even though both tasks are much more difficult than when working from
-within OCaml code (the typechecker will not help you in foreign code),
+within OCaml code (the typechecker will not provide help in foreign code),
 it is at least possible to reason locally, in a compositional way, about
 OCaml values -- task (1). For instance, building nested tuples just
 involves repeatedly building flat tuples.
@@ -203,10 +205,10 @@ Most of the time the GC will not do any work, preferring to wait for a
 batch of work that is big enough to amortize its overhead. As such an
 improper use of the OCaml API can go unnoticed for a long time. But even
 once harm has been done, it might just lead to a corruption of the OCaml
-heap that will affect an unrelated piece of code and fails much later in the
+heap that affects an unrelated piece of code and fails much later in the
 program.  GC bugs combine two nasty properties: they cannot be studied in
 isolation and they trigger depending on a complex set of conditions that
-cannot be inferred by solely looking at the buggy code.
+cannot be inferred by just looking at the buggy code.
 
 On the other hand, the OCaml FFI API enjoys a remarkably low overhead:
 the restrictions are difficult to adhere to but lead to a cheap and portable
@@ -243,7 +245,7 @@ heap:
       guaranteed to be aligned on a word boundary
 \end{itemize}
 
-Blocks are preceded by a header that determines their ``tag'' and their
+Blocks are preceded by a header containing their ``tag'' and their
 size. The tag determines how to interpret the contents of the block.
 For common OCaml values, such as algebraic data, records, tuples or
 arrays, blocks are made of other values.
@@ -276,7 +278,7 @@ values and builds a pair out of them:
 \begin{lstlisting}[]
 (* The OCaml version *)
 let mk_pair_ocaml x y = (x,y)
-(* An external function, that we will implement in C *)
+(* An external function, implemented in C *)
 external mk_pair_c : 'a -> 'b -> 'a * 'b = "mk_pair_c_impl"
 \end{lstlisting}
 
@@ -322,9 +324,8 @@ can be as many calls to \cpp{CAMLxparam} as needed. The variants from
 \cpp{CAML(x)paramN(array,\ array\_size)} for registering array of values.
 
 \paragraph{CAMLlocal} The next macro call of interest is
-\cpp{CAMLlocal1(pair)}. 
-
-It expands to \cpp{value\ pair\ =\ Val\_unit;\ CAMLxparam1(pair)}:
+\cpp{CAMLlocal1(pair)} that expands to
+\cpp{value\ pair\ =\ Val\_unit;\ CAMLxparam1(pair)}:
 %
 \begin{itemize}
 \item it declares and initializes a local variable named \cpp{pair},
@@ -358,7 +359,7 @@ void Store_field(value v, int offset, value x);
 roots. It sets the variable \cpp{caml\_local\_roots} to the state that was
 saved by \cpp{CAMLparam0()}.
 
-Thus, the code above can be desugared to the equivalent:
+The code above desugars to the following equivalent code:
 %
 \begin{lstlisting}[]
 CAMLprim
@@ -384,7 +385,10 @@ value mk_pair_c_impl(value a, value b)
 The three fundamental operations of root managements are saving local roots,
 registering new ones, and restoring the saved ones when leaving a scope.
 
-The OCaml FFI provides macros to automate most of this work but has no way to enforce their proper use. \cpp{mlroot.h} API can detect large classes of possible misuses while \cpp{mlregion.h} introduces an alternative approach to the management of roots. 
+The OCaml FFI provides macros to automate most of this work but has no way to
+enforce their proper use. The functions provided \cpp{mlroot.h} can detect
+large classes of possible misuses while \cpp{mlregion.h} introduces an
+alternative approach to the management of roots. 
 
 \subsubsection{Carefully dealing with intermediate results}
 
@@ -443,7 +447,7 @@ linearized and temporary results should be stored in local roots.
 The first change we propose is to replace the type of arguments of type \cpp{value}
 to the type \cpp{value*}, representing roots rather than direct values.
 Similarly, return values of type \cpp{value} are replaced by an extra argument
-of type \cpp{value*}, which will be used to store the results.
+of type \cpp{value*} that is used to store the results.
 
 This rewriting is only necessary for functions that allocate, but for the sake
 of uniformity we offer alternatives in this style for most GC functions.
@@ -454,9 +458,9 @@ This minor change brings many benefits.
 \paragraph{No risk of unexpected copy.}
 
 A tricky source of bug that we highlighted in the previous section was
-that OCaml values can be unexpectedly copied while being manipulated. With
+that OCaml values can be unexpectedly copied in the middle of a call. With
 the added indirection only the pointer is copied. If the GC kicks in and
-rewrites the roots, the pointer will not be affected anyway.
+rewrites the roots, the pointer will not be invalidated.
 
 Looking at the operations involved in terms of lifetime, reading a value
 from a root makes it ephemeral: the value is valid only until the next
@@ -524,10 +528,11 @@ With the existing OCaml API, any function receiving an argument of type
 \cpp{value} has to register a corresponding root. There are as many
 roots for the same value as sub-routines calls that received it as
 argument.  With the indirect approach only places that have their
-address taken need to be registered as root. Since this operation is explicit, we believe the risk of mistake is reduced.
+address taken need to be registered as root. Since this operation is explicit,
+we believe the risk of mistake is reduced.
 
-Dereferencing should also be done with care, but this will generally
-be done by a primitive function of the GC interface and not by the user code anymore.
+Dereferencing also require some care, but only the implementation of mlroot
+functions should have to do that and not the user code.
 
 \paragraph{Dealing with immediate values.}
 
@@ -544,10 +549,6 @@ garbage collection, etc.
 We argue these properties should not be exploited. That some values can be
 represented without interacting with the GC is an implementation detail. Being
 prepared for the ``worst case'' allow to present a uniform interface.
-
-Still, the library provides the \cpp{mlroot\_val\_long} and
-\cpp{mlroot\_set\_field\_long} short-hands for cases that are known to be
-safe.
 
 \subsection{Safety of this indirect API}
 
@@ -588,21 +589,21 @@ and manipulate values though them.
 
 With native OCaml FFI the connection between a root and its value is lost: when
 a value argument is passed, a copy is made and it is not possible to know which
-root it got copied from.  However \cpp{mlroot} functions check that these roots
-have been properly registered by plugging into the GC infrastructure. This
-comes at a moderate speed cost in the form of a "defensive" mode that can be
-switched on during development.
+root it got copied from.  However \cpp{mlroot} functions can check that these
+roots have been properly registered by plugging into the GC infrastructure.
+This comes at a moderate speed cost in the form of a "defensive" mode that can
+be switched on during development.
 
 \paragraph{Where to add the indirection?}
 
 Having made explicit the distinction between values (of type
 \cpp{value}) and roots (of type \cpp{value*}) in the API, one
-could wonder why our API makes use of roots in places where values would
-be fine: the arguments to \cpp{mlroot\_get\_field}, \cpp{mlroot\_long\_val},
-etc.  We are not totally decided on this issue and might revisit this design
-in the future. However the ability to dynamically check for correct use
-and the more explicit, safer-looking nature of the resulting code makes
-us favor the root arguments.
+could wonder why our API makes use of roots in places where values would be
+fine. The results of \cpp{mlroot\_get\_field} or \cpp{mlroot\_long\_val} for
+instance.  We are not totally decided on this issue and might revisit this
+design in the future. However the ability to dynamically check for correct use
+and the more explicit, safer-looking nature of the resulting code makes us
+favor the root arguments.
 
 Beside the slight increase in verbosity, we did not find any drawback to
 this approach.  The indirection does not increase memory use because the root
@@ -891,7 +892,7 @@ with the original FFI, this would help to debug existing bindings.
 As Cuite is developped in C++, we have already developped a C++ layer on top of
 the C API to make it more idiomatic and remove some of the boilerplate --
 using references instead of pointers for dealing with roots, using
-RAII-idiom~\citep{Stroustrup:1995:DEC:193198} to ensure well-bracketed nesting
+RAII-idiom~\citep{Stroustrup:1995:DEC:193198} to ensure well-bracketed use
 of regions, etc.
 Extracting and generalizing this part would extend the usefulness of our
 library to other C++ bindings.
@@ -899,8 +900,8 @@ library to other C++ bindings.
 Finally, the only part of the OCaml runtime that we rely on and that is not
 already in the public interface is the representation of local roots. 
 This part has already been stable for years. We are quite confident that it
-will be possible to get guarantees that this API will not break in future
-releases of OCaml.
+will be possible to get guarantees from the upstream developers that this API
+will not break in future releases of OCaml.
 
 \section{Related Work}
 
@@ -936,7 +937,7 @@ GC roots can be tracked by Rust type system.
 
 This is the most promising approach for getting bindings that are safe by
 construction. It does so by leveraging the type systems of OCaml and of Rust.
-As such, it cannot help with C/C++ libraries. The actual implementation is
+As such it cannot help with C/C++ libraries. The actual implementation is
 also too limited for most practical applications: it only covers a minimal part
 of the GC API, just enough to demonstrate the viability of the approach.
 
