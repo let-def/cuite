@@ -341,7 +341,6 @@ all variables have been registered properly.
 // Allocating values
 value caml_alloc(int size, int tag);
 value caml_copy_string(const char *string);
-value caml_alloc_string(int length);
 ...
     
 // Deconstructing and mutating values (actually implemented by macros)
@@ -448,7 +447,8 @@ of type \cpp{value*}, which will be used to store the results.
 
 This rewriting is only necessary for functions that allocate, but for the sake
 of uniformity we offer alternatives in this style for most GC functions.
-Figure~\ref{fig:mlroot} show what this style of API looks like.
+Figure~\ref{fig:mlvalue} shows some functions from the original OCaml FFI while
+figure~\ref{fig:mlroot} shows the equivalent functions provided by mlroot API.
 This minor change brings many benefits.
 
 \paragraph{No risk of unexpected copy.}
@@ -473,35 +473,26 @@ In practice this is almost never needed outside the implementation of
 \begin{figure}[htbp]
 \begin{lstlisting}[style=C++]
 // Allocating values
-void mlroot_alloc(value *root, size_t size, int tag);
-void mlroot_copy_string(value *root, const char *string);
-void mlroot_alloc_string(value *root, size_t size);
+void mlroot_alloc(value *root, mlsize_t size, tag_t tag);
+void mlroot_string_copy(value *root, const char *string);
 ...
     
 // Deconstructing and mutating values
-long mlroot_long_val(value *x);
-value mlroot_val_long(long x);
-value mlroot_get_field(value *root, int n);
-void mlroot_set_field(value *root, int n, value *v);
-void mlroot_set_field_long(value *root, int n, long v);
+long mlroot_get_long(value *root);
+void mlroot_set_long(value *root, long x);
+void mlroot_get_field(value *root, const value *src, int index);
+void mlroot_set_field(const value *root, int index, const value *src);
 ...
 \end{lstlisting}
-  \caption{Excerpt of the mlroot API}
+  \caption{Functions from \ref{fig:mlvalue} following mlroot conventions}
   \label{fig:mlroot}
 \end{figure}
 
-\paragraph{Return values become explicit.}
+\paragraph{Preventing nested calls.}
 
-Now that all functions that interact with the garbage collector take
-pointers, most offending code patterns become impossible to write:
-%
-\begin{itemize}
-\item functions returning void simply cannot be nested,
-\item nesting a call to a function returning \cpp{value} where a
-      \cpp{value*} is expected would require taking the address of a
-      temporary (such as \cpp{\&mlroot_get\_field(x,\ 0)}), which is rejected by the C
-      compiler.
-\end{itemize}
+Now that all functions that interact with the garbage collector take pointers
+and return void, offending code patterns become much harder. Calls cannot be
+nested anymore.
 
 Here is what the \cpp{triplet} would look like with this approach:
 %
