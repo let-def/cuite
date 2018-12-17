@@ -677,7 +677,8 @@ Since we know all the OCaml values that will be reached prior to calling
 first allocates an array of roots and passes pointers into this array.
 
 However there exist situations where the set of roots cannot be pre-determined.
-Regions appeared as a solution to this problem, and proved to be convenient in simpler cases too.
+Regions appeared as a solution to this problem, and proved to be convenient in
+simpler cases too.
 
 \subsection{Region-based management}
 
@@ -784,8 +785,7 @@ void fold_array(value *acc, value *array)
 }
 \end{lstlisting}
 
-Like for normal regions, macros can be used to automate some of the
-boilerplate.
+Macros can be used to automate some of the boilerplate.
 
 \subsection{Releasing the lock in a region}
 
@@ -921,15 +921,33 @@ on the official OCaml FFI. It goes beyond checking the registration of roots
 and also checks that the value representation on the C and OCaml sides is
 compatible.
 
+Unfortunately, O-Saffire has not received much changes since 2005 and we could
+not get it to work on a recent distribution of OCaml.
+
 Ctypes~\citep{DBLP:journals/scp/YallopSM18} proposes an alternative way to bind
 libraries. Rather than writing C code, a specification of the library is
 described in OCaml code. From this specification bridging code will be
 generated. The code can be instrumented to check for different safety
 properties.
 
+Ctypes is very convenient for binding simple C functions. Since most of the
+code is described using OCaml combinators, it is easy to get bindings that are
+type-safe by construction.  However it falls short on two fronts:  there is
+limited support for calling C++ code and for manipulating objects with complex
+lifetimes or custom memory management rules.  In these cases one has to write
+low-level code that follows the requirement of the library being bound.
+Achieving that through Ctypes combinators can prove more cumbersome and limited
+than directly writing the corresponding C code.
+
 Caml-oxide~\citep{camloxide} is a proof of concept implementation of an OCaml
-FFI for Rust. In particular, it demonstrates that the restriction applying to
+FFI for Rust. In particular, it demonstrates that the restrictions applying to
 GC roots can be tracked by Rust type system.
+
+This is the most promising approach for getting bindings that are safe by
+construction. It does so by leveraging the type systems of OCaml and of Rust.
+As such, it cannot help with C/C++ libraries. The actual implementation is
+also too limited for most practical applications: it only covers a minimal part
+of the GC API, just enough to demonstrate the viability of the approach.
 
 % \section{Conclusion}
 % 
