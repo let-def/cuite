@@ -2,15 +2,15 @@ export LD_LIBRARY_PATH:=../_build/default/lib/:$(LD_LIBRARY_PATH)
 
 run-abook_addresswidget.exe:
 	dune build abook_addresswidget.exe
-	../_build/default/examples/abook_addresswidget.exe
+	dune exec ./abook_addresswidget.exe
 
 run-syntaxhl.exe:
 	dune build syntaxhl.exe
-	../_build/default/examples/syntaxhl.exe
+	dune exec ./syntaxhl.exe
 
 run-syntaxhl2.exe:
 	dune build syntaxhl2.exe
-	../_build/default/examples/syntaxhl2.exe
+	dune exec ./syntaxhl2.exe
 
 .PHONY: run-abook_addresswidget.exe run-syntaxhl.exe run-syntaxhl2.exe
 
