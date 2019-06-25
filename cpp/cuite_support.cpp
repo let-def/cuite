@@ -552,7 +552,7 @@ static void connect_parent(value vobj)
 
 static void update_parent(const QObject *obj)
 {
-  CUITE_GC_REGION();
+  CUITE_OCAML_REGION();
   value& vobj = cuite_QObject_to_ocaml(obj);
   QObject *parent = obj->parent();
   value& vparent = parent ? cuite_QObject_to_ocaml(parent) : val_unit;
