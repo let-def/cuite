@@ -38,6 +38,16 @@ value& cuite_double_to_ocaml(const double v)
   return cuite_region_register(caml_copy_double(v));
 }
 
+value& cuite_qreal_to_ocaml(const qreal v)
+{
+  return cuite_region_register(caml_copy_double(v));
+}
+
+qreal cuite_qreal_from_ocaml(const value& v)
+{
+  return Double_val(v);
+}
+
 /* intnat */
 
 intnat cuite_intnat_from_ocaml(const value& v)
@@ -116,10 +126,10 @@ QRectF cuite_QRectF_from_ocaml(const value& v)
 value& cuite_QRectF_to_ocaml(const QRectF& v)
 {
   value u = caml_alloc_small(4 * Double_wosize, Double_array_tag);
-  Double_field(u, 0) = v.x();
-  Double_field(u, 1) = v.y();
-  Double_field(u, 2) = v.width();
-  Double_field(u, 3) = v.height();
+  Store_double_field(u, 0, v.x());
+  Store_double_field(u, 1, v.y());
+  Store_double_field(u, 2, v.width());
+  Store_double_field(u, 3, v.height());
   return cuite_region_register(u);
 }
 
@@ -148,8 +158,8 @@ QPointF cuite_QPointF_from_ocaml(const value& v)
 value& cuite_QPointF_to_ocaml(const QPointF& v)
 {
   value u = caml_alloc_small(2 * Double_wosize, Double_array_tag);
-  Double_field(u, 0) = v.x();
-  Double_field(u, 1) = v.y();
+  Store_double_field(u, 0, v.x());
+  Store_double_field(u, 1, v.y());
   return cuite_region_register(u);
 }
 
@@ -178,8 +188,8 @@ QSizeF cuite_QSizeF_from_ocaml(const value& v)
 value& cuite_QSizeF_to_ocaml(const QSizeF& v)
 {
   value u = caml_alloc_small(2 * Double_wosize, Double_array_tag);
-  Double_field(u, 0) = v.width();
-  Double_field(u, 1) = v.height();
+  Store_double_field(u, 0, v.width());
+  Store_double_field(u, 1, v.height());
   return cuite_region_register(u);
 }
 

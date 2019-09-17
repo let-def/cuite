@@ -265,7 +265,7 @@ module Decl = struct
   let int = custom_type "int" ~modifier:`Direct
   let bool = custom_type "bool" ~modifier:`Direct
   let float = custom_type "double" ~ml_name:"float" ~modifier:`Direct
-  let qreal = float
+  let qreal = custom_type "qreal" ~ml_name:"float" ~modifier:`Direct
   let double = float
 
   let qString   = custom_type ~ml_name:"string" "QString"
