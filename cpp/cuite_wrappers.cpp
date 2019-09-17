@@ -38,6 +38,16 @@ value& cuite_double_to_ocaml(const double v)
   return cuite_region_register(caml_copy_double(v));
 }
 
+value& cuite_qreal_to_ocaml(const qreal v)
+{
+  return cuite_region_register(caml_copy_double(v));
+}
+
+qreal cuite_qreal_from_ocaml(const value& v)
+{
+  return Double_val(v);
+}
+
 /* intnat */
 
 intnat cuite_intnat_from_ocaml(const value& v)

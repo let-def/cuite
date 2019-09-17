@@ -503,7 +503,7 @@ let () = with_class qWindow [
     signal "minimumHeightChanged" [arg "" int];
     signal "minimumWidthChanged" [arg "" int];
     signal "modalityChanged" [arg "" qt'WindowModality];
-    signal "opacityChanged" [arg "" float];
+    signal "opacityChanged" [arg "" qreal];
     (*  signal "screenChanged" [arg "" qScreen];*)
     signal "visibilityChanged" [arg "" qWindow'Visibility];
     signal "visibleChanged" [arg "" bool];
